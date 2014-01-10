@@ -1,0 +1,16 @@
+{
+  "name": "ms-monaco-re",
+  "version": "0.0.2",
+  "author": {
+    "name": "hackwaly",
+    "email": "hackwaly@gmail.com"
+  },
+  "main": "main.js",
+  "dependencies": {
+    "async": "*",
+    "esprima": "*",
+    "mkdirp": "*",
+    "promise": "*",
+    "request": "*"
+  }
+}
