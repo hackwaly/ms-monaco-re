@@ -2,8 +2,10 @@ var request = require('request');
 var esprima = require('esprima');
 var async = require('async');
 var mkdirp = require('mkdirp');
+var mkdirpSync = mkdirp.sync;
 var path = require('path');
 var Promise = require('promise');
+var gencode = require('escodegen').generate;
 var fs = require('fs');
 var js_beautify = require('js-beautify').js_beautify;
 
@@ -72,11 +74,23 @@ var _parseModule = (function () {
         if (node.type === 'CallExpression' && node.callee.type === 'Identifier') {
             if (node.callee.name === 'define') {
                 var args = node.arguments;
-                args.forEach(function (arg) {
-                    if (arg.type === 'Literal' && typeof arg.value === 'string') {
-                        foundModule(arg.value);
+                if (args.length > 1) {
+                    if (args[0].type === 'Literal') {
+                        extract(args[0].value, node);
                     }
-                });
+                }
+                if (args.length > 2) {
+                    var deps = args[1];
+                    if (deps.type === 'ArrayExpression') {
+                        deps.elements.forEach(function (elm) {
+                            if (elm.type === 'Literal' && typeof elm.value === 'string') {
+                                if (elm.value !== 'require' && elm.value !== 'exports' && elm.value !== 'module') {
+                                    foundModule(elm.value);
+                                }
+                            }
+                        });
+                    }
+                }
             } else if (node.callee.name === 'require') {
                 var arg0 = node.arguments[0];
                 if (arg0 && arg0.type === 'ArrayExpression') {
@@ -87,6 +101,17 @@ var _parseModule = (function () {
                     });
                 }
             }
+        }
+    }
+    function extract(moduleId, node) {
+        var r = _parseModuleId(moduleId);
+        if (r) {
+            mkdirpSync(r.dirs);
+            fs.writeFileSync(r.path, js_beautify(gencode(node), {
+                "indent_size": 2,
+                "wrap_line_length": 120
+            }), 'utf-8');
+            console.log('extract module: ' + moduleId);
         }
     }
     return function (text, moduleId) {
