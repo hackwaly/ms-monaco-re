@@ -119,12 +119,19 @@ define("vs/editor/core/view/overlays/linesDecorations/linesDecorations", ["requi
         if (t = f[r], t.options.linesDecorationsClassName)
           if (i = t.range, t.options.isWholeLine)
             for (c = i.startLineNumber; c <= i.endLineNumber; c++) {
-              e.lineIsVisible(c) && (a = e.getViewportVerticalOffsetForLineNumber(c), m.hasOwnProperty(a.toString()) ||
-                (m[a.toString()] = {}), m[a.toString()][t.options.linesDecorationsClassName] = !0);
+              if (e.lineIsVisible(c)) {
+                a = e.getViewportVerticalOffsetForLineNumber(c);
+                if (!m.hasOwnProperty(a.toString())) {
+                  m[a.toString()] = {};
+                }
+                m[a.toString()][t.options.linesDecorationsClassName] = !0;
+              }
             } else if (o = e.visibleRangesForRange(i, !1))
               for (c = 0, d = o.length; d > c; c++) {
                 a = o[c].top;
-                m.hasOwnProperty(a.toString()) || (m[a.toString()] = {});
+                if (!m.hasOwnProperty(a.toString())) {
+                  m[a.toString()] = {};
+                }
                 m[a.toString()][t.options.linesDecorationsClassName] = !0;
               }
       h.push('<div class="');

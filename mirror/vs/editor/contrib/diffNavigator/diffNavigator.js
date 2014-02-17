@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -31,7 +33,9 @@ define(["require", "exports", "vs/base/eventEmitter", "vs/base/assert", "vs/edit
 
   var n = function(a) {
     function b(b, c) {
-      typeof c == "undefined" && (c = {});
+      if (typeof c == "undefined") {
+        c = {};
+      }
       var d = this;
       a.call(this);
 
@@ -59,16 +63,18 @@ define(["require", "exports", "vs/base/eventEmitter", "vs/base/assert", "vs/edit
         return d.onDiffUpdated();
       }));
 
-      this.options.followsCaret && this.toUnbind.push(this.editor.getModifiedEditor().addListener(j.EventType.CursorPositionChanged,
-        function(a) {
+      if (this.options.followsCaret) {
+        this.toUnbind.push(this.editor.getModifiedEditor().addListener(j.EventType.CursorPositionChanged, function(a) {
           if (d.ignoreSelectionChange) return;
           d.nextIdx = -1;
         }));
+      }
 
-      this.options.alwaysRevealFirst && this.toUnbind.push(this.editor.getModifiedEditor().addListener(j.EventType.ModelChanged,
-        function(a) {
+      if (this.options.alwaysRevealFirst) {
+        this.toUnbind.push(this.editor.getModifiedEditor().addListener(j.EventType.ModelChanged, function(a) {
           d.revealFirst = !0;
         }));
+      }
 
       this.init();
     }
@@ -84,7 +90,11 @@ define(["require", "exports", "vs/base/eventEmitter", "vs/base/assert", "vs/edit
 
       this.compute(this.editor.getLineChanges());
 
-      this.revealFirst && (this.revealFirst = !1, this.nextIdx = -1, this.next());
+      if (this.revealFirst) {
+        this.revealFirst = !1;
+        this.nextIdx = -1;
+        this.next();
+      }
     };
 
     b.prototype.compute = function(a) {
@@ -117,11 +127,18 @@ define(["require", "exports", "vs/base/eventEmitter", "vs/base/assert", "vs/edit
       var c = this.editor.getPosition();
       for (var d = 0, e = this.ranges.length; d < e && !b; d++) {
         var f = this.ranges[d].range;
-        c.isBeforeOrEqual(f.getStartPosition()) && (this.nextIdx = d + (a ? 0 : -1), b = !0);
+        if (c.isBeforeOrEqual(f.getStartPosition())) {
+          this.nextIdx = d + (a ? 0 : -1);
+          b = !0;
+        }
       }
-      b || (this.nextIdx = a ? 0 : this.ranges.length - 1);
+      if (!b) {
+        this.nextIdx = a ? 0 : this.ranges.length - 1;
+      }
 
-      this.nextIdx < 0 && (this.nextIdx = this.ranges.length - 1);
+      if (this.nextIdx < 0) {
+        this.nextIdx = this.ranges.length - 1;
+      }
     };
 
     b.prototype.move = function(a) {

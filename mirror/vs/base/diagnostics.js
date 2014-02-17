@@ -21,12 +21,17 @@ define("vs/base/diagnostics", ["require", "exports"], function(e, t) {
         var u = [arguments];
         s = a.indexOf(t);
 
-        - 1 !== s && (u.unshift.apply(u, a[s + 1] || []), a[s + 1] = []);
+        if (-1 !== s) {
+          u.unshift.apply(u, a[s + 1] || []);
+          a[s + 1] = [];
+        }
         var l = (u.length > 1, function() {
           var e = u.shift();
           t.apply(t, e);
 
-          u.length > 0 && window.setTimeout(l, 500);
+          if (u.length > 0) {
+            window.setTimeout(l, 500);
+          }
         });
         l();
       } else {
@@ -48,7 +53,9 @@ define("vs/base/diagnostics", ["require", "exports"], function(e, t) {
     return u;
   }
   var o = self;
-  o.Monaco || (o.Monaco = {});
+  if (!o.Monaco) {
+    o.Monaco = {};
+  }
 
   o.Monaco.Diagnostics = {};
   var r = o.Monaco.Diagnostics;

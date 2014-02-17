@@ -43,7 +43,9 @@ define("vs/base/dom/keyboardController", ["require", "exports", "vs/base/dom/dom
     };
 
     e.prototype._fire = function(e, t) {
-      this._listeners.hasOwnProperty(e) && this._listeners[e](t);
+      if (this._listeners.hasOwnProperty(e)) {
+        this._listeners[e](t);
+      }
     };
 
     e.prototype._onKeyDown = function(e) {
@@ -55,8 +57,14 @@ define("vs/base/dom/keyboardController", ["require", "exports", "vs/base/dom/dom
     };
 
     e.prototype._onKeyPress = function(e) {
-      this._previousKeyDown && (e.shiftKey && this._previousKeyDown.asString() !== e.asString() && (e.shiftKey = !1),
-        "keypress" === this._previousEventType && this._fire("keydown", this._previousKeyDown));
+      if (this._previousKeyDown) {
+        if (e.shiftKey && this._previousKeyDown.asString() !== e.asString()) {
+          e.shiftKey = !1;
+        }
+        if ("keypress" === this._previousEventType) {
+          this._fire("keydown", this._previousKeyDown);
+        }
+      }
 
       this._previousEventType = "keypress";
 

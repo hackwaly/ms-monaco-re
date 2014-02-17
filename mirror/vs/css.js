@@ -5,7 +5,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var r in t) {
-      t.hasOwnProperty(r) && (e[r] = t[r]);
+      if (t.hasOwnProperty(r)) {
+        e[r] = t[r];
+      }
     }
     n.prototype = t.prototype;
 
@@ -160,9 +162,11 @@ var CSSLoaderPlugin;
       var e = this;
 
       var t = this._blockedLoads.length;
-      t > 0 && -1 === this._mergeStyleSheetsTimeout && (this._mergeStyleSheetsTimeout = window.setTimeout(function() {
-        return e._mergeStyleSheets();
-      }, 0));
+      if (t > 0 && -1 === this._mergeStyleSheetsTimeout) {
+        this._mergeStyleSheetsTimeout = window.setTimeout(function() {
+          return e._mergeStyleSheets();
+        }, 0);
+      }
     };
 
     t.prototype._mergeStyleSheet = function(e, t, n, r) {
@@ -183,10 +187,12 @@ var CSSLoaderPlugin;
 
       var o = [];
       for (e = 0; r > e; e++) {
-        ("loaded" === n[e].readyState || "complete" === n[e].readyState) && o.push({
-          linkNode: n[e],
-          rulesLength: n[e].styleSheet.rules.length
-        });
+        if ("loaded" === n[e].readyState || "complete" === n[e].readyState) {
+          o.push({
+            linkNode: n[e],
+            rulesLength: n[e].styleSheet.rules.length
+          });
+        }
       }
       var s = o.length;
 
@@ -236,7 +242,9 @@ var CSSLoaderPlugin;
     }
     e.prototype.load = function(t, n, r) {
       var o = this.fs.readFileSync(n, "utf8");
-      o.charCodeAt(0) === e.BOM_CHAR_CODE && (o = o.substring(1));
+      if (o.charCodeAt(0) === e.BOM_CHAR_CODE) {
+        o = o.substring(1);
+      }
 
       r(o);
     };
@@ -254,11 +262,15 @@ var CSSLoaderPlugin;
       o = o || {};
       var s = n.toUrl(t + ".css");
       this.cssLoader.load(t, s, function(n) {
-        o.isBuild && (e.BUILD_MAP[t] = n);
+        if (o.isBuild) {
+          e.BUILD_MAP[t] = n;
+        }
 
         r({});
       }, function() {
-        "function" == typeof r.error && r.error("Could not find " + s + " or it was empty");
+        if ("function" == typeof r.error) {
+          r.error("Could not find " + s + " or it was empty");
+        }
       });
     };
 

@@ -18,7 +18,9 @@ define("vs/base/arrays", ["require", "exports"], function(e, t) {
   }
 
   function o(e, t) {
-    "undefined" == typeof t && (t = null);
+    if ("undefined" == typeof t) {
+      t = null;
+    }
     for (var n = new Array(e); e-- > 0;) {
       n.push(t);
     }
@@ -60,7 +62,9 @@ define("vs/base/arrays", ["require", "exports"], function(e, t) {
   function u(e) {
     for (var t = [], n = 0; n < e.length; n++) {
       var i = e[n];
-      i && t.push(i);
+      if (i) {
+        t.push(i);
+      }
     }
     return t;
   }

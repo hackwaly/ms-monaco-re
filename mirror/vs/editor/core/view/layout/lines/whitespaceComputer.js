@@ -44,8 +44,12 @@ define("vs/editor/core/view/layout/lines/whitespaceComputer", ["require", "expor
 
       var r;
       for (o in this.whitespaceId2Index) {
-        this.whitespaceId2Index.hasOwnProperty(o) && (r = this.whitespaceId2Index[o], r >= t && (this.whitespaceId2Index[
-          o] = r + 1));
+        if (this.whitespaceId2Index.hasOwnProperty(o)) {
+          r = this.whitespaceId2Index[o];
+          if (r >= t) {
+            this.whitespaceId2Index[o] = r + 1;
+          }
+        }
       }
       this.whitespaceId2Index[e.toString()] = t;
 
@@ -108,8 +112,12 @@ define("vs/editor/core/view/layout/lines/whitespaceComputer", ["require", "expor
 
       var n;
       for (t in this.whitespaceId2Index) {
-        this.whitespaceId2Index.hasOwnProperty(t) && (n = this.whitespaceId2Index[t], n >= e && (this.whitespaceId2Index[
-          t] = n - 1));
+        if (this.whitespaceId2Index.hasOwnProperty(t)) {
+          n = this.whitespaceId2Index[t];
+          if (n >= e) {
+            this.whitespaceId2Index[t] = n - 1;
+          }
+        }
       }
     };
 
@@ -133,7 +141,9 @@ define("vs/editor/core/view/layout/lines/whitespaceComputer", ["require", "expor
       var o;
       for (i = 0, o = this.afterLineNumbers.length; o > i; i++) {
         n = this.afterLineNumbers[i];
-        n >= e && (this.afterLineNumbers[i] += t - e + 1);
+        if (n >= e) {
+          this.afterLineNumbers[i] += t - e + 1;
+        }
       }
     };
 
@@ -143,7 +153,10 @@ define("vs/editor/core/view/layout/lines/whitespaceComputer", ["require", "expor
 
     e.prototype.getAccumulatedHeight = function(e) {
       var t = Math.max(0, this.prefixSumValidIndex + 1);
-      0 === t && (this.prefixSum[0] = this.heights[0], t++);
+      if (0 === t) {
+        this.prefixSum[0] = this.heights[0];
+        t++;
+      }
       for (var n = t; e >= n; n++) {
         this.prefixSum[n] = this.prefixSum[n - 1] + this.heights[n];
       }

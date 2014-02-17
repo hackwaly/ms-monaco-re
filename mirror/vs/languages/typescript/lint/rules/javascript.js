@@ -25,7 +25,9 @@ define("vs/languages/typescript/lint/rules/javascript", ["require", "exports", "
       this.filter = [o.SyntaxKind.SemicolonToken];
     }
     e.prototype.checkElement = function(e, t) {
-      e && 0 !== e.fullWidth() || t.reportError(t.parent(e), this.name, this.code);
+      if (!(e && 0 !== e.fullWidth())) {
+        t.reportError(t.parent(e), this.name, this.code);
+      }
     };
 
     return e;
@@ -38,7 +40,9 @@ define("vs/languages/typescript/lint/rules/javascript", ["require", "exports", "
       this.name = "ReservedKeywords";
     }
     e.prototype.checkElement = function(e, t) {
-      o.SyntaxFacts.isFutureReservedKeyword(e.kind()) && t.reportError(e, this.name, this.code);
+      if (o.SyntaxFacts.isFutureReservedKeyword(e.kind())) {
+        t.reportError(e, this.name, this.code);
+      }
     };
 
     return e;
@@ -51,8 +55,11 @@ define("vs/languages/typescript/lint/rules/javascript", ["require", "exports", "
       this.name = "TypeScriptSpecifics";
     }
     e.prototype.checkElement = function(e, t) {
-      e.kind() < o.SyntaxKind.IdentifierName || this._isTrulyTypeScriptSpecific(e) && t.reportError(e, this.name,
-        this.code);
+      if (!(e.kind() < o.SyntaxKind.IdentifierName)) {
+        if (this._isTrulyTypeScriptSpecific(e)) {
+          t.reportError(e, this.name, this.code);
+        }
+      }
     };
 
     e.prototype._isTrulyTypeScriptSpecific = function(e) {
@@ -63,7 +70,9 @@ define("vs/languages/typescript/lint/rules/javascript", ["require", "exports", "
       do {
         for (var n = 0, r = e.childCount(); r > n; n++) {
           var i = e.childAt(n);
-          i && t.push(i);
+          if (i) {
+            t.push(i);
+          }
         }
         if (e = t.shift(), this._isTypeScriptSpecificToken(e)) {
           return !1;
@@ -109,7 +118,9 @@ define("vs/languages/typescript/lint/rules/javascript", ["require", "exports", "
             a.right.kind() === o.SyntaxKind.NullKeyword ? l = !0 : "undefined" === i.syntaxHelper.text(a.right) && (l = !
               0);
           }
-          l && s.reportError(a, this.name, this.code);
+          if (l) {
+            s.reportError(a, this.name, this.code);
+          }
         }
       }
     };
@@ -137,8 +148,9 @@ define("vs/languages/typescript/lint/rules/javascript", ["require", "exports", "
       ];
     }
     e.prototype.checkElement = function(e, t) {
-      e.statement && "function" == typeof e.statement.kind && e.statement.kind() === o.SyntaxKind.EmptyStatement && t
-        .reportError(e, this.name, this.code);
+      if (e.statement && "function" == typeof e.statement.kind && e.statement.kind() === o.SyntaxKind.EmptyStatement) {
+        t.reportError(e, this.name, this.code);
+      }
     };
 
     return e;
@@ -181,7 +193,9 @@ define("vs/languages/typescript/lint/rules/javascript", ["require", "exports", "
       n = e.expression instanceof o.MemberAccessExpressionSyntax ? e.expression.name.fullText() : i.syntaxHelper.text(
         e.expression);
 
-      n && !n.charAt(0).match(/[A-Z_]/) && t.reportError(e.expression, this.name, this.code);
+      if (n && !n.charAt(0).match(/[A-Z_]/)) {
+        t.reportError(e.expression, this.name, this.code);
+      }
     };
 
     return e;

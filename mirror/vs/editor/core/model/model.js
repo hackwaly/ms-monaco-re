@@ -8,9 +8,13 @@ define("vs/editor/core/model/model", ["require", "exports", "vs/base/severity", 
 
   var p = function(e) {
     function t(t, n, i, o) {
-      "undefined" == typeof i && (i = null);
+      if ("undefined" == typeof i) {
+        i = null;
+      }
 
-      "undefined" == typeof o && (o = null);
+      if ("undefined" == typeof o) {
+        o = null;
+      }
 
       e.call(this, [s.EventType.ModelPropertiesChanged, s.EventType.ModelDispose], t, n);
 
@@ -18,7 +22,9 @@ define("vs/editor/core/model/model", ["require", "exports", "vs/base/severity", 
 
       this.id = "$model" + d;
 
-      ("undefined" == typeof i || null === i) && (i = new r.URL("inMemory://model/" + d));
+      if ("undefined" == typeof i || null === i) {
+        i = new r.URL("inMemory://model/" + d);
+      }
 
       this._markerService = o;
 
@@ -41,7 +47,9 @@ define("vs/editor/core/model/model", ["require", "exports", "vs/base/severity", 
     t.prototype.dispose = function() {
       this.emit(s.EventType.ModelDispose);
 
-      this.getMode() && this.getMode().unbindModel(this);
+      if (this.getMode()) {
+        this.getMode().unbindModel(this);
+      }
 
       e.prototype.dispose.call(this);
     };
@@ -144,15 +152,19 @@ define("vs/editor/core/model/model", ["require", "exports", "vs/base/severity", 
 
     t.prototype._publishMarkerUpdate = function(e) {
       var t = u.createMarkerUpdateFromJson(e);
-      null !== this._markerService && this._markerService.change(function(e) {
-        e.processMarkerUpdate(t);
-      });
+      if (null !== this._markerService) {
+        this._markerService.change(function(e) {
+          e.processMarkerUpdate(t);
+        });
+      }
       for (var n = t.getId(), i = this._markerDecorationIds[n] || [], o = [], r = t.getMarkers(), s = 0; s < r.length; s++) {
         var a = r[s];
-        "object" == typeof a.range && o.push({
-          range: a.range,
-          options: this._createDecorationOption(a)
-        });
+        if ("object" == typeof a.range) {
+          o.push({
+            range: a.range,
+            options: this._createDecorationOption(a)
+          });
+        }
       }
       this._markerDecorationIds[t.getId()] = this.deltaDecorations(i, o);
     };

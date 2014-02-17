@@ -31,13 +31,16 @@ define("vs/editor/contrib/contextmenu/contextmenu", ["require", "exports", "vs/n
         .type || 7 === e.target.type || 1 === e.target.type)) {
         this._editor.focus();
 
-        e.target.position && !this._editor.getSelection().containsPosition(e.target.position) && this._editor.setPosition(
-          e.target.position);
+        if (e.target.position && !this._editor.getSelection().containsPosition(e.target.position)) {
+          this._editor.setPosition(e.target.position);
+        }
         var t;
-        1 !== e.target.type && (t = {
-          x: e.event.posx,
-          y: e.event.posy + 1
-        });
+        if (1 !== e.target.type) {
+          t = {
+            x: e.event.posx,
+            y: e.event.posy + 1
+          };
+        }
 
         this.showContextMenu(t);
       }
@@ -67,7 +70,9 @@ define("vs/editor/contrib/contextmenu/contextmenu", ["require", "exports", "vs/n
                 if (n._editorState.validate()) {
                   for (var o = 0; o < a.length; o++) {
                     var r = a[o];
-                    e.PREDEFINED.indexOf(r.id) < 0 || (r.enabled = i.indexOf(r.id) >= 0);
+                    if (!(e.PREDEFINED.indexOf(r.id) < 0)) {
+                      r.enabled = i.indexOf(r.id) >= 0;
+                    }
                   }
                   n._doShowContextMenu(a, t);
                 }
@@ -110,7 +115,9 @@ define("vs/editor/contrib/contextmenu/contextmenu", ["require", "exports", "vs/n
     e.prototype._prepareActions = function(e) {
       for (var t = 0; t < e.length; t++) {
         var n = e[t];
-        f.isUndefinedOrNull(n.order) && (n.order = t);
+        if (f.isUndefinedOrNull(n.order)) {
+          n.order = t;
+        }
       }
       e = e.sort(function(e, t) {
         var n = e.order;
@@ -203,7 +210,9 @@ define("vs/editor/contrib/contextmenu/contextmenu", ["require", "exports", "vs/n
     };
 
     e.prototype.dispose = function() {
-      this._contextMenuIsBeingShownCount > 0 && this.contextViewService.hideContextView();
+      if (this._contextMenuIsBeingShownCount > 0) {
+        this.contextViewService.hideContextView();
+      }
 
       this._toDispose = p.disposeAll(this._toDispose);
     };

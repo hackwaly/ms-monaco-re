@@ -117,8 +117,14 @@ define("vs/editor/core/view/viewController", ["require", "exports", "vs/editor/c
     };
 
     e.prototype.convertViewToModelMouseEvent = function(e) {
-      e.target && (e.target.position && (e.target.position = this.convertViewToModelPosition(e.target.position.lineNumber,
-        e.target.position.column)), e.target.range && (e.target.range = this.convertViewToModelRange(e.target.range)));
+      if (e.target) {
+        if (e.target.position) {
+          e.target.position = this.convertViewToModelPosition(e.target.position.lineNumber, e.target.position.column);
+        }
+        if (e.target.range) {
+          e.target.range = this.convertViewToModelRange(e.target.range);
+        }
+      }
     };
 
     e.prototype.emitKeyDown = function(e) {

@@ -44,13 +44,20 @@ define("vs/base/ui/scrollbar/impl/scrollableElement", ["require", "exports", "vs
 
       this.domNode.appendChild(this.verticalScrollbar.domNode);
 
-      this.options.useShadows && (this.leftShadowDomNode = document.createElement("div"), this.leftShadowDomNode.className =
-        "shadow", this.domNode.appendChild(this.leftShadowDomNode));
+      if (this.options.useShadows) {
+        this.leftShadowDomNode = document.createElement("div");
+        this.leftShadowDomNode.className = "shadow";
+        this.domNode.appendChild(this.leftShadowDomNode);
+      }
 
-      this.options.useShadows && (this.topShadowDomNode = document.createElement("div"), this.topShadowDomNode.className =
-        "shadow", this.domNode.appendChild(this.topShadowDomNode), this.topLeftShadowDomNode = document.createElement(
-          "div"), this.topLeftShadowDomNode.className = "shadow top-left-corner", this.domNode.appendChild(this.topLeftShadowDomNode)
-      );
+      if (this.options.useShadows) {
+        this.topShadowDomNode = document.createElement("div");
+        this.topShadowDomNode.className = "shadow";
+        this.domNode.appendChild(this.topShadowDomNode);
+        this.topLeftShadowDomNode = document.createElement("div");
+        this.topLeftShadowDomNode.className = "shadow top-left-corner";
+        this.domNode.appendChild(this.topLeftShadowDomNode);
+      }
 
       this.listenOnDomNode = this.options.listenOnDomNode || this.domNode;
 
@@ -60,7 +67,9 @@ define("vs/base/ui/scrollbar/impl/scrollableElement", ["require", "exports", "vs
         return i._onScroll();
       }));
 
-      this.options.handleMouseWheel && this.handleMouseWheel();
+      if (this.options.handleMouseWheel) {
+        this.handleMouseWheel();
+      }
 
       this.toDispose.push(n.addDisposableListener(this.listenOnDomNode, "mouseover", function(e) {
         return i._onMouseOver(e);
@@ -91,11 +100,15 @@ define("vs/base/ui/scrollbar/impl/scrollableElement", ["require", "exports", "vs
 
       this.horizontalScrollbar.destroy();
 
-      - 1 !== this.onElementDimensionsTimeout && (window.clearTimeout(this.onElementDimensionsTimeout), this.onElementDimensionsTimeout = -
-        1);
+      if (-1 !== this.onElementDimensionsTimeout) {
+        window.clearTimeout(this.onElementDimensionsTimeout);
+        this.onElementDimensionsTimeout = -1;
+      }
 
-      - 1 !== this.onElementInternalDimensionsTimeout && (window.clearTimeout(this.onElementInternalDimensionsTimeout),
-        this.onElementInternalDimensionsTimeout = -1);
+      if (-1 !== this.onElementInternalDimensionsTimeout) {
+        window.clearTimeout(this.onElementInternalDimensionsTimeout);
+        this.onElementInternalDimensionsTimeout = -1;
+      }
     };
 
     e.prototype.destroy = function() {
@@ -125,7 +138,9 @@ define("vs/base/ui/scrollbar/impl/scrollableElement", ["require", "exports", "vs
     };
 
     e.prototype.onElementDimensions = function(e) {
-      "undefined" == typeof e && (e = !1);
+      if ("undefined" == typeof e) {
+        e = !1;
+      }
       var t = this;
       e ? this.actualElementDimensions() : -1 === this.onElementDimensionsTimeout && (this.onElementDimensionsTimeout =
         window.setTimeout(function() {
@@ -144,7 +159,9 @@ define("vs/base/ui/scrollbar/impl/scrollableElement", ["require", "exports", "vs
     };
 
     e.prototype.onElementInternalDimensions = function(e) {
-      "undefined" == typeof e && (e = !1);
+      if ("undefined" == typeof e) {
+        e = !1;
+      }
       var t = this;
       e ? this.actualElementInternalDimensions() : -1 === this.onElementInternalDimensionsTimeout && (this.onElementInternalDimensionsTimeout =
         window.setTimeout(function() {
@@ -163,7 +180,9 @@ define("vs/base/ui/scrollbar/impl/scrollableElement", ["require", "exports", "vs
     e.prototype.updateClassName = function(e) {
       this.options.className = e;
 
-      o.browser.isMacintosh && (this.options.className += " mac");
+      if (o.browser.isMacintosh) {
+        this.options.className += " mac";
+      }
 
       this.domNode.className = "monaco-scrollable-element " + this.options.className;
     };
@@ -193,16 +212,30 @@ define("vs/base/ui/scrollbar/impl/scrollableElement", ["require", "exports", "vs
             var r = this.scrollable.getScrollTop();
             t = this.verticalScrollbar.validateScrollPosition((-1 !== t ? t : r) - d * i);
 
-            t === r && (t = -1);
+            if (t === r) {
+              t = -1;
+            }
           }
           if (o) {
             var s = this.scrollable.getScrollLeft();
             n = this.horizontalScrollbar.validateScrollPosition((-1 !== n ? n : s) - d * o);
 
-            n === s && (n = -1);
+            if (n === s) {
+              n = -1;
+            }
           }
-          (-1 !== t || -1 !== n) && (e.preventDefault(), e.stopPropagation(), -1 !== t && (this.verticalScrollbar.setDesiredScrollPosition(
-            t), t = -1), -1 !== n && (this.horizontalScrollbar.setDesiredScrollPosition(n), n = -1));
+          if (-1 !== t || -1 !== n) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (-1 !== t) {
+              this.verticalScrollbar.setDesiredScrollPosition(t);
+              t = -1;
+            }
+            if (-1 !== n) {
+              this.horizontalScrollbar.setDesiredScrollPosition(n);
+              n = -1;
+            }
+          }
         }
       }
     };
@@ -220,13 +253,21 @@ define("vs/base/ui/scrollbar/impl/scrollableElement", ["require", "exports", "vs
         var r = e > 0 && t > 0;
 
         var s = this.options.useShadows && i > 0 && o > 0;
-        this.topShadowDomNode && n.toggleClass(this.topShadowDomNode, "top", r);
+        if (this.topShadowDomNode) {
+          n.toggleClass(this.topShadowDomNode, "top", r);
+        }
 
-        this.topLeftShadowDomNode && n.toggleClass(this.topLeftShadowDomNode, "top", r);
+        if (this.topLeftShadowDomNode) {
+          n.toggleClass(this.topLeftShadowDomNode, "top", r);
+        }
 
-        this.leftShadowDomNode && n.toggleClass(this.leftShadowDomNode, "left", s);
+        if (this.leftShadowDomNode) {
+          n.toggleClass(this.leftShadowDomNode, "left", s);
+        }
 
-        this.topLeftShadowDomNode && n.toggleClass(this.topLeftShadowDomNode, "left", s);
+        if (this.topLeftShadowDomNode) {
+          n.toggleClass(this.topLeftShadowDomNode, "left", s);
+        }
       }
       this._reveal();
     };
@@ -264,11 +305,16 @@ define("vs/base/ui/scrollbar/impl/scrollableElement", ["require", "exports", "vs
     };
 
     e.prototype._hide = function() {
-      this.mouseIsOver || this.isDragging || (this.verticalScrollbar.beginHide(), this.horizontalScrollbar.beginHide());
+      if (!(this.mouseIsOver || this.isDragging)) {
+        this.verticalScrollbar.beginHide();
+        this.horizontalScrollbar.beginHide();
+      }
     };
 
     e.prototype._scheduleHide = function() {
-      -1 !== this.hideTimeout && window.clearTimeout(this.hideTimeout);
+      if (-1 !== this.hideTimeout) {
+        window.clearTimeout(this.hideTimeout);
+      }
 
       this.hideTimeout = window.setTimeout(this._hide.bind(this), c);
     };

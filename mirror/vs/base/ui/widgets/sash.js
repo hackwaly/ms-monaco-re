@@ -9,9 +9,11 @@ define("vs/base/ui/widgets/sash", ["require", "exports", "vs/base/dom/builder", 
   }(t.Orientation || (t.Orientation = {}));
   var a = (t.Orientation, function(e) {
     function t(t, n, i) {
-      "undefined" == typeof i && (i = {
-        orientation: 1
-      });
+      if ("undefined" == typeof i) {
+        i = {
+          orientation: 1
+        };
+      }
       var o = this;
       e.call(this);
 
@@ -142,7 +144,10 @@ define("vs/base/ui/widgets/sash", ["require", "exports", "vs/base/dom/builder", 
     };
 
     t.prototype.dispose = function() {
-      this.$e && (this.$e.destroy(), this.$e = null);
+      if (this.$e) {
+        this.$e.destroy();
+        this.$e = null;
+      }
 
       e.prototype.dispose.call(this);
     };

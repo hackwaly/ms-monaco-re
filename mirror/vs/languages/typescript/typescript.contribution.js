@@ -5,11 +5,14 @@ define("vs/languages/typescript/typescript.contribution", ["require", "exports",
   var c = o.Registry.as(r.Extensions.EditorModes);
   c.registerMode(["text/typescript"], new o.DeferredDescriptor("vs/languages/typescript/typescript", "TypeScriptMode"));
 
-  i.enableNLSWarnings && c.registerWorkerParticipant("vs.languages.typescript", new o.DeferredDescriptor(
-    "vs/languages/typescript/participants/nlsParticipant", "WorkerParticipant"));
+  if (i.enableNLSWarnings) {
+    c.registerWorkerParticipant("vs.languages.typescript", new o.DeferredDescriptor(
+      "vs/languages/typescript/participants/nlsParticipant", "WorkerParticipant"));
+  }
 
-  i.enableEditorLanguageServiceIndicator && o.Registry.as(s.Extensions.EditorContributions).registerEditorContribution(
-    new o.BaseDescriptor(a.StatusPresenter));
+  if (i.enableEditorLanguageServiceIndicator) {
+    o.Registry.as(s.Extensions.EditorContributions).registerEditorContribution(new o.BaseDescriptor(a.StatusPresenter));
+  }
   var d = o.Registry.as(u.Extensions.Configuration);
   d.registerConfiguration({
     id: r.LANGUAGE_CONFIGURATION + "/vs.languages.typescript",

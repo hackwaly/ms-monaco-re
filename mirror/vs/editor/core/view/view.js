@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -638,8 +640,10 @@ define(["require", "exports", "vs/nls", "vs/base/dom/dom", "vs/base/eventEmitter
     };
 
     b.prototype._setHasFocus = function(a) {
-      this.hasFocus !== a && (this.hasFocus = a, this.context.privateViewEventBus.emit(G.EventType.ViewFocusChanged,
-        this.hasFocus));
+      if (this.hasFocus !== a) {
+        this.hasFocus = a;
+        this.context.privateViewEventBus.emit(G.EventType.ViewFocusChanged, this.hasFocus);
+      }
     };
 
     return b;

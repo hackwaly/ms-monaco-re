@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -60,18 +62,26 @@ define(["require", "exports", "vs/nls", "vs/base/env", "./config", "vs/base/obje
       a = a || {};
       if (a.keyBindings)
         for (var b in a.keyBindings) {
-          a.keyBindings.hasOwnProperty(b) && (this.keyBindings[b] = this.keyBindings[b] || [], this.keyBindings[b].push(
-            a.keyBindings[b]));
+          if (a.keyBindings.hasOwnProperty(b)) {
+            this.keyBindings[b] = this.keyBindings[b] || [];
+            this.keyBindings[b].push(a.keyBindings[b]);
+          }
         }
-      a.keyBindings && delete a.keyBindings;
+      if (a.keyBindings) {
+        delete a.keyBindings;
+      }
       var c = typeof a.stopLineTokenizationAfter != "undefined";
 
       var d = typeof a.stopRenderingLineAfter != "undefined";
       this.editor = r.mixin(this.editor, a);
 
-      !c && this.editor.wrappingColumn >= 0 && (this.editor.stopLineTokenizationAfter = -1);
+      if (!c && this.editor.wrappingColumn >= 0) {
+        this.editor.stopLineTokenizationAfter = -1;
+      }
 
-      !d && this.editor.wrappingColumn >= 0 && (this.editor.stopRenderingLineAfter = -1);
+      if (!d && this.editor.wrappingColumn >= 0) {
+        this.editor.stopRenderingLineAfter = -1;
+      }
 
       this._validateOptions();
     };
@@ -178,13 +188,18 @@ define(["require", "exports", "vs/nls", "vs/base/env", "./config", "vs/base/obje
     b.prototype._readCSSConfiguration = function() {
       var a = this;
       this._withCSSConfiguration(function(b) {
-        a.editor.font !== b.font && (a.editor.font = b.font, a.editor.thinnestCharacterWidth = b.thinnestCharacterWidth,
+        if (a.editor.font !== b.font) {
+          a.editor.font = b.font;
+          a.editor.thinnestCharacterWidth = b.thinnestCharacterWidth;
           a.emit(y.EventType.ConfigurationFontChanged, {
             font: a.editor.font
-          }));
+          });
+        }
 
-        a.editor.lineHeight !== b.lineHeight && (a.editor.lineHeight = b.lineHeight, a.emit(y.EventType.ConfigurationLineHeightChanged,
-          a.editor.lineHeight));
+        if (a.editor.lineHeight !== b.lineHeight) {
+          a.editor.lineHeight = b.lineHeight;
+          a.emit(y.EventType.ConfigurationLineHeightChanged, a.editor.lineHeight);
+        }
       });
     };
 
@@ -224,7 +239,10 @@ define(["require", "exports", "vs/nls", "vs/base/env", "./config", "vs/base/obje
     a.apply = function(b, c) {
       return b.getConfiguration().then(function(b) {
         if (!b) return;
-        c && s.isFunction(c.updateOptions) && b[a.EDITOR_SECTION] && (delete b.readOnly, c.updateOptions(b[a.EDITOR_SECTION]));
+        if (c && s.isFunction(c.updateOptions) && b[a.EDITOR_SECTION]) {
+          delete b.readOnly;
+          c.updateOptions(b[a.EDITOR_SECTION]);
+        }
         if (b[a.LANGUAGES_SECTION]) {
           var d = b[a.LANGUAGES_SECTION];
 

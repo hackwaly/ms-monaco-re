@@ -28,7 +28,9 @@ define("vs/editor/core/controller/pointerHandler", ["require", "exports", "vs/ba
             r._lastPointerType = n === (t.MSPOINTER_TYPE_MOUSE || "mouse") ? "mouse" : n === (t.MSPOINTER_TYPE_TOUCH ||
               "touch") ? "touch" : "pen";
 
-            "mouse" !== r._lastPointerType && e.addPointer(t.pointerId);
+            if ("mouse" !== r._lastPointerType) {
+              e.addPointer(t.pointerId);
+            }
           });
 
           r.listenersToRemove.push(i.addThrottledListener(r.viewHelper.linesContentDomNode, "MSGestureChange",
@@ -47,7 +49,9 @@ define("vs/editor/core/controller/pointerHandler", ["require", "exports", "vs/ba
     __extends(t, e);
 
     t.prototype._onMouseDown = function(t) {
-      "mouse" === this._lastPointerType && e.prototype._onMouseDown.call(this, t);
+      if ("mouse" === this._lastPointerType) {
+        e.prototype._onMouseDown.call(this, t);
+      }
     };
 
     t.prototype._onCaptureGestureTap = function(e) {
@@ -58,7 +62,9 @@ define("vs/editor/core/controller/pointerHandler", ["require", "exports", "vs/ba
       var r = i.getDomNodePosition(this.viewHelper.linesContentDomNode);
 
       var s = this.mouseTargetFactory.createMouseTarget(r, o, !1);
-      s.position && this.viewController.moveTo("mouse", s.position.lineNumber, s.position.column);
+      if (s.position) {
+        this.viewController.moveTo("mouse", s.position.lineNumber, s.position.column);
+      }
 
       o.browserEvent.fromElement ? (o.preventDefault(), this.viewHelper.focusTextArea()) : setTimeout(function() {
         t.viewHelper.focusTextArea();
@@ -112,7 +118,9 @@ define("vs/editor/core/controller/pointerHandler", ["require", "exports", "vs/ba
       var o = new n.StandardMouseEvent(e);
 
       var r = this.mouseTargetFactory.createMouseTarget(t, o, !1);
-      r.position && this.viewController.moveTo("mouse", r.position.lineNumber, r.position.column);
+      if (r.position) {
+        this.viewController.moveTo("mouse", r.position.lineNumber, r.position.column);
+      }
     };
 
     t.prototype.onChange = function(e) {

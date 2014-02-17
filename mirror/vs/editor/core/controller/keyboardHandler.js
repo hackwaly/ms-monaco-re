@@ -40,23 +40,34 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
       var d = i.endColumn;
 
       var h = t.getLineMaxColumn(c);
-      i.isEmpty() && o !== u && (l = 1, d = h);
+      if (i.isEmpty() && o !== u) {
+        l = 1;
+        d = h;
+      }
       var p = "";
 
       var f = Math.max(1, u - a);
-      u > f && (p = t.getValueInRange(new n.Range(f, 1, u, 1), 1));
+      if (u > f) {
+        p = t.getValueInRange(new n.Range(f, 1, u, 1), 1);
+      }
 
       p += t.getValueInRange(new n.Range(u, 1, u, l), 1);
 
-      p.length > r && (p = p.substring(p.length - r, p.length));
+      if (p.length > r) {
+        p = p.substring(p.length - r, p.length);
+      }
       var g = "";
 
       var m = Math.min(c + a, t.getLineCount());
       g += t.getValueInRange(new n.Range(c, d, c, h), 1);
 
-      m > c && (g = "\n" + t.getValueInRange(new n.Range(c + 1, 1, m, t.getLineMaxColumn(m)), 1));
+      if (m > c) {
+        g = "\n" + t.getValueInRange(new n.Range(c + 1, 1, m, t.getLineMaxColumn(m)), 1);
+      }
 
-      g.length > r && (g = g.substring(0, r));
+      if (g.length > r) {
+        g = g.substring(0, r);
+      }
       var v = t.getValueInRange(new n.Range(u, l, c, d), 1);
       v.length > 2 * r && (v = v.substring(0, r) + String.fromCharCode(8230) + v.substring(v.length - r, v.length));
 
@@ -99,7 +110,9 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
       var t = e.value.substring(0, e.selectionStart);
 
       var n = e.value.substring(e.selectionEnd, e.value.length);
-      s.browser.isIE11orEarlier && document.queryCommandValue("OverWrite") && (n = n.substr(1));
+      if (s.browser.isIE11orEarlier && document.queryCommandValue("OverWrite")) {
+        n = n.substr(1);
+      }
       var i = this.value;
       i.substring(0, t.length) === t && (i = i.substring(t.length));
 
@@ -177,7 +190,9 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
       this.compositionCount = 0;
 
       this.listenersToRemove.push(r.addListener(this.textArea, "compositionstart", function() {
-        0 === l.compositionCount && l.showTextAreaAtCursor();
+        if (0 === l.compositionCount) {
+          l.showTextAreaAtCursor();
+        }
 
         l.compositionCount++;
 
@@ -187,50 +202,59 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
       this.listenersToRemove.push(r.addListener(this.textArea, "compositionend", function() {
         l.compositionCount--;
 
-        0 === l.compositionCount && l.hideTextArea();
+        if (0 === l.compositionCount) {
+          l.hideTextArea();
+        }
 
         l.lastCompositionEndTime = (new Date).getTime();
 
         l._scheduleReadFromTextArea(0);
       }));
 
-      s.browser.isIPad && this.listenersToRemove.push(r.addListener(this.textArea, "input", function() {
-        var e = (new Date).getTime();
+      if (s.browser.isIPad) {
+        this.listenersToRemove.push(r.addListener(this.textArea, "input", function() {
+          var e = (new Date).getTime();
 
-        var t = e - l.lastKeyPressTime;
-        500 >= t && (l._scheduleReadFromTextArea(0), l.lastKeyPressTime = 0);
-      }));
-
-      s.browser.isMacintosh && this.listenersToRemove.push(r.addListener(this.textArea, "input", function() {
-        if (l.justHadAPaste) {
-          l.justHadAPaste = !1;
-          return void 0;
-        }
-        if (l.justHadACut) {
-          l.justHadACut = !1;
-          return void 0;
-        }
-        var e = (new Date).getTime();
-
-        var t = e - l.lastKeyPressTime;
-        if (!(500 >= t)) {
-          var n = e - l.lastCompositionEndTime;
-          if (!(500 >= n || l.compositionCount > 0 || l.textArea.selectionStart !== l.textArea.selectionEnd)) {
-            var i;
-
-            var o = l.textArea.value;
-            if (s.browser.isChrome) {
-              var r = l.lastValueWrittenToTheTextArea.substring(1);
-              if (o.length <= r.length) return;
-              if (o.substring(o.length - r.length) !== r) return;
-              i = o.substring(0, o.length - r.length);
-            } else {
-              i = o;
-            }
-            console.log("DEDUCED input: <<<" + i + ">>>");
+          var t = e - l.lastKeyPressTime;
+          if (500 >= t) {
+            l._scheduleReadFromTextArea(0);
+            l.lastKeyPressTime = 0;
           }
-        }
-      }));
+        }));
+      }
+
+      if (s.browser.isMacintosh) {
+        this.listenersToRemove.push(r.addListener(this.textArea, "input", function() {
+          if (l.justHadAPaste) {
+            l.justHadAPaste = !1;
+            return void 0;
+          }
+          if (l.justHadACut) {
+            l.justHadACut = !1;
+            return void 0;
+          }
+          var e = (new Date).getTime();
+
+          var t = e - l.lastKeyPressTime;
+          if (!(500 >= t)) {
+            var n = e - l.lastCompositionEndTime;
+            if (!(500 >= n || l.compositionCount > 0 || l.textArea.selectionStart !== l.textArea.selectionEnd)) {
+              var i;
+
+              var o = l.textArea.value;
+              if (s.browser.isChrome) {
+                var r = l.lastValueWrittenToTheTextArea.substring(1);
+                if (o.length <= r.length) return;
+                if (o.substring(o.length - r.length) !== r) return;
+                i = o.substring(0, o.length - r.length);
+              } else {
+                i = o;
+              }
+              console.log("DEDUCED input: <<<" + i + ">>>");
+            }
+          }
+        }));
+      }
 
       this.listenersToRemove.push(r.addListener(this.textArea, "cut", function(e) {
         return l._onCut(e);
@@ -351,7 +375,9 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
 
     t.prototype.setTextAreaState = function(e, t) {
       var n = t && this.hasFocus && !s.isTesting();
-      n || e.resetSelection();
+      if (!n) {
+        e.resetSelection();
+      }
 
       this.lastValueWrittenToTheTextArea = e.getValue();
 
@@ -386,7 +412,9 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
         }
         this.lastKeyPressTime = (new Date).getTime();
 
-        s.browser.isIPad || this._scheduleReadFromTextArea(0);
+        if (!s.browser.isIPad) {
+          this._scheduleReadFromTextArea(0);
+        }
       }
     };
 
@@ -407,7 +435,9 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
       var n = h.fromTextArea(this.textArea, t);
 
       var i = n.extractNewText(this.previousSetTextAreaState);
-      "" !== i && (0 === e ? this.executeType(i) : this.executePaste(i));
+      if ("" !== i) {
+        0 === e ? this.executeType(i) : this.executePaste(i);
+      }
 
       this.previousSetTextAreaState = n;
 
@@ -415,11 +445,15 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
     };
 
     t.prototype.executePaste = function(e) {
-      "" !== e && this.viewController.paste("keyboard", e, !1);
+      if ("" !== e) {
+        this.viewController.paste("keyboard", e, !1);
+      }
     };
 
     t.prototype.executeType = function(e) {
-      "" !== e && this.viewController.type("keyboard", e);
+      if ("" !== e) {
+        this.viewController.type("keyboard", e);
+      }
     };
 
     t.prototype._writePlaceholderAndSelectTextArea = function() {

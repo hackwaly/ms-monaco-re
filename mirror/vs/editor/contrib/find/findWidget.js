@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -128,7 +130,9 @@ define(["require", "exports", "vs/base/ui/widgets/findInput", "./findModel", "vs
 
         b.setState(a.state);
 
-        a.shouldFocus && b.findInput.select();
+        if (a.shouldFocus) {
+          b.findInput.select();
+        }
       })), this.modelListenersToRemove.push(this.model.addListener("matches", function(a) {
         var c = a.position;
 
@@ -140,26 +144,43 @@ define(["require", "exports", "vs/base/ui/widgets/findInput", "./findModel", "vs
     b.prototype._enableReplace = function(a) {
       this.isReplaceEnabled = !0;
 
-      !this.codeEditor.getConfiguration().readOnly && !this.isReplaceVisible && (this.replaceInputElement.disabled = !
-        1, this.isReplaceVisible = !0, p.addClass(this.domNode, "replace"), p.removeClass(this.toggleReplaceBtn,
-          "collapse"), p.addClass(this.toggleReplaceBtn, "expand"));
+      if (!this.codeEditor.getConfiguration().readOnly && !this.isReplaceVisible) {
+        this.replaceInputElement.disabled = !1;
+        this.isReplaceVisible = !0;
+        p.addClass(this.domNode, "replace");
+        p.removeClass(this.toggleReplaceBtn, "collapse");
+        p.addClass(this.toggleReplaceBtn, "expand");
+      }
 
-      a && this.emit(b.USER_INPUT_EVENT);
+      if (a) {
+        this.emit(b.USER_INPUT_EVENT);
+      }
     };
 
     b.prototype._disableReplace = function(a) {
       this.isReplaceEnabled = !1;
 
-      this.isReplaceVisible && (this.replaceInputElement.disabled = !0, p.removeClass(this.domNode, "replace"), p.removeClass(
-        this.toggleReplaceBtn, "expand"), p.addClass(this.toggleReplaceBtn, "collapse"), this.isReplaceVisible = !1);
+      if (this.isReplaceVisible) {
+        this.replaceInputElement.disabled = !0;
+        p.removeClass(this.domNode, "replace");
+        p.removeClass(this.toggleReplaceBtn, "expand");
+        p.addClass(this.toggleReplaceBtn, "collapse");
+        this.isReplaceVisible = !1;
+      }
 
-      a && this.emit(b.USER_INPUT_EVENT);
+      if (a) {
+        this.emit(b.USER_INPUT_EVENT);
+      }
     };
 
     b.prototype.removeModel = function() {
-      this.model !== null && (this.modelListenersToRemove.forEach(function(a) {
-        a();
-      }), this.modelListenersToRemove = [], this.model = null);
+      if (this.model !== null) {
+        this.modelListenersToRemove.forEach(function(a) {
+          a();
+        });
+        this.modelListenersToRemove = [];
+        this.model = null;
+      }
     };
 
     b.prototype.onFindInputKeyDown = function(a) {
@@ -174,17 +195,26 @@ define(["require", "exports", "vs/base/ui/widgets/findInput", "./findModel", "vs
         this.replaceInputElement.focus();
         d.preventDefault();
         e = !0;
-      }!e && d.asString() === "Enter" && (this.codeEditor.getAction(o.NEXT_MATCH_FIND_ID).run().done(null, q.onUnexpectedError),
-        d.preventDefault(), e = !0);
+      }
+      if (!e && d.asString() === "Enter") {
+        this.codeEditor.getAction(o.NEXT_MATCH_FIND_ID).run().done(null, q.onUnexpectedError);
+        d.preventDefault();
+        e = !0;
+      }
 
-      !e && d.asString() === "Shift-Enter" && (this.codeEditor.getAction(o.PREVIOUS_MATCH_FIND_ID).run().done(null, q
-        .onUnexpectedError), d.preventDefault(), e = !0);
+      if (!e && d.asString() === "Shift-Enter") {
+        this.codeEditor.getAction(o.PREVIOUS_MATCH_FIND_ID).run().done(null, q.onUnexpectedError);
+        d.preventDefault();
+        e = !0;
+      }
 
-      e || setTimeout(function() {
-        c.onFindValueChange();
+      if (!e) {
+        setTimeout(function() {
+          c.onFindValueChange();
 
-        c.emit(b.USER_INPUT_EVENT);
-      }, 10);
+          c.emit(b.USER_INPUT_EVENT);
+        }, 10);
+      }
     };
 
     b.prototype.onReplaceInputKeyDown = function(a) {
@@ -198,15 +228,24 @@ define(["require", "exports", "vs/base/ui/widgets/findInput", "./findModel", "vs
         this.findInput.focus();
         d.preventDefault();
         e = !0;
-      }!e && d.asString() === "Enter" && (this.codeEditor.getAction(o.REPLACE_ID).run().done(null, q.onUnexpectedError),
-        d.preventDefault(), e = !0);
+      }
+      if (!e && d.asString() === "Enter") {
+        this.codeEditor.getAction(o.REPLACE_ID).run().done(null, q.onUnexpectedError);
+        d.preventDefault();
+        e = !0;
+      }
 
-      !e && d.asString() === (s.browser.isMacintosh ? "Meta-Enter" : "Ctrl-Enter") && (this.codeEditor.getAction(o.REPLACE_ALL_ID)
-        .run().done(null, q.onUnexpectedError), d.preventDefault(), e = !0);
+      if (!e && d.asString() === (s.browser.isMacintosh ? "Meta-Enter" : "Ctrl-Enter")) {
+        this.codeEditor.getAction(o.REPLACE_ALL_ID).run().done(null, q.onUnexpectedError);
+        d.preventDefault();
+        e = !0;
+      }
 
-      e || setTimeout(function() {
-        c.emit(b.USER_INPUT_EVENT);
-      }, 10);
+      if (!e) {
+        setTimeout(function() {
+          c.emit(b.USER_INPUT_EVENT);
+        }, 10);
+      }
     };
 
     b.prototype.onFindValueChange = function() {
@@ -336,7 +375,9 @@ define(["require", "exports", "vs/base/ui/widgets/findInput", "./findModel", "vs
       var k = u.Build.withElement(this.domNode);
       k.addClass("editor-widget find-widget").addClass("monaco-editor-background");
 
-      this.codeEditor.getConfiguration().readOnly || k.addClass("can-replace");
+      if (!this.codeEditor.getConfiguration().readOnly) {
+        k.addClass("can-replace");
+      }
 
       this.domNode.appendChild(this.toggleReplaceBtn);
 
@@ -347,18 +388,31 @@ define(["require", "exports", "vs/base/ui/widgets/findInput", "./findModel", "vs
 
     b.prototype.reveal = function(a) {
       var b = this;
-      this.isVisible || (this.findInput.enable(), this.isVisible = !0, window.setTimeout(function() {
-        p.addClass(b.domNode, "visible");
+      if (!this.isVisible) {
+        this.findInput.enable();
+        this.isVisible = !0;
+        window.setTimeout(function() {
+          p.addClass(b.domNode, "visible");
 
-        a || (p.addClass(b.domNode, "noanimation"), window.setTimeout(function() {
-          p.removeClass(b.domNode, "noanimation");
-        }, 200));
-      }, 0), this.codeEditor.layoutOverlayWidget(this));
+          if (!a) {
+            p.addClass(b.domNode, "noanimation");
+            window.setTimeout(function() {
+              p.removeClass(b.domNode, "noanimation");
+            }, 200);
+          }
+        }, 0);
+        this.codeEditor.layoutOverlayWidget(this);
+      }
     };
 
     b.prototype.hide = function() {
-      this.isVisible && (this.findInput.disable(), p.removeClass(this.domNode, "visible"), this.isVisible = !1, this.codeEditor
-        .focus(), this.codeEditor.layoutOverlayWidget(this));
+      if (this.isVisible) {
+        this.findInput.disable();
+        p.removeClass(this.domNode, "visible");
+        this.isVisible = !1;
+        this.codeEditor.focus();
+        this.codeEditor.layoutOverlayWidget(this);
+      }
     };
 
     b.prototype.getPosition = function() {

@@ -18,7 +18,9 @@ define("vs/base/ui/widgets/tree/treeImpl", ["require", "exports", "vs/base/types
       this.sorter = t.sorter || null;
       var r = [this.dataSource, this.renderer, this.controller, this.dnd, this.filter, this.sorter];
       r.forEach(function(t) {
-        t && n.isFunction(t.setTree) && t.setTree(e);
+        if (t && n.isFunction(t.setTree)) {
+          t.setTree(e);
+        }
       });
     }
     return e;
@@ -26,7 +28,9 @@ define("vs/base/ui/widgets/tree/treeImpl", ["require", "exports", "vs/base/types
   t.TreeContext = a;
   var u = function(e) {
     function t(t, n, i) {
-      "undefined" == typeof i && (i = {});
+      if ("undefined" == typeof i) {
+        i = {};
+      }
 
       e.call(this);
 
@@ -257,9 +261,15 @@ define("vs/base/ui/widgets/tree/treeImpl", ["require", "exports", "vs/base/types
     };
 
     t.prototype.dispose = function() {
-      null !== this.model && (this.model.dispose(), this.model = null);
+      if (null !== this.model) {
+        this.model.dispose();
+        this.model = null;
+      }
 
-      null !== this.view && (this.view.dispose(), this.view = null);
+      if (null !== this.view) {
+        this.view.dispose();
+        this.view = null;
+      }
 
       e.prototype.dispose.call(this);
     };

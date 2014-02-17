@@ -42,7 +42,9 @@ define("vs/base/ui/widgets/tree/treeDefaults", ["require", "exports", "vs/base/e
     };
 
     e.prototype.onLeftClick = function(e, t, n, o) {
-      "undefined" == typeof o && (o = "mouse");
+      if ("undefined" == typeof o) {
+        o = "mouse";
+      }
       var r = {
         origin: o,
         originalEvent: n
@@ -126,7 +128,9 @@ define("vs/base/ui/widgets/tree/treeDefaults", ["require", "exports", "vs/base/e
       } else {
         var i = e.getFocus();
         e.collapse(i).done(function(t) {
-          i && !t && e.focusParent(n);
+          if (i && !t) {
+            e.focusParent(n);
+          }
         });
       }
       return !0;

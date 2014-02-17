@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -56,7 +58,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/nls", "vs/platform/p
       this.listenersToRemove.push(this.editor.addListener(t.EventType.CursorPositionChanged, function(a) {
         if (e.isDisposed) return;
         var b = 1 + a.secondaryPositions.length;
-        b !== e.decorations.length && e.dispose();
+        if (b !== e.decorations.length) {
+          e.dispose();
+        }
       }));
 
       this.binding = d.bindGroup(function(a) {
@@ -166,10 +170,14 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/nls", "vs/platform/p
         if (d === -1) return;
       }
       var e = !1;
-      c.isEmpty() || r.RangeUtils.containsPosition(a[d], {
-        lineNumber: c.selectionStartLineNumber,
-        column: c.selectionStartColumn
-      }) && (e = !0);
+      if (!c.isEmpty()) {
+        if (r.RangeUtils.containsPosition(a[d], {
+          lineNumber: c.selectionStartLineNumber,
+          column: c.selectionStartColumn
+        })) {
+          e = !0;
+        }
+      }
       var f;
 
       var g;
@@ -183,12 +191,14 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/nls", "vs/platform/p
         positionColumn: a[d].startColumn + f
       });
       for (var i = 0; i < a.length; i++) {
-        i !== d && h.push({
-          selectionStartLineNumber: a[i].startLineNumber,
-          selectionStartColumn: a[i].startColumn + g,
-          positionLineNumber: a[i].startLineNumber,
-          positionColumn: a[i].startColumn + f
-        });
+        if (i !== d) {
+          h.push({
+            selectionStartLineNumber: a[i].startLineNumber,
+            selectionStartColumn: a[i].startColumn + g,
+            positionLineNumber: a[i].startLineNumber,
+            positionColumn: a[i].startColumn + f
+          });
+        }
       }
       new u(this.editor, h, a, this.handlerService);
     };

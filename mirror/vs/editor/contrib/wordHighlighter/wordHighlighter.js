@@ -62,11 +62,14 @@ define(["require", "exports", "vs/platform/platform", "vs/editor/core/constants"
     }
     a.prototype._removeDecorations = function() {
       var a = this;
-      this._decorationIds.length > 0 && (this.editor.changeDecorations(function(b) {
-        for (var c = 0, d = a._decorationIds.length; c < d; c++) {
-          b.removeDecoration(a._decorationIds[c]);
-        }
-      }), this._decorationIds = []);
+      if (this._decorationIds.length > 0) {
+        this.editor.changeDecorations(function(b) {
+          for (var c = 0, d = a._decorationIds.length; c < d; c++) {
+            b.removeDecoration(a._decorationIds[c]);
+          }
+        });
+        this._decorationIds = [];
+      }
     };
 
     a.prototype._stopAll = function() {
@@ -74,12 +77,20 @@ define(["require", "exports", "vs/platform/platform", "vs/editor/core/constants"
 
       this._removeDecorations();
 
-      this.renderDecorationsTimer !== -1 && (window.clearTimeout(this.renderDecorationsTimer), this.renderDecorationsTimer = -
-        1);
+      if (this.renderDecorationsTimer !== -1) {
+        window.clearTimeout(this.renderDecorationsTimer);
+        this.renderDecorationsTimer = -1;
+      }
 
-      this.workerRequest !== null && (this.workerRequest.cancel(), this.workerRequest = null);
+      if (this.workerRequest !== null) {
+        this.workerRequest.cancel();
+        this.workerRequest = null;
+      }
 
-      this.workerRequestCompleted || (this.workerRequestTokenId++, this.workerRequestCompleted = !0);
+      if (!this.workerRequestCompleted) {
+        this.workerRequestTokenId++;
+        this.workerRequestCompleted = !0;
+      }
     };
 
     a.prototype._onPositionChanged = function(a) {
@@ -120,12 +131,17 @@ define(["require", "exports", "vs/platform/platform", "vs/editor/core/constants"
       var j = this._lastWordRange && this._lastWordRange.equalsRange(h);
       for (var k = 0, l = this._decorationIds.length; !j && k < l; k++) {
         var m = this.model.getDecorationRange(this._decorationIds[k]);
-        m && m.startLineNumber === d && m.startColumn <= e && m.endColumn >= f && (j = !0);
+        if (m && m.startLineNumber === d && m.startColumn <= e && m.endColumn >= f) {
+          j = !0;
+        }
       }
       this.lastCursorPositionChangeTime = (new Date).getTime();
       if (j) {
-        this.workerRequestCompleted && this.renderDecorationsTimer !== -1 && (window.clearTimeout(this.renderDecorationsTimer),
-          this.renderDecorationsTimer = -1, this._beginRenderDecorations());
+        if (this.workerRequestCompleted && this.renderDecorationsTimer !== -1) {
+          window.clearTimeout(this.renderDecorationsTimer);
+          this.renderDecorationsTimer = -1;
+          this._beginRenderDecorations();
+        }
       } else {
         this._stopAll();
         var n = ++this.workerRequestTokenId;
@@ -135,7 +151,11 @@ define(["require", "exports", "vs/platform/platform", "vs/editor/core/constants"
           this.editor.getPosition());
 
         this.workerRequest.then(function(a) {
-          n === b.workerRequestTokenId && (b.workerRequestCompleted = !0, b.workerRequestValue = a, b._beginRenderDecorations());
+          if (n === b.workerRequestTokenId) {
+            b.workerRequestCompleted = !0;
+            b.workerRequestValue = a;
+            b._beginRenderDecorations();
+          }
         }).done();
       }
       this._lastWordRange = h;
@@ -162,7 +182,10 @@ define(["require", "exports", "vs/platform/platform", "vs/editor/core/constants"
         var e = "wordHighlight";
 
         var f = "rgba(246, 185, 77, 0.7)";
-        d.kind && d.kind === "write" && (e += "Strong", f = "rgba(249, 206, 130, 0.7)");
+        if (d.kind && d.kind === "write") {
+          e += "Strong";
+          f = "rgba(249, 206, 130, 0.7)";
+        }
 
         a.push({
           range: d.range,

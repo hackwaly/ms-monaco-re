@@ -341,8 +341,8 @@ function loop() {
     'vs/languages/typescript/typescript',
     'vs/languages/javascript/javascript'
 ].forEach(foundModule);
-//loop();
+loop();
 
-console.log(
-    deobsecure(fs.readFileSync(path.join(__dirname, 'mirror', 'vs/base/ui/scrollbar/abstractScrollbar.js'), 'utf-8'))
-);
+//console.log(
+//    deobsecure(fs.readFileSync(path.join(__dirname, 'mirror', 'vs/base/ui/scrollbar/scrollable.js'), 'utf-8'))
+//);

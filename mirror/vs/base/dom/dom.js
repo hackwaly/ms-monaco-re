@@ -24,7 +24,12 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
       n(e);
     };
     return i.isFunction(e.addEventListener) ? (e.addEventListener(t, r, o || !1), function() {
-      r && (e.removeEventListener(t, r, o || !1), r = null, e = null, n = null);
+      if (r) {
+        e.removeEventListener(t, r, o || !1);
+        r = null;
+        e = null;
+        n = null;
+      }
     }) : (e.attachEvent("on" + t, r), function() {
       e.detachEvent("on" + t, r);
     });
@@ -54,7 +59,9 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
       for (var i = t.relatedTarget || t.toElement; i && i !== e;) {
         i = i.parentNode;
       }
-      i !== e && n(t);
+      if (i !== e) {
+        n(t);
+      }
     });
   }
 
@@ -66,9 +73,13 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
   }
 
   function v(e, n, i, o, r) {
-    "undefined" == typeof o && (o = B);
+    if ("undefined" == typeof o) {
+      o = B;
+    }
 
-    "undefined" == typeof r && (r = 0);
+    if ("undefined" == typeof r) {
+      r = 0;
+    }
     var s = null;
 
     var a = 0;
@@ -95,7 +106,10 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
     var h = t.addListener(e, n, function(e) {
       s = o(s, e);
 
-      l || (l = !0, t.scheduleAtNextAnimationFrame(d, Number.MAX_VALUE));
+      if (!l) {
+        l = !0;
+        t.scheduleAtNextAnimationFrame(d, Number.MAX_VALUE);
+      }
     });
     return function() {
       u = !0;
@@ -105,9 +119,13 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
   }
 
   function y(e, n, i, o, r) {
-    "undefined" == typeof o && (o = B);
+    if ("undefined" == typeof o) {
+      o = B;
+    }
 
-    "undefined" == typeof r && (r = U);
+    if ("undefined" == typeof r) {
+      r = U;
+    }
     var s = null;
 
     var a = 0;
@@ -130,7 +148,9 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
       t >= r ? (-1 !== u && window.clearTimeout(u), l()) : -1 === u && (u = window.setTimeout(l, r - t));
     });
     return function() {
-      -1 !== u && window.clearTimeout(u);
+      if (-1 !== u) {
+        window.clearTimeout(u);
+      }
 
       c();
     };
@@ -166,10 +186,17 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
       e !== document.documentElement;) {
       i -= e.scrollTop;
       var r = t.getComputedStyle(e);
-      r && (o -= "rtl" !== r.direction ? e.scrollLeft : -e.scrollLeft);
+      if (r) {
+        o -= "rtl" !== r.direction ? e.scrollLeft : -e.scrollLeft;
+      }
 
-      e === n && (o += z.getBorderLeftWidth(e), i += z.getBorderTopWidth(e), i += e.offsetTop, o += e.offsetLeft, n =
-        e.offsetParent);
+      if (e === n) {
+        o += z.getBorderLeftWidth(e);
+        i += z.getBorderTopWidth(e);
+        i += e.offsetTop;
+        o += e.offsetLeft;
+        n = e.offsetParent;
+      }
     }
     return {
       left: o,
@@ -256,7 +283,12 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
   }
 
   function R(e, t) {
-    t && (j || D(), j.sheet.insertRule(e + "{" + t + "}", 0));
+    if (t) {
+      if (!j) {
+        D();
+      }
+      j.sheet.insertRule(e + "{" + t + "}", 0);
+    }
   }
 
   function P(e) {
@@ -280,7 +312,9 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
         var o = t[i];
 
         var r = o.selectorText.replace(/::/gi, ":");
-        0 === r.indexOf(e) && n.push(i);
+        if (0 === r.indexOf(e)) {
+          n.push(i);
+        }
       }
       for (var i = n.length - 1; i >= 0; i--) {
         j.sheet.deleteRule(n[i]);
@@ -297,7 +331,9 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
     try {
       e.select();
 
-      e.setSelectionRange && e.setSelectionRange(0, 9999);
+      if (e.setSelectionRange) {
+        e.setSelectionRange(0, 9999);
+      }
     } catch (t) {}
   }
 
@@ -333,13 +369,23 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
     var l = function() {
       r = !1;
 
-      i || (i = !0, s.emit("focus", {}));
+      if (!i) {
+        i = !0;
+        s.emit("focus", {});
+      }
     };
 
     var c = function() {
-      i && (r = !0, n.isTesting() ? r && (r = !1, i = !1, s.emit("blur", {})) : window.setTimeout(function() {
-        r && (r = !1, i = !1, s.emit("blur", {}));
-      }, 0));
+      if (i) {
+        r = !0;
+        n.isTesting() ? r && (r = !1, i = !1, s.emit("blur", {})) : window.setTimeout(function() {
+          if (r) {
+            r = !1;
+            i = !1;
+            s.emit("blur", {});
+          }
+        }, 0);
+      }
     };
     a.push(t.addListener(e, t.EventType.FOCUS, l, !0));
 
@@ -421,15 +467,21 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
     t.removeClass = function(t, o) {
       e(t, o);
 
-      - 1 !== n && (t.className = t.className.substring(0, n) + t.className.substring(i));
+      if (-1 !== n) {
+        t.className = t.className.substring(0, n) + t.className.substring(i);
+      }
     };
 
     t.toggleClass = function(i, o, r) {
       e(i, o);
 
-      - 1 === n || r || t.removeClass(i, o);
+      if (!(-1 === n || r)) {
+        t.removeClass(i, o);
+      }
 
-      - 1 === n && r && t.addClass(i, o);
+      if (-1 === n && r) {
+        t.addClass(i, o);
+      }
     };
   })();
 
@@ -445,7 +497,12 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
 
     return {
       dispose: function() {
-        o && (e.removeEventListener(t, o, i || !1), o = null, e = null, n = null);
+        if (o) {
+          e.removeEventListener(t, o, i || !1);
+          o = null;
+          e = null;
+          n = null;
+        }
       }
     };
   };
@@ -519,7 +576,9 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
 
     var r = !1;
     t.scheduleAtNextAnimationFrame = function(t, r) {
-      "undefined" == typeof r && (r = 0);
+      if ("undefined" == typeof r) {
+        r = 0;
+      }
       var s = i.length;
       i.push({
         cancelled: !1,
@@ -539,7 +598,9 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
     t.cancelAtNextAnimationFrame = function(e) {
       if ("undefined" != typeof e) {
         var t = e - n;
-        0 > t || t >= i.length || (i[t].cancelled = !0);
+        if (!(0 > t || t >= i.length)) {
+          i[t].cancelled = !0;
+        }
       }
     };
   })();
@@ -677,7 +738,9 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
     stop: function(e, t) {
       e.preventDefault ? e.preventDefault() : e.returnValue = !1;
 
-      t && (e.stopPropagation ? e.stopPropagation() : e.cancelBubble = !0);
+      if (t) {
+        e.stopPropagation ? e.stopPropagation() : e.cancelBubble = !0;
+      }
     }
   };
 

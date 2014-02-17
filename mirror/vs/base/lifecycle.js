@@ -1,7 +1,9 @@
 define("vs/base/lifecycle", ["require", "exports"], function(e, t) {
   function n(e) {
     for (var t = 0, n = e.length; n > t; t++) {
-      e[t] && e[t].dispose();
+      if (e[t]) {
+        e[t].dispose();
+      }
     }
     return [];
   }

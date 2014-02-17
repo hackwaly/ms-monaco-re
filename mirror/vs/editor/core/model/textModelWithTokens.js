@@ -46,11 +46,15 @@ define("vs/editor/core/model/textModelWithTokens", ["require", "exports", "vs/nl
     };
 
     t.prototype._clearTimers = function() {
-      -1 !== this._revalidateTokensTimeout && (window.clearTimeout(this._revalidateTokensTimeout), this._revalidateTokensTimeout = -
-        1);
+      if (-1 !== this._revalidateTokensTimeout) {
+        window.clearTimeout(this._revalidateTokensTimeout);
+        this._revalidateTokensTimeout = -1;
+      }
 
-      - 1 !== this._modeTokenizationFailedTimeout && (window.clearTimeout(this._modeTokenizationFailedTimeout), this._modeTokenizationFailedTimeout = -
-        1);
+      if (-1 !== this._modeTokenizationFailedTimeout) {
+        window.clearTimeout(this._modeTokenizationFailedTimeout);
+        this._modeTokenizationFailedTimeout = -1;
+      }
     };
 
     t.prototype._initializeTokenizationState = function() {
@@ -62,7 +66,9 @@ define("vs/editor/core/model/textModelWithTokens", ["require", "exports", "vs/nl
 
         this._mode = new o.NullMode;
       }
-      e || (e = new o.NullState(this._mode, null));
+      if (!e) {
+        e = new o.NullState(this._mode, null);
+      }
 
       this._lines[0].state = e;
 
@@ -136,8 +142,13 @@ define("vs/editor/core/model/textModelWithTokens", ["require", "exports", "vs/nl
     t.prototype._invalidateLine = function(e) {
       this._lines[e].isInvalid = !0;
 
-      e < this._invalidLineStartIndex && (this._invalidLineStartIndex < this._lines.length && (this._lines[this._invalidLineStartIndex]
-        .isInvalid = !0), this._invalidLineStartIndex = e, this._beginBackgroundTokenization());
+      if (e < this._invalidLineStartIndex) {
+        if (this._invalidLineStartIndex < this._lines.length) {
+          this._lines[this._invalidLineStartIndex].isInvalid = !0;
+        }
+        this._invalidLineStartIndex = e;
+        this._beginBackgroundTokenization();
+      }
     };
 
     t.prototype._updateLineTokens = function(e, t) {
@@ -145,10 +156,12 @@ define("vs/editor/core/model/textModelWithTokens", ["require", "exports", "vs/nl
     };
 
     t.prototype._beginBackgroundTokenization = function() {
-      var e = this; - 1 === this._revalidateTokensTimeout && (this._revalidateTokensTimeout = window.setTimeout(
-        function() {
+      var e = this;
+      if (-1 === this._revalidateTokensTimeout) {
+        this._revalidateTokensTimeout = window.setTimeout(function() {
           e._revalidateTokensNow();
-        }, 50));
+        }, 50);
+      }
     };
 
     t.prototype._revalidateTokensNow = function() {
@@ -167,9 +180,13 @@ define("vs/editor/core/model/textModelWithTokens", ["require", "exports", "vs/nl
 
         o += r;
       }
-      i >= n && this.emitModelTokensChangedEvent(n, i);
+      if (i >= n) {
+        this.emitModelTokensChangedEvent(n, i);
+      }
 
-      this._invalidLineStartIndex < this._lines.length && this._beginBackgroundTokenization();
+      if (this._invalidLineStartIndex < this._lines.length) {
+        this._beginBackgroundTokenization();
+      }
     };
 
     t.prototype.getStateBeforeLine = function(e) {
@@ -195,7 +212,10 @@ define("vs/editor/core/model/textModelWithTokens", ["require", "exports", "vs/nl
 
       var s = e - 1;
 
-      var a = this._stopLineTokenizationAfter; - 1 === a && (a = 1e9);
+      var a = this._stopLineTokenizationAfter;
+      if (-1 === a) {
+        a = 1e9;
+      }
       for (var u = this._invalidLineStartIndex + 1, l = e, c = this._invalidLineStartIndex; s >= c; c++) {
         var d = c + 1;
 
@@ -210,11 +230,14 @@ define("vs/editor/core/model/textModelWithTokens", ["require", "exports", "vs/nl
 
             this._onModeTokenizationFailed();
           }
-          h && h.actualStopOffset < p.length && (h.tokens.push({
-            startIndex: h.actualStopOffset,
-            type: "",
-            bracket: 0
-          }), h.endState = this._lines[c].state);
+          if (h && h.actualStopOffset < p.length) {
+            h.tokens.push({
+              startIndex: h.actualStopOffset,
+              type: "",
+              bracket: 0
+            });
+            h.endState = this._lines[c].state;
+          }
         }
         if (h || (h = o.nullTokenize(this._mode, p, this._lines[c].state)), this._updateLineTokens(c, h), this._lines[
             c].modeTransitions = h.modeTransitions, this._lines[c].isInvalid && (this._lines[c].isInvalid = !1), i >
@@ -235,18 +258,22 @@ define("vs/editor/core/model/textModelWithTokens", ["require", "exports", "vs/nl
             this._lastState = h.endState;
           }
       }
-      n && l >= u && this.emitModelTokensChangedEvent(u, l);
+      if (n && l >= u) {
+        this.emitModelTokensChangedEvent(u, l);
+      }
 
       this._invalidLineStartIndex = Math.max(this._invalidLineStartIndex, s + 1);
     };
 
     t.prototype._onModeTokenizationFailed = function() {
-      var e = this; - 1 === this._modeTokenizationFailedTimeout && (this._modeTokenizationFailedTimeout = window.setTimeout(
-        function() {
+      var e = this;
+      if (-1 === this._modeTokenizationFailedTimeout) {
+        this._modeTokenizationFailedTimeout = window.setTimeout(function() {
           e._modeTokenizationFailedTimeout = -1;
 
           e.setMode(new o.NullMode);
-        }, 200));
+        }, 200);
+      }
     };
 
     t.prototype.emitModelTokensChangedEvent = function(e, t) {

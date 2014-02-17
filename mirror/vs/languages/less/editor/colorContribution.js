@@ -79,27 +79,38 @@ define("vs/languages/less/editor/colorContribution", ["require", "exports", "vs/
       var t = this._editor.getModel();
       if (t) {
         var i = t.getMode();
-        "function" == typeof i.findColorDeclarations && (this._scheduler.setRunner(function() {
-          e._currentFindColorDeclarationsPromise && e._currentFindColorDeclarationsPromise.cancel();
+        if ("function" == typeof i.findColorDeclarations) {
+          this._scheduler.setRunner(function() {
+            if (e._currentFindColorDeclarationsPromise) {
+              e._currentFindColorDeclarationsPromise.cancel();
+            }
 
-          e._currentFindColorDeclarationsPromise = i.findColorDeclarations(t.getAssociatedResource());
+            e._currentFindColorDeclarationsPromise = i.findColorDeclarations(t.getAssociatedResource());
 
-          e._currentFindColorDeclarationsPromise.then(function(t) {
-            e.renderAndTrackColors(t);
-          }, function(e) {
-            r.onUnexpectedError(e);
+            e._currentFindColorDeclarationsPromise.then(function(t) {
+              e.renderAndTrackColors(t);
+            }, function(e) {
+              r.onUnexpectedError(e);
+            });
           });
-        }), this._scheduler.schedule(), this._callOnModelChange.push(function() {
-          e._scheduler.cancel();
-        }), this._callOnModelChange.push(function() {
-          e._currentFindColorDeclarationsPromise && e._currentFindColorDeclarationsPromise.cancel();
+          this._scheduler.schedule();
+          this._callOnModelChange.push(function() {
+            e._scheduler.cancel();
+          });
+          this._callOnModelChange.push(function() {
+            if (e._currentFindColorDeclarationsPromise) {
+              e._currentFindColorDeclarationsPromise.cancel();
+            }
 
-          e._currentFindColorDeclarationsPromise = null;
-        }), this._callOnModelChange.push(t.addListener(a.EventType.ModelContentChanged, function() {
-          return e._scheduler.schedule();
-        })), this._callOnModelChange.push(t.addListener(a.EventType.ModelDecorationsChanged, function() {
-          return e.onDecorationsChanged();
-        })));
+            e._currentFindColorDeclarationsPromise = null;
+          });
+          this._callOnModelChange.push(t.addListener(a.EventType.ModelContentChanged, function() {
+            return e._scheduler.schedule();
+          }));
+          this._callOnModelChange.push(t.addListener(a.EventType.ModelDecorationsChanged, function() {
+            return e.onDecorationsChanged();
+          }));
+        }
       }
     };
 
@@ -172,7 +183,9 @@ define("vs/languages/less/editor/colorContribution", ["require", "exports", "vs/
       for (t = Math.min(e.length, this._currentDynamicColors.length) - 1; t >= 0; t--) {
         if (this._currentDynamicColors[t] !== e[t]) {
           var n = o.getCSSRule(this.getCSSRuleName(t));
-          n && (n.style.backgroundColor = e[t]);
+          if (n) {
+            n.style.backgroundColor = e[t];
+          }
         }
         this._currentDynamicColors[t] = e[t];
       }

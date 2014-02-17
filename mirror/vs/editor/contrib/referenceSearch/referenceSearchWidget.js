@@ -78,7 +78,9 @@ define("vs/editor/contrib/referenceSearch/referenceSearchWidget", ["require", "e
               var c = a.range.endColumn - a.range.startColumn;
 
               var d = u.endColumn - u.startColumn;
-              c !== d && (l = !0);
+              if (c !== d) {
+                l = !0;
+              }
             }
             l ? (this.decorationIgnoreSet.add(a), o.push(n[r].id)) : a.range = u;
           }
@@ -416,11 +418,17 @@ define("vs/editor/contrib/referenceSearch/referenceSearchWidget", ["require", "e
     t.prototype._doLayoutBody = function(t) {
       e.prototype._doLayoutBody.call(this, t);
       var n = t + "px";
-      n !== this.lastHeight && (this.treeContainer.style({
-        height: n
-      }), this.previewContainer.style({
-        height: n
-      }), this.tree.layout(t), this.preview.layout(), this.lastHeight = n);
+      if (n !== this.lastHeight) {
+        this.treeContainer.style({
+          height: n
+        });
+        this.previewContainer.style({
+          height: n
+        });
+        this.tree.layout(t);
+        this.preview.layout();
+        this.lastHeight = n;
+      }
     };
 
     t.prototype.onWidth = function() {
@@ -439,20 +447,27 @@ define("vs/editor/contrib/referenceSearch/referenceSearchWidget", ["require", "e
         }));
 
         this.callOnModel.push(this.tree.addListener2(x.Events.FOCUSED, function(e) {
-          e instanceof w.OneReference && n.showReferencePreview(e);
+          if (e instanceof w.OneReference) {
+            n.showReferencePreview(e);
+          }
         }));
 
         this.callOnModel.push(this.tree.addListener2(x.Events.SELECTED, function(e) {
-          e instanceof w.OneReference && (n.showReferencePreview(e), n.model.currentReference = e);
+          if (e instanceof w.OneReference) {
+            n.showReferencePreview(e);
+            n.model.currentReference = e;
+          }
         }));
 
         this.callOnModel.push(this.tree.addListener2(x.Events.OPEN_TO_SIDE, function(e) {
-          e instanceof w.OneReference && n.editorService.openEditor({
-            resource: e.resource,
-            options: {
-              selection: e.range
-            }
-          }, !0);
+          if (e instanceof w.OneReference) {
+            n.editorService.openEditor({
+              resource: e.resource,
+              options: {
+                selection: e.range
+              }
+            }, !0);
+          }
         }));
         var i = 1 === this.model.children.length ? this.model.children[0] : this.model;
         this.tree.setInput(i).then(function() {
@@ -460,11 +475,13 @@ define("vs/editor/contrib/referenceSearch/referenceSearchWidget", ["require", "e
         }).done(null, l.onUnexpectedError);
 
         this.callOnModel.push(this.preview.addListener2(y.EventType.MouseDown, function(e) {
-          2 === e.event.detail && n.emit(t.Events.EditorDoubleClick, {
-            reference: n.getFocusedReference(),
-            range: e.target.range,
-            originalEvent: e.event
-          });
+          if (2 === e.event.detail) {
+            n.emit(t.Events.EditorDoubleClick, {
+              reference: n.getFocusedReference(),
+              range: e.target.range,
+              originalEvent: e.event
+            });
+          }
         }));
       }
     };

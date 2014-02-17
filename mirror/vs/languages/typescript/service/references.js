@@ -20,7 +20,10 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
       e.traverse(t.getName(), function(e) {
         n = e.getName();
 
-        i[n] || (i[n] = !0, r.unshift(e));
+        if (!i[n]) {
+          i[n] = !0;
+          r.unshift(e);
+        }
       });
     }
     return r;
@@ -66,7 +69,9 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
         e.insertEdge(n.getName(), "error:" + JSON.stringify(s));
       } else if (o.file) {
         var a = e.insertEdge(n.getName(), r.nodeName(o.file.path));
-        o.error || t.fillGraph(e, a, r, o.file);
+        if (!o.error) {
+          t.fillGraph(e, a, r, o.file);
+        }
       }
     });
   }
@@ -113,7 +118,9 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
       if (this !== e) {
         var n = Object.keys(e.store);
         n.forEach(function(e) {
-          t.hasNode(e) || t.insertNode(e);
+          if (!t.hasNode(e)) {
+            t.insertNode(e);
+          }
         });
 
         n.forEach(function(n) {
@@ -165,7 +172,11 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
 
         var s = t.length;
         for (0 === t.length && (t = Object.keys(o.outgoing), s = t.length), r = 0; s > r; r++) {
-          this.store.hasOwnProperty(t[r]) && (i = this.store[t[r]], delete o.outgoing[i.name], delete i.incoming[e]);
+          if (this.store.hasOwnProperty(t[r])) {
+            i = this.store[t[r]];
+            delete o.outgoing[i.name];
+            delete i.incoming[e];
+          }
         }
       }
     };
@@ -192,7 +203,9 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
     };
 
     e.prototype.traverse = function(e, t, n) {
-      "undefined" == typeof n && (n = {});
+      if ("undefined" == typeof n) {
+        n = {};
+      }
       var r = this;
       if (this.store.hasOwnProperty(e) && n[e] !== !0) {
         n[e] = !0;
@@ -239,7 +252,10 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
 
       var i = new e;
       for (var o in t.i) {
-        t.i.hasOwnProperty(o) && (n = t.i[o], i.insertNode(n));
+        if (t.i.hasOwnProperty(o)) {
+          n = t.i[o];
+          i.insertNode(n);
+        }
       }
       for (var s = 0, a = t.g.length; a > s; s++)
         for (n = t.i[t.g[s]], r = t.g[++s]; r > 0;) {
@@ -319,7 +335,9 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
       this.references = [];
     }
     e.prototype.resolve = function(t, n, r, o) {
-      "undefined" == typeof o && (o = {});
+      if ("undefined" == typeof o) {
+        o = {};
+      }
       var s = this;
       this.references = n(this.content);
 
@@ -329,7 +347,9 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
         var l = s.references.length;
 
         var c = function() {
-          0 === --l && i(null);
+          if (0 === --l) {
+            i(null);
+          }
         };
 
         var u = function() {
@@ -412,7 +432,9 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
     }
     e.prototype.consume = function(e) {
       function t(e) {
-        "undefined" == typeof e && (e = !0);
+        if ("undefined" == typeof e) {
+          e = !0;
+        }
 
         i = r;
         do {
@@ -430,10 +452,20 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
           var u = r.length;
 
           var p = d.REGEXP.exec(l);
-          p && this.references.push(new d(c + p[1].length + p[2].length, p[3].length, p[3]));
+          if (p) {
+            this.references.push(new d(c + p[1].length + p[2].length, p[3].length, p[3]));
+          }
         } else {
-          r.kind === n.SyntaxKind.ImportKeyword && (t(), r.kind === n.SyntaxKind.IdentifierName && (t(), r.kind === n
-            .SyntaxKind.EqualsToken && (t(), a = !0)));
+          if (r.kind === n.SyntaxKind.ImportKeyword) {
+            t();
+            if (r.kind === n.SyntaxKind.IdentifierName) {
+              t();
+              if (r.kind === n.SyntaxKind.EqualsToken) {
+                t();
+                a = !0;
+              }
+            }
+          }
         }
         if ((a || !i || i.kind !== n.SyntaxKind.DotToken) && r.kind === n.SyntaxKind.RequireKeyword && (t(), r.kind ===
           n.SyntaxKind.OpenParenToken && (t(), r.kind === n.SyntaxKind.StringLiteral))) {
@@ -444,17 +476,21 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
           var u = r.length;
           t();
 
-          r.kind === n.SyntaxKind.CloseParenToken && (a ? this.references.push(new m(c + 1, -2 + u, h)) : this.references
-            .push(new f(c + 1, -2 + u, h)));
+          if (r.kind === n.SyntaxKind.CloseParenToken) {
+            a ? this.references.push(new m(c + 1, -2 + u, h)) : this.references.push(new f(c + 1, -2 + u, h));
+          }
         }
         if (r.kind === n.SyntaxKind.IdentifierName && "define" === r.text && (t(), r.kind === n.SyntaxKind.OpenParenToken &&
           (t(!1), r.kind === n.SyntaxKind.StringLiteral && (t(!1), r.kind === n.SyntaxKind.CommaToken && t(!1)), r.kind ===
             n.SyntaxKind.OpenBracketToken)))
           for (t(!1); r.kind === n.SyntaxKind.StringLiteral;) {
-            "exports" !== r.text && "require" !== r.text && "module" !== r.text && this.references.push(new f(r.offset +
-              1, -2 + r.length, r.text));
+            if ("exports" !== r.text && "require" !== r.text && "module" !== r.text) {
+              this.references.push(new f(r.offset + 1, -2 + r.length, r.text));
+            }
             t(!1);
-            r.kind === n.SyntaxKind.CommaToken && t(!1);
+            if (r.kind === n.SyntaxKind.CommaToken) {
+              t(!1);
+            }
           }
       }
       return this.references.slice(o);

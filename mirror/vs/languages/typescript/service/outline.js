@@ -159,7 +159,9 @@ define("vs/languages/typescript/service/outline", ["require", "exports", "vs/bas
       var n;
       t.stringLiteral ? n = t.stringLiteral.valueText() : t.name && (n = t.name.fullText());
 
-      n && this.add(6, t, n);
+      if (n) {
+        this.add(6, t, n);
+      }
 
       e.prototype.visitModuleDeclaration.call(this, t);
     };
@@ -190,8 +192,10 @@ define("vs/languages/typescript/service/outline", ["require", "exports", "vs/bas
     };
 
     t.prototype.visitBinaryExpression = function(t) {
-      t.operatorToken.kind() === i.SyntaxKind.EqualsToken && t.right.kind() === i.SyntaxKind.FunctionExpression &&
-        t.left.kind() === i.SyntaxKind.MemberAccessExpression && this.add(7, t.left, t.left.name.valueText());
+      if (t.operatorToken.kind() === i.SyntaxKind.EqualsToken && t.right.kind() === i.SyntaxKind.FunctionExpression &&
+        t.left.kind() === i.SyntaxKind.MemberAccessExpression) {
+        this.add(7, t.left, t.left.name.valueText());
+      }
 
       e.prototype.skip.call(this, t);
     };

@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -67,7 +69,9 @@ define(["require", "exports", "vs/base/dom/dom", "vs/base/lib/winjs.base", "vs/e
       }));
 
       this.toUnbind.push(this.editor.addListener(w.EventType.CursorPositionChanged, function() {
-        d.ignoreSelectionChange || (d.nextIdx = -1);
+        if (!d.ignoreSelectionChange) {
+          d.nextIdx = -1;
+        }
       }));
     }
     __extends(b, a);
@@ -101,11 +105,18 @@ define(["require", "exports", "vs/base/dom/dom", "vs/base/lib/winjs.base", "vs/e
       for (var d = 0, e = this.markers.length; d < e && !b; d++) {
         var f = new y.Range(this.markers[d].range.startLineNumber, this.markers[d].range.startColumn, this.markers[d]
           .range.endLineNumber, this.markers[d].range.endColumn);
-        c.isBeforeOrEqual(f.getStartPosition()) && (this.nextIdx = d + (a ? 0 : -1), b = !0);
+        if (c.isBeforeOrEqual(f.getStartPosition())) {
+          this.nextIdx = d + (a ? 0 : -1);
+          b = !0;
+        }
       }
-      b || (this.nextIdx = a ? 0 : this.markers.length - 1);
+      if (!b) {
+        this.nextIdx = a ? 0 : this.markers.length - 1;
+      }
 
-      this.nextIdx < 0 && (this.nextIdx = this.markers.length - 1);
+      if (this.nextIdx < 0) {
+        this.nextIdx = this.markers.length - 1;
+      }
     };
 
     b.prototype.move = function(a) {
@@ -308,9 +319,15 @@ define(["require", "exports", "vs/base/dom/dom", "vs/base/lib/winjs.base", "vs/e
       while (this.toUnhook.length > 0) {
         this.toUnhook.pop()();
       }
-      this.zone && (this.zone.dispose(), this.zone = null);
+      if (this.zone) {
+        this.zone.dispose();
+        this.zone = null;
+      }
 
-      this.model && (this.model.dispose(), this.model = null);
+      if (this.model) {
+        this.model.dispose();
+        this.model = null;
+      }
     };
 
     b.prototype.getOrCreateModel = function() {
@@ -339,7 +356,9 @@ define(["require", "exports", "vs/base/dom/dom", "vs/base/lib/winjs.base", "vs/e
       }));
 
       this.toUnhook.push(this.model.addListener(E.Events.CURRENT, function(b) {
-        b || a.cleanUp();
+        if (!b) {
+          a.cleanUp();
+        }
       }));
 
       this.toUnhook.push(this.markerService.addListener(z.MarkerServiceConstants.SERVICE_CHANGED, function(b) {

@@ -37,7 +37,9 @@ define(["require", "exports"], function(a, b) {
         this.height = a.height;
         this.domNode.width = this.width;
         this.domNode.height = this.height;
-        b && this.render();
+        if (b) {
+          this.render();
+        }
       }
     };
 
@@ -56,32 +58,46 @@ define(["require", "exports"], function(a, b) {
     a.prototype.setScrollHeight = function(a, b) {
       this.outerHeight = a;
 
-      b && this.render();
+      if (b) {
+        this.render();
+      }
     };
 
     a.prototype.setLineHeight = function(a, b) {
       this.lineHeight = a;
 
-      b && this.render();
+      if (b) {
+        this.render();
+      }
     };
 
     a.prototype.setZones = function(a, b) {
       this.zones = a;
 
-      b && this.render();
+      if (b) {
+        this.render();
+      }
     };
 
     a.prototype._insertZone = function(a, b, c, d, e) {
       var f = Math.floor((b + c) / 2);
 
       var g = c - f;
-      g > d / 2 && (g = d / 2);
+      if (g > d / 2) {
+        g = d / 2;
+      }
 
-      g < this.minimumHeight / 2 && (g = this.minimumHeight / 2);
+      if (g < this.minimumHeight / 2) {
+        g = this.minimumHeight / 2;
+      }
 
-      f - g < 0 && (f = g);
+      if (f - g < 0) {
+        f = g;
+      }
 
-      f + g > this.height && (f = this.height - g);
+      if (f + g > this.height) {
+        f = this.height - g;
+      }
 
       a[e] = a[e] || [];
 

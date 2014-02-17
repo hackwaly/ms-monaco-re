@@ -18,7 +18,10 @@ define("vs/base/time/schedulers", ["require", "exports"], function(e, t) {
     };
 
     e.prototype.cancel = function() {
-      -1 !== this.timeoutToken && (clearTimeout(this.timeoutToken), this.timeoutToken = -1);
+      if (-1 !== this.timeoutToken) {
+        clearTimeout(this.timeoutToken);
+        this.timeoutToken = -1;
+      }
     };
 
     e.prototype.setRunner = function(e) {
@@ -38,7 +41,9 @@ define("vs/base/time/schedulers", ["require", "exports"], function(e, t) {
     e.prototype.onTimeout = function() {
       this.timeoutToken = -1;
 
-      this.runner && this.runner();
+      if (this.runner) {
+        this.runner();
+      }
     };
 
     return e;
@@ -199,11 +204,17 @@ define("vs/languages/typescript/service/textEdit", ["require", "exports", "vs/ba
       this.edit = new i(0, this.model.getValue().length, null);
     }
     e.prototype.replace = function(e, t, n) {
-      "undefined" == typeof t && (t = 0);
+      if ("undefined" == typeof t) {
+        t = 0;
+      }
 
-      "undefined" == typeof n && (n = null);
+      if ("undefined" == typeof n) {
+        n = null;
+      }
       var r = new i(e, t, n);
-      r.isNoop() || (this.edit = this.edit.insert(r));
+      if (!r.isNoop()) {
+        this.edit = this.edit.insert(r);
+      }
     };
 
     e.prototype.apply = function() {
@@ -227,7 +238,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var r in t) {
-      t.hasOwnProperty(r) && (e[r] = t[r]);
+      if (t.hasOwnProperty(r)) {
+        e[r] = t[r];
+      }
     }
     n.prototype = t.prototype;
 
@@ -433,8 +446,11 @@ define("vs/languages/typescript/lint/rules/layout", ["require", "exports", "vs/l
     }
     e.prototype.checkElement = function(e, t) {
       var n = e;
-      n.kind() === r.SyntaxKind.ElseClause && n.statement && n.statement.kind() === r.SyntaxKind.IfStatement || n.statement &&
-        n.statement.kind() !== r.SyntaxKind.Block && t.reportError(n.statement, this.name, this.code);
+      if (!(n.kind() === r.SyntaxKind.ElseClause && n.statement && n.statement.kind() === r.SyntaxKind.IfStatement)) {
+        if (n.statement && n.statement.kind() !== r.SyntaxKind.Block) {
+          t.reportError(n.statement, this.name, this.code);
+        }
+      }
     };
 
     return e;
@@ -449,7 +465,9 @@ define("vs/languages/typescript/lint/rules/layout", ["require", "exports", "vs/l
       this.filter = [r.SyntaxKind.Block];
     }
     e.prototype.checkElement = function(e, t) {
-      e.statements.childCount() > 0 || this._hasComment(e) || t.reportError(e, this.name, this.code);
+      if (!(e.statements.childCount() > 0 || this._hasComment(e))) {
+        t.reportError(e, this.name, this.code);
+      }
     };
 
     e.prototype._hasComment = function(e) {
@@ -513,7 +531,9 @@ define("vs/languages/typescript/lint/rules/typescript", ["require", "exports", "
       this.filter = [r.SyntaxKind.SingleLineCommentTrivia];
     }
     e.prototype.checkElement = function(e, t) {
-      this._couldMeanTripleSlash(e) && t.reportError(e, this.name, this.code);
+      if (this._couldMeanTripleSlash(e)) {
+        t.reportError(e, this.name, this.code);
+      }
     };
 
     e.prototype._couldMeanTripleSlash = function(t) {
@@ -550,7 +570,9 @@ define("vs/languages/typescript/lint/rules/typescript", ["require", "exports", "
       var n = t.end(e.identifier) - 1;
 
       var r = t.languageService().getOccurrencesAtPosition(t.filename(), n);
-      1 === r.length && t.reportError(e, this.name, this.code);
+      if (1 === r.length) {
+        t.reportError(e, this.name, this.code);
+      }
     };
 
     return e;
@@ -577,7 +599,10 @@ define("vs/languages/typescript/lint/rules/typescript", ["require", "exports", "
               var a = void 0;
 
               var c = void 0;
-              n.typeAnnotation && (a = t.start(n.propertyName), c = t.end(n.typeAnnotation) - a);
+              if (n.typeAnnotation) {
+                a = t.start(n.propertyName);
+                c = t.end(n.typeAnnotation) - a;
+              }
 
               t.reportError(n.propertyName, this.name, this.code, a, c);
             }
@@ -603,7 +628,9 @@ define("vs/languages/typescript/lint/rules/typescript", ["require", "exports", "
         var i = t.end(n) - 1;
 
         var o = t.languageService().getOccurrencesAtPosition(t.filename(), i);
-        o.length <= 1 && t.reportError(n, this.name, this.code);
+        if (o.length <= 1) {
+          t.reportError(n, this.name, this.code);
+        }
       }
     };
 
@@ -631,7 +658,9 @@ define("vs/languages/typescript/lint/rules/typescript", ["require", "exports", "
         var i = t.end(n) - 1;
 
         var o = t.languageService().getOccurrencesAtPosition(t.filename(), i);
-        o.length <= 1 && t.reportError(n, this.name, this.code);
+        if (o.length <= 1) {
+          t.reportError(n, this.name, this.code);
+        }
       }
     };
 
@@ -667,7 +696,9 @@ define("vs/languages/typescript/lint/rules/javascript", ["require", "exports", "
       this.filter = [o.SyntaxKind.SemicolonToken];
     }
     e.prototype.checkElement = function(e, t) {
-      e && 0 !== e.fullWidth() || t.reportError(t.parent(e), this.name, this.code);
+      if (!(e && 0 !== e.fullWidth())) {
+        t.reportError(t.parent(e), this.name, this.code);
+      }
     };
 
     return e;
@@ -680,7 +711,9 @@ define("vs/languages/typescript/lint/rules/javascript", ["require", "exports", "
       this.name = "ReservedKeywords";
     }
     e.prototype.checkElement = function(e, t) {
-      o.SyntaxFacts.isFutureReservedKeyword(e.kind()) && t.reportError(e, this.name, this.code);
+      if (o.SyntaxFacts.isFutureReservedKeyword(e.kind())) {
+        t.reportError(e, this.name, this.code);
+      }
     };
 
     return e;
@@ -693,8 +726,11 @@ define("vs/languages/typescript/lint/rules/javascript", ["require", "exports", "
       this.name = "TypeScriptSpecifics";
     }
     e.prototype.checkElement = function(e, t) {
-      e.kind() < o.SyntaxKind.IdentifierName || this._isTrulyTypeScriptSpecific(e) && t.reportError(e, this.name,
-        this.code);
+      if (!(e.kind() < o.SyntaxKind.IdentifierName)) {
+        if (this._isTrulyTypeScriptSpecific(e)) {
+          t.reportError(e, this.name, this.code);
+        }
+      }
     };
 
     e.prototype._isTrulyTypeScriptSpecific = function(e) {
@@ -705,7 +741,9 @@ define("vs/languages/typescript/lint/rules/javascript", ["require", "exports", "
       do {
         for (var n = 0, r = e.childCount(); r > n; n++) {
           var i = e.childAt(n);
-          i && t.push(i);
+          if (i) {
+            t.push(i);
+          }
         }
         if (e = t.shift(), this._isTypeScriptSpecificToken(e)) {
           return !1;
@@ -751,7 +789,9 @@ define("vs/languages/typescript/lint/rules/javascript", ["require", "exports", "
             a.right.kind() === o.SyntaxKind.NullKeyword ? l = !0 : "undefined" === i.syntaxHelper.text(a.right) && (l = !
               0);
           }
-          l && s.reportError(a, this.name, this.code);
+          if (l) {
+            s.reportError(a, this.name, this.code);
+          }
         }
       }
     };
@@ -779,8 +819,9 @@ define("vs/languages/typescript/lint/rules/javascript", ["require", "exports", "
       ];
     }
     e.prototype.checkElement = function(e, t) {
-      e.statement && "function" == typeof e.statement.kind && e.statement.kind() === o.SyntaxKind.EmptyStatement && t
-        .reportError(e, this.name, this.code);
+      if (e.statement && "function" == typeof e.statement.kind && e.statement.kind() === o.SyntaxKind.EmptyStatement) {
+        t.reportError(e, this.name, this.code);
+      }
     };
 
     return e;
@@ -823,7 +864,9 @@ define("vs/languages/typescript/lint/rules/javascript", ["require", "exports", "
       n = e.expression instanceof o.MemberAccessExpressionSyntax ? e.expression.name.fullText() : i.syntaxHelper.text(
         e.expression);
 
-      n && !n.charAt(0).match(/[A-Z_]/) && t.reportError(e.expression, this.name, this.code);
+      if (n && !n.charAt(0).match(/[A-Z_]/)) {
+        t.reportError(e.expression, this.name, this.code);
+      }
     };
 
     return e;
@@ -836,7 +879,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var r in t) {
-      t.hasOwnProperty(r) && (e[r] = t[r]);
+      if (t.hasOwnProperty(r)) {
+        e[r] = t[r];
+      }
     }
     n.prototype = t.prototype;
 
@@ -851,7 +896,9 @@ define("vs/languages/typescript/lint/lint", ["require", "exports", "vs/nls!vs/la
     for (var n in e)
       if (e.hasOwnProperty(n)) {
         var r = e[n];
-        "function" == typeof r && (t[String(n).toLowerCase()] = r);
+        if ("function" == typeof r) {
+          t[String(n).toLowerCase()] = r;
+        }
       }
   }
 
@@ -867,10 +914,12 @@ define("vs/languages/typescript/lint/lint", ["require", "exports", "vs/nls!vs/la
     for (var s in e)
       if (e.hasOwnProperty(s)) {
         var p = o.lookup(t, String(s).toLowerCase());
-        p && n.push({
-          rule: i.create(p),
-          severity: r.fromValue(e[s])
-        });
+        if (p) {
+          n.push({
+            rule: i.create(p),
+            severity: r.fromValue(e[s])
+          });
+        }
       }
     return n;
   }
@@ -914,9 +963,13 @@ define("vs/languages/typescript/lint/lint", ["require", "exports", "vs/nls!vs/la
     };
 
     e.prototype.reportError = function(e, t, n, r, i) {
-      "undefined" == typeof r && (r = this.start(e));
+      if ("undefined" == typeof r) {
+        r = this.start(e);
+      }
 
-      "undefined" == typeof i && (i = "function" == typeof e.width ? e.width() : e.fullWidth());
+      if ("undefined" == typeof i) {
+        i = "function" == typeof e.width ? e.width() : e.fullWidth();
+      }
       var o = this._lineMap.getLineAndCharacterFromPosition(r);
 
       var s = this._lineMap.getLineAndCharacterFromPosition(r + i);
@@ -1071,7 +1124,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var r in t) {
-      t.hasOwnProperty(r) && (e[r] = t[r]);
+      if (t.hasOwnProperty(r)) {
+        e[r] = t[r];
+      }
     }
     n.prototype = t.prototype;
 
@@ -1239,7 +1294,9 @@ define("vs/languages/typescript/service/outline", ["require", "exports", "vs/bas
       var n;
       t.stringLiteral ? n = t.stringLiteral.valueText() : t.name && (n = t.name.fullText());
 
-      n && this.add(6, t, n);
+      if (n) {
+        this.add(6, t, n);
+      }
 
       e.prototype.visitModuleDeclaration.call(this, t);
     };
@@ -1270,8 +1327,10 @@ define("vs/languages/typescript/service/outline", ["require", "exports", "vs/bas
     };
 
     t.prototype.visitBinaryExpression = function(t) {
-      t.operatorToken.kind() === i.SyntaxKind.EqualsToken && t.right.kind() === i.SyntaxKind.FunctionExpression &&
-        t.left.kind() === i.SyntaxKind.MemberAccessExpression && this.add(7, t.left, t.left.name.valueText());
+      if (t.operatorToken.kind() === i.SyntaxKind.EqualsToken && t.right.kind() === i.SyntaxKind.FunctionExpression &&
+        t.left.kind() === i.SyntaxKind.MemberAccessExpression) {
+        this.add(7, t.left, t.left.name.valueText());
+      }
 
       e.prototype.skip.call(this, t);
     };
@@ -1288,7 +1347,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var r in t) {
-      t.hasOwnProperty(r) && (e[r] = t[r]);
+      if (t.hasOwnProperty(r)) {
+        e[r] = t[r];
+      }
     }
     n.prototype = t.prototype;
 
@@ -1317,7 +1378,10 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
       e.traverse(t.getName(), function(e) {
         n = e.getName();
 
-        i[n] || (i[n] = !0, r.unshift(e));
+        if (!i[n]) {
+          i[n] = !0;
+          r.unshift(e);
+        }
       });
     }
     return r;
@@ -1363,7 +1427,9 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
         e.insertEdge(n.getName(), "error:" + JSON.stringify(s));
       } else if (o.file) {
         var a = e.insertEdge(n.getName(), r.nodeName(o.file.path));
-        o.error || t.fillGraph(e, a, r, o.file);
+        if (!o.error) {
+          t.fillGraph(e, a, r, o.file);
+        }
       }
     });
   }
@@ -1410,7 +1476,9 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
       if (this !== e) {
         var n = Object.keys(e.store);
         n.forEach(function(e) {
-          t.hasNode(e) || t.insertNode(e);
+          if (!t.hasNode(e)) {
+            t.insertNode(e);
+          }
         });
 
         n.forEach(function(n) {
@@ -1462,7 +1530,11 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
 
         var s = t.length;
         for (0 === t.length && (t = Object.keys(o.outgoing), s = t.length), r = 0; s > r; r++) {
-          this.store.hasOwnProperty(t[r]) && (i = this.store[t[r]], delete o.outgoing[i.name], delete i.incoming[e]);
+          if (this.store.hasOwnProperty(t[r])) {
+            i = this.store[t[r]];
+            delete o.outgoing[i.name];
+            delete i.incoming[e];
+          }
         }
       }
     };
@@ -1489,7 +1561,9 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
     };
 
     e.prototype.traverse = function(e, t, n) {
-      "undefined" == typeof n && (n = {});
+      if ("undefined" == typeof n) {
+        n = {};
+      }
       var r = this;
       if (this.store.hasOwnProperty(e) && n[e] !== !0) {
         n[e] = !0;
@@ -1536,7 +1610,10 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
 
       var i = new e;
       for (var o in t.i) {
-        t.i.hasOwnProperty(o) && (n = t.i[o], i.insertNode(n));
+        if (t.i.hasOwnProperty(o)) {
+          n = t.i[o];
+          i.insertNode(n);
+        }
       }
       for (var s = 0, a = t.g.length; a > s; s++)
         for (n = t.i[t.g[s]], r = t.g[++s]; r > 0;) {
@@ -1616,7 +1693,9 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
       this.references = [];
     }
     e.prototype.resolve = function(t, n, r, o) {
-      "undefined" == typeof o && (o = {});
+      if ("undefined" == typeof o) {
+        o = {};
+      }
       var s = this;
       this.references = n(this.content);
 
@@ -1626,7 +1705,9 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
         var l = s.references.length;
 
         var c = function() {
-          0 === --l && i(null);
+          if (0 === --l) {
+            i(null);
+          }
         };
 
         var u = function() {
@@ -1709,7 +1790,9 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
     }
     e.prototype.consume = function(e) {
       function t(e) {
-        "undefined" == typeof e && (e = !0);
+        if ("undefined" == typeof e) {
+          e = !0;
+        }
 
         i = r;
         do {
@@ -1727,10 +1810,20 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
           var u = r.length;
 
           var p = d.REGEXP.exec(l);
-          p && this.references.push(new d(c + p[1].length + p[2].length, p[3].length, p[3]));
+          if (p) {
+            this.references.push(new d(c + p[1].length + p[2].length, p[3].length, p[3]));
+          }
         } else {
-          r.kind === n.SyntaxKind.ImportKeyword && (t(), r.kind === n.SyntaxKind.IdentifierName && (t(), r.kind === n
-            .SyntaxKind.EqualsToken && (t(), a = !0)));
+          if (r.kind === n.SyntaxKind.ImportKeyword) {
+            t();
+            if (r.kind === n.SyntaxKind.IdentifierName) {
+              t();
+              if (r.kind === n.SyntaxKind.EqualsToken) {
+                t();
+                a = !0;
+              }
+            }
+          }
         }
         if ((a || !i || i.kind !== n.SyntaxKind.DotToken) && r.kind === n.SyntaxKind.RequireKeyword && (t(), r.kind ===
           n.SyntaxKind.OpenParenToken && (t(), r.kind === n.SyntaxKind.StringLiteral))) {
@@ -1741,17 +1834,21 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
           var u = r.length;
           t();
 
-          r.kind === n.SyntaxKind.CloseParenToken && (a ? this.references.push(new m(c + 1, -2 + u, h)) : this.references
-            .push(new f(c + 1, -2 + u, h)));
+          if (r.kind === n.SyntaxKind.CloseParenToken) {
+            a ? this.references.push(new m(c + 1, -2 + u, h)) : this.references.push(new f(c + 1, -2 + u, h));
+          }
         }
         if (r.kind === n.SyntaxKind.IdentifierName && "define" === r.text && (t(), r.kind === n.SyntaxKind.OpenParenToken &&
           (t(!1), r.kind === n.SyntaxKind.StringLiteral && (t(!1), r.kind === n.SyntaxKind.CommaToken && t(!1)), r.kind ===
             n.SyntaxKind.OpenBracketToken)))
           for (t(!1); r.kind === n.SyntaxKind.StringLiteral;) {
-            "exports" !== r.text && "require" !== r.text && "module" !== r.text && this.references.push(new f(r.offset +
-              1, -2 + r.length, r.text));
+            if ("exports" !== r.text && "require" !== r.text && "module" !== r.text) {
+              this.references.push(new f(r.offset + 1, -2 + r.length, r.text));
+            }
             t(!1);
-            r.kind === n.SyntaxKind.CommaToken && t(!1);
+            if (r.kind === n.SyntaxKind.CommaToken) {
+              t(!1);
+            }
           }
       }
       return this.references.slice(o);
@@ -1840,18 +1937,22 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
         var i = t[r];
 
         var o = s.Severity.Error;
-        this._compilationSettings.diagnosticClassifier && (o = this._compilationSettings.diagnosticClassifier(i));
+        if (this._compilationSettings.diagnosticClassifier) {
+          o = this._compilationSettings.diagnosticClassifier(i);
+        }
 
-        o && n.push({
-          type: "",
-          code: -1,
-          text: i.text(),
-          severity: o,
-          range: this.rangeFromMinAndLim({
-            minChar: i.start(),
-            limChar: i.start() + i.length()
-          }, e)
-        });
+        if (o) {
+          n.push({
+            type: "",
+            code: -1,
+            text: i.text(),
+            severity: o,
+            range: this.rangeFromMinAndLim({
+              minChar: i.start(),
+              limChar: i.start() + i.length()
+            }, e)
+          });
+        }
       }
       return n;
     };
@@ -1982,14 +2083,16 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
           var l = e.FILTER(t, n[s].name);
           if (l) {
             var c = this._host.getScriptSnapshot(a.fileName).model;
-            c && !this.isBaseLibModel(c) && i.push({
-              containerName: a.containerName,
-              name: a.name,
-              type: a.kind,
-              matchKind: a.matchKind,
-              resourceUrl: c.getAssociatedResource().toExternal(),
-              range: this.rangeFromMinAndLim(a, c.getAssociatedResource())
-            });
+            if (c && !this.isBaseLibModel(c)) {
+              i.push({
+                containerName: a.containerName,
+                name: a.name,
+                type: a.kind,
+                matchKind: a.matchKind,
+                resourceUrl: c.getAssociatedResource().toExternal(),
+                range: this.rangeFromMinAndLim(a, c.getAssociatedResource())
+              });
+            }
           }
         }
       }
@@ -2256,12 +2359,14 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
       var u = [];
       c.entries.forEach(function(e) {
         var t = o.difference(s, e.name);
-        t < s.length / 2 || u.push({
-          type: "field",
-          label: e.name,
-          codeSnippet: e.name,
-          score: t
-        });
+        if (!(t < s.length / 2)) {
+          u.push({
+            type: "field",
+            label: e.name,
+            codeSnippet: e.name,
+            score: t
+          });
+        }
       });
 
       u.sort(function(e, t) {
@@ -2291,10 +2396,12 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
         if (r = e.charAt(t), ")" === r && l--, "(" === r && l++, 1 !== l || ":" !== r)
           if (1 !== l || "," !== r) {
             if (0 === l && ")" === r) {
-              "" !== o && i.push({
-                name: o,
-                type: s
-              });
+              if ("" !== o) {
+                i.push({
+                  name: o,
+                  type: s
+                });
+              }
               break;
             }
             a ? o += r : s += r;
@@ -2400,7 +2507,9 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
     };
 
     e.prototype.rangeFromMinAndLim = function(e, t, n) {
-      "undefined" == typeof n && (n = !1);
+      if ("undefined" == typeof n) {
+        n = !1;
+      }
       var r = this._host.getScriptSnapshotByUrl(t).model;
 
       var i = e.minChar;
@@ -2419,13 +2528,19 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
     };
 
     e.prototype.preview = function(e, t, n, r) {
-      "undefined" == typeof r && (r = 200);
+      if ("undefined" == typeof r) {
+        r = 200;
+      }
       for (var i, o = this._languageService.getSyntaxTree(e.getAssociatedResource().toExternal()), s = o.sourceUnit()
           .findToken(t); s && !i;) {
-        s.fullWidth() > r && (i = s);
+        if (s.fullWidth() > r) {
+          i = s;
+        }
         s = s.parent();
       }
-      i || (i = o.sourceUnit().findToken(t).root());
+      if (!i) {
+        i = o.sourceUnit().findToken(t).root();
+      }
       var a = e.getValue().substring(i.fullStart(), i.fullEnd());
 
       var c = new l.MirrorModel(0, a);
@@ -2455,7 +2570,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var r in t) {
-      t.hasOwnProperty(r) && (e[r] = t[r]);
+      if (t.hasOwnProperty(r)) {
+        e[r] = t[r];
+      }
     }
     n.prototype = t.prototype;
 
@@ -2628,8 +2745,9 @@ define("vs/languages/typescript/service/languageServiceHost2", ["require", "expo
       var r = this._resourceService.get(e);
       if (r) {
         var i = r.getVersionId();
-        n.contains(this._resourceSet, t) && n.lookup(this._resourceSet, t).versionId === i || (this._resourceSet[t] =
-          new l(r));
+        if (!(n.contains(this._resourceSet, t) && n.lookup(this._resourceSet, t).versionId === i)) {
+          this._resourceSet[t] = new l(r);
+        }
       } else {
         console.warn(e.toExternal() + " NOT found");
         delete this._resourceService[t];
@@ -2786,10 +2904,13 @@ define("vs/languages/typescript/resources/dependencyResolver", ["require", "expo
       clearTimeout(n.scheduledUpdate);
 
       n.scheduledUpdate = setTimeout(function() {
-        n.stateId !== t._computeState(e) && (n.listener.dispose(), t._cache.remove(e.getAssociatedResource()), t._eventbus
-          .emit(c.OnReferencesChanged, {
+        if (n.stateId !== t._computeState(e)) {
+          n.listener.dispose();
+          t._cache.remove(e.getAssociatedResource());
+          t._eventbus.emit(c.OnReferencesChanged, {
             resource: e.getAssociatedResource()
-          }));
+          });
+        }
       }, 1500);
     };
 
@@ -2810,7 +2931,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var r in t) {
-      t.hasOwnProperty(r) && (e[r] = t[r]);
+      if (t.hasOwnProperty(r)) {
+        e[r] = t[r];
+      }
     }
     n.prototype = t.prototype;
 
@@ -2995,7 +3118,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var r in t) {
-      t.hasOwnProperty(r) && (e[r] = t[r]);
+      if (t.hasOwnProperty(r)) {
+        e[r] = t[r];
+      }
     }
     n.prototype = t.prototype;
 
@@ -3029,10 +3154,15 @@ define("vs/languages/typescript/resources/dependencyResolverGraph", ["require", 
           var r = t(e.substring(c, n));
 
           var i = Number(r["Content-Length"]);
-          n + 4 + i > e.length || (u.push({
-            header: r,
-            body: e.substr(n + 4, i)
-          }), l(u[u.length - 1]), c = n + 4 + i, o(e));
+          if (!(n + 4 + i > e.length)) {
+            u.push({
+              header: r,
+              body: e.substr(n + 4, i)
+            });
+            l(u[u.length - 1]);
+            c = n + 4 + i;
+            o(e);
+          }
         }
       }
       var s;
@@ -3063,7 +3193,11 @@ define("vs/languages/typescript/resources/dependencyResolverGraph", ["require", 
       }, function(e) {
         a(e);
       }, function(e) {
-        i.browser.isIE10orEarlier || 3 === e.readyState && o(e.responseText);
+        if (!i.browser.isIE10orEarlier) {
+          if (3 === e.readyState) {
+            o(e.responseText);
+          }
+        }
       }).done(null, function(e) {
         a(e);
       });
@@ -3114,7 +3248,9 @@ define("vs/languages/typescript/resources/dependencyResolverGraph", ["require", 
       }).then(function(e) {
         t = e;
         for (var i = [], o = 0; o < e.length; o++) {
-          r._resourceService.contains(e[o]) || i.push(r._requestService.getPath("root", e[o]));
+          if (!r._resourceService.contains(e[o])) {
+            i.push(r._requestService.getPath("root", e[o]));
+          }
         }
         return 0 === i.length ? n.Promise.as(e) : p.fetchChunkedData(r._requestService, {
           type: "POST",
@@ -3135,7 +3271,9 @@ define("vs/languages/typescript/resources/dependencyResolverGraph", ["require", 
           var n = s.URL.fromEncoded(r._requestService.getRequestUrl("root", t, !0));
 
           var i = new a.RemoteModel(n, e.body);
-          r._resourceService.contains(n) || r._resourceService.insert(n, i);
+          if (!r._resourceService.contains(n)) {
+            r._resourceService.insert(n, i);
+          }
         }
       });
     };
@@ -3155,7 +3293,9 @@ define("vs/languages/typescript/resources/dependencyResolverGraph", ["require", 
 
     t.prototype._parseGraph = function(e) {
       for (var t = this._requestService.getRequestUrl("root", "", !0), n = Object.keys(e.i), r = 0; r < n.length; r++) {
-        0 !== e.i[n[r]].indexOf("error:") && (e.i[n[r]] = t + e.i[n[r]].substring(1));
+        if (0 !== e.i[n[r]].indexOf("error:")) {
+          e.i[n[r]] = t + e.i[n[r]].substring(1);
+        }
       }
       return l.Graph.fromJSON(e);
     };
@@ -3228,7 +3368,9 @@ define("vs/languages/typescript/typescript.configuration", ["require", "exports"
     function e(e, t, i) {
       if (this._raw = e, this._raw) {
         if (this._raw.validationSettings) {
-          Array.isArray(this._raw.validationSettings) || (this._raw.validationSettings = [this._raw.validationSettings]);
+          if (!Array.isArray(this._raw.validationSettings)) {
+            this._raw.validationSettings = [this._raw.validationSettings];
+          }
           var o = this._raw.validationSettings;
           if (0 === o.length) {
             this._raw.validationSettings = [t];
@@ -3239,16 +3381,21 @@ define("vs/languages/typescript/typescript.configuration", ["require", "exports"
 
               s = s || "/" === u.scope;
 
-              r.startsWith(u.scope, "/") || (u.scope = "/" + u.scope);
+              if (!r.startsWith(u.scope, "/")) {
+                u.scope = "/" + u.scope;
+              }
 
-              - 1 === u.extraLibs.indexOf("vs/text!vs/languages/typescript/lib/lib.d.ts") && u.extraLibs.unshift(
-                "vs/text!vs/languages/typescript/lib/lib.d.ts");
+              if (-1 === u.extraLibs.indexOf("vs/text!vs/languages/typescript/lib/lib.d.ts")) {
+                u.extraLibs.unshift("vs/text!vs/languages/typescript/lib/lib.d.ts");
+              }
 
               this._raw.validationSettings[l] = u;
 
               a = u;
             }
-            s || this._raw.validationSettings.unshift(t);
+            if (!s) {
+              this._raw.validationSettings.unshift(t);
+            }
           }
         } else {
           this._raw.validationSettings = [t];
@@ -3305,7 +3452,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var r in t) {
-      t.hasOwnProperty(r) && (e[r] = t[r]);
+      if (t.hasOwnProperty(r)) {
+        e[r] = t[r];
+      }
     }
     n.prototype = t.prototype;
 
@@ -3421,7 +3570,9 @@ define("vs/languages/typescript/typescriptWorker2", ["require", "exports", "vs/b
     };
 
     e.prototype._doRun = function(e, t, r, i) {
-      "undefined" == typeof i && (i = null);
+      if ("undefined" == typeof i) {
+        i = null;
+      }
       var o;
 
       var s = this;
@@ -3435,7 +3586,9 @@ define("vs/languages/typescript/typescriptWorker2", ["require", "exports", "vs/b
             l(o);
             return void 0;
           }
-          e && (t = c.combine([t, c.singleton(e)]));
+          if (e) {
+            t = c.combine([t, c.singleton(e)]);
+          }
 
           s._host.updateResources(t);
           var u = i;
@@ -3443,7 +3596,9 @@ define("vs/languages/typescript/typescriptWorker2", ["require", "exports", "vs/b
           try {
             u = r(s._adapter);
           } catch (p) {
-            s._handleError(p) && (a = T.StatusError);
+            if (s._handleError(p)) {
+              a = T.StatusError;
+            }
           } finally {
             s._eventBus.emit(a);
 
@@ -3504,10 +3659,14 @@ define("vs/languages/typescript/typescriptWorker2", ["require", "exports", "vs/b
 
       var r = s.empty;
       c.forEach(this._data, function(e) {
-        s.startsWith(n, e.key) && e.key.length > r.length && (r = e.key);
+        if (s.startsWith(n, e.key) && e.key.length > r.length) {
+          r = e.key;
+        }
       });
 
-      r || (r = "inMemory://model");
+      if (!r) {
+        r = "inMemory://model";
+      }
       var o = c.lookup(this._data, r);
       if (!o) throw new Error("unkown prefix (" + e + ") all =" + Object.keys(this._data));
       for (var a = n.substring(r.length), l = 0, u = o.length; u > l; l++)
@@ -3595,8 +3754,12 @@ define("vs/languages/typescript/typescriptWorker2", ["require", "exports", "vs/b
     t.prototype.configure = function(e) {
       for (var t = S.sanitize(e, S._internalDefaultValidationSettings, S.defaultSuggestSettions), r = 0, o = t.validationSettings
           .length; o > r; r++) {
-        this._extraData.semanticValidation || (t.validationSettings[r].semanticValidation = !1);
-        this._extraData.syntacticValidation || (t.validationSettings[r].syntaxValidation = !1);
+        if (!this._extraData.semanticValidation) {
+          t.validationSettings[r].semanticValidation = !1;
+        }
+        if (!this._extraData.syntacticValidation) {
+          t.validationSettings[r].syntaxValidation = !1;
+        }
       }
       if (this._options && S.equal(this._options, t)) {
         return n.Promise.as(null);
@@ -3623,9 +3786,11 @@ define("vs/languages/typescript/typescriptWorker2", ["require", "exports", "vs/b
     };
 
     t.prototype.emitStatus = function(e) {
-      this.shouldEmitStatus && this.publisher.sendMessage("ts.statusUpdate", {
-        status: e
-      });
+      if (this.shouldEmitStatus) {
+        this.publisher.sendMessage("ts.statusUpdate", {
+          status: e
+        });
+      }
     };
 
     t.prototype.validate = function(e) {
@@ -3642,22 +3807,30 @@ define("vs/languages/typescript/typescriptWorker2", ["require", "exports", "vs/b
 
     t.prototype._validateAll = function(e) {
       var t = this;
-      this.validationScheduler || (this.validationScheduler = new h.RunOnceScheduler(function() {
-        if (0 === t.validationQueue.length) {
-          t.validationScheduler.cancel();
-          return void 0;
-        }
-        try {
-          t.activeValidation = t.validationQueue.shift()();
-        } catch (e) {
-          console.error(e);
-        }
-        t.validationScheduler.schedule();
-      }, 100));
+      if (!this.validationScheduler) {
+        this.validationScheduler = new h.RunOnceScheduler(function() {
+          if (0 === t.validationQueue.length) {
+            t.validationScheduler.cancel();
+            return void 0;
+          }
+          try {
+            t.activeValidation = t.validationQueue.shift()();
+          } catch (e) {
+            console.error(e);
+          }
+          t.validationScheduler.schedule();
+        }, 100);
+      }
 
-      this.activeValidation && this.activeValidation.cancel();
+      if (this.activeValidation) {
+        this.activeValidation.cancel();
+      }
       for (var n = this.resourceService.all(), r = [], i = 0, o = n.length; o > i; i++) {
-        n[i] instanceof m.MirrorModel && (e && e.equals(n[i].getAssociatedResource()) || r.push(n[i]));
+        if (n[i] instanceof m.MirrorModel) {
+          if (!(e && e.equals(n[i].getAssociatedResource()))) {
+            r.push(n[i]);
+          }
+        }
       }
       r.sort(function(e, t) {
         return t.getVersionId() - e.getVersionId();
@@ -3707,7 +3880,10 @@ define("vs/languages/typescript/typescriptWorker2", ["require", "exports", "vs/b
           return t._languageServices.withFileDependencies(e, function(r) {
             if (a) throw l;
             var i = [];
-            n || (i.push.apply(i, r.getSemanticDiagnostics(e)), i.push.apply(i, r.getExtraDiagnostics(e)));
+            if (!n) {
+              i.push.apply(i, r.getSemanticDiagnostics(e));
+              i.push.apply(i, r.getExtraDiagnostics(e));
+            }
 
             t._publishMarkersForResource(e, s.format("{0}/semantic", t._uuid), i);
           });

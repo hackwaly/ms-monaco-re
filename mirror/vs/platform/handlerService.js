@@ -2,7 +2,9 @@ define("vs/platform/handlerService", ["require", "exports", "vs/nls!vs/editor/ed
   "vs/base/env", "vs/base/dom/dom", "vs/base/dom/keyboardEvent"
 ], function(e, t, n, i, o, r, s) {
   function a(e, t) {
-    "undefined" == typeof t && (t = !1);
+    if ("undefined" == typeof t) {
+      t = !1;
+    }
     var i = [];
     (e.ctrlCmd && !o.browser.isMacintosh || e.winCtrl && o.browser.isMacintosh) && i.push(t ? n.localize(
       "vs_platform_handlerService", 0) : "Ctrl");
@@ -44,7 +46,9 @@ define("vs/platform/handlerService", ["require", "exports", "vs/nls!vs/editor/ed
       this.data = [];
     }
     e.prototype.push = function(e, t) {
-      "undefined" == typeof t && (t = {});
+      if ("undefined" == typeof t) {
+        t = {};
+      }
       var n;
 
       var i;
@@ -63,7 +67,9 @@ define("vs/platform/handlerService", ["require", "exports", "vs/nls!vs/editor/ed
         try {
           s = e.apply(e, n);
 
-          s === !0 && t.once && i.dispose();
+          if (s === !0 && t.once) {
+            i.dispose();
+          }
         } catch (a) {
           throw i.dispose(), a;
         }
@@ -91,7 +97,13 @@ define("vs/platform/handlerService", ["require", "exports", "vs/nls!vs/editor/ed
         },
         dispose: function() {
           u(o.keyBinding, t, "disposed");
-          var e = o.data.indexOf(n); - 1 !== e && (o.data.splice(e, 1), 0 === o.data.length && o.onEmpty());
+          var e = o.data.indexOf(n);
+          if (-1 !== e) {
+            o.data.splice(e, 1);
+            if (0 === o.data.length) {
+              o.onEmpty();
+            }
+          }
         }
       };
     };
@@ -183,10 +195,12 @@ define("vs/platform/handlerService", ["require", "exports", "vs/nls!vs/editor/ed
     };
 
     e.prototype.bindGroup = function(e, n) {
-      "undefined" == typeof n && (n = {
-        once: !1,
-        id: "unkownGroup"
-      });
+      if ("undefined" == typeof n) {
+        n = {
+          once: !1,
+          id: "unkownGroup"
+        };
+      }
       var i;
 
       var o = this;
@@ -195,17 +209,22 @@ define("vs/platform/handlerService", ["require", "exports", "vs/nls!vs/editor/ed
 
       var s = function(e, s) {
         var a = s;
-        n.once && (a = function() {
-          var o = !1;
-          try {
-            o = s.apply(s, arguments);
+        if (n.once) {
+          a = function() {
+            var o = !1;
+            try {
+              o = s.apply(s, arguments);
 
-            o === !0 && (u(t.asString(e), n, "handled?true > GROUP disposal"), i.dispose());
-          } catch (r) {
-            throw i.dispose(), r;
-          }
-          return o;
-        });
+              if (o === !0) {
+                u(t.asString(e), n, "handled?true > GROUP disposal");
+                i.dispose();
+              }
+            } catch (r) {
+              throw i.dispose(), r;
+            }
+            return o;
+          };
+        }
 
         r.push(o.bind(e, a));
       };
@@ -272,7 +291,9 @@ define("vs/platform/handlerService", ["require", "exports", "vs/nls!vs/editor/ed
     };
 
     e.prototype.update = function(e) {
-      this.handlerActive !== e && (this.handlerActive = e);
+      if (this.handlerActive !== e) {
+        this.handlerActive = e;
+      }
 
       l(this.scopeNode, e);
     };

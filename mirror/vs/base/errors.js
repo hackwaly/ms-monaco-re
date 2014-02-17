@@ -6,7 +6,9 @@ define("vs/base/errors", ["require", "exports", "vs/nls!vs/editor/worker/editorW
   }
 
   function a(e, n) {
-    "undefined" == typeof n && (n = null);
+    if ("undefined" == typeof n) {
+      n = null;
+    }
 
     t.errorHandler.onUnexpectedError(e, n);
   }
@@ -128,9 +130,13 @@ define("vs/base/errors", ["require", "exports", "vs/nls!vs/editor/worker/editorW
     };
 
     e.prototype.emit = function(e, t, n) {
-      "undefined" == typeof t && (t = null);
+      if ("undefined" == typeof t) {
+        t = null;
+      }
 
-      "undefined" == typeof n && (n = null);
+      if ("undefined" == typeof n) {
+        n = null;
+      }
 
       this.listeners.forEach(function(i) {
         i(e, t, n);
@@ -150,7 +156,9 @@ define("vs/base/errors", ["require", "exports", "vs/nls!vs/editor/worker/editorW
     };
 
     e.prototype.onUnexpectedError = function(e, n) {
-      "undefined" == typeof n && (n = null);
+      if ("undefined" == typeof n) {
+        n = null;
+      }
 
       this.unexpectedErrorHandler(e, n);
 

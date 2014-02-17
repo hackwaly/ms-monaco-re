@@ -23,10 +23,11 @@ define("vs/editor/terminal/terminal", ["require", "exports", "vs/editor/core/cod
       var n = this;
       e.prototype._attachModel.call(this, t);
 
-      this.cursor && this.listenersToRemove.push(this.cursor.addListener(o.EventType.CursorSelectionChanged, function(
-        e) {
-        return n._onCursorSelectionChanged(e);
-      }));
+      if (this.cursor) {
+        this.listenersToRemove.push(this.cursor.addListener(o.EventType.CursorSelectionChanged, function(e) {
+          return n._onCursorSelectionChanged(e);
+        }));
+      }
     };
 
     t.prototype._onCursorSelectionChanged = function(e) {
@@ -34,7 +35,9 @@ define("vs/editor/terminal/terminal", ["require", "exports", "vs/editor/core/cod
         var t = this.getPosition();
 
         var n = this.cursor.getEditableRange();
-        t.equals(n.getEndPosition()) && this.revealPosition(t, !1, !1);
+        if (t.equals(n.getEndPosition())) {
+          this.revealPosition(t, !1, !1);
+        }
       }
     };
 
@@ -93,9 +96,12 @@ define("vs/editor/terminal/terminal", ["require", "exports", "vs/editor/core/cod
     };
 
     t.prototype.setReadOnly = function(e) {
-      this.isReadOnly !== e && (this.isReadOnly = e, this.updateOptions({
-        readOnly: e
-      }));
+      if (this.isReadOnly !== e) {
+        this.isReadOnly = e;
+        this.updateOptions({
+          readOnly: e
+        });
+      }
     };
 
     t.prototype.pause = function() {
@@ -108,17 +114,21 @@ define("vs/editor/terminal/terminal", ["require", "exports", "vs/editor/core/cod
         var n = this.model.getLineCount();
 
         var i = this.model.getLineMaxColumn(n);
-        e && this.cursor.setEditableRange({
-          startLineNumber: n,
-          startColumn: i,
-          endLineNumber: n,
-          endColumn: i
-        });
+        if (e) {
+          this.cursor.setEditableRange({
+            startLineNumber: n,
+            startColumn: i,
+            endLineNumber: n,
+            endColumn: i
+          });
+        }
 
-        t && this.setPosition({
-          lineNumber: n,
-          column: i
-        }, !1, !1, !1);
+        if (t) {
+          this.setPosition({
+            lineNumber: n,
+            column: i
+          }, !1, !1, !1);
+        }
       }
     };
 

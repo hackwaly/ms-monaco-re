@@ -111,10 +111,13 @@ define("vs/languages/typescript/resources/dependencyResolver", ["require", "expo
       clearTimeout(n.scheduledUpdate);
 
       n.scheduledUpdate = setTimeout(function() {
-        n.stateId !== t._computeState(e) && (n.listener.dispose(), t._cache.remove(e.getAssociatedResource()), t._eventbus
-          .emit(c.OnReferencesChanged, {
+        if (n.stateId !== t._computeState(e)) {
+          n.listener.dispose();
+          t._cache.remove(e.getAssociatedResource());
+          t._eventbus.emit(c.OnReferencesChanged, {
             resource: e.getAssociatedResource()
-          }));
+          });
+        }
       }, 1500);
     };
 

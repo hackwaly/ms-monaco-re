@@ -39,7 +39,9 @@ define("vs/editor/core/view/layout/layoutProvider", ["require", "exports", "vs/e
 
     t.prototype.updateLineCount = function() {
       var e = this.editorLayoutProvider.setLineCount(this.model.getLineCount());
-      e && this._emitLayoutChangedEvent();
+      if (e) {
+        this._emitLayoutChangedEvent();
+      }
     };
 
     t.prototype.onZonesChanged = function() {
@@ -112,7 +114,9 @@ define("vs/editor/core/view/layout/layoutProvider", ["require", "exports", "vs/e
       var e = this.scrollManager.getScrollHeight();
       this.scrollManager.setScrollHeight(this.getTotalHeight());
       var t = this.scrollManager.getScrollHeight();
-      e !== t && this.privateViewEventBus.emit(n.EventType.ViewScrollHeightChanged, t);
+      if (e !== t) {
+        this.privateViewEventBus.emit(n.EventType.ViewScrollHeightChanged, t);
+      }
     };
 
     t.prototype._updateWrappingColumn = function(e, t) {
@@ -155,7 +159,9 @@ define("vs/editor/core/view/layout/layoutProvider", ["require", "exports", "vs/e
     };
 
     t.prototype._emitLayoutChangedEvent = function(e) {
-      "undefined" == typeof e && (e = 0);
+      if ("undefined" == typeof e) {
+        e = 0;
+      }
 
       this.scrollManager.onSizeProviderLayoutChanged();
       var t = this.getLayoutInfo();
@@ -185,7 +191,10 @@ define("vs/editor/core/view/layout/layoutProvider", ["require", "exports", "vs/e
       var i = this.scrollManager.getScrollWidth();
       this.scrollManager.setScrollWidth(t);
       var t = this.scrollManager.getScrollWidth();
-      t !== i && (this.privateViewEventBus.emit(n.EventType.ViewScrollWidthChanged), this._updateHeight());
+      if (t !== i) {
+        this.privateViewEventBus.emit(n.EventType.ViewScrollWidthChanged);
+        this._updateHeight();
+      }
     };
 
     t.prototype.saveState = function() {

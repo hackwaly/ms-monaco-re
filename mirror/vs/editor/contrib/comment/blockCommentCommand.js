@@ -62,7 +62,10 @@ define(["require", "exports", "vs/editor/core/range", "vs/editor/core/selection"
       var e = this._selection.endLineNumber;
 
       var f = this._selection.endColumn;
-      c < e && f === 1 && (e -= 1, f = a.getLineMaxColumn(e));
+      if (c < e && f === 1) {
+        e -= 1;
+        f = a.getLineMaxColumn(e);
+      }
       var g = a.getModeAtPosition(c, d).commentsSupport;
       if (!g) return;
       var h = g.getCommentsConfiguration();

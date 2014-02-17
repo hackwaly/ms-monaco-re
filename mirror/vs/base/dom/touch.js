@@ -32,13 +32,17 @@ define("vs/base/dom/touch", ["require", "exports", "vs/base/arrays", "vs/base/li
 
         this._target = e;
 
-        this._target && (this.callOnTarget.push(o.addListener(this._target, "touchstart", function(e) {
-          return t.onTouchStart(e);
-        })), this.callOnTarget.push(o.addListener(this._target, "touchend", function(e) {
-          return t.onTouchEnd(e);
-        })), this.callOnTarget.push(o.addListener(this._target, "touchmove", function(e) {
-          return t.onTouchMove(e);
-        })));
+        if (this._target) {
+          this.callOnTarget.push(o.addListener(this._target, "touchstart", function(e) {
+            return t.onTouchStart(e);
+          }));
+          this.callOnTarget.push(o.addListener(this._target, "touchend", function(e) {
+            return t.onTouchEnd(e);
+          }));
+          this.callOnTarget.push(o.addListener(this._target, "touchmove", function(e) {
+            return t.onTouchMove(e);
+          }));
+        }
       },
       enumerable: !0,
       configurable: !0
@@ -121,9 +125,15 @@ define("vs/base/dom/touch", ["require", "exports", "vs/base/arrays", "vs/base/li
 
                 a += e.SCROLL_FRICTION * l;
 
-                n > 0 && (h = !1, c = y * n * l);
+                if (n > 0) {
+                  h = !1;
+                  c = y * n * l;
+                }
 
-                a > 0 && (h = !1, d = _ * a * l);
+                if (a > 0) {
+                  h = !1;
+                  d = _ * a * l;
+                }
                 var p = e.newGestureEvent(r.Change);
                 p.translationX = c;
 
@@ -131,7 +141,9 @@ define("vs/base/dom/touch", ["require", "exports", "vs/base/arrays", "vs/base/li
 
                 i._target.dispatchEvent(p);
 
-                h || b(o, n, s + c, a, u + d);
+                if (!h) {
+                  b(o, n, s + c, a, u + d);
+                }
               });
             };
             b(t.timeStamp, Math.abs(m) / g, p, Math.abs(v) / g, f);
@@ -157,7 +169,11 @@ define("vs/base/dom/touch", ["require", "exports", "vs/base/arrays", "vs/base/li
 
           this._target.dispatchEvent(u);
 
-          a.rollingPageX.length > 3 && (a.rollingPageX.shift(), a.rollingPageY.shift(), a.rollingTimestamps.shift());
+          if (a.rollingPageX.length > 3) {
+            a.rollingPageX.shift();
+            a.rollingPageY.shift();
+            a.rollingTimestamps.shift();
+          }
 
           a.rollingPageX.push(s.pageX);
 

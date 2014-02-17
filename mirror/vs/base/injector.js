@@ -39,7 +39,10 @@ define("vs/base/injector", ["require", "exports", "vs/base/assert", "vs/base/typ
           if (i.isFunction(u)) {
             a = a.substring(r).toLowerCase();
             var l = this.findService(a, e);
-            i.isUndefinedOrNull(l) || (u.apply(e, [l]), s = !0);
+            if (!i.isUndefinedOrNull(l)) {
+              u.apply(e, [l]);
+              s = !0;
+            }
           }
         }
       return s;
@@ -53,7 +56,9 @@ define("vs/base/injector", ["require", "exports", "vs/base/assert", "vs/base/typ
     };
 
     e.prototype.findService = function(e, t) {
-      "undefined" == typeof t && (t = null);
+      if ("undefined" == typeof t) {
+        t = null;
+      }
       var n = this.map[e];
       !i.isUndefinedOrNull(n) && t !== n || null === this.parent || (n = this.parent.findService(e, t));
 

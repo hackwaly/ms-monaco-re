@@ -60,7 +60,9 @@ define("vs/editor/contrib/hover/modesContentHover", ["require", "exports", "vs/e
             value: i.options.hoverMessage,
             range: new n.Range(e._range.startLineNumber, s, e._range.startLineNumber, a)
           };
-          i.options.htmlMessage && (u.htmlContent = i.options.htmlMessage);
+          if (i.options.htmlMessage) {
+            u.htmlContent = i.options.htmlMessage;
+          }
 
           r.push(u);
         }
@@ -98,7 +100,11 @@ define("vs/editor/contrib/hover/modesContentHover", ["require", "exports", "vs/e
     __extends(t, e);
 
     t.prototype.onModelDecorationsChanged = function() {
-      this._isVisible && (this._hoverOperation.cancel(), this._computer.clearResult(), this._hoverOperation.start());
+      if (this._isVisible) {
+        this._hoverOperation.cancel();
+        this._computer.clearResult();
+        this._hoverOperation.start();
+      }
     };
 
     t.prototype.startShowingAt = function(e) {
@@ -111,7 +117,9 @@ define("vs/editor/contrib/hover/modesContentHover", ["require", "exports", "vs/e
               var o = this._messages[n];
 
               var r = o.range;
-              r.startColumn <= e.startColumn && r.endColumn >= e.endColumn && t.push(o);
+              if (r.startColumn <= e.startColumn && r.endColumn >= e.endColumn) {
+                t.push(o);
+              }
             }
             t.length > 0 ? this._renderMessages(e, t) : this.hide();
           }
@@ -155,7 +163,12 @@ define("vs/editor/contrib/hover/modesContentHover", ["require", "exports", "vs/e
           var a = null;
 
           var u = t;
-          e.className && (a = document.createElement("span"), a.className = e.className, u = a, t.appendChild(a));
+          if (e.className) {
+            a = document.createElement("span");
+            a.className = e.className;
+            u = a;
+            t.appendChild(a);
+          }
 
           e.htmlContent && e.htmlContent.length > 0 ? e.htmlContent.forEach(function(e) {
             u.appendChild(s.renderHtml(e));

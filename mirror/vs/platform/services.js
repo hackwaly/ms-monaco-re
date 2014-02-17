@@ -94,7 +94,9 @@ define("vs/platform/services", ["require", "exports", "vs/base/lib/winjs.base", 
   t.AsyncDescriptor = p;
   var f = function() {
     function e(e, t, n) {
-      "undefined" == typeof n && (n = {});
+      if ("undefined" == typeof n) {
+        n = {};
+      }
 
       this.workspace = e;
 
@@ -136,9 +138,13 @@ define("vs/platform/services", ["require", "exports", "vs/base/lib/winjs.base", 
         if (this.contextService = e, this.contextService.getConfiguration()) {
           this.origin = this.contextService.getConfiguration().paths.PUBLIC_WORKSPACE_URL;
           var t = (new r.URL(this.origin)).getPath();
-          t && t.length > 0 && (this.origin = this.origin.substring(0, this.origin.length - t.length + 1));
+          if (t && t.length > 0) {
+            this.origin = this.origin.substring(0, this.origin.length - t.length + 1);
+          }
 
-          o.endsWith(this.origin, "/") || (this.origin += "/");
+          if (!o.endsWith(this.origin, "/")) {
+            this.origin += "/";
+          }
         } else {
           this.origin = "/";
         }
@@ -191,7 +197,9 @@ define("vs/platform/services", ["require", "exports", "vs/base/lib/winjs.base", 
       }, !1));
 
       return i.always(n.xhr(e), function(e) {
-        t.data && (t.data.status = e.status);
+        if (t.data) {
+          t.data.status = e.status;
+        }
 
         t.stop();
       });
@@ -262,7 +270,9 @@ define("vs/platform/services", ["require", "exports", "vs/base/lib/winjs.base", 
         }, function(e) {
           r(e);
         }, function(e) {
-          3 === e.readyState && i(e.responseText);
+          if (3 === e.readyState) {
+            i(e.responseText);
+          }
         });
       }, function() {
         c = !0;
@@ -393,7 +403,10 @@ define("vs/platform/services", ["require", "exports", "vs/base/lib/winjs.base", 
         return this._enabled;
       },
       set: function(e) {
-        this._enabled !== e && (this._enabled = e, this.emit("enabled", this));
+        if (this._enabled !== e) {
+          this._enabled = e;
+          this.emit("enabled", this);
+        }
       },
       enumerable: !0,
       configurable: !0

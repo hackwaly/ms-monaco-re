@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -66,7 +68,9 @@ define(["require", "exports", "vs/nls", "vs/base/env", "vs/base/lib/winjs.base",
       var d = this.editor.getModel();
 
       var e = d.getMode().logicalSelectionSupport;
-      t && t.editor !== this.editor && (t = null);
+      if (t && t.editor !== this.editor) {
+        t = null;
+      }
       var f = m.Promise.as(t);
       t || (f = e.getRangesToPosition(d.getAssociatedResource(), c.getStartPosition()).then(function(a) {
         var c;
@@ -81,14 +85,19 @@ define(["require", "exports", "vs/nls", "vs/base/env", "vs/base/lib/winjs.base",
           var e = new s(b.editor);
           e.selection = new o.Range(d.startLineNumber, d.startColumn, d.endLineNumber, d.endColumn);
 
-          c && (e.next = c, c.previous = e);
+          if (c) {
+            e.next = c;
+            c.previous = e;
+          }
 
           c = e;
         });
         var d = new s(b.editor);
         d.next = c;
 
-        c && (c.previous = d);
+        if (c) {
+          c.previous = d;
+        }
 
         t = d;
       }).then(function() {

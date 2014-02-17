@@ -20,7 +20,9 @@ define("vs/editor/core/model/textModelWithDecorations", ["require", "exports", "
   }
 
   function a(e, t) {
-    "undefined" == typeof t && (t = null);
+    if ("undefined" == typeof t) {
+      t = null;
+    }
     var n = {
       color: "",
       position: 2
@@ -69,23 +71,33 @@ define("vs/editor/core/model/textModelWithDecorations", ["require", "exports", "
     };
 
     e.prototype.addRemovedDecoration = function(e, t, n, i) {
-      this.newOrChangedDecorations.hasOwnProperty(e) && delete this.newOrChangedDecorations[e];
+      if (this.newOrChangedDecorations.hasOwnProperty(e)) {
+        delete this.newOrChangedDecorations[e];
+      }
 
-      this.oldDecorationRange.hasOwnProperty(e) || (this.oldDecorationRange[e] = n);
+      if (!this.oldDecorationRange.hasOwnProperty(e)) {
+        this.oldDecorationRange[e] = n;
+      }
 
-      this.oldDecorationOptions.hasOwnProperty(e) || (this.oldDecorationOptions[e] = i);
+      if (!this.oldDecorationOptions.hasOwnProperty(e)) {
+        this.oldDecorationOptions[e] = i;
+      }
 
       this.removedDecorations[e] = !0;
     };
 
     e.prototype.addMovedDecoration = function(e, t) {
-      this.oldDecorationRange.hasOwnProperty(e) || (this.oldDecorationRange[e] = t);
+      if (!this.oldDecorationRange.hasOwnProperty(e)) {
+        this.oldDecorationRange[e] = t;
+      }
 
       this.newOrChangedDecorations[e] = !0;
     };
 
     e.prototype.addUpdatedDecoration = function(e, t) {
-      this.oldDecorationOptions.hasOwnProperty(e) || (this.oldDecorationOptions[e] = t);
+      if (!this.oldDecorationOptions.hasOwnProperty(e)) {
+        this.oldDecorationOptions[e] = t;
+      }
 
       this.newOrChangedDecorations[e] = !0;
     };
@@ -126,7 +138,9 @@ define("vs/editor/core/model/textModelWithDecorations", ["require", "exports", "
     };
 
     t.prototype.changeDecorations = function(e, t) {
-      "undefined" == typeof t && (t = 0);
+      if ("undefined" == typeof t) {
+        t = 0;
+      }
       var n = this;
       return this._withDeferredEvents(function(i) {
         var o = {
@@ -177,7 +191,12 @@ define("vs/editor/core/model/textModelWithDecorations", ["require", "exports", "
 
       var i = [];
       for (t in this.decorations) {
-        this.decorations.hasOwnProperty(t) && (n = this.decorations[t], n.ownerId === e && i.push(n.id));
+        if (this.decorations.hasOwnProperty(t)) {
+          n = this.decorations[t];
+          if (n.ownerId === e) {
+            i.push(n.id);
+          }
+        }
       }
       for (var o = 0; o < i.length; o++) {
         this._removeDecorationImpl(null, i[o]);
@@ -247,9 +266,13 @@ define("vs/editor/core/model/textModelWithDecorations", ["require", "exports", "
     };
 
     t.prototype.getAllDecorations = function(e, t) {
-      "undefined" == typeof e && (e = 0);
+      if ("undefined" == typeof e) {
+        e = 0;
+      }
 
-      "undefined" == typeof t && (t = !1);
+      if ("undefined" == typeof t) {
+        t = !1;
+      }
       var n;
 
       var i;
@@ -274,12 +297,18 @@ define("vs/editor/core/model/textModelWithDecorations", ["require", "exports", "
       var t = this;
       return this.deferredEmit(function() {
         var n = t._currentDeferredEvents ? !1 : !0;
-        n && (t._currentDeferredEvents = new c);
+        if (n) {
+          t._currentDeferredEvents = new c;
+        }
         try {
           var i = e(t._currentDeferredEvents);
-          n && t._handleCollectedEvents(t._currentDeferredEvents);
+          if (n) {
+            t._handleCollectedEvents(t._currentDeferredEvents);
+          }
         } finally {
-          n && (t._currentDeferredEvents = null);
+          if (n) {
+            t._currentDeferredEvents = null;
+          }
         }
         return i;
       });
@@ -303,8 +332,10 @@ define("vs/editor/core/model/textModelWithDecorations", ["require", "exports", "
 
       var i;
       for (n in t) {
-        t.hasOwnProperty(n) && this.rangeIdToDecorationId.hasOwnProperty(n) && (i = this.rangeIdToDecorationId[n], e.addMovedDecoration(
-          i, t[n]));
+        if (t.hasOwnProperty(n) && this.rangeIdToDecorationId.hasOwnProperty(n)) {
+          i = this.rangeIdToDecorationId[n];
+          e.addMovedDecoration(i, t[n]);
+        }
       }
     };
 
@@ -321,14 +352,26 @@ define("vs/editor/core/model/textModelWithDecorations", ["require", "exports", "
 
       var a = [];
       for (t in e.newOrChangedDecorations) {
-        e.newOrChangedDecorations.hasOwnProperty(t) && (a.push(t), n = this._getDecorationData(t), n.isForValidation =
-          n.options.className === o.ClassName.EditorErrorDecoration || n.options.className === o.ClassName.EditorWarningDecoration,
-          r.push(n), e.oldDecorationRange.hasOwnProperty(t) && (i = e.oldDecorationRange[t], i.startLineNumber = i.startLineNumber ||
-            n.range.startLineNumber, i.startColumn = i.startColumn || n.range.startColumn, i.endLineNumber = i.endLineNumber ||
-            n.range.endLineNumber, i.endColumn = i.endColumn || n.range.endColumn));
+        if (e.newOrChangedDecorations.hasOwnProperty(t)) {
+          a.push(t);
+          n = this._getDecorationData(t);
+          n.isForValidation = n.options.className === o.ClassName.EditorErrorDecoration || n.options.className === o.ClassName
+            .EditorWarningDecoration;
+          r.push(n);
+          if (e.oldDecorationRange.hasOwnProperty(t)) {
+            i = e.oldDecorationRange[t];
+            i.startLineNumber = i.startLineNumber || n.range.startLineNumber;
+            i.startColumn = i.startColumn || n.range.startColumn;
+            i.endLineNumber = i.endLineNumber || n.range.endLineNumber;
+            i.endColumn = i.endColumn || n.range.endColumn;
+          }
+        }
       }
       for (t in e.removedDecorations) {
-        e.removedDecorations.hasOwnProperty(t) && (a.push(t), s.push(t));
+        if (e.removedDecorations.hasOwnProperty(t)) {
+          a.push(t);
+          s.push(t);
+        }
       }
       if (a.length > 0) {
         var u = {
@@ -392,7 +435,9 @@ define("vs/editor/core/model/textModelWithDecorations", ["require", "exports", "
         var i = this.decorations[t];
 
         var o = i.options;
-        o.stickiness !== n.stickiness && this.changeTrackedRangeStickiness(i.rangeId, n.stickiness);
+        if (o.stickiness !== n.stickiness) {
+          this.changeTrackedRangeStickiness(i.rangeId, n.stickiness);
+        }
 
         i.options = n;
 
@@ -405,7 +450,9 @@ define("vs/editor/core/model/textModelWithDecorations", ["require", "exports", "
         var n = this.decorations[t];
 
         var i = null;
-        e && (i = this.getTrackedRange(n.rangeId));
+        if (e) {
+          i = this.getTrackedRange(n.rangeId);
+        }
 
         this.removeTrackedRange(n.rangeId);
 
@@ -413,7 +460,9 @@ define("vs/editor/core/model/textModelWithDecorations", ["require", "exports", "
 
         delete this.decorations[t];
 
-        e && e.addRemovedDecoration(t, n.ownerId, i, n.options);
+        if (e) {
+          e.addRemovedDecoration(t, n.ownerId, i, n.options);
+        }
       }
     };
 
@@ -443,8 +492,12 @@ define("vs/editor/core/model/textModelWithDecorations", ["require", "exports", "
 
       var d = {};
       for (s = 0, a = n.length; a > s; s++) {
-        this.decorations.hasOwnProperty(n[s]) && (c = this.decorations[n[s]], l = u(this.getTrackedRange(c.rangeId),
-          c.options), d[l] = d[l] || [], d[l].push(n[s]));
+        if (this.decorations.hasOwnProperty(n[s])) {
+          c = this.decorations[n[s]];
+          l = u(this.getTrackedRange(c.rangeId), c.options);
+          d[l] = d[l] || [];
+          d[l].push(n[s]);
+        }
       }
       var h;
 
@@ -468,10 +521,14 @@ define("vs/editor/core/model/textModelWithDecorations", ["require", "exports", "
               m.push(f[h]);
               break;
             }
-        g || m.push(this._addDecorationImpl(e, t, o[s], r[s]));
+        if (!g) {
+          m.push(this._addDecorationImpl(e, t, o[s], r[s]));
+        }
       }
       for (s = 0, a = n.length; a > s; s++) {
-        v.hasOwnProperty(n[s]) || this._removeDecorationImpl(e, n[s]);
+        if (!v.hasOwnProperty(n[s])) {
+          this._removeDecorationImpl(e, n[s]);
+        }
       }
       return m;
     };

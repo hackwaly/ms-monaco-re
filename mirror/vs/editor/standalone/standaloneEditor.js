@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -103,7 +105,9 @@ define(["require", "exports", "vs/editor/core/codeEditorWidget", "vs/editor/diff
       if (b) {
         var d;
         for (d in b) {
-          b.hasOwnProperty(d) && (c[d] = b[d]);
+          if (b.hasOwnProperty(d)) {
+            c[d] = b[d];
+          }
         }
       }
       return y.create(c);
@@ -140,7 +144,9 @@ define(["require", "exports", "vs/editor/core/codeEditorWidget", "vs/editor/diff
 
       d = d || {};
 
-      d.enableTelemetry && (this._telemetryService = new v.TelemetryService);
+      if (d.enableTelemetry) {
+        this._telemetryService = new v.TelemetryService;
+      }
       var e = {
         editorService: this._editorService,
         handlerService: this._handlerService,
@@ -177,7 +183,10 @@ define(["require", "exports", "vs/editor/core/codeEditorWidget", "vs/editor/diff
       var b = this.getModel();
       a.prototype._detachModel.call(this);
 
-      b && this._ownsModel && (b.destroy(), this._ownsModel = !1);
+      if (b && this._ownsModel) {
+        b.destroy();
+        this._ownsModel = !1;
+      }
     };
 
     return c;
@@ -194,9 +203,13 @@ define(["require", "exports", "vs/editor/core/codeEditorWidget", "vs/editor/diff
 
   b.getOrCreateMode = L;
   var M = self;
-  M.Monaco || (M.Monaco = {});
+  if (!M.Monaco) {
+    M.Monaco = {};
+  }
   var N = M.Monaco;
-  N.Editor || (N.Editor = {});
+  if (!N.Editor) {
+    N.Editor = {};
+  }
 
   N.Editor.create = b.create;
 

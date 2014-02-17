@@ -45,11 +45,15 @@ define("vs/base/dom/htmlContent", ["require", "exports", "vs/base/dom/dom"], fun
     } else {
       7 === t.type ? r = document.createElement("br") : 1 === t.type && (r = e);
     }
-    e !== r && e.appendChild(r);
+    if (e !== r) {
+      e.appendChild(r);
+    }
 
-    Array.isArray(t.children) && t.children.forEach(function(e) {
-      o(r, e, i);
-    });
+    if (Array.isArray(t.children)) {
+      t.children.forEach(function(e) {
+        o(r, e, i);
+      });
+    }
   }
 
   function r(e) {
@@ -61,7 +65,9 @@ define("vs/base/dom/htmlContent", ["require", "exports", "vs/base/dom/dom"], fun
       if (s(u) && u === r.peek()) {
         r.advance();
 
-        2 === i.type && (i = o.pop());
+        if (2 === i.type) {
+          i = o.pop();
+        }
         var c = a(u);
         if (i.type === c || 5 === i.type && 6 === c) {
           i = o.pop();
@@ -70,7 +76,10 @@ define("vs/base/dom/htmlContent", ["require", "exports", "vs/base/dom/dom"], fun
             type: c,
             children: []
           };
-          5 === c && (d.index = n, n++);
+          if (5 === c) {
+            d.index = n;
+            n++;
+          }
 
           i.children.push(d);
 
@@ -79,7 +88,9 @@ define("vs/base/dom/htmlContent", ["require", "exports", "vs/base/dom/dom"], fun
           i = d;
         }
       } else if ("\n" === u) {
-        2 === i.type && (i = o.pop());
+        if (2 === i.type) {
+          i = o.pop();
+        }
         i.children.push({
           type: 7
         });

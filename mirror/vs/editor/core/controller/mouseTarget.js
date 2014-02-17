@@ -3,11 +3,17 @@ define("vs/editor/core/controller/mouseTarget", ["require", "exports", "vs/edito
 ], function(e, t, n, i, o) {
   var r = function() {
     function e(e, t, n, o, r) {
-      "undefined" == typeof n && (n = null);
+      if ("undefined" == typeof n) {
+        n = null;
+      }
 
-      "undefined" == typeof o && (o = null);
+      if ("undefined" == typeof o) {
+        o = null;
+      }
 
-      "undefined" == typeof r && (r = null);
+      if ("undefined" == typeof r) {
+        r = null;
+      }
 
       this.element = e;
 
@@ -15,7 +21,9 @@ define("vs/editor/core/controller/mouseTarget", ["require", "exports", "vs/edito
 
       this.position = n;
 
-      !o && n && (o = new i.Range(n.lineNumber, n.column, n.lineNumber, n.column));
+      if (!o && n) {
+        o = new i.Range(n.lineNumber, n.column, n.lineNumber, n.column);
+      }
 
       this.range = o;
 
@@ -77,7 +85,12 @@ define("vs/editor/core/controller/mouseTarget", ["require", "exports", "vs/edito
     }
     e.prototype.getClassNamePathTo = function(e, t) {
       for (var n, i = []; e && e !== document.body && e !== t;) {
-        e.nodeType === e.ELEMENT_NODE && (n = e.className, n && i.unshift(n));
+        if (e.nodeType === e.ELEMENT_NODE) {
+          n = e.className;
+          if (n) {
+            i.unshift(n);
+          }
+        }
         e = e.parentNode;
       }
       return i.join("/");
@@ -120,7 +133,10 @@ define("vs/editor/core/controller/mouseTarget", ["require", "exports", "vs/edito
         if (d.position) {
           return this.createMouseTargetFromHitTestPosition(a, d.position.lineNumber, d.position.column, o);
         }
-        d.hitTarget && (a = d.hitTarget, u = this.getClassNamePathTo(a, this.viewHelper.viewDomNode));
+        if (d.hitTarget) {
+          a = d.hitTarget;
+          u = this.getClassNamePathTo(a, this.viewHelper.viewDomNode);
+        }
       }
       return s.IS_CHILD_OF_SCROLLABLE_ELEMENT.test(u) ? this.createMouseTargetFromScrollbar(a, i) : s.IS_CHILD_OF_LINES_DECORATIONS
         .test(u) ? this.createMouseTargetFromLinesDecorationsChild(a, i) : s.IS_CHILD_OF_LINE_NUMBERS.test(u) ? this.createMouseTargetFromLineNumbers(

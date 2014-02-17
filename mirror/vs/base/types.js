@@ -62,16 +62,20 @@ define("vs/base/types", ["require", "exports"], function(e, t) {
   }
 
   function p(e, n, i) {
-    "undefined" == typeof i && (i = !0);
+    if ("undefined" == typeof i) {
+      i = !0;
+    }
     var o;
 
     var r = {};
     for (o in e) {
-      (i || e.hasOwnProperty(o)) && t.isFunction(e[o]) && (r[o] = function(t) {
-        return function() {
-          return n(e, t, arguments);
-        };
-      }(o));
+      if ((i || e.hasOwnProperty(o)) && t.isFunction(e[o])) {
+        r[o] = function(t) {
+          return function() {
+            return n(e, t, arguments);
+          };
+        }(o);
+      }
     }
     return r;
   }

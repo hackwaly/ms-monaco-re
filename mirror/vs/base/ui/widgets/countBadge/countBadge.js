@@ -30,7 +30,10 @@ define("vs/base/ui/widgets/countBadge/countBadge", ["require", "exports", "vs/ba
     };
 
     e.prototype.dispose = function() {
-      this.$el && (this.$el.destroy(), this.$el = null);
+      if (this.$el) {
+        this.$el.destroy();
+        this.$el = null;
+      }
     };
 
     return e;

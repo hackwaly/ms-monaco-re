@@ -25,7 +25,10 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
       this.builder = v().div(function(t) {
         t.on(g.EventType.KEY_DOWN, function(t) {
           var n = new f.KeyboardEvent(t);
-          "Escape" === n.key && (g.EventHelper.stop(t, !0), e.hide(!0));
+          if ("Escape" === n.key) {
+            g.EventHelper.stop(t, !0);
+            e.hide(!0);
+          }
         }).on(g.EventType.FOCUS, function() {
           return e.gainingFocus();
         }, null, !0).on(g.EventType.CONTEXT_MENU, function(e) {
@@ -49,15 +52,22 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
 
           e.inputBox.$input.on(g.EventType.KEY_DOWN, function(t) {
             var n = new f.KeyboardEvent(t);
-            ("Tab" === n.key || "DownArrow" === n.key || "UpArrow" === n.key || "PageDown" === n.key ||
-              "PageUp" === n.key) && (g.EventHelper.stop(t, !0), e.navigateInTree(n.key, n.shiftKey));
+            if ("Tab" === n.key || "DownArrow" === n.key || "UpArrow" === n.key || "PageDown" === n.key ||
+              "PageUp" === n.key) {
+              g.EventHelper.stop(t, !0);
+              e.navigateInTree(n.key, n.shiftKey);
+            }
           }).on(g.EventType.KEY_UP, function(t) {
             var n = new f.KeyboardEvent(t);
             if ("Enter" === n.key) {
               var o = e.tree.getFocus();
-              o && e.elementSelected(o, t);
+              if (o) {
+                e.elementSelected(o, t);
+              }
             } else {
-              !i.browser.isIE9 || "Backspace" !== n.key && "Delete" !== n.key || e.onType();
+              if (!(!i.browser.isIE9 || "Backspace" !== n.key && "Delete" !== n.key)) {
+                e.onType();
+              }
             }
           }).on(g.EventType.INPUT, function() {
             e.onType();
@@ -90,21 +100,27 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
           }));
 
           e.toUnbind.push(e.tree.addListener(o.EventType.SELECTION, function(t) {
-            t.selection && t.selection.length > 0 && e.elementSelected(t.selection[0], t);
+            if (t.selection && t.selection.length > 0) {
+              e.elementSelected(t.selection[0], t);
+            }
           }));
         }).on(g.EventType.KEY_DOWN, function(t) {
           var n = new f.KeyboardEvent(t);
-          e.quickNavigateConfiguration && (e.quickNavigateConfiguration.keybinding.keys.some(function(e) {
-            return e === n.key;
-          }) ? (g.EventHelper.stop(t, !0), e.navigateInTree(n.shiftKey ? "UpArrow" : "DownArrow")) : (
-            "DownArrow" === n.key || "UpArrow" === n.key || "PageDown" === n.key || "PageUp" === n.key) && (g.EventHelper
-            .stop(t, !0), e.navigateInTree(n.key)));
+          if (e.quickNavigateConfiguration) {
+            e.quickNavigateConfiguration.keybinding.keys.some(function(e) {
+              return e === n.key;
+            }) ? (g.EventHelper.stop(t, !0), e.navigateInTree(n.shiftKey ? "UpArrow" : "DownArrow")) : (
+              "DownArrow" === n.key || "UpArrow" === n.key || "PageDown" === n.key || "PageUp" === n.key) && (g.EventHelper
+              .stop(t, !0), e.navigateInTree(n.key));
+          }
         }).on(g.EventType.KEY_UP, function(t) {
           var n = new f.KeyboardEvent(t);
           if (e.quickNavigateConfiguration && ((e.quickNavigateConfiguration.keybinding.ctrlCmd || e.quickNavigateConfiguration
             .keybinding.winCtrl) && "Ctrl" === n.key || "Enter" === n.key)) {
             var i = e.tree.getFocus();
-            i && e.elementSelected(i, t);
+            if (i) {
+              e.elementSelected(i, t);
+            }
           }
         }).clone();
       }).addClass("quick-open-widget").addClass(i.browser.isIE10orEarlier ? " no-shadow" : "").build(this.container);
@@ -112,7 +128,9 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
 
     e.prototype.onType = function() {
       var e = this.inputBox.value;
-      this.helpText && (e ? this.helpText.hide() : this.helpText.show());
+      if (this.helpText) {
+        e ? this.helpText.hide() : this.helpText.show();
+      }
 
       this.callbacks.onType(e);
     };
@@ -146,7 +164,9 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
       }
       i = this.tree.getFocus();
 
-      i && (r ? this.tree.reveal(this.tree.getFocus(), 0) : this.tree.reveal(this.tree.getFocus()));
+      if (i) {
+        r ? this.tree.reveal(this.tree.getFocus(), 0) : this.tree.reveal(this.tree.getFocus());
+      }
     };
 
     e.prototype.cycleThroughEntryGroups = function(e, t, n) {
@@ -211,11 +231,15 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
           isQuickNavigate: this.quickNavigateConfiguration ? !0 : !1
         });
       }
-      n && this.hide();
+      if (n) {
+        this.hide();
+      }
     };
 
     e.prototype.show = function(e, t, n) {
-      r.isUndefined(t) && (t = {});
+      if (r.isUndefined(t)) {
+        t = {};
+      }
 
       this.visible = !0;
 
@@ -227,7 +251,9 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
         this.builder.show(), this.tree.DOMFocus()) : (this.inputContainer.show(), this.treeContainer.addClass(
         "transition"), this.builder.show(), this.inputBox.$input.domFocus());
 
-      this.helpText && (this.quickNavigateConfiguration || r.isString(e) ? this.helpText.hide() : this.helpText.show());
+      if (this.helpText) {
+        this.quickNavigateConfiguration || r.isString(e) ? this.helpText.hide() : this.helpText.show();
+      }
 
       r.isString(e) ? this.doShowWithPrefix(e) : this.doShowWithInput(e, t);
     };
@@ -253,11 +279,15 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
       });
 
       this.getAnimationPromise().then(function() {
-        n.currentInputToken === i && n.tree.setInput(e).done(function() {
-          n.tree.layout();
+        if (n.currentInputToken === i) {
+          n.tree.setInput(e).done(function() {
+            n.tree.layout();
 
-          e && e.getEntries().length > 0 && n.autoFocus(e, t);
-        }, s.onUnexpectedError);
+            if (e && e.getEntries().length > 0) {
+              n.autoFocus(e, t);
+            }
+          }, s.onUnexpectedError);
+        }
       });
     };
 
@@ -280,21 +310,28 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
         this.tree.reveal(this.tree.getFocus(), 0);
       } else if (t.autoFocusSecondEntry) {
         var o = e.getEntries();
-        o.length > 1 && this.tree.setFocus(o[1]);
+        if (o.length > 1) {
+          this.tree.setFocus(o[1]);
+        }
       }
     };
 
     e.prototype.refreshAndLayout = function(e, t) {
       var n = this;
-      this.isVisible() && (this.treeContainer.style({
-        height: this.getHeight(e) + "px"
-      }), this.getAnimationPromise().then(function() {
-        n.tree.refresh().done(function() {
-          n.tree.layout();
+      if (this.isVisible()) {
+        this.treeContainer.style({
+          height: this.getHeight(e) + "px"
+        });
+        this.getAnimationPromise().then(function() {
+          n.tree.refresh().done(function() {
+            n.tree.layout();
 
-          !n.tree.getFocus() && e && e.getEntries().length > 0 && n.autoFocus(e, t);
-        }, s.onUnexpectedError);
-      }));
+            if (!n.tree.getFocus() && e && e.getEntries().length > 0) {
+              n.autoFocus(e, t);
+            }
+          }, s.onUnexpectedError);
+        });
+      }
     };
 
     e.prototype.getAnimationPromise = function() {
@@ -318,10 +355,12 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
           var t = this.tree.getInput();
           if (t) {
             var n = t.entries.length;
-            this.usageLogger && this.usageLogger.publicLog("quickOpenWidgetCancelled", {
-              count: n,
-              isQuickNavigate: this.quickNavigateConfiguration ? !0 : !1
-            });
+            if (this.usageLogger) {
+              this.usageLogger.publicLog("quickOpenWidgetCancelled", {
+                count: n,
+                isQuickNavigate: this.quickNavigateConfiguration ? !0 : !1
+              });
+            }
           }
         }
         this.inputBox.value = "";
@@ -341,7 +380,9 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
     };
 
     e.prototype.setInput = function(e, t) {
-      this.isVisible() && this.setInputAndLayout(e, t);
+      if (this.isVisible()) {
+        this.setInputAndLayout(e, t);
+      }
     };
 
     e.prototype.getInput = function() {
@@ -359,7 +400,9 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
 
     e.prototype.setExtraClass = function(e) {
       var t = this.builder.getProperty("extra-class");
-      t && this.builder.removeClass(t);
+      if (t) {
+        this.builder.removeClass(t);
+      }
 
       e ? (this.builder.addClass(e), this.builder.setProperty("extra-class", e)) : t && this.builder.removeProperty(
         "extra-class");
@@ -375,9 +418,14 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
 
     e.prototype.loosingFocus = function() {
       var e = this;
-      this.isVisible() && (this.isLoosingFocus = !0, n.Promise.timeout(0).then(function() {
-        e.isLoosingFocus && e.hide(!1);
-      }));
+      if (this.isVisible()) {
+        this.isLoosingFocus = !0;
+        n.Promise.timeout(0).then(function() {
+          if (e.isLoosingFocus) {
+            e.hide(!1);
+          }
+        });
+      }
     };
 
     e.prototype.dispose = function() {

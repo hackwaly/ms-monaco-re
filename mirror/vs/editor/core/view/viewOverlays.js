@@ -95,14 +95,20 @@ define("vs/editor/core/view/viewOverlays", ["require", "exports", "vs/base/dom/d
           this._overlays[o].prepareRender(e);
         }
         this._requestModificationFrame(function() {
-          r && (n._dynamicDomNode.innerHTML = r.join(""));
+          if (r) {
+            n._dynamicDomNode.innerHTML = r.join("");
+          }
           for (var t = 0; t < n._overlays.length; t++) {
             n._overlays[t].render(e);
           }
-          n._scrollHeight !== e.scrollHeight && (n._scrollHeight = e.scrollHeight, n._backgroundDomNode.style.height =
-            n._scrollHeight + "px");
+          if (n._scrollHeight !== e.scrollHeight) {
+            n._scrollHeight = e.scrollHeight;
+            n._backgroundDomNode.style.height = n._scrollHeight + "px";
+          }
           var i = e.getViewportVerticalOffsetForLineNumber(e.visibleRange.startLineNumber) + "px";
-          n._backgroundDomNode.style.top !== i && (n._backgroundDomNode.style.top = i);
+          if (n._backgroundDomNode.style.top !== i) {
+            n._backgroundDomNode.style.top = i;
+          }
         });
       };
 

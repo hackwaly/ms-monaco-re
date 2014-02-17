@@ -18,12 +18,18 @@ define("vs/editor/core/view/model/prefixSumComputer", ["require", "exports"], fu
 
       this.prefixSum.splice(e, 0, 0);
 
-      e - 1 < this.prefixSumValidIndex && (this.prefixSumValidIndex = e - 1);
+      if (e - 1 < this.prefixSumValidIndex) {
+        this.prefixSumValidIndex = e - 1;
+      }
     };
 
     e.prototype.changeValue = function(e, t) {
-      this.values[e] !== t && (this.values[e] = t, e - 1 < this.prefixSumValidIndex && (this.prefixSumValidIndex = e -
-        1));
+      if (this.values[e] !== t) {
+        this.values[e] = t;
+        if (e - 1 < this.prefixSumValidIndex) {
+          this.prefixSumValidIndex = e - 1;
+        }
+      }
     };
 
     e.prototype.removeValues = function(e, t) {
@@ -31,7 +37,9 @@ define("vs/editor/core/view/model/prefixSumComputer", ["require", "exports"], fu
 
       this.prefixSum.splice(e, t);
 
-      e - 1 < this.prefixSumValidIndex && (this.prefixSumValidIndex = e - 1);
+      if (e - 1 < this.prefixSumValidIndex) {
+        this.prefixSumValidIndex = e - 1;
+      }
     };
 
     e.prototype.getTotalValue = function() {
@@ -46,7 +54,10 @@ define("vs/editor/core/view/model/prefixSumComputer", ["require", "exports"], fu
         return this.prefixSum[e];
       }
       var t = this.prefixSumValidIndex + 1;
-      0 === t && (this.prefixSum[0] = this.values[0], t++);
+      if (0 === t) {
+        this.prefixSum[0] = this.values[0];
+        t++;
+      }
       for (var n = t; e >= n; n++) {
         this.prefixSum[n] = this.prefixSum[n - 1] + this.values[n];
       }

@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -62,13 +64,17 @@ define(["require", "exports", "vs/base/eventEmitter", "vs/base/types", "vs/platf
     b.prototype.insertLinked = function(a, b, c) {
       if (!this.contains(a)) return;
       var d = a.toExternal();
-      this.linked.hasOwnProperty(d) || (this.linked[d] = {});
+      if (!this.linked.hasOwnProperty(d)) {
+        this.linked[d] = {};
+      }
 
       this.linked[d][b] = c;
 
-      h.isFunction(c.onChange) && this.unbinds[d].push(this.data[d].addBulkListener(function(a) {
-        c.onChange(a);
-      }));
+      if (h.isFunction(c.onChange)) {
+        this.unbinds[d].push(this.data[d].addBulkListener(function(a) {
+          c.onChange(a);
+        }));
+      }
     };
 
     b.prototype.get = function(a) {
@@ -120,7 +126,9 @@ define(["require", "exports", "vs/base/eventEmitter", "vs/base/types", "vs/platf
       for (var f in this.linked[c])
         if (this.linked.hasOwnProperty(f)) {
           var g = this.linked[c][f];
-          h.isFunction(g.onRemove) && g.onRemove();
+          if (h.isFunction(g.onRemove)) {
+            g.onRemove();
+          }
         }
       delete this.unbinds[c];
 

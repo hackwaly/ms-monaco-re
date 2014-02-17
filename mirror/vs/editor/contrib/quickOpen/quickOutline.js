@@ -133,9 +133,14 @@ define("vs/editor/contrib/quickOpen/quickOutline", ["require", "exports", "vs/nl
       var i = [];
 
       var o = [];
-      e && (this.flatten(e, o), this.filter(o));
+      if (e) {
+        this.flatten(e, o);
+        this.filter(o);
+      }
       var r = t;
-      0 === t.indexOf(c) && (r = r.substr(c.length));
+      if (0 === t.indexOf(c)) {
+        r = r.substr(c.length);
+      }
       for (var u = 0; u < o.length; u++) {
         var l = o[u];
 
@@ -149,7 +154,9 @@ define("vs/editor/contrib/quickOpen/quickOutline", ["require", "exports", "vs/nl
         var g = a.CombinedMatcher.matches(r, h);
         if (g) {
           var m = null;
-          l.parentScope && (m = l.parentScope.join("."));
+          if (l.parentScope) {
+            m = l.parentScope.join(".");
+          }
 
           i.push(new d(h, p, l.type, m, l.range, g, this.editor, this));
         }
@@ -161,9 +168,13 @@ define("vs/editor/contrib/quickOpen/quickOutline", ["require", "exports", "vs/nl
           v !== b.getType() ? (y && y.setGroupLabel(this.typeToLabel(v, _)), v = b.getType(), y = b, _ = 1, b.setShowBorder(
             u > 0)) : _++;
         }
-        y && y.setGroupLabel(this.typeToLabel(v, _));
+        if (y) {
+          y.setGroupLabel(this.typeToLabel(v, _));
+        }
       } else {
-        i.length > 0 && i[0].setGroupLabel(n.localize("vs_editor_contrib_quickOpen_quickOutline", 1, i.length));
+        if (i.length > 0) {
+          i[0].setGroupLabel(n.localize("vs_editor_contrib_quickOpen_quickOutline", 1, i.length));
+        }
       }
       return i;
     };
@@ -199,9 +210,13 @@ define("vs/editor/contrib/quickOpen/quickOutline", ["require", "exports", "vs/nl
         var o = e[i];
         if (t.push(o), n && (o.parentScope = n), o.children) {
           var r = [];
-          n && (r = n.slice(0));
+          if (n) {
+            r = n.slice(0);
+          }
 
-          "module" !== o.type && r.push(o.label);
+          if ("module" !== o.type) {
+            r.push(o.label);
+          }
 
           this.flatten(o.children, t, r);
         }
@@ -213,7 +228,9 @@ define("vs/editor/contrib/quickOpen/quickOutline", ["require", "exports", "vs/nl
         var o = e[i];
         if ("module" === o.type && (t = i, n++, n > 1)) break;
       }
-      1 === n && e.splice(t, 1);
+      if (1 === n) {
+        e.splice(t, 1);
+      }
     };
 
     t.prototype.sortNormal = function(e, t, n) {

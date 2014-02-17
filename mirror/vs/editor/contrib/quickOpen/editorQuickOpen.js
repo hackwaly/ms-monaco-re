@@ -11,15 +11,19 @@ define("vs/editor/contrib/quickOpen/editorQuickOpen", ["require", "exports", "vs
 
     t.prototype.run = function() {
       var e = this;
-      this.widget || (this.widget = new o.QuickOpenEditorWidget(this.editor, function() {
-        return e._onClose(!1);
-      }, function() {
-        return e._onClose(!0);
-      }, function(t) {
-        return e.onType(t);
-      }));
+      if (!this.widget) {
+        this.widget = new o.QuickOpenEditorWidget(this.editor, function() {
+          return e._onClose(!1);
+        }, function() {
+          return e._onClose(!0);
+        }, function(t) {
+          return e.onType(t);
+        });
+      }
 
-      this.lastKnownEditorSelection || (this.lastKnownEditorSelection = this.editor.getSelection());
+      if (!this.lastKnownEditorSelection) {
+        this.lastKnownEditorSelection = this.editor.getSelection();
+      }
       var t = "";
       this.onType(t);
 
@@ -43,8 +47,10 @@ define("vs/editor/contrib/quickOpen/editorQuickOpen", ["require", "exports", "vs
     t.prototype.decorateLine = function(e, t) {
       var n = this;
       t.changeDecorations(function(t) {
-        n.lineHighlightDecorationId && (t.removeDecoration(n.lineHighlightDecorationId), n.lineHighlightDecorationId =
-          null);
+        if (n.lineHighlightDecorationId) {
+          t.removeDecoration(n.lineHighlightDecorationId);
+          n.lineHighlightDecorationId = null;
+        }
 
         n.lineHighlightDecorationId = t.addDecoration(e, {
           className: "lineHighlight",
@@ -55,17 +61,21 @@ define("vs/editor/contrib/quickOpen/editorQuickOpen", ["require", "exports", "vs
 
     t.prototype.clearDecorations = function() {
       var e = this;
-      this.lineHighlightDecorationId && this.editor.changeDecorations(function(t) {
-        t.removeDecoration(e.lineHighlightDecorationId);
+      if (this.lineHighlightDecorationId) {
+        this.editor.changeDecorations(function(t) {
+          t.removeDecoration(e.lineHighlightDecorationId);
 
-        e.lineHighlightDecorationId = null;
-      });
+          e.lineHighlightDecorationId = null;
+        });
+      }
     };
 
     t.prototype._onClose = function(e) {
       this.clearDecorations();
 
-      e && this.lastKnownEditorSelection && this.editor.setSelection(this.lastKnownEditorSelection, !0, !0, !0);
+      if (e && this.lastKnownEditorSelection) {
+        this.editor.setSelection(this.lastKnownEditorSelection, !0, !0, !0);
+      }
 
       this.lastKnownEditorSelection = null;
 
@@ -75,7 +85,10 @@ define("vs/editor/contrib/quickOpen/editorQuickOpen", ["require", "exports", "vs
     t.prototype.dispose = function() {
       e.prototype.dispose.call(this);
 
-      this.widget && (this.widget.destroy(), this.widget = null);
+      if (this.widget) {
+        this.widget.destroy();
+        this.widget = null;
+      }
     };
 
     return t;

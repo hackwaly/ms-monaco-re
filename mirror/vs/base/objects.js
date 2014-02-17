@@ -71,7 +71,9 @@ define("vs/base/objects", ["require", "exports", "./types"], function(e, t, n) {
   }
 
   function a(e, t, n) {
-    "undefined" == typeof e[t] && (e[t] = n);
+    if ("undefined" == typeof e[t]) {
+      e[t] = n;
+    }
   }
 
   function u(e) {
@@ -82,11 +84,15 @@ define("vs/base/objects", ["require", "exports", "./types"], function(e, t, n) {
   }
 
   function l(e, n) {
-    "undefined" == typeof n && (n = !1);
+    if ("undefined" == typeof n) {
+      n = !1;
+    }
 
-    n && (e = e.map(function(e) {
-      return e.toLowerCase();
-    }));
+    if (n) {
+      e = e.map(function(e) {
+        return e.toLowerCase();
+      });
+    }
     var i = t.arrayToHash(e);
     return n ? function(e) {
       return void 0 !== i[e.toLowerCase()] && i.hasOwnProperty(e.toLowerCase());

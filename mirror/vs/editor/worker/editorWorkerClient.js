@@ -43,9 +43,15 @@ define("vs/editor/worker/editorWorkerClient", ["require", "exports", "vs/base/wo
     };
 
     e.prototype._clearTimersAndPromises = function() {
-      -1 !== this._validateTimeout && (clearTimeout(this._validateTimeout), this._validateTimeout = -1);
+      if (-1 !== this._validateTimeout) {
+        clearTimeout(this._validateTimeout);
+        this._validateTimeout = -1;
+      }
 
-      this._validateRequest && (this._validateRequest.cancel(), this._validateRequest = null);
+      if (this._validateRequest) {
+        this._validateRequest.cancel();
+        this._validateRequest = null;
+      }
     };
 
     e.prototype._onModelEvents = function(e) {
@@ -91,9 +97,13 @@ define("vs/editor/worker/editorWorkerClient", ["require", "exports", "vs/base/wo
             }, a, ["properties"]));
         }
       }
-      o.length > 0 && this._sendModelEvent(o);
+      if (o.length > 0) {
+        this._sendModelEvent(o);
+      }
 
-      r && this._setupValidation();
+      if (r) {
+        this._setupValidation();
+      }
     };
 
     e.prototype._mixinProperties = function(e, t, n) {
@@ -107,11 +117,13 @@ define("vs/editor/worker/editorWorkerClient", ["require", "exports", "vs/base/wo
       var e = this;
       this._clearTimersAndPromises();
       var t = this._model.getMode().validationSupport;
-      t && t.autoValidateDelay >= 0 && (this._validateTimeout = setTimeout(function() {
-        e._validateTimeout = -1;
+      if (t && t.autoValidateDelay >= 0) {
+        this._validateTimeout = setTimeout(function() {
+          e._validateTimeout = -1;
 
-        e._validateRequest = e._sendValidate();
-      }, t.autoValidateDelay));
+          e._validateRequest = e._sendValidate();
+        }, t.autoValidateDelay);
+      }
     };
 
     e.prototype._sendInitialize = function() {
@@ -146,7 +158,9 @@ define("vs/editor/worker/editorWorkerClient", ["require", "exports", "vs/base/wo
 
       this.friendlyModuleId = this._languageModeModuleId;
       var r = this.friendlyModuleId.lastIndexOf("/");
-      r >= 0 && (this.friendlyModuleId = this.friendlyModuleId.substr(r + 1));
+      if (r >= 0) {
+        this.friendlyModuleId = this.friendlyModuleId.substr(r + 1);
+      }
       var s = {
         languageModeModuleId: t,
         extraData: o.extraData,
@@ -200,7 +214,10 @@ define("vs/editor/worker/editorWorkerClient", ["require", "exports", "vs/base/wo
 
     t.prototype.unbindModel = function(e) {
       var t = e.getAssociatedResource().toExternal();
-      this._models.hasOwnProperty(t) && (this._models[t].dispose(), delete this._models[t]);
+      if (this._models.hasOwnProperty(t)) {
+        this._models[t].dispose();
+        delete this._models[t];
+      }
     };
 
     t.prototype._onError = function(e, t) {
@@ -214,7 +231,9 @@ define("vs/editor/worker/editorWorkerClient", ["require", "exports", "vs/base/wo
         var n = e[t];
         if (n.model) {
           var i = this._models[n.resource];
-          i && i.publishMarkerUpdate(n);
+          if (i) {
+            i.publishMarkerUpdate(n);
+          }
         }
       }
     };

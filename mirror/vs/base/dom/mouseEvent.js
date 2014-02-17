@@ -17,7 +17,9 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
 
       this.detail = e.detail || 1;
 
-      "dblclick" === e.type && (this.detail = 2);
+      if ("dblclick" === e.type) {
+        this.detail = 2;
+      }
 
       this.posx = 0;
 
@@ -84,17 +86,21 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
           o(r.wheelDeltaX) : "undefined" != typeof s.HORIZONTAL_AXIS && s.axis === s.HORIZONTAL_AXIS && (this.deltaX = -
             e.detail / 3);
 
-        0 === this.deltaY && 0 === this.deltaX && e.wheelDelta && (this.deltaY = o(e.wheelDelta));
+        if (0 === this.deltaY && 0 === this.deltaX && e.wheelDelta) {
+          this.deltaY = o(e.wheelDelta);
+        }
       }
     }
     e.prototype.preventDefault = function() {
-      this.browserEvent && (this.browserEvent.preventDefault ? this.browserEvent.preventDefault() : this.browserEvent
-        .returnValue = !1);
+      if (this.browserEvent) {
+        this.browserEvent.preventDefault ? this.browserEvent.preventDefault() : this.browserEvent.returnValue = !1;
+      }
     };
 
     e.prototype.stopPropagation = function() {
-      this.browserEvent && (this.browserEvent.stopPropagation ? this.browserEvent.stopPropagation() : this.browserEvent
-        .cancelBubble = !0);
+      if (this.browserEvent) {
+        this.browserEvent.stopPropagation ? this.browserEvent.stopPropagation() : this.browserEvent.cancelBubble = !0;
+      }
     };
 
     return e;

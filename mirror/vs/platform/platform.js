@@ -31,7 +31,9 @@ define("vs/platform/platform", ["require", "exports", "vs/base/errors", "vs/base
   t.BaseDescriptor = s;
   var a = function() {
     function t(e, t, n) {
-      "undefined" == typeof n && (n = []);
+      if ("undefined" == typeof n) {
+        n = [];
+      }
 
       r.ok(!o.isUndefinedOrNull(e), "deferred desc must have a moduleId");
 
@@ -128,12 +130,15 @@ define("vs/platform/platform", ["require", "exports", "vs/base/errors", "vs/base
             if (r) {
               return i(r);
             }
-            o.isUndefinedOrNull(e[s.getCtorName()]) && i(new Error("module " + s.getModuleId() +
-              " does not export " + s.getCtorName()));
+            if (o.isUndefinedOrNull(e[s.getCtorName()])) {
+              i(new Error("module " + s.getModuleId() + " does not export " + s.getCtorName()));
+            }
             var a = s.getPayload().slice(0);
             a.unshift(e[s.getCtorName()]);
             var u = o.create.apply(null, a);
-            t && t.injectTo(u);
+            if (t) {
+              t.injectTo(u);
+            }
 
             s.assertType(u);
 

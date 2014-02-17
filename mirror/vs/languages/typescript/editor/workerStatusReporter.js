@@ -53,7 +53,10 @@ define("vs/languages/typescript/editor/workerStatusReporter", ["require", "expor
     };
 
     t.prototype.updateStatus = function(e) {
-      this.status !== e && (this.status = e, this.emit(t.Events.Updated, this.status));
+      if (this.status !== e) {
+        this.status = e;
+        this.emit(t.Events.Updated, this.status);
+      }
     };
 
     t.prototype.dispose = function() {
@@ -73,7 +76,9 @@ define("vs/languages/typescript/editor/workerStatusReporter", ["require", "expor
       if (!this.status) {
         this.status = [];
         for (var t = e.getWorkers(), n = 0, i = t.length; i > n; n++) {
-          "vs/languages/typescript/typescriptWorker2" === t[n].moduleIdentifier && this.status.push(new l(t[n]));
+          if ("vs/languages/typescript/typescriptWorker2" === t[n].moduleIdentifier) {
+            this.status.push(new l(t[n]));
+          }
         }
       }
       return this.status;

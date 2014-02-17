@@ -1,6 +1,8 @@
 define("vs/base/collections", ["require", "exports", "vs/base/errors"], function(e, t, n) {
   function i(e, t, n) {
-    "undefined" == typeof n && (n = null);
+    if ("undefined" == typeof n) {
+      n = null;
+    }
     var i = String(t);
     return e.hasOwnProperty(i) ? e[i] : n;
   }
@@ -21,7 +23,9 @@ define("vs/base/collections", ["require", "exports", "vs/base/errors"], function
   function a(e) {
     var t = [];
     for (var n in e) {
-      e.hasOwnProperty(n) && t.push(e[n]);
+      if (e.hasOwnProperty(n)) {
+        t.push(e[n]);
+      }
     }
     return t;
   }
@@ -45,7 +49,10 @@ define("vs/base/collections", ["require", "exports", "vs/base/errors"], function
       var i = t(e);
 
       var o = n.lookup(i);
-      o || (o = [], n.add(i, o));
+      if (!o) {
+        o = [];
+        n.add(i, o);
+      }
 
       o.push(e);
     });
@@ -302,7 +309,9 @@ define("vs/base/collections", ["require", "exports", "vs/base/errors"], function
 
     t.prototype.add = function(e, t) {
       var n = this.hashFn(e);
-      this._data.hasOwnProperty(n) || (this._count += 1);
+      if (!this._data.hasOwnProperty(n)) {
+        this._count += 1;
+      }
 
       this._data[n] = {
         key: e,
@@ -317,7 +326,10 @@ define("vs/base/collections", ["require", "exports", "vs/base/errors"], function
 
     t.prototype.remove = function(e) {
       var t = this.hashFn(e);
-      this._data.hasOwnProperty(t) && (this._count -= 1, delete this._data[t]);
+      if (this._data.hasOwnProperty(t)) {
+        this._count -= 1;
+        delete this._data[t];
+      }
     };
 
     t.prototype.containsKey = function(e) {
@@ -340,7 +352,9 @@ define("vs/base/collections", ["require", "exports", "vs/base/errors"], function
   t.StringDictionary = y;
   var _ = function(e) {
     function t(t) {
-      "undefined" == typeof t && (t = 10);
+      if ("undefined" == typeof t) {
+        t = 10;
+      }
 
       e.call(this);
 

@@ -85,8 +85,10 @@ define("vs/editor/core/controller/mouseHandler", ["require", "exports", "vs/base
 
       this._unhook();
 
-      - 1 !== this.hideTextAreaTimeout && (window.clearTimeout(this.hideTextAreaTimeout), this.hideTextAreaTimeout = -
-        1);
+      if (-1 !== this.hideTextAreaTimeout) {
+        window.clearTimeout(this.hideTextAreaTimeout);
+        this.hideTextAreaTimeout = -1;
+      }
     };
 
     t.prototype.onLayoutChanged = function() {
@@ -181,25 +183,33 @@ define("vs/editor/core/controller/mouseHandler", ["require", "exports", "vs/base
     };
 
     t.prototype._hookedOnScroll = function() {
-      var e = this; - 1 === this.onScrollTimeout && (this.onScrollTimeout = window.setTimeout(function() {
-        e.onScrollTimeout = -1;
+      var e = this;
+      if (-1 === this.onScrollTimeout) {
+        this.onScrollTimeout = window.setTimeout(function() {
+          e.onScrollTimeout = -1;
 
-        e._updateMouse(e.monitoringStartTargetType, null, !0);
-      }, 10));
+          e._updateMouse(e.monitoringStartTargetType, null, !0);
+        }, 10);
+      }
     };
 
     t.prototype._hook = function(e) {
       var t = this;
-      this.mouseMoveMonitor.isMonitoring() || (this.monitoringStartTargetType = e, this.mouseMoveMonitor.startMonitoring(
-        d, function(e) {
+      if (!this.mouseMoveMonitor.isMonitoring()) {
+        this.monitoringStartTargetType = e;
+        this.mouseMoveMonitor.startMonitoring(d, function(e) {
           t._updateMouse(t.monitoringStartTargetType, e, !0);
         }, function() {
           t._unhook();
-        }));
+        });
+      }
     };
 
     t.prototype._unhook = function() {
-      -1 !== this.onScrollTimeout && (window.clearTimeout(this.onScrollTimeout), this.onScrollTimeout = -1);
+      if (-1 !== this.onScrollTimeout) {
+        window.clearTimeout(this.onScrollTimeout);
+        this.onScrollTimeout = -1;
+      }
     };
 
     t.prototype._getPositionOutsideEditor = function(e, t) {
@@ -223,7 +233,9 @@ define("vs/editor/core/controller/mouseHandler", ["require", "exports", "vs/base
     };
 
     t.prototype._updateMouse = function(e, n, o, s) {
-      "undefined" == typeof s && (s = 0);
+      if ("undefined" == typeof s) {
+        s = 0;
+      }
 
       n = n || this.lastMouseEvent;
 
@@ -249,11 +261,15 @@ define("vs/editor/core/controller/mouseHandler", ["require", "exports", "vs/base
       }
       if (s) {
         var p = (new Date).getTime();
-        p - this.lastSetMouseDownCountTime > t.CLEAR_MOUSE_DOWN_COUNT_TIME && (s = 1);
+        if (p - this.lastSetMouseDownCountTime > t.CLEAR_MOUSE_DOWN_COUNT_TIME) {
+          s = 1;
+        }
 
         this.lastSetMouseDownCountTime = p;
 
-        s > this.lastMouseDownCount + 1 && (s = this.lastMouseDownCount + 1);
+        if (s > this.lastMouseDownCount + 1) {
+          s = this.lastMouseDownCount + 1;
+        }
         var f = new i.Position(a, u);
         this.lastMouseDownPosition && this.lastMouseDownPosition.equals(f) ? this.lastMouseDownPositionEqualCount++ :
           this.lastMouseDownPositionEqualCount = 1;

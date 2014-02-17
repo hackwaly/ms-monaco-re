@@ -52,7 +52,9 @@ define("vs/editor/core/view/parts/overlayWidgets/overlayWidgets", ["require", "e
       i.preference = t;
 
       this._requestModificationFrame(function() {
-        n._widgets.hasOwnProperty(e.getId()) && n._renderWidget(i);
+        if (n._widgets.hasOwnProperty(e.getId())) {
+          n._renderWidget(i);
+        }
       });
     };
 
@@ -90,11 +92,15 @@ define("vs/editor/core/view/parts/overlayWidgets/overlayWidgets", ["require", "e
       var i = this;
       if (t)
         for (n in this._widgets) {
-          this._widgets.hasOwnProperty(n) && t.renderedOverlayWidgets++;
+          if (this._widgets.hasOwnProperty(n)) {
+            t.renderedOverlayWidgets++;
+          }
         }
       this._requestModificationFrame(function() {
         for (n in i._widgets) {
-          i._widgets.hasOwnProperty(n) && i._renderWidget(i._widgets[n]);
+          if (i._widgets.hasOwnProperty(n)) {
+            i._renderWidget(i._widgets[n]);
+          }
         }
       });
     };

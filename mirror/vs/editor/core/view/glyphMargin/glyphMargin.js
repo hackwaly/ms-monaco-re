@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -148,7 +150,9 @@ define(["require", "exports", "vs/editor/core/view/viewContext", "vs/editor/core
             if (!a.lineIsVisible(o)) continue;
             l = a.getViewportVerticalOffsetForLineNumber(o);
 
-            k.hasOwnProperty(l.toString()) || (k[l.toString()] = {});
+            if (!k.hasOwnProperty(l.toString())) {
+              k[l.toString()] = {};
+            }
 
             k[l.toString()][f.options.glyphMarginClassName] = !0;
           } else {
@@ -156,7 +160,9 @@ define(["require", "exports", "vs/editor/core/view/viewContext", "vs/editor/core
             if (h)
               while (h.next()) {
                 l = h.getTop();
-                k.hasOwnProperty(l.toString()) || (k[l.toString()] = {});
+                if (!k.hasOwnProperty(l.toString())) {
+                  k[l.toString()] = {};
+                }
                 k[l.toString()][f.options.glyphMarginClassName] = !0;
               }
           }

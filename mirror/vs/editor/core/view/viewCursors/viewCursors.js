@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -70,7 +72,10 @@ define(["require", "exports", "vs/editor/core/view/viewEventHandler", "vs/editor
     b.prototype.dispose = function() {
       this.context.removeEventHandler(this);
 
-      this.blinkTimer !== -1 && (window.clearInterval(this.blinkTimer), this.blinkTimer = -1);
+      if (this.blinkTimer !== -1) {
+        window.clearInterval(this.blinkTimer);
+        this.blinkTimer = -1;
+      }
     };
 
     b.prototype.getDomNode = function() {
@@ -212,13 +217,18 @@ define(["require", "exports", "vs/editor/core/view/viewEventHandler", "vs/editor
 
     b.prototype.updateBlinking = function() {
       var a = this;
-      this.blinkTimer !== -1 && (window.clearInterval(this.blinkTimer), this.blinkTimer = -1);
+      if (this.blinkTimer !== -1) {
+        window.clearInterval(this.blinkTimer);
+        this.blinkTimer = -1;
+      }
       var c = this.getRenderType();
       c === g.Visible || c === g.Blink ? this._show() : this._hide();
 
-      c === g.Blink && (this.blinkTimer = window.setInterval(function() {
-        return a._blink();
-      }, b.BLINK_INTERVAL));
+      if (c === g.Blink) {
+        this.blinkTimer = window.setInterval(function() {
+          return a._blink();
+        }, b.BLINK_INTERVAL);
+      }
     };
 
     b.prototype._blink = function() {

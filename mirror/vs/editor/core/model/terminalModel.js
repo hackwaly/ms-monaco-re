@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -22,9 +24,13 @@ define(["require", "exports", "./model", "vs/editor/core/position", "vs/editor/c
 
     var k = function(a) {
       function b(b, c, d, e) {
-        typeof d == "undefined" && (d = null);
+        if (typeof d == "undefined") {
+          d = null;
+        }
 
-        typeof e == "undefined" && (e = null);
+        if (typeof e == "undefined") {
+          e = null;
+        }
 
         a.call(this, "", c, d);
 
@@ -41,7 +47,9 @@ define(["require", "exports", "./model", "vs/editor/core/position", "vs/editor/c
       __extends(b, a);
 
       b.prototype.setValue = function(b, c) {
-        typeof c == "undefined" && (c = null);
+        if (typeof c == "undefined") {
+          c = null;
+        }
 
         a.prototype.setValue.call(this, "", c);
 
@@ -92,11 +100,19 @@ define(["require", "exports", "./model", "vs/editor/core/position", "vs/editor/c
                 var p = null;
                 o = ++n < l ? b.charAt(n) : null;
 
-                o && o >= "0" && o <= "9" && (p = o, o = ++n < l ? b.charAt(n) : null);
+                if (o && o >= "0" && o <= "9") {
+                  p = o;
+                  o = ++n < l ? b.charAt(n) : null;
+                }
 
-                o && o >= "0" && o <= "9" && (p += o, o = ++n < l ? b.charAt(n) : null);
+                if (o && o >= "0" && o <= "9") {
+                  p += o;
+                  o = ++n < l ? b.charAt(n) : null;
+                }
 
-                p === null && (p = "0");
+                if (p === null) {
+                  p = "0";
+                }
                 if (o === "m") {
                   g = parseInt(p, 10);
 
@@ -146,9 +162,14 @@ define(["require", "exports", "./model", "vs/editor/core/position", "vs/editor/c
         this.change(function(c) {
           var d = 0;
           for (var e = 0, f = a.length; e < f; e++) {
-            a.charAt(e) === "\n" && (b.appendOutputPiece(c, a.substring(d, e), !0), d = e + 1);
+            if (a.charAt(e) === "\n") {
+              b.appendOutputPiece(c, a.substring(d, e), !0);
+              d = e + 1;
+            }
           }
-          d < f && b.appendOutputPiece(c, a.substr(d), !1);
+          if (d < f) {
+            b.appendOutputPiece(c, a.substr(d), !1);
+          }
         });
       };
 
@@ -156,7 +177,9 @@ define(["require", "exports", "./model", "vs/editor/core/position", "vs/editor/c
         var a = this.promptText;
 
         var b = this.getLineContent(this.getLineCount());
-        b !== "" && (a = "\n" + a);
+        if (b !== "") {
+          a = "\n" + a;
+        }
 
         this.forceAppendOutputColumn = 0;
 
@@ -169,11 +192,13 @@ define(["require", "exports", "./model", "vs/editor/core/position", "vs/editor/c
         var b = this;
 
         var c = this.getEditableRange();
-        this.promptText && this.promptText !== a && c.startColumn > this.promptText.length && this.change(function(d) {
-          var e = d.deleteText(new i.Range(c.startLineNumber, c.startColumn - b.promptText.length, c.startLineNumber,
-            c.startColumn));
-          d.insertText(e.position, a, !0);
-        });
+        if (this.promptText && this.promptText !== a && c.startColumn > this.promptText.length) {
+          this.change(function(d) {
+            var e = d.deleteText(new i.Range(c.startLineNumber, c.startColumn - b.promptText.length, c.startLineNumber,
+              c.startColumn));
+            d.insertText(e.position, a, !0);
+          });
+        }
 
         this.promptText = a || "";
 
@@ -190,11 +215,13 @@ define(["require", "exports", "./model", "vs/editor/core/position", "vs/editor/c
             var f = Number.MIN_VALUE;
             c = [];
             for (var g = 0; g < e.length; g++) {
-              e[g] !== f && c.push({
-                startIndex: g,
-                type: e[g] === 0 ? "" : "meta.code" + e[g] + ".terminal",
-                bracket: j.Bracket.None
-              });
+              if (e[g] !== f) {
+                c.push({
+                  startIndex: g,
+                  type: e[g] === 0 ? "" : "meta.code" + e[g] + ".terminal",
+                  bracket: j.Bracket.None
+                });
+              }
               f = e[g];
             }
           }

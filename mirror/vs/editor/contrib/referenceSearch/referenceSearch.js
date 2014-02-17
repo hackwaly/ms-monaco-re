@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -377,21 +379,27 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/s
       }
       this.model = a;
 
-      this.model && (this.toUnhook.push(this.tree.addListener(N.Events.FOCUSED, function(a) {
-        c.showReferencePreview(a);
-      })), this.toUnhook.push(this.tree.addListener(N.Events.SELECTED, function(a) {
-        c.showReferencePreview(a);
+      if (this.model) {
+        this.toUnhook.push(this.tree.addListener(N.Events.FOCUSED, function(a) {
+          c.showReferencePreview(a);
+        }));
+        this.toUnhook.push(this.tree.addListener(N.Events.SELECTED, function(a) {
+          c.showReferencePreview(a);
 
-        c.model.currentReference = a;
-      })), this.tree.setInput(this.model).then(function() {
-        c.tree.setSelection([c.model.currentReference]);
-      }).done(null, A.onUnexpectedError), this.toUnhook.push(this.preview.addListener(H.EventType.MouseDown,
-        function(a) {
-          a.event.detail === 2 && c.emit(b.Events.EditorDoubleClick, {
-            reference: c.tree.getFocus(),
-            range: a.target.range
-          });
-        })));
+          c.model.currentReference = a;
+        }));
+        this.tree.setInput(this.model).then(function() {
+          c.tree.setSelection([c.model.currentReference]);
+        }).done(null, A.onUnexpectedError);
+        this.toUnhook.push(this.preview.addListener(H.EventType.MouseDown, function(a) {
+          if (a.event.detail === 2) {
+            c.emit(b.Events.EditorDoubleClick, {
+              reference: c.tree.getFocus(),
+              range: a.target.range
+            });
+          }
+        }));
+      }
     };
 
     b.prototype.focus = function() {
@@ -449,10 +457,12 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/s
           };
           for (var f = 0; f < b.model.references.length; f++) {
             var g = b.model.references[f];
-            g.resourceUrl === a.resourceUrl && d.push({
-              range: g.range,
-              options: e
-            });
+            if (g.resourceUrl === a.resourceUrl) {
+              d.push({
+                range: g.range,
+                options: e
+              });
+            }
           }
           b.previewDecorations = c.deltaDecorations(b.previewDecorations, d);
         });
@@ -575,15 +585,18 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/s
         a.model.currentReference = a.model.references[d];
 
         a.callOnClear.push(a.model.addListener(K.ON_CURRENT_REF, function() {
-          a.model.currentReference && (a.modelRevealing = !0, a.widget.revealCurrentReference().done(function() {
-            a.modelRevealing = !1;
+          if (a.model.currentReference) {
+            a.modelRevealing = !0;
+            a.widget.revealCurrentReference().done(function() {
+              a.modelRevealing = !1;
 
-            window.setTimeout(function() {
-              a.widget.showReferencePreview(a.model.currentReference);
+              window.setTimeout(function() {
+                a.widget.showReferencePreview(a.model.currentReference);
 
-              a.widget.showAtReference(a.model.currentReference);
-            }, 0);
-          }, A.onUnexpectedError));
+                a.widget.showAtReference(a.model.currentReference);
+              }, 0);
+            }, A.onUnexpectedError);
+          }
         }));
 
         a._startTime = Date.now();
@@ -615,7 +628,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/s
       }));
 
       this.callOnClear.push(this.editor.addListener(H.EventType.ModelChanged, function() {
-        a.modelRevealing || a.clear();
+        if (!a.modelRevealing) {
+          a.clear();
+        }
       }));
 
       this.widget = new P(this.editorService, this.requestService, this.editor);

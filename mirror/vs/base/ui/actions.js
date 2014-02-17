@@ -22,13 +22,21 @@ define("vs/base/ui/actions", ["require", "exports", "vs/base/lib/winjs.base", "v
   t.isAction = r;
   var a = function(e) {
     function t(t, n, i, o, r) {
-      "undefined" == typeof n && (n = "");
+      if ("undefined" == typeof n) {
+        n = "";
+      }
 
-      "undefined" == typeof i && (i = "");
+      if ("undefined" == typeof i) {
+        i = "";
+      }
 
-      "undefined" == typeof o && (o = !0);
+      if ("undefined" == typeof o) {
+        o = !0;
+      }
 
-      "undefined" == typeof r && (r = null);
+      if ("undefined" == typeof r) {
+        r = null;
+      }
 
       e.call(this);
 
@@ -64,9 +72,12 @@ define("vs/base/ui/actions", ["require", "exports", "vs/base/lib/winjs.base", "v
     });
 
     t.prototype._setLabel = function(e) {
-      this._label !== e && (this._label = e, this.emit(t.LABEL, {
-        source: this
-      }));
+      if (this._label !== e) {
+        this._label = e;
+        this.emit(t.LABEL, {
+          source: this
+        });
+      }
     };
 
     Object.defineProperty(t.prototype, "class", {
@@ -81,9 +92,12 @@ define("vs/base/ui/actions", ["require", "exports", "vs/base/lib/winjs.base", "v
     });
 
     t.prototype._setClass = function(e) {
-      this._cssClass !== e && (this._cssClass = e, this.emit(t.CLASS, {
-        source: this
-      }));
+      if (this._cssClass !== e) {
+        this._cssClass = e;
+        this.emit(t.CLASS, {
+          source: this
+        });
+      }
     };
 
     Object.defineProperty(t.prototype, "enabled", {
@@ -98,9 +112,12 @@ define("vs/base/ui/actions", ["require", "exports", "vs/base/lib/winjs.base", "v
     });
 
     t.prototype._setEnabled = function(e) {
-      this._enabled !== e && (this._enabled = e, this.emit(t.ENABLED, {
-        source: this
-      }));
+      if (this._enabled !== e) {
+        this._enabled = e;
+        this.emit(t.ENABLED, {
+          source: this
+        });
+      }
     };
 
     Object.defineProperty(t.prototype, "checked", {
@@ -115,9 +132,12 @@ define("vs/base/ui/actions", ["require", "exports", "vs/base/lib/winjs.base", "v
     });
 
     t.prototype._setChecked = function(e) {
-      this._checked !== e && (this._checked = e, this.emit(t.CHECKED, {
-        source: this
-      }));
+      if (this._checked !== e) {
+        this._checked = e;
+        this.emit(t.CHECKED, {
+          source: this
+        });
+      }
     };
 
     Object.defineProperty(t.prototype, "order", {

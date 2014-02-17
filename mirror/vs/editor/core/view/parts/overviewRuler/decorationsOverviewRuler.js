@@ -101,12 +101,14 @@ define("vs/editor/core/view/parts/overviewRuler/decorationsOverviewRuler", ["req
       var o = [];
       for (e = 0, t = i.length; t > e; e++) {
         n = i[e];
-        n.options.overviewRuler.color && o.push({
-          startLineNumber: n.range.startLineNumber,
-          endLineNumber: n.range.endLineNumber,
-          color: n.options.overviewRuler.color,
-          position: n.options.overviewRuler.position
-        });
+        if (n.options.overviewRuler.color) {
+          o.push({
+            startLineNumber: n.range.startLineNumber,
+            endLineNumber: n.range.endLineNumber,
+            color: n.options.overviewRuler.color,
+            position: n.options.overviewRuler.position
+          });
+        }
       }
       return o;
     };
@@ -135,10 +137,15 @@ define("vs/editor/core/view/parts/overviewRuler/decorationsOverviewRuler", ["req
     t.prototype._render = function() {
       var e = this;
       if (this._shouldUpdateDecorations || this._shouldUpdateCursorPosition) {
-        this._shouldUpdateDecorations && (this._shouldUpdateDecorations = !1, this._zonesFromDecorations = this._createZonesFromDecorations());
+        if (this._shouldUpdateDecorations) {
+          this._shouldUpdateDecorations = !1;
+          this._zonesFromDecorations = this._createZonesFromDecorations();
+        }
 
-        this._shouldUpdateCursorPosition && (this._shouldUpdateCursorPosition = !1, this._zonesFromCursors = this._hideCursor ? [] :
-          this._createZonesFromCursors());
+        if (this._shouldUpdateCursorPosition) {
+          this._shouldUpdateCursorPosition = !1;
+          this._zonesFromCursors = this._hideCursor ? [] : this._createZonesFromCursors();
+        }
         var t = [];
         t = t.concat(this._zonesFromDecorations);
 

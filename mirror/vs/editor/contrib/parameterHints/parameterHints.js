@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -44,8 +46,9 @@ define(["require", "exports", "vs/nls", "./parameterHintsModel", "./parameterHin
     b.prototype.injectHandlerService = function(b) {
       a.prototype.injectHandlerService.call(this, b);
 
-      this.parameterHintsWidget || (this.parameterHintsWidget = new l.ParameterHintsWidget(this.model, this.editor,
-        this.handlerService));
+      if (!this.parameterHintsWidget) {
+        this.parameterHintsWidget = new l.ParameterHintsWidget(this.model, this.editor, this.handlerService);
+      }
     };
 
     b.prototype.getEnablementState = function() {
@@ -59,9 +62,15 @@ define(["require", "exports", "vs/nls", "./parameterHintsModel", "./parameterHin
     b.prototype.dispose = function() {
       a.prototype.dispose.call(this);
 
-      this.model && (this.model.dispose(), this.model = null);
+      if (this.model) {
+        this.model.dispose();
+        this.model = null;
+      }
 
-      this.parameterHintsWidget && (this.parameterHintsWidget.destroy(), this.parameterHintsWidget = null);
+      if (this.parameterHintsWidget) {
+        this.parameterHintsWidget.destroy();
+        this.parameterHintsWidget = null;
+      }
     };
 
     b.ID = "editor.contrib.parameterHints.trigger";

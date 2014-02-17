@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -53,7 +55,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/platform/platform", 
       this.editorListeners.push(this.editor.addListener(r.EventType.ModelChanged, function() {
         b.disposeBindingAndModel();
 
-        b.editor.getModel() && b.lastState && b.widgetIsVisible && b._start(b.lastState.isReplaceEnabled, !1, !1);
+        if (b.editor.getModel() && b.lastState && b.widgetIsVisible) {
+          b._start(b.lastState.isReplaceEnabled, !1, !1);
+        }
       }));
 
       this.editorListeners.push(this.editor.addListener(r.EventType.Disposed, function() {
@@ -83,17 +87,28 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/platform/platform", 
 
       this.widgetListeners = [];
 
-      this.widget && (this.widget.destroy(), this.widget = null);
+      if (this.widget) {
+        this.widget.destroy();
+        this.widget = null;
+      }
 
       this.disposeBindingAndModel();
     };
 
     a.prototype.disposeBindingAndModel = function() {
-      this.binding && (this.binding.dispose(), this.binding = null);
+      if (this.binding) {
+        this.binding.dispose();
+        this.binding = null;
+      }
 
-      this.widget && this.widget.setModel(null);
+      if (this.widget) {
+        this.widget.setModel(null);
+      }
 
-      this.model && (this.model.destroy(), this.model = null);
+      if (this.model) {
+        this.model.destroy();
+        this.model = null;
+      }
     };
 
     a.prototype.onEscape = function() {
@@ -113,32 +128,45 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/platform/platform", 
     a.prototype.onWidgetUserInput = function() {
       this.lastState = this.widget.getState();
 
-      this.model && this.model.update(this.lastState, !0);
+      if (this.model) {
+        this.model.update(this.lastState, !0);
+      }
     };
 
     a.prototype._start = function(a, b, c) {
       var d = this;
-      this.widget || (this.widget = new o.FindWidget(this.editor), this.widgetListeners.push(this.widget.addListener(
-        o.FindWidget.USER_INPUT_EVENT, function() {
+      if (!this.widget) {
+        this.widget = new o.FindWidget(this.editor);
+        this.widgetListeners.push(this.widget.addListener(o.FindWidget.USER_INPUT_EVENT, function() {
           return d.onWidgetUserInput();
-        })), this.widgetListeners.push(this.widget.addListener(o.FindWidget.USER_CLOSED_EVENT, function() {
-        return d.onWidgetClosed();
-      })));
+        }));
+        this.widgetListeners.push(this.widget.addListener(o.FindWidget.USER_CLOSED_EVENT, function() {
+          return d.onWidgetClosed();
+        }));
+      }
 
-      this.model || (this.model = new p.FindModelBoundToEditorModel(this.editor), this.widget.setModel(this.model));
+      if (!this.model) {
+        this.model = new p.FindModelBoundToEditorModel(this.editor);
+        this.widget.setModel(this.model);
+      }
 
-      this.binding === null && (this.binding = this.handlerService.bind({
-        key: "Escape"
-      }, function() {
-        return d.onEscape();
-      }));
+      if (this.binding === null) {
+        this.binding = this.handlerService.bind({
+          key: "Escape"
+        }, function() {
+          return d.onEscape();
+        });
+      }
 
       this.lastState = this.lastState || this.widget.getState();
       var e = this.editor.getSelection();
-      b && !e.isEmpty() && e.startLineNumber === e.endLineNumber && (this.lastState.searchString = this.editor.getModel()
-        .getValueInRange(e));
+      if (b && !e.isEmpty() && e.startLineNumber === e.endLineNumber) {
+        this.lastState.searchString = this.editor.getModel().getValueInRange(e);
+      }
 
-      a && (this.lastState.isReplaceEnabled = a);
+      if (a) {
+        this.lastState.isReplaceEnabled = a;
+      }
 
       this.model.start(this.lastState, c);
 

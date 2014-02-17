@@ -53,8 +53,10 @@ define(["require", "exports", "vs/base/strings", "vs/editor/core/range", "vs/edi
         }
         this.lines.push(h.line);
       }
-      this.placeHolders.length > this.startPlaceHolderIndex && this.placeHolders[this.startPlaceHolderIndex].value ===
-        "" && this.placeHolders.length > 1 && this.startPlaceHolderIndex++;
+      if (this.placeHolders.length > this.startPlaceHolderIndex && this.placeHolders[this.startPlaceHolderIndex].value ===
+        "" && this.placeHolders.length > 1) {
+        this.startPlaceHolderIndex++;
+      }
     };
 
     a.prototype.parseLine = function(a) {
@@ -104,7 +106,9 @@ define(["require", "exports", "vs/base/strings", "vs/editor/core/range", "vs/edi
     };
 
     a.prototype.extractLineIndentation = function(a, b) {
-      typeof b == "undefined" && (b = Number.MAX_VALUE);
+      if (typeof b == "undefined") {
+        b = Number.MAX_VALUE;
+      }
       var c = h.getLeadingWhitespace(a);
       return c.length > b - 1 ? c.substring(0, b - 1) : c;
     };
@@ -241,12 +245,16 @@ define(["require", "exports", "vs/base/strings", "vs/editor/core/range", "vs/edi
           var b = a.lineNumber;
 
           var d = c.editor.getModel().getDecorationRange(c.highlightDecorationId);
-          (b < d.startLineNumber || b > d.endLineNumber) && c.stopAll();
+          if (b < d.startLineNumber || b > d.endLineNumber) {
+            c.stopAll();
+          }
         } else if (a.changeType === j.EventType.ModelContentChangedLinesInserted) {
           var e = a.fromLineNumber;
 
           var d = c.editor.getModel().getDecorationRange(c.highlightDecorationId);
-          (e < d.startLineNumber || e > d.endLineNumber) && c.stopAll();
+          if (e < d.startLineNumber || e > d.endLineNumber) {
+            c.stopAll();
+          }
         } else if (a.changeType === j.EventType.ModelContentChangedLinesDeleted) {
           var f = a.fromLineNumber;
 
@@ -257,7 +265,9 @@ define(["require", "exports", "vs/base/strings", "vs/editor/core/range", "vs/edi
           var h = g < d.startLineNumber;
 
           var i = f > d.endLineNumber;
-          (h || i) && c.stopAll();
+          if (h || i) {
+            c.stopAll();
+          }
         }
       }));
 
@@ -266,7 +276,9 @@ define(["require", "exports", "vs/base/strings", "vs/editor/core/range", "vs/edi
         var b = c.editor.getModel().getDecorationRange(c.highlightDecorationId);
 
         var d = a.position.lineNumber;
-        (d < b.startLineNumber || d > b.endLineNumber) && c.stopAll();
+        if (d < b.startLineNumber || d > b.endLineNumber) {
+          c.stopAll();
+        }
       }));
 
       this.listenersToRemove.push(this.editor.addListener(j.EventType.ModelChanged, function() {
@@ -300,12 +312,14 @@ define(["require", "exports", "vs/base/strings", "vs/editor/core/range", "vs/edi
           var l = j.className === "finish-snippet-placeholder";
 
           var m = Number(k) ^ Number(l);
-          m && c.editor.changeDecorations(function(a) {
-            var b = k ? "finish-snippet-placeholder" : "snippet-placeholder";
-            a.changeDecorationOptions(h, {
-              className: b
+          if (m) {
+            c.editor.changeDecorations(function(a) {
+              var b = k ? "finish-snippet-placeholder" : "snippet-placeholder";
+              a.changeDecorationOptions(h, {
+                className: b
+              });
             });
-          });
+          }
         }
       }));
 
@@ -433,7 +447,9 @@ define(["require", "exports", "vs/base/strings", "vs/editor/core/range", "vs/edi
       var h = b.getModel();
 
       var i = f;
-      e && (i = i.plusRange(e));
+      if (e) {
+        i = i.plusRange(e);
+      }
       var j = d.bind(h.getLineContent(i.startLineNumber), i.startLineNumber - 1, i.startColumn - 1, b);
 
       var m = j.lines.join("\n");

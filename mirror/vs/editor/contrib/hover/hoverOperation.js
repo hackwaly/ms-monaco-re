@@ -60,20 +60,29 @@ define("vs/editor/contrib/hover/hoverOperation", ["require", "exports", "vs/base
       };
 
       e.prototype._triggerSyncComputation = function() {
-        this._computer.computeSync && this._computer.onResult(this._computer.computeSync(), !0);
+        if (this._computer.computeSync) {
+          this._computer.onResult(this._computer.computeSync(), !0);
+        }
 
         this._asyncComputationPromiseDone ? (this._state = 0, this._onComplete(this._computer.getResult())) : (this._state =
           3, this._onProgress(this._computer.getResult()));
       };
 
       e.prototype._withAsyncResult = function(e) {
-        e && this._computer.onResult(e, !1);
+        if (e) {
+          this._computer.onResult(e, !1);
+        }
 
-        3 === this._state && (this._state = 0, this._onComplete(this._computer.getResult()));
+        if (3 === this._state) {
+          this._state = 0;
+          this._onComplete(this._computer.getResult());
+        }
       };
 
       e.prototype._onComplete = function(e) {
-        this._completeCallback && this._completeCallback(e);
+        if (this._completeCallback) {
+          this._completeCallback(e);
+        }
       };
 
       e.prototype._onError = function(e) {
@@ -81,20 +90,33 @@ define("vs/editor/contrib/hover/hoverOperation", ["require", "exports", "vs/base
       };
 
       e.prototype._onProgress = function(e) {
-        this._progressCallback && this._progressCallback(e);
+        if (this._progressCallback) {
+          this._progressCallback(e);
+        }
       };
 
       e.prototype.start = function() {
-        0 === this._state && (this._state = 1, this._firstWaitScheduler.schedule());
+        if (0 === this._state) {
+          this._state = 1;
+          this._firstWaitScheduler.schedule();
+        }
       };
 
       e.prototype.cancel = function() {
-        1 === this._state && this._firstWaitScheduler.cancel();
+        if (1 === this._state) {
+          this._firstWaitScheduler.cancel();
+        }
 
-        2 === this._state && (this._secondWaitScheduler.cancel(), this._asyncComputationPromise && this._asyncComputationPromise
-          .cancel());
+        if (2 === this._state) {
+          this._secondWaitScheduler.cancel();
+          if (this._asyncComputationPromise) {
+            this._asyncComputationPromise.cancel();
+          }
+        }
 
-        3 === this._state && this._asyncComputationPromise && this._asyncComputationPromise.cancel();
+        if (3 === this._state && this._asyncComputationPromise) {
+          this._asyncComputationPromise.cancel();
+        }
 
         this._state = 0;
       };

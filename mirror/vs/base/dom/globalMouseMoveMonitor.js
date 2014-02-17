@@ -36,7 +36,9 @@ define("vs/base/dom/globalMouseMoveMonitor", ["require", "exports", "vs/base/lif
         var t = this.onStopCallback;
         this.onStopCallback = null;
 
-        e && t();
+        if (e) {
+          t();
+        }
       }
     };
 
@@ -66,12 +68,16 @@ define("vs/base/dom/globalMouseMoveMonitor", ["require", "exports", "vs/base/lif
           var l = a[a.length - 1];
           this.hooks.push(i.addDisposableListener(l.window.document, "mouseout", function(e) {
             var t = new o.StandardMouseEvent(e);
-            "html" === t.target.tagName.toLowerCase() && s.stopMonitoring(!0);
+            if ("html" === t.target.tagName.toLowerCase()) {
+              s.stopMonitoring(!0);
+            }
           }));
 
           this.hooks.push(i.addDisposableListener(l.window.document, "mouseover", function(e) {
             var t = new o.StandardMouseEvent(e);
-            "html" === t.target.tagName.toLowerCase() && s.stopMonitoring(!0);
+            if ("html" === t.target.tagName.toLowerCase()) {
+              s.stopMonitoring(!0);
+            }
           }));
 
           this.hooks.push(i.addDisposableListener(l.window.document.body, "mouseleave", function() {

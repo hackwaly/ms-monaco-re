@@ -74,18 +74,22 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
         var i = t[r];
 
         var o = s.Severity.Error;
-        this._compilationSettings.diagnosticClassifier && (o = this._compilationSettings.diagnosticClassifier(i));
+        if (this._compilationSettings.diagnosticClassifier) {
+          o = this._compilationSettings.diagnosticClassifier(i);
+        }
 
-        o && n.push({
-          type: "",
-          code: -1,
-          text: i.text(),
-          severity: o,
-          range: this.rangeFromMinAndLim({
-            minChar: i.start(),
-            limChar: i.start() + i.length()
-          }, e)
-        });
+        if (o) {
+          n.push({
+            type: "",
+            code: -1,
+            text: i.text(),
+            severity: o,
+            range: this.rangeFromMinAndLim({
+              minChar: i.start(),
+              limChar: i.start() + i.length()
+            }, e)
+          });
+        }
       }
       return n;
     };
@@ -216,14 +220,16 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
           var l = e.FILTER(t, n[s].name);
           if (l) {
             var c = this._host.getScriptSnapshot(a.fileName).model;
-            c && !this.isBaseLibModel(c) && i.push({
-              containerName: a.containerName,
-              name: a.name,
-              type: a.kind,
-              matchKind: a.matchKind,
-              resourceUrl: c.getAssociatedResource().toExternal(),
-              range: this.rangeFromMinAndLim(a, c.getAssociatedResource())
-            });
+            if (c && !this.isBaseLibModel(c)) {
+              i.push({
+                containerName: a.containerName,
+                name: a.name,
+                type: a.kind,
+                matchKind: a.matchKind,
+                resourceUrl: c.getAssociatedResource().toExternal(),
+                range: this.rangeFromMinAndLim(a, c.getAssociatedResource())
+              });
+            }
           }
         }
       }
@@ -490,12 +496,14 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
       var u = [];
       c.entries.forEach(function(e) {
         var t = o.difference(s, e.name);
-        t < s.length / 2 || u.push({
-          type: "field",
-          label: e.name,
-          codeSnippet: e.name,
-          score: t
-        });
+        if (!(t < s.length / 2)) {
+          u.push({
+            type: "field",
+            label: e.name,
+            codeSnippet: e.name,
+            score: t
+          });
+        }
       });
 
       u.sort(function(e, t) {
@@ -525,10 +533,12 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
         if (r = e.charAt(t), ")" === r && l--, "(" === r && l++, 1 !== l || ":" !== r)
           if (1 !== l || "," !== r) {
             if (0 === l && ")" === r) {
-              "" !== o && i.push({
-                name: o,
-                type: s
-              });
+              if ("" !== o) {
+                i.push({
+                  name: o,
+                  type: s
+                });
+              }
               break;
             }
             a ? o += r : s += r;
@@ -634,7 +644,9 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
     };
 
     e.prototype.rangeFromMinAndLim = function(e, t, n) {
-      "undefined" == typeof n && (n = !1);
+      if ("undefined" == typeof n) {
+        n = !1;
+      }
       var r = this._host.getScriptSnapshotByUrl(t).model;
 
       var i = e.minChar;
@@ -653,13 +665,19 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
     };
 
     e.prototype.preview = function(e, t, n, r) {
-      "undefined" == typeof r && (r = 200);
+      if ("undefined" == typeof r) {
+        r = 200;
+      }
       for (var i, o = this._languageService.getSyntaxTree(e.getAssociatedResource().toExternal()), s = o.sourceUnit()
           .findToken(t); s && !i;) {
-        s.fullWidth() > r && (i = s);
+        if (s.fullWidth() > r) {
+          i = s;
+        }
         s = s.parent();
       }
-      i || (i = o.sourceUnit().findToken(t).root());
+      if (!i) {
+        i = o.sourceUnit().findToken(t).root();
+      }
       var a = e.getValue().substring(i.fullStart(), i.fullEnd());
 
       var c = new l.MirrorModel(0, a);

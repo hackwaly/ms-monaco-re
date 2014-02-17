@@ -14,9 +14,13 @@ define("vs/editor/core/model/textModelWithTokensHelpers", ["require", "exports",
         if (t instanceof RegExp) {
           if (!t.global) {
             var r = "g";
-            t.ignoreCase && (r += "i");
+            if (t.ignoreCase) {
+              r += "i";
+            }
 
-            t.multiline && (r += "m");
+            if (t.multiline) {
+              r += "m";
+            }
 
             t = new RegExp(t.source, r);
           }
@@ -70,10 +74,14 @@ define("vs/editor/core/model/textModelWithTokensHelpers", ["require", "exports",
             var C = 0;
             for (u = 0; u < b.length; u++) {
               var w = b[u].trim();
-              w.length > 0 && (y = _.indexOf(w, C), C = y + w.length, c.push({
-                start: s + y,
-                end: s + C
-              }));
+              if (w.length > 0) {
+                y = _.indexOf(w, C);
+                C = y + w.length;
+                c.push({
+                  start: s + y,
+                  end: s + C
+                });
+              }
             }
           }
           s = l;
@@ -100,10 +108,16 @@ define("vs/editor/core/model/textModelWithTokensHelpers", ["require", "exports",
       var l = [];
       for (n = 0; n < u.length; n++) {
         a = u[n].trim();
-        a.length > 0 && (i = e.indexOf(a, o), o = i + a.length, r = i, s = o, l.push({
-          start: r,
-          end: s
-        }));
+        if (a.length > 0) {
+          i = e.indexOf(a, o);
+          o = i + a.length;
+          r = i;
+          s = o;
+          l.push({
+            start: r,
+            end: s
+          });
+        }
       }
       return l;
     };
@@ -119,9 +133,14 @@ define("vs/editor/core/model/textModelWithTokensHelpers", ["require", "exports",
       var u = -1;
       if (s.length > 0 && (a = n.findIndexInSegmentsArray(s, i.column - 1), a > 0 && s[a].startIndex === i.column - 1 &&
         (u = a - 1)), o && (-1 !== a || -1 !== u)) {
-        var l = e._getNonWordTokenhMap(t); - 1 !== a && l.hasOwnProperty(s[a].type) && (a = -1);
+        var l = e._getNonWordTokenhMap(t);
+        if (-1 !== a && l.hasOwnProperty(s[a].type)) {
+          a = -1;
+        }
 
-        - 1 !== u && l.hasOwnProperty(s[u].type) && (u = -1);
+        if (-1 !== u && l.hasOwnProperty(s[u].type)) {
+          u = -1;
+        }
       }
       var c;
 
@@ -265,7 +284,9 @@ define("vs/editor/core/model/textModelWithTokensHelpers", ["require", "exports",
       for (o = 0, r = c.length; - 1 === l && r > o; o++) {
         s = c[o];
         a = o === r - 1 ? d.length : c[o + 1].startIndex;
-        s.startIndex <= u && a >= u && (l = o);
+        if (s.startIndex <= u && a >= u) {
+          l = o;
+        }
       }
       return e._findMatchingBracketUp(t, n, i.lineNumber, l + 1, 0);
     };
@@ -299,13 +320,17 @@ define("vs/editor/core/model/textModelWithTokensHelpers", ["require", "exports",
           if (l = h[o], c = o === s - 1 ? a.length : h[o + 1].startIndex, l.startIndex <= d && c >= d) {
             if (l.bracket < 0) {
               var p = e._findMatchingBracketUp(t, l.type, n.lineNumber, o, -1);
-              p && (u.brackets = [new r.Range(n.lineNumber, l.startIndex + 1, n.lineNumber, c + 1), p]);
+              if (p) {
+                u.brackets = [new r.Range(n.lineNumber, l.startIndex + 1, n.lineNumber, c + 1), p];
+              }
             }
             if (null === u.brackets && l.bracket > 0) {
               var f = e._findMatchingBracketDown(t, l.type, n.lineNumber, o, i);
               u.isAccurate = f.isAccurate;
 
-              f.range && (u.brackets = [new r.Range(n.lineNumber, l.startIndex + 1, n.lineNumber, c + 1), f.range]);
+              if (f.range) {
+                u.brackets = [new r.Range(n.lineNumber, l.startIndex + 1, n.lineNumber, c + 1), f.range];
+              }
             }
           }
       }

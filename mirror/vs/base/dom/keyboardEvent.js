@@ -91,7 +91,9 @@ define("vs/base/dom/keyboardEvent", ["require", "vs/base/lib/winjs.base", "vs/ba
     var t = {};
     ! function() {
       for (var n in e) {
-        e.hasOwnProperty(n) && (t[e[n]] = n);
+        if (e.hasOwnProperty(n)) {
+          t[e[n]] = n;
+        }
       }
     }();
 

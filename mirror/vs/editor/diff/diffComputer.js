@@ -88,7 +88,10 @@ define("vs/editor/diff/diffComputer", ["require", "exports", "vs/base/diff/diff"
         u += t[i];
         s = 1;
         a = t[i].length + 1;
-        n && (s = this._getFirstNonBlankColumn(t[i], 1), a = this._getLastNonBlankColumn(t[i], 1));
+        if (n) {
+          s = this._getFirstNonBlankColumn(t[i], 1);
+          a = this._getLastNonBlankColumn(t[i], 1);
+        }
         l.push({
           offset: r + s - 1,
           lineNumber: i + 1,
@@ -182,7 +185,9 @@ define("vs/editor/diff/diffComputer", ["require", "exports", "vs/base/diff/diff"
         var c = new n.LcsDiff(a, l, r);
 
         var d = c.ComputeDiff();
-        s && (d = i(d));
+        if (s) {
+          d = i(d);
+        }
 
         this.charChanges = [];
         for (var h = 0, p = d.length; p > h; h++) {

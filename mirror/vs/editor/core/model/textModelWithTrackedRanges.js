@@ -174,11 +174,18 @@ define("vs/editor/core/model/textModelWithTrackedRanges", ["require", "exports",
       for (a = e; t >= a; a++)
         for (n = this._getLineMarkers(a), r = 0, s = n.length; s > r; r++) {
           i = n[r];
-          this._markerIdToRangeId.hasOwnProperty(i.id) && (o = this._markerIdToRangeId[i.id], d.hasOwnProperty(o) ||
-            (u = this._getMarker(this._ranges[o].startMarkerId), l = this._getMarker(this._ranges[o].endMarkerId), c.push({
-              id: o,
-              range: this._newEditorRange(u, l)
-            }), d[o] = !0));
+          if (this._markerIdToRangeId.hasOwnProperty(i.id)) {
+            o = this._markerIdToRangeId[i.id];
+            if (!d.hasOwnProperty(o)) {
+              u = this._getMarker(this._ranges[o].startMarkerId);
+              l = this._getMarker(this._ranges[o].endMarkerId);
+              c.push({
+                id: o,
+                range: this._newEditorRange(u, l)
+              });
+              d[o] = !0;
+            }
+          }
         }
       return c;
     };
@@ -199,15 +206,20 @@ define("vs/editor/core/model/textModelWithTrackedRanges", ["require", "exports",
       var a = {};
       for (r = 0, s = e.length; s > r; r++) {
         o = e[r];
-        this._markerIdToRangeId.hasOwnProperty(o.id) && (i = this._markerIdToRangeId[o.id], n = this._ranges[i], a.hasOwnProperty(
-            n.id) ? t = a[n.id] : (t = {
+        if (this._markerIdToRangeId.hasOwnProperty(o.id)) {
+          i = this._markerIdToRangeId[o.id];
+          n = this._ranges[i];
+          a.hasOwnProperty(n.id) ? t = a[n.id] : (t = {
             startLineNumber: 0,
             startColumn: 0,
             endLineNumber: 0,
             endColumn: 0
-          }, a[n.id] = t), o.id === n.startMarkerId ? (t.startLineNumber = o.oldLineNumber, t.startColumn = o.oldColumn) :
-          (t.endLineNumber = o.oldLineNumber, t.endColumn = o.oldColumn), this._setRangeIsMultiLine(n.id, this._getMarker(
-            n.startMarkerId).lineNumber !== this._getMarker(n.endMarkerId).lineNumber));
+          }, a[n.id] = t);
+          o.id === n.startMarkerId ? (t.startLineNumber = o.oldLineNumber, t.startColumn = o.oldColumn) : (t.endLineNumber =
+            o.oldLineNumber, t.endColumn = o.oldColumn);
+          this._setRangeIsMultiLine(n.id, this._getMarker(n.startMarkerId).lineNumber !== this._getMarker(n.endMarkerId)
+            .lineNumber);
+        }
       }
       return a;
     };

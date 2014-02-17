@@ -41,11 +41,16 @@ define("vs/editor/core/view/viewPart", ["require", "exports", "vs/editor/core/vi
     };
 
     t.prototype.onReadAfterForcedLayout = function(e, t) {
-      this.shouldRender && this._render(e, t);
+      if (this.shouldRender) {
+        this._render(e, t);
+      }
     };
 
     t.prototype.onWriteAfterForcedLayout = function() {
-      this.shouldRender && (this.shouldRender = !1, this._executeModificationRunners());
+      if (this.shouldRender) {
+        this.shouldRender = !1;
+        this._executeModificationRunners();
+      }
     };
 
     t.prototype._executeModificationRunners = function() {

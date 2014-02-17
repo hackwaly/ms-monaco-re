@@ -514,9 +514,12 @@ define("vs/editor/core/view/viewImpl", ["require", "exports", "vs/nls!vs/editor/
 
     t.prototype._renderNow = function() {
       var e = this;
-      this._shouldRender && (this._shouldRender = !1, this.outgoingEventBus.deferredEmit(function() {
-        e.actualRender();
-      }));
+      if (this._shouldRender) {
+        this._shouldRender = !1;
+        this.outgoingEventBus.deferredEmit(function() {
+          e.actualRender();
+        });
+      }
     };
 
     t.prototype.createRenderingContext = function(e) {
@@ -569,7 +572,9 @@ define("vs/editor/core/view/viewImpl", ["require", "exports", "vs/nls!vs/editor/
         var t;
 
         var n = !1;
-        b.enableTelemetry && (n = !0);
+        if (b.enableTelemetry) {
+          n = !0;
+        }
         var o = null;
 
         var r = (new Date).getTime();
@@ -606,7 +611,9 @@ define("vs/editor/core/view/viewImpl", ["require", "exports", "vs/nls!vs/editor/
             this.viewParts[e].onBeforeForcedLayout();
           }
           var u = this.viewLines.render(n ? o.lines : null);
-          n && (o.lines.time = (new Date).getTime() - a);
+          if (n) {
+            o.lines.time = (new Date).getTime() - a;
+          }
           var l = this.createRenderingContext(u);
 
           var c = (new Date).getTime();
@@ -616,8 +623,13 @@ define("vs/editor/core/view/viewImpl", ["require", "exports", "vs/nls!vs/editor/
           for (e = 0, t = this.viewParts.length; t > e; e++) {
             this.viewParts[e].onWriteAfterForcedLayout();
           }
-          n && (o.parts.time = (new Date).getTime() - c, o.time = (new Date).getTime() - r, o.time >= 100 && this.telemetryService &&
-            this.telemetryService.publicLog("editorSlowRender", o));
+          if (n) {
+            o.parts.time = (new Date).getTime() - c;
+            o.time = (new Date).getTime() - r;
+            if (o.time >= 100 && this.telemetryService) {
+              this.telemetryService.publicLog("editorSlowRender", o);
+            }
+          }
         } catch (d) {
           C.onUnexpectedError(d);
         }
@@ -625,8 +637,10 @@ define("vs/editor/core/view/viewImpl", ["require", "exports", "vs/nls!vs/editor/
     };
 
     t.prototype._setHasFocus = function(e) {
-      this.hasFocus !== e && (this.hasFocus = e, this.context.privateViewEventBus.emit(r.EventType.ViewFocusChanged,
-        this.hasFocus));
+      if (this.hasFocus !== e) {
+        this.hasFocus = e;
+        this.context.privateViewEventBus.emit(r.EventType.ViewFocusChanged, this.hasFocus);
+      }
     };
 
     return t;

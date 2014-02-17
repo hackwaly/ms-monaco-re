@@ -43,7 +43,9 @@ define("vs/editor/worker/modesWorker", ["require", "exports", "vs/base/lib/winjs
     };
 
     e.prototype.triggerValidateParticipation = function(e, t, n) {
-      "undefined" == typeof n && (n = null);
+      if ("undefined" == typeof n) {
+        n = null;
+      }
       var i = this.resourceService.get(e);
       this.workerParticipants.forEach(function(e) {
         try {
@@ -72,14 +74,18 @@ define("vs/editor/worker/modesWorker", ["require", "exports", "vs/base/lib/winjs
 
       this.workerParticipants.forEach(function(e) {
         try {
-          "function" == typeof e.suggest && o.push(e.suggest(t, r));
+          if ("function" == typeof e.suggest) {
+            o.push(e.suggest(t, r));
+          }
         } catch (n) {}
       });
 
       return n.Promise.join(o).then(function(e) {
         for (var t = i.getSuggestionFilterMain(), n = 0; n < e.length; n++) {
           e[n].forEach(function(e) {
-            t(s, e) && a.suggestions.push(e);
+            if (t(s, e)) {
+              a.suggestions.push(e);
+            }
           });
         }
         return a;
@@ -125,7 +131,9 @@ define("vs/editor/worker/modesWorker", ["require", "exports", "vs/base/lib/winjs
     e.prototype.getSuggestionFilterMain = function() {
       var e = this.getSuggestionFilter();
       this.workerParticipants.forEach(function(t) {
-        "function" == typeof t.filter && (e = o.and(e, t.filter));
+        if ("function" == typeof t.filter) {
+          e = o.and(e, t.filter);
+        }
       });
 
       return e;
@@ -142,9 +150,11 @@ define("vs/editor/worker/modesWorker", ["require", "exports", "vs/base/lib/winjs
 
       var r = [];
       i.getAllWordsWithRange().forEach(function(e) {
-        e.text === o && r.push({
-          range: e.range
-        });
+        if (e.text === o) {
+          r.push({
+            range: e.range
+          });
+        }
       });
 
       return n.TPromise.as(r.slice(0, 1e3));
@@ -199,7 +209,9 @@ define("vs/editor/worker/modesWorker", ["require", "exports", "vs/base/lib/winjs
         value: null
       };
       if (i) {
-        t.startColumn === t.endColumn && (t.endColumn += 1);
+        if (t.startColumn === t.endColumn) {
+          t.endColumn += 1;
+        }
         o = r.getValueInRange(t);
         s.range = t;
       } else {
@@ -378,10 +390,17 @@ define("vs/editor/worker/modesWorker", ["require", "exports", "vs/base/lib/winjs
           C = !1;
           y === l ? (" " === _ || "	" === _ || _ === m) && (r.push(this.createLink(p, t, v, f)), C = !0) : y === u ?
             " " === _ || "	" === _ || _ === m ? C = !0 : y = l : s[y].hasOwnProperty(_) ? y = s[y][_] : C = !0;
-          C && (y = a, v = f + 1, b = p.charCodeAt(f), m = b < d.length ? d[b] : _);
+          if (C) {
+            y = a;
+            v = f + 1;
+            b = p.charCodeAt(f);
+            m = b < d.length ? d[b] : _;
+          }
           f++;
         }
-        y === l && r.push(this.createLink(p, t, v, g));
+        if (y === l) {
+          r.push(this.createLink(p, t, v, g));
+        }
       }
       return n.TPromise.as(r);
     };

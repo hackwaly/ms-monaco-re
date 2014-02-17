@@ -3,9 +3,13 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
 ], function(e, t, n, i, o, r, s, a, u) {
   var l = function() {
     function e(t, r) {
-      "undefined" == typeof t && (t = !0);
+      if ("undefined" == typeof t) {
+        t = !0;
+      }
 
-      "undefined" == typeof r && (r = null);
+      if ("undefined" == typeof r) {
+        r = null;
+      }
 
       this.eventQueue = [];
 
@@ -31,7 +35,11 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
 
       this.toUnbind.push(o.errorHandler.addListener(this.onErrorEvent.bind(this)));
 
-      r || s.isInWebWorker() === !1 && (r = new a.IdleMonitor);
+      if (!r) {
+        if (s.isInWebWorker() === !1) {
+          r = new a.IdleMonitor;
+        }
+      }
 
       this.idleMonitor = r;
 
@@ -43,9 +51,13 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
       }
       this.timeKeeper.dispose();
 
-      this.idleMonitor && this.idleMonitor.dispose();
+      if (this.idleMonitor) {
+        this.idleMonitor.dispose();
+      }
 
-      this.oldOnError && (self.onerror = this.oldOnError);
+      if (this.oldOnError) {
+        self.onerror = this.oldOnError;
+      }
     };
 
     e.prototype.onTelemetryTimerEventStop = function(e) {
@@ -56,9 +68,13 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
     };
 
     e.prototype.onErrorEvent = function(e, t, n) {
-      "undefined" == typeof t && (t = null);
+      if ("undefined" == typeof t) {
+        t = null;
+      }
 
-      "undefined" == typeof n && (n = null);
+      if ("undefined" == typeof n) {
+        n = null;
+      }
 
       this.publicLog("UnhandledError", {
         friendlyMessage: t,
@@ -69,13 +85,17 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
     };
 
     e.prototype.enableGlobalErrorHandler = function() {
-      r.isFunction(self.onerror) && (this.oldOnError = self.onerror);
+      if (r.isFunction(self.onerror)) {
+        this.oldOnError = self.onerror;
+      }
       var e = this;
 
       var t = function(t, n, i, o, r) {
         e.onUncaughtError(t, n, i, o, r);
 
-        e.oldOnError && e.oldOnError.apply(this, arguments);
+        if (e.oldOnError) {
+          e.oldOnError.apply(this, arguments);
+        }
       };
       self.onerror = t;
     };
@@ -87,11 +107,13 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
         line: n,
         column: i
       };
-      o && (r.error = {
-        name: o.name,
-        message: o.message,
-        stack: this.authFilter(o.stack)
-      });
+      if (o) {
+        r.error = {
+          name: o.name,
+          message: o.message,
+          stack: this.authFilter(o.stack)
+        };
+      }
 
       this.publicLog("UncaughtError", r);
     };
@@ -114,7 +136,9 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
     };
 
     e.prototype.log = function(e, t) {
-      this.publicOnly || this.handleEvent("restricted", e, t);
+      if (!this.publicOnly) {
+        this.handleEvent("restricted", e, t);
+      }
     };
 
     e.prototype.publicLog = function(e, t) {
@@ -122,26 +146,36 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
     };
 
     e.prototype.handleEvent = function(e, t, n) {
-      this.eventQueue.length >= this.eventMaxQueueSize || (n = n || {}, n.source = "client", n.version = {
-        clientVersion: s.version
-      }, this.eventQueue.push({
-        name: t,
-        kind: e,
-        timestamp: new Date,
-        data: JSON.stringify(n),
-        activeExperiments: this.getEnabledExperiments(),
-        sessionID: this.sessionID
-      }), this.sendingEvents || this.failureCount > 0 || (this.eventQueue.length > this.eventBatchSize ? (
-        clearTimeout(this.waitIntervalId), this.waitIntervalId = null, this.sendEvents()) : this.sendSoon()));
+      if (!(this.eventQueue.length >= this.eventMaxQueueSize)) {
+        n = n || {};
+        n.source = "client";
+        n.version = {
+          clientVersion: s.version
+        };
+        this.eventQueue.push({
+          name: t,
+          kind: e,
+          timestamp: new Date,
+          data: JSON.stringify(n),
+          activeExperiments: this.getEnabledExperiments(),
+          sessionID: this.sessionID
+        });
+        if (!(this.sendingEvents || this.failureCount > 0)) {
+          this.eventQueue.length > this.eventBatchSize ? (clearTimeout(this.waitIntervalId), this.waitIntervalId =
+            null, this.sendEvents()) : this.sendSoon();
+        }
+      }
     };
 
     e.prototype.sendSoon = function() {
       var t = this;
-      null === this.waitIntervalId && (this.waitIntervalId = setTimeout(function() {
-        t.waitIntervalId = null;
+      if (null === this.waitIntervalId) {
+        this.waitIntervalId = setTimeout(function() {
+          t.waitIntervalId = null;
 
-        t.sendEvents();
-      }, e.EVENT_INTERVAL * Math.pow(2, this.failureCount)));
+          t.sendEvents();
+        }, e.EVENT_INTERVAL * Math.pow(2, this.failureCount));
+      }
     };
 
     e.prototype.sendEvents = function() {
@@ -158,7 +192,9 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
         }).done(function() {
           e.sendingEvents = !1;
 
-          e.eventQueue.length > 0 && e.sendSoon();
+          if (e.eventQueue.length > 0) {
+            e.sendSoon();
+          }
         });
       }
     };

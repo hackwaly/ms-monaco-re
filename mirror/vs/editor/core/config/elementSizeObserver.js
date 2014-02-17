@@ -26,15 +26,19 @@ define("vs/editor/core/config/elementSizeObserver", ["require", "exports"], func
     };
 
     e.prototype.startObserving = function() {
-      var e = this; - 1 === this.measureReferenceDomElementToken && (this.measureReferenceDomElementToken = window.setInterval(
-        function() {
+      var e = this;
+      if (-1 === this.measureReferenceDomElementToken) {
+        this.measureReferenceDomElementToken = window.setInterval(function() {
           return e.measureReferenceDomElement(!0);
-        }, 100));
+        }, 100);
+      }
     };
 
     e.prototype.stopObserving = function() {
-      -1 !== this.measureReferenceDomElementToken && (window.clearInterval(this.measureReferenceDomElementToken),
-        this.measureReferenceDomElementToken = -1);
+      if (-1 !== this.measureReferenceDomElementToken) {
+        window.clearInterval(this.measureReferenceDomElementToken);
+        this.measureReferenceDomElementToken = -1;
+      }
     };
 
     e.prototype.observe = function() {
@@ -45,7 +49,13 @@ define("vs/editor/core/config/elementSizeObserver", ["require", "exports"], func
       var t = Math.max(5, this.referenceDomElement ? this.referenceDomElement.clientWidth : 0);
 
       var n = Math.max(5, this.referenceDomElement ? this.referenceDomElement.clientHeight : 0);
-      (this.width !== t || this.height !== n) && (this.width = t, this.height = n, e && this.changeCallback());
+      if (this.width !== t || this.height !== n) {
+        this.width = t;
+        this.height = n;
+        if (e) {
+          this.changeCallback();
+        }
+      }
     };
 
     return e;

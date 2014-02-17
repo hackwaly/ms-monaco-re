@@ -15,8 +15,10 @@ define(["require", "exports", "vs/editor/core/range", "vs/editor/core/selection"
       if (!this._isMovingDown && this._selection.startLineNumber === 1) return;
       this._moveEndPositionDown = !1;
       var d = this._selection;
-      d.startLineNumber < d.endLineNumber && d.endColumn === 1 && (this._moveEndPositionDown = !0, d = d.setEndPosition(
-        d.endLineNumber - 1, a.getLineMaxColumn(d.endLineNumber - 1)));
+      if (d.startLineNumber < d.endLineNumber && d.endColumn === 1) {
+        this._moveEndPositionDown = !0;
+        d = d.setEndPosition(d.endLineNumber - 1, a.getLineMaxColumn(d.endLineNumber - 1));
+      }
       if (d.startLineNumber === d.endLineNumber && a.getLineMaxColumn(d.startLineNumber) === 1) {
         var g = d.startLineNumber;
 

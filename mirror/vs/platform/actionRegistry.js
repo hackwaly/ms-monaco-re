@@ -88,11 +88,17 @@ define("vs/platform/actionRegistry", ["require", "exports", "vs/platform/platfor
   t.IShouldNotUseAnAsyncDescriptorWithEntryPoint = l;
   var c = function(t) {
     function n(e, n, i, o, r, s) {
-      "undefined" == typeof o && (o = "");
+      if ("undefined" == typeof o) {
+        o = "";
+      }
 
-      "undefined" == typeof r && (r = "");
+      if ("undefined" == typeof r) {
+        r = "";
+      }
 
-      "undefined" == typeof s && (s = !0);
+      if ("undefined" == typeof s) {
+        s = !0;
+      }
 
       t.call(this, i, o, r, s);
 
@@ -195,9 +201,13 @@ define("vs/platform/actionRegistry", ["require", "exports", "vs/platform/platfor
     };
 
     n.prototype.dispose = function() {
-      this._emitterUnbind && this._emitterUnbind();
+      if (this._emitterUnbind) {
+        this._emitterUnbind();
+      }
 
-      this._cachedAction && this._cachedAction.dispose();
+      if (this._cachedAction) {
+        this._cachedAction.dispose();
+      }
 
       t.prototype.dispose.call(this);
     };

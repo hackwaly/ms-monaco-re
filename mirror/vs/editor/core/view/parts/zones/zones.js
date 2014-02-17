@@ -39,14 +39,21 @@ define("vs/editor/core/view/parts/zones/zones", ["require", "exports", "vs/base/
 
           var s = {};
           for (i in this._zones) {
-            this._zones.hasOwnProperty(i) && (o = this._zones[i], r = this._heightInLinesToPixels(o.delegate.heightInLines),
-              n.isFunction(o.delegate.onComputedHeight) && o.delegate.onComputedHeight(r), s[i] = r, this._whitespaceManager
-              .changeWhitespace(parseInt(i, 10), r));
+            if (this._zones.hasOwnProperty(i)) {
+              o = this._zones[i];
+              r = this._heightInLinesToPixels(o.delegate.heightInLines);
+              if (n.isFunction(o.delegate.onComputedHeight)) {
+                o.delegate.onComputedHeight(r);
+              }
+              s[i] = r;
+              this._whitespaceManager.changeWhitespace(parseInt(i, 10), r);
+            }
           }
           this._requestModificationFrame(function() {
             for (i in t._zones) {
-              t._zones.hasOwnProperty(i) && s.hasOwnProperty(i) && (t._zones[i].delegate.domNode.style.height = s[i] +
-                "px");
+              if (t._zones.hasOwnProperty(i) && s.hasOwnProperty(i)) {
+                t._zones[i].delegate.domNode.style.height = s[i] + "px";
+              }
             }
           });
 
@@ -151,7 +158,9 @@ define("vs/editor/core/view/parts/zones/zones", ["require", "exports", "vs/base/
           this._whitespaceManager.removeWhitespace(t.whitespaceId);
 
           this._requestModificationFrame(function() {
-            t.delegate.domNode.parentNode && t.delegate.domNode.parentNode.removeChild(t.delegate.domNode);
+            if (t.delegate.domNode.parentNode) {
+              t.delegate.domNode.parentNode.removeChild(t.delegate.domNode);
+            }
           });
 
           return !0;
@@ -175,7 +184,9 @@ define("vs/editor/core/view/parts/zones/zones", ["require", "exports", "vs/base/
         var i = this;
 
         var o = this._whitespaceManager.getWhitespaceViewportData();
-        t && (t.renderedViewZones += o.length);
+        if (t) {
+          t.renderedViewZones += o.length;
+        }
 
         this._requestModificationFrame(function() {
           var t;
@@ -193,14 +204,19 @@ define("vs/editor/core/view/parts/zones/zones", ["require", "exports", "vs/base/
 
           var l;
           for (u in i._zones) {
-            i._zones.hasOwnProperty(u) && (l = i._zones[u], s.hasOwnProperty(u) ? (l.delegate.domNode.style.top = e.getScrolledTopFromAbsoluteTop(
-                s[u].verticalOffset) + "px", l.delegate.domNode.style.height = s[u].height + "px", l.isVisible || (
-                l.delegate.domNode.style.display = "block", l.isVisible = !0), n.isFunction(l.delegate.onDomNodeTop) &&
-              l.delegate.onDomNodeTop(e.getScrolledTopFromAbsoluteTop(s[u].verticalOffset))) : (l.isVisible && (l.delegate
-                .domNode.style.display = "none", l.isVisible = !1), n.isFunction(l.delegate.onDomNodeTop) && l.delegate
-              .onDomNodeTop(e.getScrolledTopFromAbsoluteTop(-1e6))));
+            if (i._zones.hasOwnProperty(u)) {
+              l = i._zones[u];
+              s.hasOwnProperty(u) ? (l.delegate.domNode.style.top = e.getScrolledTopFromAbsoluteTop(s[u].verticalOffset) +
+                "px", l.delegate.domNode.style.height = s[u].height + "px", l.isVisible || (l.delegate.domNode.style.display =
+                  "block", l.isVisible = !0), n.isFunction(l.delegate.onDomNodeTop) && l.delegate.onDomNodeTop(e.getScrolledTopFromAbsoluteTop(
+                  s[u].verticalOffset))) : (l.isVisible && (l.delegate.domNode.style.display = "none", l.isVisible = !
+                1), n.isFunction(l.delegate.onDomNodeTop) && l.delegate.onDomNodeTop(e.getScrolledTopFromAbsoluteTop(-
+                1e6)));
+            }
           }
-          a && (i.domNode.style.width = e.scrollWidth + "px");
+          if (a) {
+            i.domNode.style.width = e.scrollWidth + "px";
+          }
         });
       };
 

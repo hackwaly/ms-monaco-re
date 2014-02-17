@@ -29,9 +29,15 @@ define("vs/editor/core/view/layout/scroll/editorScrollable", ["require", "export
     };
 
     t.prototype.setWidth = function(e) {
-      0 > e && (e = 0);
+      if (0 > e) {
+        e = 0;
+      }
 
-      this.width !== e && (this.width = e, this.setScrollWidth(this.scrollWidth), this.setScrollLeft(this.scrollLeft));
+      if (this.width !== e) {
+        this.width = e;
+        this.setScrollWidth(this.scrollWidth);
+        this.setScrollLeft(this.scrollLeft);
+      }
     };
 
     t.prototype.getScrollWidth = function() {
@@ -39,9 +45,15 @@ define("vs/editor/core/view/layout/scroll/editorScrollable", ["require", "export
     };
 
     t.prototype.setScrollWidth = function(e) {
-      e < this.width && (e = this.width);
+      if (e < this.width) {
+        e = this.width;
+      }
 
-      this.scrollWidth !== e && (this.scrollWidth = e, this.setScrollLeft(this.scrollLeft), this._emitInternalSizeEvent());
+      if (this.scrollWidth !== e) {
+        this.scrollWidth = e;
+        this.setScrollLeft(this.scrollLeft);
+        this._emitInternalSizeEvent();
+      }
     };
 
     t.prototype.getScrollLeft = function() {
@@ -49,11 +61,19 @@ define("vs/editor/core/view/layout/scroll/editorScrollable", ["require", "export
     };
 
     t.prototype.setScrollLeft = function(e) {
-      0 > e && (e = 0);
+      if (0 > e) {
+        e = 0;
+      }
 
-      e + this.width > this.scrollWidth && (e = this.scrollWidth - this.width);
+      if (e + this.width > this.scrollWidth) {
+        e = this.scrollWidth - this.width;
+      }
 
-      this.scrollLeft !== e && (this.scrollLeft = e, this.linesContent.scrollLeft = e, this._emitScrollEvent(!1, !0));
+      if (this.scrollLeft !== e) {
+        this.scrollLeft = e;
+        this.linesContent.scrollLeft = e;
+        this._emitScrollEvent(!1, !0);
+      }
     };
 
     t.prototype.getHeight = function() {
@@ -61,9 +81,15 @@ define("vs/editor/core/view/layout/scroll/editorScrollable", ["require", "export
     };
 
     t.prototype.setHeight = function(e) {
-      0 > e && (e = 0);
+      if (0 > e) {
+        e = 0;
+      }
 
-      this.height !== e && (this.height = e, this.setScrollHeight(this.scrollHeight), this.setScrollTop(this.scrollTop));
+      if (this.height !== e) {
+        this.height = e;
+        this.setScrollHeight(this.scrollHeight);
+        this.setScrollTop(this.scrollTop);
+      }
     };
 
     t.prototype.getScrollHeight = function() {
@@ -71,9 +97,15 @@ define("vs/editor/core/view/layout/scroll/editorScrollable", ["require", "export
     };
 
     t.prototype.setScrollHeight = function(e) {
-      e < this.height && (e = this.height);
+      if (e < this.height) {
+        e = this.height;
+      }
 
-      this.scrollHeight !== e && (this.scrollHeight = e, this.setScrollTop(this.scrollTop), this._emitInternalSizeEvent());
+      if (this.scrollHeight !== e) {
+        this.scrollHeight = e;
+        this.setScrollTop(this.scrollTop);
+        this._emitInternalSizeEvent();
+      }
     };
 
     t.prototype.getScrollTop = function() {
@@ -81,11 +113,18 @@ define("vs/editor/core/view/layout/scroll/editorScrollable", ["require", "export
     };
 
     t.prototype.setScrollTop = function(e) {
-      0 > e && (e = 0);
+      if (0 > e) {
+        e = 0;
+      }
 
-      e + this.height > this.scrollHeight && (e = this.scrollHeight - this.height);
+      if (e + this.height > this.scrollHeight) {
+        e = this.scrollHeight - this.height;
+      }
 
-      this.scrollTop !== e && (this.scrollTop = e, this._emitScrollEvent(!0, !1));
+      if (this.scrollTop !== e) {
+        this.scrollTop = e;
+        this._emitScrollEvent(!0, !1);
+      }
     };
 
     t.prototype._emitScrollEvent = function(e, n) {

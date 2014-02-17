@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -93,9 +95,11 @@ define(["require", "exports", "vs/editor/core/config", "vs/editor/core/constants
 
       this._measureDomElement(!1);
 
-      c.automaticLayout && (this.measureDomElementToken = window.setInterval(function() {
-        return e._measureDomElement(!0);
-      }, 100));
+      if (c.automaticLayout) {
+        this.measureDomElementToken = window.setInterval(function() {
+          return e._measureDomElement(!0);
+        }, 100);
+      }
 
       this._createLeftHandSideEditor(c, d);
 
@@ -156,7 +160,9 @@ define(["require", "exports", "vs/editor/core/config", "vs/editor/core/constants
     };
 
     b.prototype._measureDomElement = function(a, c) {
-      typeof c == "undefined" && (c = this.sashPosition);
+      if (typeof c == "undefined") {
+        c = this.sashPosition;
+      }
       var d = o.getDomNodePosition(this.containerDomElement);
       if (d.width <= 0) return;
       var e = d.width - b.ENTIRE_DIFF_OVERVIEW_WIDTH;
@@ -187,39 +193,50 @@ define(["require", "exports", "vs/editor/core/config", "vs/editor/core/constants
 
       this.overviewDomElement.style.left = this.width - b.ENTIRE_DIFF_OVERVIEW_WIDTH + "px";
 
-      a && this.layout();
+      if (a) {
+        this.layout();
+      }
 
-      (this.originalOverviewRuler || this.modifiedOverviewRuler) && this._layoutOverviewRulers();
+      if (this.originalOverviewRuler || this.modifiedOverviewRuler) {
+        this._layoutOverviewRulers();
+      }
     };
 
     b.prototype._layoutOverviewRulers = function() {
       var a = b.ENTIRE_DIFF_OVERVIEW_WIDTH - 2 * b.ONE_OVERVIEW_WIDTH;
 
       var c = this.modifiedEditor.getLayoutInfo();
-      c && (this.originalOverviewRuler.setLayout({
-        top: 0,
-        width: b.ONE_OVERVIEW_WIDTH,
-        right: a + b.ONE_OVERVIEW_WIDTH,
-        height: this.height - c.horizontalScrollbarHeight
-      }), this.modifiedOverviewRuler.setLayout({
-        top: 0,
-        right: 0,
-        width: b.ONE_OVERVIEW_WIDTH,
-        height: this.height - c.horizontalScrollbarHeight
-      }));
+      if (c) {
+        this.originalOverviewRuler.setLayout({
+          top: 0,
+          width: b.ONE_OVERVIEW_WIDTH,
+          right: a + b.ONE_OVERVIEW_WIDTH,
+          height: this.height - c.horizontalScrollbarHeight
+        });
+        this.modifiedOverviewRuler.setLayout({
+          top: 0,
+          right: 0,
+          width: b.ONE_OVERVIEW_WIDTH,
+          height: this.height - c.horizontalScrollbarHeight
+        });
+      }
     };
 
     b.prototype._recreateOverviewRulers = function() {
-      this.originalOverviewRuler && (this.overviewDomElement.removeChild(this.originalOverviewRuler.getDomNode()),
-        this.originalOverviewRuler.destroy());
+      if (this.originalOverviewRuler) {
+        this.overviewDomElement.removeChild(this.originalOverviewRuler.getDomNode());
+        this.originalOverviewRuler.destroy();
+      }
 
       this.originalOverviewRuler = this.originalEditor.getView().createOverviewRuler("original diffOverviewRuler", 4,
         Number.MAX_VALUE);
 
       this.overviewDomElement.appendChild(this.originalOverviewRuler.getDomNode());
 
-      this.modifiedOverviewRuler && (this.overviewDomElement.removeChild(this.modifiedOverviewRuler.getDomNode()),
-        this.modifiedOverviewRuler.destroy());
+      if (this.modifiedOverviewRuler) {
+        this.overviewDomElement.removeChild(this.modifiedOverviewRuler.getDomNode());
+        this.modifiedOverviewRuler.destroy();
+      }
 
       this.modifiedOverviewRuler = this.modifiedEditor.getView().createOverviewRuler("modified diffOverviewRuler", 4,
         Number.MAX_VALUE);
@@ -292,17 +309,21 @@ define(["require", "exports", "vs/editor/core/config", "vs/editor/core/constants
     };
 
     b.prototype._cleanViewZonesAndDecorationsOnEditor = function(a, b, c) {
-      b.length > 0 && a.changeViewZones(function(a) {
-        for (var c = 0, d = b.length; c < d; c++) {
-          a.removeZone(b[c]);
-        }
-      });
+      if (b.length > 0) {
+        a.changeViewZones(function(a) {
+          for (var c = 0, d = b.length; c < d; c++) {
+            a.removeZone(b[c]);
+          }
+        });
+      }
 
-      c.length > 0 && a.changeDecorations(function(a) {
-        for (var b = 0, d = c.length; b < d; b++) {
-          a.removeDecoration(c[b]);
-        }
-      });
+      if (c.length > 0) {
+        a.changeDecorations(function(a) {
+          for (var b = 0, d = c.length; b < d; b++) {
+            a.removeDecoration(c[b]);
+          }
+        });
+      }
     };
 
     b.prototype._cleanViewZonesAndDecorations = function() {
@@ -381,7 +402,10 @@ define(["require", "exports", "vs/editor/core/config", "vs/editor/core/constants
 
       this.modifiedEditor.setModel(a ? a.modified : null);
 
-      a && (this._recreateOverviewRulers(), this._beginUpdateDecorations());
+      if (a) {
+        this._recreateOverviewRulers();
+        this._beginUpdateDecorations();
+      }
     };
 
     b.prototype.getDomNode = function() {
@@ -492,17 +516,26 @@ define(["require", "exports", "vs/editor/core/config", "vs/editor/core/constants
       var d = !1;
       for (var e = 0; e < a.length; e++) {
         d = d || a[e].getType() === "change";
-        a[e].getType() === "scroll" && this._onModifiedEditorScroll(a[e].getData());
+        if (a[e].getType() === "scroll") {
+          this._onModifiedEditorScroll(a[e].getData());
+        }
       }
-      d && this.isVisible && (this.beginUpdateDecorationsTimeout !== -1 && (window.clearTimeout(this.beginUpdateDecorationsTimeout),
-        this.beginUpdateDecorationsTimeout = -1), this.beginUpdateDecorationsTimeout = window.setTimeout(function() {
-        return c._beginUpdateDecorations();
-      }, b.UPDATE_DIFF_DECORATIONS_DELAY));
+      if (d && this.isVisible) {
+        if (this.beginUpdateDecorationsTimeout !== -1) {
+          window.clearTimeout(this.beginUpdateDecorationsTimeout);
+          this.beginUpdateDecorationsTimeout = -1;
+        }
+        this.beginUpdateDecorationsTimeout = window.setTimeout(function() {
+          return c._beginUpdateDecorations();
+        }, b.UPDATE_DIFF_DECORATIONS_DELAY);
+      }
     };
 
     b.prototype._onOriginalEditorEvents = function(a) {
       for (var b = 0; b < a.length; b++) {
-        a[b].getType() === "scroll" && this._onOriginalEditorScroll(a[b].getData());
+        if (a[b].getType() === "scroll") {
+          this._onOriginalEditorScroll(a[b].getData());
+        }
       }
     };
 
@@ -541,12 +574,18 @@ define(["require", "exports", "vs/editor/core/config", "vs/editor/core/constants
       } else try {
         c.computeDiff(this.originalEditor.getModel().getAssociatedResource(), this.modifiedEditor.getModel().getAssociatedResource())
           .then(function(c) {
-            b === a.diffComputationToken && (a._updateDecorations(c), a.lineChanges = c, a.emit(l.EventType.DiffUpdated, {
-              editor: a,
-              lineChanges: c
-            }));
+            if (b === a.diffComputationToken) {
+              a._updateDecorations(c);
+              a.lineChanges = c;
+              a.emit(l.EventType.DiffUpdated, {
+                editor: a,
+                lineChanges: c
+              });
+            }
           }, function(c) {
-            b === a.diffComputationToken && a._updateDecorations(null);
+            if (b === a.diffComputationToken) {
+              a._updateDecorations(null);
+            }
           });
       } catch (d) {
         console.error(d);
@@ -608,12 +647,18 @@ define(["require", "exports", "vs/editor/core/config", "vs/editor/core/constants
         var i;
         for (d = 0, e = a.length; d < e; d++) {
           f = a[d];
-          b._isChangeOrInsert(f) && (h = b._getModifiedLength(f), g = b._getOriginalLength(f), h > g && (i = Math.max(
-            f.originalStartLineNumber, f.originalEndLineNumber), b.originalZones.push(c.addZone({
-            afterLineNumber: i,
-            heightInLines: h - g,
-            domNode: b._createFakeLinesDiv()
-          }))));
+          if (b._isChangeOrInsert(f)) {
+            h = b._getModifiedLength(f);
+            g = b._getOriginalLength(f);
+            if (h > g) {
+              i = Math.max(f.originalStartLineNumber, f.originalEndLineNumber);
+              b.originalZones.push(c.addZone({
+                afterLineNumber: i,
+                heightInLines: h - g,
+                domNode: b._createFakeLinesDiv()
+              }));
+            }
+          }
         }
       });
       var c;
@@ -640,8 +685,10 @@ define(["require", "exports", "vs/editor/core/config", "vs/editor/core/constants
 
           j.push(this._createDecoration(g.originalStartLineNumber, 1, g.originalEndLineNumber, 1e5, "line-delete", !0));
 
-          (!i || !g.charChanges) && j.push(this._createDecoration(g.originalStartLineNumber, 1, g.originalEndLineNumber,
-            1e5, "char-delete", !0));
+          if (!i || !g.charChanges) {
+            j.push(this._createDecoration(g.originalStartLineNumber, 1, g.originalEndLineNumber, 1e5, "char-delete", !
+              0));
+          }
 
           k.push({
             startLineNumber: g.originalStartLineNumber,
@@ -651,8 +698,10 @@ define(["require", "exports", "vs/editor/core/config", "vs/editor/core/constants
           if (g.charChanges)
             for (e = 0, f = g.charChanges.length; e < f; e++) {
               h = g.charChanges[e];
-              this._isChangeOrDelete(h) && j.push(this._createDecoration(h.originalStartLineNumber, h.originalStartColumn,
-                h.originalEndLineNumber, h.originalEndColumn, "char-delete", !1));
+              if (this._isChangeOrDelete(h)) {
+                j.push(this._createDecoration(h.originalStartLineNumber, h.originalStartColumn, h.originalEndLineNumber,
+                  h.originalEndColumn, "char-delete", !1));
+              }
             }
         }
       }
@@ -680,12 +729,18 @@ define(["require", "exports", "vs/editor/core/config", "vs/editor/core/constants
         var i;
         for (d = 0, e = a.length; d < e; d++) {
           f = a[d];
-          b._isChangeOrDelete(f) && (h = b._getModifiedLength(f), g = b._getOriginalLength(f), g > h && (i = Math.max(
-            f.modifiedStartLineNumber, f.modifiedEndLineNumber), b.modifiedZones.push(c.addZone({
-            afterLineNumber: i,
-            heightInLines: g - h,
-            domNode: b._createFakeLinesDiv()
-          }))));
+          if (b._isChangeOrDelete(f)) {
+            h = b._getModifiedLength(f);
+            g = b._getOriginalLength(f);
+            if (g > h) {
+              i = Math.max(f.modifiedStartLineNumber, f.modifiedEndLineNumber);
+              b.modifiedZones.push(c.addZone({
+                afterLineNumber: i,
+                heightInLines: g - h,
+                domNode: b._createFakeLinesDiv()
+              }));
+            }
+          }
         }
       });
       var c;
@@ -712,8 +767,10 @@ define(["require", "exports", "vs/editor/core/config", "vs/editor/core/constants
 
           j.push(this._createDecoration(g.modifiedStartLineNumber, 1, g.modifiedEndLineNumber, 1e5, "line-insert", !0));
 
-          (!i || !g.charChanges) && j.push(this._createDecoration(g.modifiedStartLineNumber, 1, g.modifiedEndLineNumber,
-            1e5, "char-insert", !0));
+          if (!i || !g.charChanges) {
+            j.push(this._createDecoration(g.modifiedStartLineNumber, 1, g.modifiedEndLineNumber, 1e5, "char-insert", !
+              0));
+          }
 
           k.push({
             startLineNumber: g.modifiedStartLineNumber,
@@ -723,8 +780,10 @@ define(["require", "exports", "vs/editor/core/config", "vs/editor/core/constants
           if (g.charChanges)
             for (e = 0, f = g.charChanges.length; e < f; e++) {
               h = g.charChanges[e];
-              this._isChangeOrInsert(h) && j.push(this._createDecoration(h.modifiedStartLineNumber, h.modifiedStartColumn,
-                h.modifiedEndLineNumber, h.modifiedEndColumn, "char-insert", !1));
+              if (this._isChangeOrInsert(h)) {
+                j.push(this._createDecoration(h.modifiedStartLineNumber, h.modifiedStartColumn, h.modifiedEndLineNumber,
+                  h.modifiedEndColumn, "char-insert", !1));
+              }
             }
         }
       }

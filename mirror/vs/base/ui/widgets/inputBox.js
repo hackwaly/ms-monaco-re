@@ -27,8 +27,10 @@ define("vs/base/ui/widgets/inputBox", ["require", "exports", "vs/base/env", "vs/
 
       this.ariaLabel = r && r.ariaLabel || "";
 
-      r && r.validationOptions && (this.validation = r.validationOptions.validation, this.showValidationMessage = r
-        .validationOptions.showMessage || !1);
+      if (r && r.validationOptions) {
+        this.validation = r.validationOptions.validation;
+        this.showValidationMessage = r.validationOptions.showMessage || !1;
+      }
 
       this.$el = a(".monaco-inputbox.idle").appendTo(t);
       var u = a(".wrapper").appendTo(this.$el);
@@ -39,9 +41,13 @@ define("vs/base/ui/widgets/inputBox", ["require", "exports", "vs/base/env", "vs/
         autocapitalize: "off",
         spellcheck: "false"
       };
-      this.ariaLabel && (l["aria-label"] = this.ariaLabel);
+      if (this.ariaLabel) {
+        l["aria-label"] = this.ariaLabel;
+      }
 
-      !n.browser.isIE11orEarlier && this.placeholder && (l.placeholder = this.placeholder);
+      if (!n.browser.isIE11orEarlier && this.placeholder) {
+        l.placeholder = this.placeholder;
+      }
 
       this.$input = a("input.input").type("text").attr(l).on(o.EventType.INPUT, function() {
         s.onValueChange();
@@ -51,17 +57,21 @@ define("vs/base/ui/widgets/inputBox", ["require", "exports", "vs/base/env", "vs/
         s._showMessage();
       });
 
-      this.placeholder && n.browser.isIE11orEarlier && (this.$placeholderShim = a("label.placeholder-shim").appendTo(
-        u).attr({
-        text: this.placeholder,
-        "for": "input"
-      }).on(o.EventType.CLICK, function(e) {
-        o.EventHelper.stop(e, !0);
+      if (this.placeholder && n.browser.isIE11orEarlier) {
+        this.$placeholderShim = a("label.placeholder-shim").appendTo(u).attr({
+          text: this.placeholder,
+          "for": "input"
+        }).on(o.EventType.CLICK, function(e) {
+          o.EventHelper.stop(e, !0);
 
-        s.$input.domFocus();
-      }), n.browser.isIE9 && this.$input.on("keyup", function() {
-        return s.onValueChange();
-      }));
+          s.$input.domFocus();
+        });
+        if (n.browser.isIE9) {
+          this.$input.on("keyup", function() {
+            return s.onValueChange();
+          });
+        }
+      }
 
       this.$input.appendTo(u);
     }
@@ -84,7 +94,10 @@ define("vs/base/ui/widgets/inputBox", ["require", "exports", "vs/base/env", "vs/
         return this.inputElement.value;
       },
       set: function(e) {
-        this.inputElement.value !== e && (this.inputElement.value = e, this.onValueChange());
+        if (this.inputElement.value !== e) {
+          this.inputElement.value = e;
+          this.onValueChange();
+        }
       },
       enumerable: !0,
       configurable: !0
@@ -115,7 +128,9 @@ define("vs/base/ui/widgets/inputBox", ["require", "exports", "vs/base/env", "vs/
     };
 
     t.prototype.select = function(e) {
-      "undefined" == typeof e && (e = null);
+      if ("undefined" == typeof e) {
+        e = null;
+      }
 
       this.$input.domSelect(e);
     };
@@ -148,7 +163,9 @@ define("vs/base/ui/widgets/inputBox", ["require", "exports", "vs/base/env", "vs/
 
       this.$el.removeClass("idle info warning error").addClass(this.classForType(e.type));
 
-      this.hasFocus() && this._showMessage();
+      if (this.hasFocus()) {
+        this._showMessage();
+      }
     };
 
     t.prototype.hideMessage = function() {
@@ -219,7 +236,10 @@ define("vs/base/ui/widgets/inputBox", ["require", "exports", "vs/base/env", "vs/
     };
 
     t.prototype._hideMessage = function() {
-      this.contextViewProvider && "open" === this.state && (this.state = "idle", this.contextViewProvider.hideContextView());
+      if (this.contextViewProvider && "open" === this.state) {
+        this.state = "idle";
+        this.contextViewProvider.hideContextView();
+      }
     };
 
     t.prototype.onValueChange = function() {
@@ -227,13 +247,23 @@ define("vs/base/ui/widgets/inputBox", ["require", "exports", "vs/base/env", "vs/
 
       this.validate();
 
-      this.$placeholderShim && (this.value ? this.$placeholderShim.hide() : this.$placeholderShim.show());
+      if (this.$placeholderShim) {
+        this.value ? this.$placeholderShim.hide() : this.$placeholderShim.show();
+      }
     };
 
     t.prototype.dispose = function() {
-      this.$el && (this.$el.dispose(), this.$el = null, this.$input.dispose(), this.$input = null);
+      if (this.$el) {
+        this.$el.dispose();
+        this.$el = null;
+        this.$input.dispose();
+        this.$input = null;
+      }
 
-      this.$placeholderShim && (this.$placeholderShim.dispose(), this.$placeholderShim = null);
+      if (this.$placeholderShim) {
+        this.$placeholderShim.dispose();
+        this.$placeholderShim = null;
+      }
 
       this.contextViewProvider = null;
 

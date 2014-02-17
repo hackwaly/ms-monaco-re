@@ -128,8 +128,10 @@ define("vs/editor/core/view/overlays/currentLineHighlight/currentLineHighlight",
     };
 
     t.prototype.render = function() {
-      this.shouldRender && (this.shouldRender = !1, this._currentLine.style.top = this._primaryCursorPositionTop +
-        "px");
+      if (this.shouldRender) {
+        this.shouldRender = !1;
+        this._currentLine.style.top = this._primaryCursorPositionTop + "px";
+      }
     };
 
     return t;

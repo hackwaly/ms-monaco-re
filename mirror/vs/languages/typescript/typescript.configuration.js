@@ -61,7 +61,9 @@ define("vs/languages/typescript/typescript.configuration", ["require", "exports"
     function e(e, t, i) {
       if (this._raw = e, this._raw) {
         if (this._raw.validationSettings) {
-          Array.isArray(this._raw.validationSettings) || (this._raw.validationSettings = [this._raw.validationSettings]);
+          if (!Array.isArray(this._raw.validationSettings)) {
+            this._raw.validationSettings = [this._raw.validationSettings];
+          }
           var o = this._raw.validationSettings;
           if (0 === o.length) {
             this._raw.validationSettings = [t];
@@ -72,16 +74,21 @@ define("vs/languages/typescript/typescript.configuration", ["require", "exports"
 
               s = s || "/" === u.scope;
 
-              r.startsWith(u.scope, "/") || (u.scope = "/" + u.scope);
+              if (!r.startsWith(u.scope, "/")) {
+                u.scope = "/" + u.scope;
+              }
 
-              - 1 === u.extraLibs.indexOf("vs/text!vs/languages/typescript/lib/lib.d.ts") && u.extraLibs.unshift(
-                "vs/text!vs/languages/typescript/lib/lib.d.ts");
+              if (-1 === u.extraLibs.indexOf("vs/text!vs/languages/typescript/lib/lib.d.ts")) {
+                u.extraLibs.unshift("vs/text!vs/languages/typescript/lib/lib.d.ts");
+              }
 
               this._raw.validationSettings[l] = u;
 
               a = u;
             }
-            s || this._raw.validationSettings.unshift(t);
+            if (!s) {
+              this._raw.validationSettings.unshift(t);
+            }
           }
         } else {
           this._raw.validationSettings = [t];

@@ -5,7 +5,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var r in t) {
-      t.hasOwnProperty(r) && (e[r] = t[r]);
+      if (t.hasOwnProperty(r)) {
+        e[r] = t[r];
+      }
     }
     n.prototype = t.prototype;
 
@@ -100,7 +102,9 @@ define("vs/languages/vsxml/vsxml", ["require", "exports", "vs/base/objects", "vs
   t.VSXMLEmbeddedState = p;
   var h = function(e) {
     function t(t, n, r, i) {
-      "undefined" == typeof i && (i = "");
+      if ("undefined" == typeof i) {
+        i = "";
+      }
 
       e.call(this, t);
 
@@ -267,7 +271,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var r in t) {
-      t.hasOwnProperty(r) && (e[r] = t[r]);
+      if (t.hasOwnProperty(r)) {
+        e[r] = t[r];
+      }
     }
     n.prototype = t.prototype;
 
@@ -338,8 +344,11 @@ define("vs/languages/typescript/typescript", ["require", "exports", "vs/editor/m
       }
       e.prototype.getClassificationsForLine = function(e, n) {
         var i = 0;
-        0 !== n && (4 === n ? e = '"\\\n' + e : 3 === n ? e = "'\\\n" + e : 1 === n ? e = "/*\n" + e : 2 === n && (e =
-          "/**\n" + e), i = 3);
+        if (0 !== n) {
+          4 === n ? e = '"\\\n' + e : 3 === n ? e = "'\\\n" + e : 1 === n ? e = "/*\n" + e : 2 === n && (e = "/**\n" +
+            e);
+          i = 3;
+        }
         var o = new r;
         this.scanner = new a.Scanner("", a.SimpleText.fromString(e), 1, this.characterWindow);
         for (var s = a.SyntaxKind.None; this.scanner.absoluteIndex() < e.length;) {
@@ -380,7 +389,12 @@ define("vs/languages/typescript/typescript", ["require", "exports", "vs/editor/m
       };
 
       e.prototype.addResult = function(e, t, n, r, o, s) {
-        r > 0 && (0 === n.entries.length && (r -= t), n.entries.push(new i(r, o, s)));
+        if (r > 0) {
+          if (0 === n.entries.length) {
+            r -= t;
+          }
+          n.entries.push(new i(r, o, s));
+        }
       };
 
       return e;

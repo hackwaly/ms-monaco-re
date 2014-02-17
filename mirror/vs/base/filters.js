@@ -34,7 +34,10 @@ define("vs/base/filters", ["require", "exports", "vs/base/strings"], function(e,
     if (0 === n.length || n.length < t.length) {
       return null;
     }
-    e && (t = t.toLowerCase(), n = n.toLowerCase());
+    if (e) {
+      t = t.toLowerCase();
+      n = n.toLowerCase();
+    }
     for (var i = 0; i < t.length; i++)
       if (t[i] !== n[i]) {
         return null;
@@ -155,7 +158,10 @@ define("vs/base/filters", ["require", "exports", "vs/base/strings"], function(e,
     function e() {}
     e.matches = function(t, i) {
       var o = e.RegExpCache[t];
-      o || (o = new RegExp(n.convertSimple2RegExpPattern(t), "i"), e.RegExpCache[t] = o);
+      if (!o) {
+        o = new RegExp(n.convertSimple2RegExpPattern(t), "i");
+        e.RegExpCache[t] = o;
+      }
       var r = o.exec(i);
       return r ? [{
         start: r.index,

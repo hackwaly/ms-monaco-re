@@ -3,7 +3,9 @@ define("vs/editor/core/view/layout/scroll/scrollManager", ["require", "exports",
   "vs/editor/core/view/layout/scroll/editorScrollable", "vs/base/dom/dom", "vs/base/lifecycle"
 ], function(e, t, n, i, o, r, s, a) {
   function u(e, t, n) {
-    e.hasOwnProperty(n) && (t[n] = e[n]);
+    if (e.hasOwnProperty(n)) {
+      t[n] = e[n];
+    }
   }
   var l = function() {
     function e(e, t, a, l) {
@@ -61,11 +63,17 @@ define("vs/editor/core/view/layout/scroll/scrollManager", ["require", "exports",
       var h = function(e, t, n) {
         if (t) {
           var i = e.scrollTop;
-          i && (c.scrollable.setScrollTop(c.getScrollTop() + i), e.scrollTop = 0);
+          if (i) {
+            c.scrollable.setScrollTop(c.getScrollTop() + i);
+            e.scrollTop = 0;
+          }
         }
         if (n) {
           var o = e.scrollLeft;
-          o && (c.scrollable.setScrollLeft(c.getScrollLeft() + o), e.scrollLeft = 0);
+          if (o) {
+            c.scrollable.setScrollLeft(c.getScrollLeft() + o);
+            e.scrollLeft = 0;
+          }
         }
       };
       this.toDispose.push(s.addDisposableListener(l, "scroll", function() {
@@ -89,7 +97,9 @@ define("vs/editor/core/view/layout/scroll/scrollManager", ["require", "exports",
     };
 
     e.prototype.onSizeProviderLayoutChanged = function() {
-      this.scrollbar && this.scrollbar.onElementDimensions();
+      if (this.scrollbar) {
+        this.scrollbar.onElementDimensions();
+      }
     };
 
     e.prototype.getScrolledTopFromAbsoluteTop = function(e) {
@@ -105,7 +115,9 @@ define("vs/editor/core/view/layout/scroll/scrollManager", ["require", "exports",
     };
 
     e.prototype.delegateVerticalScrollbarMouseDown = function(e) {
-      this.scrollbar && this.scrollbar.delegateVerticalScrollbarMouseDown(e);
+      if (this.scrollbar) {
+        this.scrollbar.delegateVerticalScrollbarMouseDown(e);
+      }
     };
 
     e.prototype.getWidth = function() {

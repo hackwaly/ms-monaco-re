@@ -23,18 +23,25 @@ define(["require", "exports", "vs/editor/core/constants", "vs/platform/platform"
 
       this._toUnhook = [];
 
-      a.getConfiguration().hover && (this._toUnhook.push(this._editor.addListener(j.EventType.MouseMove, function(a) {
-        return b._onEditorMouseMove(a);
-      })), this._toUnhook.push(this._editor.addListener(j.EventType.MouseLeave, function(a) {
-        return b._hideWidgets();
-      })), this._toUnhook.push(this._editor.addListener(j.EventType.KeyDown, function(a) {
-        return b._onKeyDown(a);
-      })), this._toUnhook.push(this._editor.addListener(j.EventType.ModelChanged, function() {
-        return b._hideWidgets();
-      })), this._toUnhook.push(this._editor.addListener("scroll", function() {
-        return b._hideWidgets();
-      })), this._contentWidget = new o.ModesContentHoverWidget(a), this._glyphWidget = new p.ModesGlyphHoverWidget(
-        a));
+      if (a.getConfiguration().hover) {
+        this._toUnhook.push(this._editor.addListener(j.EventType.MouseMove, function(a) {
+          return b._onEditorMouseMove(a);
+        }));
+        this._toUnhook.push(this._editor.addListener(j.EventType.MouseLeave, function(a) {
+          return b._hideWidgets();
+        }));
+        this._toUnhook.push(this._editor.addListener(j.EventType.KeyDown, function(a) {
+          return b._onKeyDown(a);
+        }));
+        this._toUnhook.push(this._editor.addListener(j.EventType.ModelChanged, function() {
+          return b._hideWidgets();
+        }));
+        this._toUnhook.push(this._editor.addListener("scroll", function() {
+          return b._hideWidgets();
+        }));
+        this._contentWidget = new o.ModesContentHoverWidget(a);
+        this._glyphWidget = new p.ModesGlyphHoverWidget(a);
+      }
     }
     a.prototype._onEditorMouseMove = function(a) {
       var b = a.target.type;
@@ -51,7 +58,9 @@ define(["require", "exports", "vs/editor/core/constants", "vs/platform/platform"
 
     a.prototype._onKeyDown = function(a) {
       var b = n.browser.isMacintosh ? "Meta" : "Ctrl";
-      a.key !== b && this._hideWidgets();
+      if (a.key !== b) {
+        this._hideWidgets();
+      }
     };
 
     a.prototype._hideWidgets = function() {
@@ -65,9 +74,15 @@ define(["require", "exports", "vs/editor/core/constants", "vs/platform/platform"
     };
 
     a.prototype.dispose = function() {
-      this._glyphWidget && (this._glyphWidget.dispose(), this._glyphWidget = null);
+      if (this._glyphWidget) {
+        this._glyphWidget.dispose();
+        this._glyphWidget = null;
+      }
 
-      this._contentWidget && (this._contentWidget.dispose(), this._contentWidget = null);
+      if (this._contentWidget) {
+        this._contentWidget.dispose();
+        this._contentWidget = null;
+      }
       while (this._toUnhook.length > 0) {
         this._toUnhook.pop()();
       }

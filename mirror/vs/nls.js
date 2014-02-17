@@ -63,7 +63,9 @@
           var p = u.availableLanguages ? n(u.availableLanguages, e) : null;
           c = ".nls";
 
-          null !== p && p !== o && (c = c + "." + p);
+          if (null !== p && p !== o) {
+            c = c + "." + p;
+          }
 
           s([e + c], function(e) {
             a({

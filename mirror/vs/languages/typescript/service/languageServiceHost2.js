@@ -164,8 +164,9 @@ define("vs/languages/typescript/service/languageServiceHost2", ["require", "expo
       var r = this._resourceService.get(e);
       if (r) {
         var i = r.getVersionId();
-        n.contains(this._resourceSet, t) && n.lookup(this._resourceSet, t).versionId === i || (this._resourceSet[t] =
-          new l(r));
+        if (!(n.contains(this._resourceSet, t) && n.lookup(this._resourceSet, t).versionId === i)) {
+          this._resourceSet[t] = new l(r);
+        }
       } else {
         console.warn(e.toExternal() + " NOT found");
         delete this._resourceService[t];

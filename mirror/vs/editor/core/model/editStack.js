@@ -11,8 +11,10 @@ define("vs/editor/core/model/editStack", ["require", "exports", "vs/editor/core/
       this.future = [];
     }
     e.prototype.pushStackElement = function() {
-      null !== this.currentOpenStackElement && (this.past.push(this.currentOpenStackElement), this.currentOpenStackElement =
-        null);
+      if (null !== this.currentOpenStackElement) {
+        this.past.push(this.currentOpenStackElement);
+        this.currentOpenStackElement = null;
+      }
     };
 
     e.prototype.clear = function() {
@@ -26,11 +28,13 @@ define("vs/editor/core/model/editStack", ["require", "exports", "vs/editor/core/
     e.prototype.pushEditOperation = function(e, t, i) {
       this.future = [];
 
-      this.currentOpenStackElement || (this.currentOpenStackElement = {
-        beforeCursorState: e,
-        editOperations: [],
-        afterCursorState: null
-      });
+      if (!this.currentOpenStackElement) {
+        this.currentOpenStackElement = {
+          beforeCursorState: e,
+          editOperations: [],
+          afterCursorState: null
+        };
+      }
       var o = n.ModelEditOperation.execute(this.model, {
         operations: t
       });

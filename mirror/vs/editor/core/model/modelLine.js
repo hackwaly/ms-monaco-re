@@ -42,14 +42,20 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
           var h;
           for (l = 0, c = a.length; c > l; l++) {
             h = a[l];
-            h.startIndex >= n - 1 && h.startIndex > 0 && (h.startIndex += u);
+            if (h.startIndex >= n - 1 && h.startIndex > 0) {
+              h.startIndex += u;
+            }
           }
         }
         var p;
         for (l = 0, c = this.markers.length; c > l; l++) {
           p = this.markers[l];
-          (p.column > n || p.column === n && (o || !p.stickToPreviousCharacter)) && (t[p.id] = !0, p.oldLineNumber =
-            p.oldLineNumber || this.lineNumber, p.oldColumn = p.oldColumn || p.column, p.column += u);
+          if (p.column > n || p.column === n && (o || !p.stickToPreviousCharacter)) {
+            t[p.id] = !0;
+            p.oldLineNumber = p.oldLineNumber || this.lineNumber;
+            p.oldColumn = p.oldColumn || p.column;
+            p.column += u;
+          }
         }
         this.text = d;
 
@@ -141,7 +147,9 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
 
     e.prototype.removeMarker = function(e) {
       var t = this._indexOfMarkerId(e.id);
-      t >= 0 && this.markers.splice(t, 1);
+      if (t >= 0) {
+        this.markers.splice(t, 1);
+      }
 
       e.line = null;
     };

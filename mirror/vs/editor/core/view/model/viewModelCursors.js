@@ -28,11 +28,18 @@ define("vs/editor/core/view/model/viewModelCursors", ["require", "exports", "vs/
       this.lastCursorPositionChangedEvent = e;
       var n = this.converter.validateViewPosition(e.viewPosition.lineNumber, e.viewPosition.column, e.position);
 
-      var i = this.configuration.editor.stopRenderingLineAfter; - 1 !== i && n.column > i && (n = n.clone(), n.column =
-        i);
+      var i = this.configuration.editor.stopRenderingLineAfter;
+      if (-1 !== i && n.column > i) {
+        n = n.clone();
+        n.column = i;
+      }
       for (var r = [], s = 0, a = e.secondaryPositions.length; a > s; s++) {
         r[s] = this.converter.validateViewPosition(e.secondaryViewPositions[s].lineNumber, e.secondaryViewPositions[s]
-          .column, e.secondaryPositions[s]); - 1 !== i && r[s].column > i && (r[s] = r[s].clone(), r[s].column = i);
+          .column, e.secondaryPositions[s]);
+        if (-1 !== i && r[s].column > i) {
+          r[s] = r[s].clone();
+          r[s].column = i;
+        }
       }
       var u = {
         position: n,
@@ -74,9 +81,13 @@ define("vs/editor/core/view/model/viewModelCursors", ["require", "exports", "vs/
     };
 
     e.prototype.onLineMappingChanged = function(e) {
-      this.lastCursorPositionChangedEvent && this.onCursorPositionChanged(this.lastCursorPositionChangedEvent, e);
+      if (this.lastCursorPositionChangedEvent) {
+        this.onCursorPositionChanged(this.lastCursorPositionChangedEvent, e);
+      }
 
-      this.lastCursorSelectionChangedEvent && this.onCursorSelectionChanged(this.lastCursorSelectionChangedEvent, e);
+      if (this.lastCursorSelectionChangedEvent) {
+        this.onCursorSelectionChanged(this.lastCursorSelectionChangedEvent, e);
+      }
     };
 
     return e;

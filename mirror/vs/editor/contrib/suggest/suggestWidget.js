@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -234,7 +236,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/error
         height: a.HEIGHT + "px"
       });
 
-      this.editor.getConfiguration().iconsInSuggestions || this.builder.addClass("no-icons");
+      if (!this.editor.getConfiguration().iconsInSuggestions) {
+        this.builder.addClass("no-icons");
+      }
       var f = new B;
       this.renderer = new D(f, this.editor);
 
@@ -250,16 +254,22 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/error
 
       this.listenersToRemove.push(b.addListener("blur", function() {
         o.Promise.timeout(150).done(function() {
-          d.tree && !d.tree.isDOMFocused() && d.hide();
+          if (d.tree && !d.tree.isDOMFocused()) {
+            d.hide();
+          }
         });
       }));
 
       this.listenersToRemove.push(this.tree.addListener("selection", function(a) {
         if (a.selection && a.selection.length > 0) {
           var b = a.selection[0];
-          !b.hasOwnProperty("suggestions") && !(b instanceof A) && !(b instanceof z) && (d.telemetryData.selectedIndex =
-            d.tree.getInput().suggestions.indexOf(b), d.telemetryData.wasCancelled = !1, d.submitTelemetryData(),
-            d.model.accept(b), d.editor.focus());
+          if (!b.hasOwnProperty("suggestions") && !(b instanceof A) && !(b instanceof z)) {
+            d.telemetryData.selectedIndex = d.tree.getInput().suggestions.indexOf(b);
+            d.telemetryData.wasCancelled = !1;
+            d.submitTelemetryData();
+            d.model.accept(b);
+            d.editor.focus();
+          }
         }
       }));
       var g = null;
@@ -267,24 +277,34 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/error
         var b = a.focus;
 
         var c = a.payload;
-        q.isISuggestion(b) && d.resolveDetails(b);
+        if (q.isISuggestion(b)) {
+          d.resolveDetails(b);
+        }
         if (b === g) return;
         var e = [];
-        g && e.push(g);
+        if (g) {
+          e.push(g);
+        }
 
-        b && e.push(b);
+        if (b) {
+          e.push(b);
+        }
 
         g = b;
 
         d.tree.refreshAll(e).done(function() {
-          b && d.tree.reveal(b, c && c.firstSuggestion ? 0 : null);
+          if (b) {
+            d.tree.reveal(b, c && c.firstSuggestion ? 0 : null);
+          }
         }, p.onUnexpectedError);
       }));
 
       this.editor.addContentWidget(this);
 
       this.listenersToRemove.push(this.editor.addListener(w.EventType.CursorSelectionChanged, function(a) {
-        d.isActive && d.editor.layoutContentWidget(d);
+        if (d.isActive) {
+          d.editor.layoutContentWidget(d);
+        }
       }));
 
       this.hide();
@@ -298,22 +318,30 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/error
 
       var e;
       this.modelListenersToRemove.push(this.model.addListener("loading", function(b) {
-        !b.auto && !c.isActive && (d = c.telemetryService.start("suggestWidgetLoadingTime"), c.isLoading = !0, e =
-          setTimeout(function() {
+        if (!b.auto && !c.isActive) {
+          d = c.telemetryService.start("suggestWidgetLoadingTime");
+          c.isLoading = !0;
+          e = setTimeout(function() {
             c.builder.removeClass("empty");
 
             c.tree.setInput(a.LOADING_MESSAGE).done(null, p.onUnexpectedError);
 
             c.show();
-          }, 50), b.retrigger || (c.telemetryData = {
-            wasAutomaticallyTriggered: b.characterTriggered
-          }));
+          }, 50);
+          if (!b.retrigger) {
+            c.telemetryData = {
+              wasAutomaticallyTriggered: b.characterTriggered
+            };
+          }
+        }
       }));
 
       this.modelListenersToRemove.push(this.model.addListener("suggest", function(a) {
         c.isLoading = !1;
 
-        typeof e != "undefined" && clearTimeout(e);
+        if (typeof e != "undefined") {
+          clearTimeout(e);
+        }
         if (!a.auto) {
           c.builder.removeClass("empty");
 
@@ -336,7 +364,11 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/error
           for (var l = 0, m = g.length; l < m; l++) {
             h = g[l];
             var n = E(h.label, b, f);
-            n > k && (k = n, j = h, i = l);
+            if (n > k) {
+              k = n;
+              j = h;
+              i = l;
+            }
           }
           c.resolveDetails(j);
 
@@ -350,19 +382,30 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/error
 
           c.telemetryData.hintLength = b.length;
 
-          d && (d.data = {
-            reason: "results"
-          }, d.stop(), d = null);
+          if (d) {
+            d.data = {
+              reason: "results"
+            };
+            d.stop();
+            d = null;
+          }
         }
       }));
 
       this.modelListenersToRemove.push(this.model.addListener("empty", function(b) {
         c.isLoading = !1;
 
-        b.auto || (c.tree.getInput() === a.LOADING_MESSAGE ? c.shouldShowEmptySuggestionList ? c.tree.setInput(a.NO_SUGGESTIONS_MESSAGE)
-          .done(null, p.onUnexpectedError) : c.hide() : c.builder.addClass("empty"), d && (d.data = {
-            reason: "empty"
-          }, d.stop(), d = null));
+        if (!b.auto) {
+          c.tree.getInput() === a.LOADING_MESSAGE ? c.shouldShowEmptySuggestionList ? c.tree.setInput(a.NO_SUGGESTIONS_MESSAGE)
+            .done(null, p.onUnexpectedError) : c.hide() : c.builder.addClass("empty");
+          if (d) {
+            d.data = {
+              reason: "empty"
+            };
+            d.stop();
+            d = null;
+          }
+        }
       }));
 
       this.modelListenersToRemove.push(this.model.addListener("cancel", function(a) {
@@ -370,10 +413,20 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/error
 
         c.hide();
 
-        a.auto || (!a.retrigger && c.telemetryData && (c.telemetryData.selectedIndex = -1, c.telemetryData.wasCancelled = !
-          0, c.submitTelemetryData()), d && (d.data = {
-          reason: "cancel"
-        }, d.stop(), d = null));
+        if (!a.auto) {
+          if (!a.retrigger && c.telemetryData) {
+            c.telemetryData.selectedIndex = -1;
+            c.telemetryData.wasCancelled = !0;
+            c.submitTelemetryData();
+          }
+          if (d) {
+            d.data = {
+              reason: "cancel"
+            };
+            d.stop();
+            d = null;
+          }
+        }
       }));
     };
 
@@ -382,7 +435,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/error
       if (a.detailsResolved === !0) return;
       var c = this.editor.getModel().getMode().suggestSupport;
       if (typeof c.getSuggestionDetails != "function") return;
-      this.currentSuggestionDetails && this.currentSuggestionDetails.cancel();
+      if (this.currentSuggestionDetails) {
+        this.currentSuggestionDetails.cancel();
+      }
 
       this.currentSuggestionDetails = c.getSuggestionDetails(this.editor.getModel().getAssociatedResource(), this.editor
         .getPosition(), a);
@@ -516,7 +571,10 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/error
 
       this.tree = null;
 
-      this.renderer && (this.renderer.dispose(), this.renderer = null);
+      if (this.renderer) {
+        this.renderer.dispose();
+        this.renderer = null;
+      }
 
       this.listenersToRemove.forEach(function(a) {
         a();

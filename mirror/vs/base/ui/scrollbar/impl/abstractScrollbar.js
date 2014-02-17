@@ -7,19 +7,31 @@ define("vs/base/ui/scrollbar/impl/abstractScrollbar", ["require", "exports", "vs
   }
 
   function u(e, t, n, i, o) {
-    null !== t && (e.style.top = a(t));
+    if (null !== t) {
+      e.style.top = a(t);
+    }
 
-    null !== n && (e.style.left = a(n));
+    if (null !== n) {
+      e.style.left = a(n);
+    }
 
-    null !== i && (e.style.bottom = a(i));
+    if (null !== i) {
+      e.style.bottom = a(i);
+    }
 
-    null !== o && (e.style.right = a(o));
+    if (null !== o) {
+      e.style.right = a(o);
+    }
   }
 
   function l(e, t, n) {
-    null !== t && (e.style.width = a(t));
+    if (null !== t) {
+      e.style.width = a(t);
+    }
 
-    null !== n && (e.style.height = a(n));
+    if (null !== n) {
+      e.style.height = a(n);
+    }
   }
   var c = function() {
     function e(e, t, n) {
@@ -61,10 +73,13 @@ define("vs/base/ui/scrollbar/impl/abstractScrollbar", ["require", "exports", "vs
 
           this.computedSliderPosition -= t;
 
-          this.computedSliderPosition + this.computedSliderSize > this.computedRepresentableSize && (this.computedSliderPosition =
-            this.computedRepresentableSize - this.computedSliderSize);
+          if (this.computedSliderPosition + this.computedSliderSize > this.computedRepresentableSize) {
+            this.computedSliderPosition = this.computedRepresentableSize - this.computedSliderSize;
+          }
 
-          this.computedSliderPosition < 0 && (this.computedSliderPosition = 0);
+          if (this.computedSliderPosition < 0) {
+            this.computedSliderPosition = 0;
+          }
         }
       } else {
         this.computedSliderSize = this.computedRepresentableSize;
@@ -188,9 +203,15 @@ define("vs/base/ui/scrollbar/impl/abstractScrollbar", ["require", "exports", "vs
     };
 
     e.prototype._clearArrowTimers = function() {
-      -1 !== this.interval && (window.clearInterval(this.interval), this.interval = -1);
+      if (-1 !== this.interval) {
+        window.clearInterval(this.interval);
+        this.interval = -1;
+      }
 
-      - 1 !== this.timeout && (window.clearTimeout(this.timeout), this.timeout = -1);
+      if (-1 !== this.timeout) {
+        window.clearTimeout(this.timeout);
+        this.timeout = -1;
+      }
     };
 
     return e;
@@ -215,7 +236,10 @@ define("vs/base/ui/scrollbar/impl/abstractScrollbar", ["require", "exports", "vs
       this.fadeAwayTimeout = -1;
     }
     e.prototype.dispose = function() {
-      -1 !== this.fadeAwayTimeout && (window.clearTimeout(this.fadeAwayTimeout), this.fadeAwayTimeout = -1);
+      if (-1 !== this.fadeAwayTimeout) {
+        window.clearTimeout(this.fadeAwayTimeout);
+        this.fadeAwayTimeout = -1;
+      }
     };
 
     e.prototype.applyVisibilitySetting = function(e) {
@@ -224,11 +248,17 @@ define("vs/base/ui/scrollbar/impl/abstractScrollbar", ["require", "exports", "vs
 
     e.prototype.setShouldBeVisible = function(e) {
       var t = this.applyVisibilitySetting(e);
-      this.shouldBeVisible !== t && (this.shouldBeVisible = t, this.ensureVisibility());
+      if (this.shouldBeVisible !== t) {
+        this.shouldBeVisible = t;
+        this.ensureVisibility();
+      }
     };
 
     e.prototype.setIsNeeded = function(e) {
-      this.isNeeded !== e && (this.isNeeded = e, this.ensureVisibility());
+      if (this.isNeeded !== e) {
+        this.isNeeded = e;
+        this.ensureVisibility();
+      }
     };
 
     e.prototype.setDomNode = function(e) {
@@ -247,20 +277,30 @@ define("vs/base/ui/scrollbar/impl/abstractScrollbar", ["require", "exports", "vs
 
     e.prototype._reveal = function() {
       var e = this;
-      this.isVisible || (this.isVisible = !0, window.setTimeout(function() {
-        e.domNode.className = e.visibleClassName;
-      }, 0), this.domNode.style.display = "block", -1 !== this.fadeAwayTimeout && (window.clearTimeout(this.fadeAwayTimeout),
-        this.fadeAwayTimeout = -1));
+      if (!this.isVisible) {
+        this.isVisible = !0;
+        window.setTimeout(function() {
+          e.domNode.className = e.visibleClassName;
+        }, 0);
+        this.domNode.style.display = "block";
+        if (-1 !== this.fadeAwayTimeout) {
+          window.clearTimeout(this.fadeAwayTimeout);
+          this.fadeAwayTimeout = -1;
+        }
+      }
     };
 
     e.prototype._hide = function(e) {
       var t = this;
-      this.isVisible && (this.isVisible = !1, this.domNode.className = this.invisibleClassName, e ? -1 === this.fadeAwayTimeout &&
-        (this.fadeAwayTimeout = window.setTimeout(function() {
+      if (this.isVisible) {
+        this.isVisible = !1;
+        this.domNode.className = this.invisibleClassName;
+        e ? -1 === this.fadeAwayTimeout && (this.fadeAwayTimeout = window.setTimeout(function() {
           t.fadeAwayTimeout = -1;
 
           t.domNode.style.display = "none";
-        }, 800)) : this.domNode.style.display = "none");
+        }, 800)) : this.domNode.style.display = "none";
+      }
     };
 
     return e;
@@ -328,19 +368,25 @@ define("vs/base/ui/scrollbar/impl/abstractScrollbar", ["require", "exports", "vs
     };
 
     e.prototype.onElementSize = function(e) {
-      this.scrollbarState.setVisibleSize(e) && (this._renderDomNode(this.scrollbarState.getRectangleLargeSize(), this
-        .scrollbarState.getRectangleSmallSize()), this._renderSlider(), this.visibilityController.setIsNeeded(this.scrollbarState
-        .isNeeded()));
+      if (this.scrollbarState.setVisibleSize(e)) {
+        this._renderDomNode(this.scrollbarState.getRectangleLargeSize(), this.scrollbarState.getRectangleSmallSize());
+        this._renderSlider();
+        this.visibilityController.setIsNeeded(this.scrollbarState.isNeeded());
+      }
     };
 
     e.prototype.onElementScrollSize = function(e) {
-      this.scrollbarState.setScrollSize(e) && (this._renderSlider(), this.visibilityController.setIsNeeded(this.scrollbarState
-        .isNeeded()));
+      if (this.scrollbarState.setScrollSize(e)) {
+        this._renderSlider();
+        this.visibilityController.setIsNeeded(this.scrollbarState.isNeeded());
+      }
     };
 
     e.prototype.onElementScrollPosition = function(e) {
-      this.scrollbarState.setScrollPosition(e) && (this._renderSlider(), this.visibilityController.setIsNeeded(this.scrollbarState
-        .isNeeded()));
+      if (this.scrollbarState.setScrollPosition(e)) {
+        this._renderSlider();
+        this.visibilityController.setIsNeeded(this.scrollbarState.isNeeded());
+      }
     };
 
     e.prototype.beginReveal = function() {
@@ -358,7 +404,9 @@ define("vs/base/ui/scrollbar/impl/abstractScrollbar", ["require", "exports", "vs
 
     e.prototype._domNodeMouseDown = function(e) {
       var t = new i.StandardMouseEvent(e);
-      t.target === this.domNode && this.onMouseDown(e);
+      if (t.target === this.domNode) {
+        this.onMouseDown(e);
+      }
     };
 
     e.prototype.onMouseDown = function(e) {

@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -35,23 +37,31 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/base/async", "vs/edi
       this.active = !1;
 
       this.listenersToRemove.push(this.editor.addListener(i.EventType.CursorSelectionChanged, function(a) {
-        d.isTriggered() && d.trigger();
+        if (d.isTriggered()) {
+          d.trigger();
+        }
       }));
     }
     __extends(b, a);
 
     b.prototype.cancel = function(a) {
-      typeof a == "undefined" && (a = !1);
+      if (typeof a == "undefined") {
+        a = !1;
+      }
 
       this.active = !1;
 
       this.throttledDelayer.cancel();
 
-      a || this.emit("cancel");
+      if (!a) {
+        this.emit("cancel");
+      }
     };
 
     b.prototype.trigger = function(a) {
-      typeof a == "undefined" && (a = b.DELAY);
+      if (typeof a == "undefined") {
+        a = b.DELAY;
+      }
       var c = this;
       if (!this.editor.getModel().getMode().parameterHintsSupport) return;
       this.cancel(!0);
@@ -92,9 +102,12 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/base/async", "vs/edi
     b.prototype.dispose = function() {
       this.cancel(!0);
 
-      this.listenersToRemove && (this.listenersToRemove.forEach(function(a) {
-        a();
-      }), this.listenersToRemove = null);
+      if (this.listenersToRemove) {
+        this.listenersToRemove.forEach(function(a) {
+          a();
+        });
+        this.listenersToRemove = null;
+      }
 
       this.emit("destroy", null);
 

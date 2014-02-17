@@ -104,11 +104,17 @@ define("vs/languages/typescript/service/textEdit", ["require", "exports", "vs/ba
       this.edit = new i(0, this.model.getValue().length, null);
     }
     e.prototype.replace = function(e, t, n) {
-      "undefined" == typeof t && (t = 0);
+      if ("undefined" == typeof t) {
+        t = 0;
+      }
 
-      "undefined" == typeof n && (n = null);
+      if ("undefined" == typeof n) {
+        n = null;
+      }
       var r = new i(e, t, n);
-      r.isNoop() || (this.edit = this.edit.insert(r));
+      if (!r.isNoop()) {
+        this.edit = this.edit.insert(r);
+      }
     };
 
     e.prototype.apply = function() {

@@ -109,7 +109,9 @@ define("vs/editor/modes/monarch/monarch", ["require", "exports", "vs/platform/pl
           g = !1;
           break;
         }
-      g && (r = n[p].type);
+      if (g) {
+        r = n[p].type;
+      }
     }
     return o || r ? {
       matchBracketType: r,
@@ -245,8 +247,12 @@ define("vs/editor/modes/monarch/monarch", ["require", "exports", "vs/platform/pl
         a = this.groupMatched.shift();
         u = this.groupActions.shift();
         d = this.groupRule;
-        0 === this.groupActions.length && (this.groupActions = null, this.groupMatches = null, this.groupMatched =
-          null, this.groupRule = null);
+        if (0 === this.groupActions.length) {
+          this.groupActions = null;
+          this.groupMatches = null;
+          this.groupMatched = null;
+          this.groupRule = null;
+        }
       } else {
         if (e.eos()) {
           return {
@@ -290,7 +296,9 @@ define("vs/editor/modes/monarch/monarch", ["require", "exports", "vs/platform/pl
               this.lexer, u.nextEmbedded, a, r, o), this.embeddedEntered = !0)), u.goBack && e.goBack(u.goBack), u.switchTo &&
           "string" == typeof u.switchTo) {
           var y = s.substituteMatches(this.lexer, u.switchTo, a, r, o);
-          "@" === y[0] && (y = y.substr(1));
+          if ("@" === y[0]) {
+            y = y.substr(1);
+          }
 
           s.findRules(this.lexer, y) ? this.stack[0] = y : s.throwError(this.lexer, "trying to switch to a state '" +
             y + "' that is undefined in rule: " + d.name);
@@ -308,24 +316,31 @@ define("vs/editor/modes/monarch/monarch", ["require", "exports", "vs/platform/pl
           this.stack.length <= 1 ? s.throwError(this.lexer, "trying to pop an empty stack in rule: " + d.name) : this
             .stack.shift();
         } else if ("@popall" === u.next) {
-          this.stack.length > 1 && (this.stack = [this.stack[this.stack.length - 1]]);
+          if (this.stack.length > 1) {
+            this.stack = [this.stack[this.stack.length - 1]];
+          }
         } else {
           var y = s.substituteMatches(this.lexer, u.next, a, r, o);
-          "@" === y[0] && (y = y.substr(1));
+          if ("@" === y[0]) {
+            y = y.substr(1);
+          }
 
           s.findRules(this.lexer, y) ? this.stack.unshift(y) : s.throwError(this.lexer,
             "trying to set a next state '" + y + "' that is undefined in rule: " + d.name);
         }
-        u.log && "string" == typeof u.log && s.log(this.lexer, this.lexer.displayName + ": " + s.substituteMatches(
-          this.lexer, u.log, a, r, o));
+        if (u.log && "string" == typeof u.log) {
+          s.log(this.lexer, this.lexer.displayName + ": " + s.substituteMatches(this.lexer, u.log, a, r, o));
+        }
       }
       if (null === v && (s.throwError(this.lexer, "lexer rule has no well-defined action in rule: " + d.name), v =
         this.lexer.defaultToken), v instanceof Array) {
-        this.groupActions && this.groupActions.length > 0 && s.throwError(this.lexer, "groups cannot be nested: " + d
-          .name);
+        if (this.groupActions && this.groupActions.length > 0) {
+          s.throwError(this.lexer, "groups cannot be nested: " + d.name);
+        }
 
-        r.length !== v.length + 1 && s.throwError(this.lexer,
-          "matched number of groups does not match the number of actions in rule: " + d.name);
+        if (r.length !== v.length + 1) {
+          s.throwError(this.lexer, "matched number of groups does not match the number of actions in rule: " + d.name);
+        }
         for (var _ = 0, b = 1; b < r.length; b++) {
           _ += r[b].length;
         }
@@ -382,7 +397,9 @@ define("vs/editor/modes/monarch/monarch", ["require", "exports", "vs/platform/pl
   t.MonarchLexer = y;
   var _ = function(e) {
     function t(t) {
-      !t.name && t.lexer && (t = t.lexer);
+      if (!t.name && t.lexer) {
+        t = t.lexer;
+      }
 
       e.call(this, t.name, t.workerScriptPath ? t.workerScriptPath : s.monarchPath + "Worker", t.usesEmbedded);
 

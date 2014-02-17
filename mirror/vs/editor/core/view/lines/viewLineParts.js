@@ -41,7 +41,9 @@ define("vs/editor/core/view/lines/viewLineParts", ["require", "exports", "vs/bas
 
           u++;
         }
-        o > i && h.push(new s(i, r));
+        if (o > i) {
+          h.push(new s(i, r));
+        }
       }
       this.parts = h;
 
@@ -170,9 +172,17 @@ define("vs/editor/core/view/lines/viewLineParts", ["require", "exports", "vs/bas
       var d = 0;
       for (a = 0, l = n.length; l > a; a++) {
         o = n[a];
-        o.range.endLineNumber < t || o.range.startLineNumber > t || (r = o.range.startLineNumber === t ? o.range.startColumn -
-          1 : 0, s = o.range.endLineNumber === t ? o.range.endColumn - 2 : e.MAX_LINE_LENGTH - 1, 0 > s || (d = c.consumeLowerThan(
-            r, d, i), 0 === c.count && (d = r), c.insert(s, o.options.inlineClassName)));
+        if (!(o.range.endLineNumber < t || o.range.startLineNumber > t)) {
+          r = o.range.startLineNumber === t ? o.range.startColumn - 1 : 0;
+          s = o.range.endLineNumber === t ? o.range.endColumn - 2 : e.MAX_LINE_LENGTH - 1;
+          if (!(0 > s)) {
+            d = c.consumeLowerThan(r, d, i);
+            if (0 === c.count) {
+              d = r;
+            }
+            c.insert(s, o.options.inlineClassName);
+          }
+        }
       }
       c.consumeLowerThan(e.MAX_LINE_LENGTH, d, i);
 

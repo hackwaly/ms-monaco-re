@@ -78,10 +78,12 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
       var a = this;
       if (!this.editor.getModel()) return;
       var b = this.editor.getModel().getMode();
-      b.linkSupport && (this.computePromise = b.linkSupport.computeLinks(this.editor.getModel().getAssociatedResource()),
+      if (b.linkSupport) {
+        this.computePromise = b.linkSupport.computeLinks(this.editor.getModel().getAssociatedResource());
         this.computePromise.then(function(b) {
           return a.updateDecorations(b);
-        }));
+        });
+      }
     };
 
     a.prototype.updateDecorations = function(b) {
@@ -100,11 +102,15 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
     };
 
     a.prototype.onEditorKeyDown = function(b) {
-      b.key === a.TRIGGER_KEY_VALUE && this.lastMouseEvent && this.onEditorMouseMove(this.lastMouseEvent, b);
+      if (b.key === a.TRIGGER_KEY_VALUE && this.lastMouseEvent) {
+        this.onEditorMouseMove(this.lastMouseEvent, b);
+      }
     };
 
     a.prototype.onEditorKeyUp = function(b) {
-      b.key === a.TRIGGER_KEY_VALUE && this.cleanUpActiveLinkDecoration();
+      if (b.key === a.TRIGGER_KEY_VALUE) {
+        this.cleanUpActiveLinkDecoration();
+      }
     };
 
     a.prototype.onEditorMouseMove = function(b, c) {
@@ -177,9 +183,15 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
     };
 
     a.prototype.stop = function() {
-      this.timeoutPromise && (this.timeoutPromise.cancel(), this.timeoutPromise = null);
+      if (this.timeoutPromise) {
+        this.timeoutPromise.cancel();
+        this.timeoutPromise = null;
+      }
 
-      this.computePromise && (this.computePromise.cancel(), this.computePromise = null);
+      if (this.computePromise) {
+        this.computePromise.cancel();
+        this.computePromise = null;
+      }
     };
 
     a.prototype.destroy = function() {

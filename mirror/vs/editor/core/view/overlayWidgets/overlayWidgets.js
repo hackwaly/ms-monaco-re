@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -108,7 +110,9 @@ define(["require", "exports", "vs/editor/core/view/viewContext", "vs/editor/edit
       this.shouldRender = !1;
       var c;
       for (c in this.widgets) {
-        this.widgets.hasOwnProperty(c) && this._renderWidget(this.widgets[c]);
+        if (this.widgets.hasOwnProperty(c)) {
+          this._renderWidget(this.widgets[c]);
+        }
       }
     };
 

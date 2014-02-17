@@ -155,10 +155,18 @@ define("vs/editor/core/view/overlays/selections/selections", ["require", "export
           top: 0,
           bottom: 0
         };
-        c > 0 && (o = e[c - 1].left, r = e[c - 1].left + e[c - 1].width, n === o ? u.top = 2 : n > o && (u.top = 1),
-          i === r ? l.top = 2 : i > o && r > i && (l.top = 1));
-        d > c + 1 && (s = e[c + 1].left, a = e[c + 1].left + e[c + 1].width, n === s ? u.bottom = 2 : n > s && a > n &&
-          (u.bottom = 1), i === a ? l.bottom = 2 : a > i && (l.bottom = 1));
+        if (c > 0) {
+          o = e[c - 1].left;
+          r = e[c - 1].left + e[c - 1].width;
+          n === o ? u.top = 2 : n > o && (u.top = 1);
+          i === r ? l.top = 2 : i > o && r > i && (l.top = 1);
+        }
+        if (d > c + 1) {
+          s = e[c + 1].left;
+          a = e[c + 1].left + e[c + 1].width;
+          n === s ? u.bottom = 2 : n > s && a > n && (u.bottom = 1);
+          i === a ? l.bottom = 2 : a > i && (l.bottom = 1);
+        }
         t.startStyle = u;
         t.endStyle = l;
       }
@@ -217,18 +225,51 @@ define("vs/editor/core/view/overlays/selections/selections", ["require", "export
       var d = 0;
       for (a = 0; a < e.length; a++) {
         u = e[a];
-        l && ((1 === u.startStyle.top || 1 === u.startStyle.bottom) && (d++, this._createSelectionPiece(t.SELECTION_CLASS_NAME,
-            u.top, u.left - t.ROUNDED_PIECE_WIDTH, t.ROUNDED_PIECE_WIDTH, c, n, i, o, r), s = t.EDITOR_BACKGROUND_CLASS_NAME,
-          1 === u.startStyle.top && (s += " " + t.SELECTION_TOP_RIGHT), 1 === u.startStyle.bottom && (s += " " + t.SELECTION_BOTTOM_RIGHT),
-          d++, this._createSelectionPiece(s, u.top, u.left - t.ROUNDED_PIECE_WIDTH, t.ROUNDED_PIECE_WIDTH, c, n, i,
-            o, r)), (1 === u.endStyle.top || 1 === u.endStyle.bottom) && (d++, this._createSelectionPiece(t.SELECTION_CLASS_NAME,
-            u.top, u.left + u.width, t.ROUNDED_PIECE_WIDTH, c, n, i, o, r), s = t.EDITOR_BACKGROUND_CLASS_NAME, 1 ===
-          u.endStyle.top && (s += " " + t.SELECTION_TOP_LEFT), 1 === u.endStyle.bottom && (s += " " + t.SELECTION_BOTTOM_LEFT),
-          d++, this._createSelectionPiece(s, u.top, u.left + u.width, t.ROUNDED_PIECE_WIDTH, c, n, i, o, r)));
+        if (l) {
+          if (1 === u.startStyle.top || 1 === u.startStyle.bottom) {
+            d++;
+            this._createSelectionPiece(t.SELECTION_CLASS_NAME, u.top, u.left - t.ROUNDED_PIECE_WIDTH, t.ROUNDED_PIECE_WIDTH,
+              c, n, i, o, r);
+            s = t.EDITOR_BACKGROUND_CLASS_NAME;
+            if (1 === u.startStyle.top) {
+              s += " " + t.SELECTION_TOP_RIGHT;
+            }
+            if (1 === u.startStyle.bottom) {
+              s += " " + t.SELECTION_BOTTOM_RIGHT;
+            }
+            d++;
+            this._createSelectionPiece(s, u.top, u.left - t.ROUNDED_PIECE_WIDTH, t.ROUNDED_PIECE_WIDTH, c, n, i, o, r);
+          }
+          if (1 === u.endStyle.top || 1 === u.endStyle.bottom) {
+            d++;
+            this._createSelectionPiece(t.SELECTION_CLASS_NAME, u.top, u.left + u.width, t.ROUNDED_PIECE_WIDTH, c, n,
+              i, o, r);
+            s = t.EDITOR_BACKGROUND_CLASS_NAME;
+            if (1 === u.endStyle.top) {
+              s += " " + t.SELECTION_TOP_LEFT;
+            }
+            if (1 === u.endStyle.bottom) {
+              s += " " + t.SELECTION_BOTTOM_LEFT;
+            }
+            d++;
+            this._createSelectionPiece(s, u.top, u.left + u.width, t.ROUNDED_PIECE_WIDTH, c, n, i, o, r);
+          }
+        }
         s = t.SELECTION_CLASS_NAME;
-        l && (0 === u.startStyle.top && (s += " " + t.SELECTION_TOP_LEFT), 0 === u.startStyle.bottom && (s += " " + t
-            .SELECTION_BOTTOM_LEFT), 0 === u.endStyle.top && (s += " " + t.SELECTION_TOP_RIGHT), 0 === u.endStyle.bottom &&
-          (s += " " + t.SELECTION_BOTTOM_RIGHT));
+        if (l) {
+          if (0 === u.startStyle.top) {
+            s += " " + t.SELECTION_TOP_LEFT;
+          }
+          if (0 === u.startStyle.bottom) {
+            s += " " + t.SELECTION_BOTTOM_LEFT;
+          }
+          if (0 === u.endStyle.top) {
+            s += " " + t.SELECTION_TOP_RIGHT;
+          }
+          if (0 === u.endStyle.bottom) {
+            s += " " + t.SELECTION_BOTTOM_RIGHT;
+          }
+        }
         d++;
         this._createSelectionPiece(s, u.top, u.left, u.width, c, n, i, o, r);
       }
@@ -253,8 +294,10 @@ define("vs/editor/core/view/overlays/selections/selections", ["require", "export
         "px;width:"), o.push(e.scrollWidth.toString()), o.push("px;height:"), o.push(e.scrollHeight.toString()), o.push(
         'px;">'), i = 0; i < this._selections.length; i++) {
         t = this._selections[i];
-        t.isEmpty() || (n = this._getVisibleRangesWithStyle(t, e), a += this._actualRenderOneSelection(n, e.viewportLeft,
-          o, r, s));
+        if (!t.isEmpty()) {
+          n = this._getVisibleRangesWithStyle(t, e);
+          a += this._actualRenderOneSelection(n, e.viewportLeft, o, r, s);
+        }
       }
       o.push("</div>");
 

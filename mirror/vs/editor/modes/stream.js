@@ -200,8 +200,13 @@ define("vs/editor/modes/stream", ["require", "exports"], function(e, t) {
     };
 
     e.prototype.setTokenRules = function(e, t) {
-      (this.separators !== e || this.whitespace !== t) && (this.separators = e, this.separatorsArr = this.stringToArray(
-        this.separators), this.whitespace = t, this.whitespaceArr = this.stringToArray(this.whitespace), this.resetPeekedToken());
+      if (this.separators !== e || this.whitespace !== t) {
+        this.separators = e;
+        this.separatorsArr = this.stringToArray(this.separators);
+        this.whitespace = t;
+        this.whitespaceArr = this.stringToArray(this.whitespace);
+        this.resetPeekedToken();
+      }
     };
 
     e.prototype.peekToken = function() {

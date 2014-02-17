@@ -16,7 +16,9 @@ define(["require", "exports", "vs/editor/core/range", "vs/editor/core/selection"
       var f = this.selection.endLineNumber;
 
       var g = this.selection.endColumn;
-      c < f && g === 1 && (f -= 1);
+      if (c < f && g === 1) {
+        f -= 1;
+      }
 
       d = 1;
 

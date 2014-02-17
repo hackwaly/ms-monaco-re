@@ -36,13 +36,20 @@ define("vs/base/time/idleMonitor", ["require", "exports", "vs/base/dom/dom", "vs
       this.referenceCount = 0;
     }
     e.prototype.increment = function() {
-      0 === this.referenceCount && this.construct();
+      if (0 === this.referenceCount) {
+        this.construct();
+      }
 
       this.referenceCount++;
     };
 
     e.prototype.decrement = function() {
-      this.referenceCount > 0 && (this.referenceCount--, 0 === this.referenceCount && this.dispose());
+      if (this.referenceCount > 0) {
+        this.referenceCount--;
+        if (0 === this.referenceCount) {
+          this.dispose();
+        }
+      }
     };
 
     e.prototype.construct = function() {
@@ -106,11 +113,18 @@ define("vs/base/time/idleMonitor", ["require", "exports", "vs/base/dom/dom", "vs
     r.prototype.onUserActive = function() {
       this.lastActiveTime = (new Date).getTime();
 
-      1 !== this.status && (this.status = 1, this.scheduleIdleCheck(), this.eventEmitter.emit("onActive"));
+      if (1 !== this.status) {
+        this.status = 1;
+        this.scheduleIdleCheck();
+        this.eventEmitter.emit("onActive");
+      }
     };
 
     r.prototype.onUserIdle = function() {
-      0 !== this.status && (this.status = 0, this.eventEmitter.emit("onIdle"));
+      if (0 !== this.status) {
+        this.status = 0;
+        this.eventEmitter.emit("onIdle");
+      }
     };
 
     r.prototype.scheduleIdleCheck = function() {
@@ -126,7 +140,10 @@ define("vs/base/time/idleMonitor", ["require", "exports", "vs/base/dom/dom", "vs
     };
 
     r.prototype.cancelIdleCheck = function() {
-      -1 !== this.idleCheckTimeout && (clearTimeout(this.idleCheckTimeout), this.idleCheckTimeout = -1);
+      if (-1 !== this.idleCheckTimeout) {
+        clearTimeout(this.idleCheckTimeout);
+        this.idleCheckTimeout = -1;
+      }
     };
 
     r.prototype.checkIfUserIsIdle = function() {

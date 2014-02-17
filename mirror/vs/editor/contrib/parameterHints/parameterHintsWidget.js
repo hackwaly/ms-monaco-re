@@ -196,7 +196,9 @@ define(["require", "exports", "vs/base/dom/builder", "vs/editor/core/constants",
     };
 
     a.prototype.renderDocumentation = function(a, b, c) {
-      b.documentation && a.append(i(".documentation").text(b.documentation));
+      if (b.documentation) {
+        a.append(i(".documentation").text(b.documentation));
+      }
       var d = b.parameters[c];
       if (d && d.documentation) {
         var e = i(".documentation");
@@ -246,7 +248,10 @@ define(["require", "exports", "vs/base/dom/builder", "vs/editor/core/constants",
       while (a = this.modelListenersToRemove.pop()) {
         a();
       }
-      this.model && (this.model.dispose(), this.model = null);
+      if (this.model) {
+        this.model.dispose();
+        this.model = null;
+      }
     };
 
     a.prototype.destroy = function() {
@@ -254,15 +259,30 @@ define(["require", "exports", "vs/base/dom/builder", "vs/editor/core/constants",
       while (this.triggerCharactersListeners.length > 0) {
         this.triggerCharactersListeners.pop()();
       }
-      this.$overloads && (this.$overloads.destroy(), delete this.$overloads);
+      if (this.$overloads) {
+        this.$overloads.destroy();
+        delete this.$overloads;
+      }
 
-      this.$signatures && (this.$signatures.destroy(), delete this.$signatures);
+      if (this.$signatures) {
+        this.$signatures.destroy();
+        delete this.$signatures;
+      }
 
-      this.$wrapper && (this.$wrapper.destroy(), delete this.$wrapper);
+      if (this.$wrapper) {
+        this.$wrapper.destroy();
+        delete this.$wrapper;
+      }
 
-      this.$el && (this.$el.destroy(), delete this.$el);
+      if (this.$el) {
+        this.$el.destroy();
+        delete this.$el;
+      }
 
-      this.bindings && (this.bindings.dispose(), delete this.bindings);
+      if (this.bindings) {
+        this.bindings.dispose();
+        delete this.bindings;
+      }
     };
 
     a.ID = "editor.widget.parameterHintsWidget";

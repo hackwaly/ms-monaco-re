@@ -25,10 +25,15 @@ define("vs/languages/typescript/resources/dependencyResolverGraph", ["require", 
           var r = t(e.substring(c, n));
 
           var i = Number(r["Content-Length"]);
-          n + 4 + i > e.length || (u.push({
-            header: r,
-            body: e.substr(n + 4, i)
-          }), l(u[u.length - 1]), c = n + 4 + i, o(e));
+          if (!(n + 4 + i > e.length)) {
+            u.push({
+              header: r,
+              body: e.substr(n + 4, i)
+            });
+            l(u[u.length - 1]);
+            c = n + 4 + i;
+            o(e);
+          }
         }
       }
       var s;
@@ -59,7 +64,11 @@ define("vs/languages/typescript/resources/dependencyResolverGraph", ["require", 
       }, function(e) {
         a(e);
       }, function(e) {
-        i.browser.isIE10orEarlier || 3 === e.readyState && o(e.responseText);
+        if (!i.browser.isIE10orEarlier) {
+          if (3 === e.readyState) {
+            o(e.responseText);
+          }
+        }
       }).done(null, function(e) {
         a(e);
       });
@@ -110,7 +119,9 @@ define("vs/languages/typescript/resources/dependencyResolverGraph", ["require", 
       }).then(function(e) {
         t = e;
         for (var i = [], o = 0; o < e.length; o++) {
-          r._resourceService.contains(e[o]) || i.push(r._requestService.getPath("root", e[o]));
+          if (!r._resourceService.contains(e[o])) {
+            i.push(r._requestService.getPath("root", e[o]));
+          }
         }
         return 0 === i.length ? n.Promise.as(e) : p.fetchChunkedData(r._requestService, {
           type: "POST",
@@ -131,7 +142,9 @@ define("vs/languages/typescript/resources/dependencyResolverGraph", ["require", 
           var n = s.URL.fromEncoded(r._requestService.getRequestUrl("root", t, !0));
 
           var i = new a.RemoteModel(n, e.body);
-          r._resourceService.contains(n) || r._resourceService.insert(n, i);
+          if (!r._resourceService.contains(n)) {
+            r._resourceService.insert(n, i);
+          }
         }
       });
     };
@@ -151,7 +164,9 @@ define("vs/languages/typescript/resources/dependencyResolverGraph", ["require", 
 
     t.prototype._parseGraph = function(e) {
       for (var t = this._requestService.getRequestUrl("root", "", !0), n = Object.keys(e.i), r = 0; r < n.length; r++) {
-        0 !== e.i[n[r]].indexOf("error:") && (e.i[n[r]] = t + e.i[n[r]].substring(1));
+        if (0 !== e.i[n[r]].indexOf("error:")) {
+          e.i[n[r]] = t + e.i[n[r]].substring(1);
+        }
       }
       return l.Graph.fromJSON(e);
     };

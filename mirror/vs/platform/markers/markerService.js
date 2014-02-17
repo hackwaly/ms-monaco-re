@@ -25,11 +25,15 @@ define("vs/platform/markers/markerService", ["require", "exports", "vs/platform/
         },
         deleteMarkerSet: function(e) {
           var n = i.__deleteMarkerSet(e);
-          null !== n && t.push(n);
+          if (null !== n) {
+            t.push(n);
+          }
         },
         processMarkerUpdate: function(e) {
           var n = i.__processMarkerUpdate(e);
-          null !== n && t.push(n);
+          if (null !== n) {
+            t.push(n);
+          }
         }
       };
       e(o);

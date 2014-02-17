@@ -36,7 +36,9 @@ define("vs/languages/typescript/lint/rules/typescript", ["require", "exports", "
       this.filter = [r.SyntaxKind.SingleLineCommentTrivia];
     }
     e.prototype.checkElement = function(e, t) {
-      this._couldMeanTripleSlash(e) && t.reportError(e, this.name, this.code);
+      if (this._couldMeanTripleSlash(e)) {
+        t.reportError(e, this.name, this.code);
+      }
     };
 
     e.prototype._couldMeanTripleSlash = function(t) {
@@ -73,7 +75,9 @@ define("vs/languages/typescript/lint/rules/typescript", ["require", "exports", "
       var n = t.end(e.identifier) - 1;
 
       var r = t.languageService().getOccurrencesAtPosition(t.filename(), n);
-      1 === r.length && t.reportError(e, this.name, this.code);
+      if (1 === r.length) {
+        t.reportError(e, this.name, this.code);
+      }
     };
 
     return e;
@@ -100,7 +104,10 @@ define("vs/languages/typescript/lint/rules/typescript", ["require", "exports", "
               var a = void 0;
 
               var c = void 0;
-              n.typeAnnotation && (a = t.start(n.propertyName), c = t.end(n.typeAnnotation) - a);
+              if (n.typeAnnotation) {
+                a = t.start(n.propertyName);
+                c = t.end(n.typeAnnotation) - a;
+              }
 
               t.reportError(n.propertyName, this.name, this.code, a, c);
             }
@@ -126,7 +133,9 @@ define("vs/languages/typescript/lint/rules/typescript", ["require", "exports", "
         var i = t.end(n) - 1;
 
         var o = t.languageService().getOccurrencesAtPosition(t.filename(), i);
-        o.length <= 1 && t.reportError(n, this.name, this.code);
+        if (o.length <= 1) {
+          t.reportError(n, this.name, this.code);
+        }
       }
     };
 
@@ -154,7 +163,9 @@ define("vs/languages/typescript/lint/rules/typescript", ["require", "exports", "
         var i = t.end(n) - 1;
 
         var o = t.languageService().getOccurrencesAtPosition(t.filename(), i);
-        o.length <= 1 && t.reportError(n, this.name, this.code);
+        if (o.length <= 1) {
+          t.reportError(n, this.name, this.code);
+        }
       }
     };
 

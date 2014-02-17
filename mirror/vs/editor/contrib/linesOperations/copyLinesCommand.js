@@ -13,9 +13,14 @@ define(["require", "exports", "vs/editor/core/range"], function(a, b, c) {
 
       this._moveStartPositionUp = !1;
 
-      c.startLineNumber < c.endLineNumber && c.endColumn === 1 && (this._moveEndPositionDown = !0, c = c.setEndPosition(
-        c.endLineNumber - 1, a.getLineMaxColumn(c.endLineNumber - 1)), !this._isCopyingDown && c.isEmpty() && (this
-        ._moveEndPositionDown = !1, this._moveStartPositionUp = !0));
+      if (c.startLineNumber < c.endLineNumber && c.endColumn === 1) {
+        this._moveEndPositionDown = !0;
+        c = c.setEndPosition(c.endLineNumber - 1, a.getLineMaxColumn(c.endLineNumber - 1));
+        if (!this._isCopyingDown && c.isEmpty()) {
+          this._moveEndPositionDown = !1;
+          this._moveStartPositionUp = !0;
+        }
+      }
       var e = [];
       for (var f = c.startLineNumber; f <= c.endLineNumber; f++) {
         e.push(a.getLineContent(f));

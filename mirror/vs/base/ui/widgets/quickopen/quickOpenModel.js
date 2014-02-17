@@ -151,11 +151,15 @@ define("vs/base/ui/widgets/quickopen/quickOpenModel", ["require", "exports", "vs
     });
 
     e.prototype.addEntries = function(e) {
-      n.isArray(e) && (this._entries = this._entries.concat(e));
+      if (n.isArray(e)) {
+        this._entries = this._entries.concat(e);
+      }
     };
 
     e.prototype.setEntries = function(e) {
-      n.isArray(e) && (this._entries = e);
+      if (n.isArray(e)) {
+        this._entries = e;
+      }
     };
 
     e.prototype.getEntries = function() {

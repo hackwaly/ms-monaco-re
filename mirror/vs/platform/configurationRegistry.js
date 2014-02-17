@@ -40,10 +40,12 @@ define("vs/platform/configurationRegistry", ["require", "exports", "vs/nls!vs/ed
         };
       } else {
         var i = t.shift();
-        e.properties[i] || (e.properties[i] = {
-          type: "object",
-          properties: {}
-        });
+        if (!e.properties[i]) {
+          e.properties[i] = {
+            type: "object",
+            properties: {}
+          };
+        }
 
         this.registerConfigurationNode(e.properties[i], t, n);
       }

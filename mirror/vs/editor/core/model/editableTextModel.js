@@ -86,10 +86,16 @@ define("vs/editor/core/model/editableTextModel", ["require", "exports", "vs/edit
     t.prototype.setEditableRange = function(e) {
       this._commandManager.clear();
 
-      this._hasEditableRange && (this.removeTrackedRange(this._editableRangeId), this._editableRangeId = null, this._hasEditableRange = !
-        1);
+      if (this._hasEditableRange) {
+        this.removeTrackedRange(this._editableRangeId);
+        this._editableRangeId = null;
+        this._hasEditableRange = !1;
+      }
 
-      e && (this._hasEditableRange = !0, this._editableRangeId = this.addTrackedRange(e, 0));
+      if (e) {
+        this._hasEditableRange = !0;
+        this._editableRangeId = this.addTrackedRange(e, 0);
+      }
     };
 
     t.prototype.hasEditableRange = function() {
@@ -103,7 +109,11 @@ define("vs/editor/core/model/editableTextModel", ["require", "exports", "vs/edit
     t.prototype.callInsertTextOnLine = function(e, t, n, i, o, r) {
       this._lines[t].insertText(e, n, i, o);
 
-      r && (this._invalidateLine(t), this._increaseVersionId(), this.emitModelContentChangedLineChangedEvent(t + 1));
+      if (r) {
+        this._invalidateLine(t);
+        this._increaseVersionId();
+        this.emitModelContentChangedLineChangedEvent(t + 1);
+      }
     };
 
     t.prototype.callDeleteTextOnLine = function(e, t, n, i, o, r, s) {
@@ -145,7 +155,9 @@ define("vs/editor/core/model/editableTextModel", ["require", "exports", "vs/edit
         return o;
       }
       for (var r = n.split("\n"), s = 0, a = r.length; a > s; s++) {
-        "\r" === r[s].charAt(r[s].length - 1) && (r[s] = r[s].substring(0, r[s].length - 1));
+        if ("\r" === r[s].charAt(r[s].length - 1)) {
+          r[s] = r[s].substring(0, r[s].length - 1);
+        }
       }
       return 1 === r.length ? this._insertTextOneLine(e, o, r[0], i) : this._insertTextMultiline(e, o, r, i);
     };

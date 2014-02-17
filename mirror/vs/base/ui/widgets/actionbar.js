@@ -72,11 +72,15 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
       });
 
       this.builder.on("mousedown", function(e) {
-        0 === e.button && t._action.enabled && t.builder.addClass("active");
+        if (0 === e.button && t._action.enabled) {
+          t.builder.addClass("active");
+        }
       });
 
       this.builder.on(["mouseup", "mouseout"], function(e) {
-        0 === e.button && t._action.enabled && t.builder.removeClass("active");
+        if (0 === e.button && t._action.enabled) {
+          t.builder.removeClass("active");
+        }
       });
     };
 
@@ -136,7 +140,9 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
   t.Separator = p;
   var f = function(e) {
     function t(t, n, i) {
-      "undefined" == typeof i && (i = {});
+      if ("undefined" == typeof i) {
+        i = {};
+      }
 
       e.call(this, t, n);
 
@@ -159,8 +165,9 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
         role: "menuitem"
       });
 
-      this.options.label && this.options.keybinding && d("span.keybinding").text(this.options.keybinding).appendTo(
-        this.builder);
+      if (this.options.label && this.options.keybinding) {
+        d("span.keybinding").text(this.options.keybinding).appendTo(this.builder);
+      }
 
       this._updateClass();
 
@@ -180,13 +187,17 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
     };
 
     t.prototype._updateLabel = function() {
-      this.options.label && this.$e.text(this.getAction().label);
+      if (this.options.label) {
+        this.$e.text(this.getAction().label);
+      }
     };
 
     t.prototype._updateTitle = function() {
       if (!this.options.label && this.getAction().label && this.options.icon) {
         var e = this.getAction().label;
-        this.options.keybinding && (e = n.localize("vs_base_ui_widgets_actionbar", 0, e, this.options.keybinding));
+        if (this.options.keybinding) {
+          e = n.localize("vs_base_ui_widgets_actionbar", 0, e, this.options.keybinding);
+        }
 
         this.$e.attr({
           title: e
@@ -195,7 +206,9 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
     };
 
     t.prototype._updateClass = function() {
-      this.cssClass && this.$e.removeClass(this.cssClass);
+      if (this.cssClass) {
+        this.$e.removeClass(this.cssClass);
+      }
 
       this.options.icon ? (this.cssClass = this.getAction().class, this.$e.addClass("icon"), this.cssClass && this.$e
         .addClass(this.cssClass), this._updateEnabled()) : this.$e.removeClass("icon");
@@ -291,7 +304,9 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
 
   var v = function(e) {
     function t(t, i) {
-      "undefined" == typeof i && (i = m);
+      if ("undefined" == typeof i) {
+        i = m;
+      }
       var o = this;
       e.call(this);
 
@@ -303,7 +318,10 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
 
       this._actionRunner = this.options.actionRunner;
 
-      this._actionRunner || (this._actionRunner = new r.ActionRunner, this.toDispose.push(this._actionRunner));
+      if (!this._actionRunner) {
+        this._actionRunner = new r.ActionRunner;
+        this.toDispose.push(this._actionRunner);
+      }
 
       this.toDispose.push(this.addEmitter2(this._actionRunner));
 
@@ -317,7 +335,9 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
 
       this.domNode.tabIndex = 0;
 
-      2 === this.options.orientation && (this.domNode.className += " vertical");
+      if (2 === this.options.orientation) {
+        this.domNode.className += " vertical";
+      }
 
       d(this.domNode).on(s.EventType.KEY_DOWN, function(e) {
         var t = new c.KeyboardEvent(e);
@@ -340,7 +360,10 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
           default:
             n = !1;
         }
-        n && (t.preventDefault(), t.stopPropagation());
+        if (n) {
+          t.preventDefault();
+          t.stopPropagation();
+        }
       });
 
       d(this.domNode).on(s.EventType.KEY_UP, function(e) {
@@ -356,7 +379,9 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
       });
       var a = s.trackFocus(this.domNode);
       a.addBlurListener(function(e) {
-        document.activeElement !== o.domNode && s.isAncestor(document.activeElement, o.domNode) || o.emit("blur", e);
+        if (!(document.activeElement !== o.domNode && s.isAncestor(document.activeElement, o.domNode))) {
+          o.emit("blur", e);
+        }
       });
 
       this.actionsList = document.createElement("ul");
@@ -369,7 +394,9 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
 
       this.domNode.appendChild(this.actionsList);
 
-      t && t.getHTMLElement().appendChild(this.domNode);
+      if (t) {
+        t.getHTMLElement().appendChild(this.domNode);
+      }
     }
     __extends(t, e);
 
@@ -378,9 +405,12 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
         return this._actionRunner;
       },
       set: function(e) {
-        e && (this._actionRunner = e, this.items.forEach(function(t) {
-          return t.actionRunner = e;
-        }));
+        if (e) {
+          this._actionRunner = e;
+          this.items.forEach(function(t) {
+            return t.actionRunner = e;
+          });
+        }
       },
       enumerable: !0,
       configurable: !0
@@ -391,9 +421,13 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
     };
 
     t.prototype.push = function(e, t) {
-      "undefined" == typeof t && (t = {});
+      if ("undefined" == typeof t) {
+        t = {};
+      }
       var n = this;
-      Array.isArray(e) || (e = [e]);
+      if (!Array.isArray(e)) {
+        e = [e];
+      }
       var i = u.isNumber(t.index) ? t.index : null;
       e.forEach(function(e) {
         var o = document.createElement("li");
@@ -401,9 +435,13 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
 
         o.setAttribute("role", "presentation");
         var r = null;
-        n.options.actionItemProvider && (r = n.options.actionItemProvider(e));
+        if (n.options.actionItemProvider) {
+          r = n.options.actionItemProvider(e);
+        }
 
-        r || (r = new f(n.options.context, e, t));
+        if (!r) {
+          r = new f(n.options.context, e, t);
+        }
 
         r.actionRunner = n._actionRunner;
 
@@ -440,13 +478,17 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
     };
 
     t.prototype.focus = function(e) {
-      e && "undefined" == typeof this.focusedItem && (this.focusedItem = 0);
+      if (e && "undefined" == typeof this.focusedItem) {
+        this.focusedItem = 0;
+      }
 
       this.updateFocus();
     };
 
     t.prototype.focusNext = function() {
-      "undefined" == typeof this.focusedItem && (this.focusedItem = this.items.length - 1);
+      if ("undefined" == typeof this.focusedItem) {
+        this.focusedItem = this.items.length - 1;
+      }
       var e;
 
       var t = this.focusedItem;
@@ -454,22 +496,30 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
         this.focusedItem = (this.focusedItem + 1) % this.items.length;
         e = this.items[this.focusedItem];
       } while (this.focusedItem !== t && !e.isEnabled());
-      this.focusedItem !== t || e.isEnabled() || (this.focusedItem = void 0);
+      if (!(this.focusedItem !== t || e.isEnabled())) {
+        this.focusedItem = void 0;
+      }
 
       this.updateFocus();
     };
 
     t.prototype.focusPrevious = function() {
-      "undefined" == typeof this.focusedItem && (this.focusedItem = 0);
+      if ("undefined" == typeof this.focusedItem) {
+        this.focusedItem = 0;
+      }
       var e;
 
       var t = this.focusedItem;
       do {
         this.focusedItem = this.focusedItem - 1;
-        this.focusedItem < 0 && (this.focusedItem = this.items.length - 1);
+        if (this.focusedItem < 0) {
+          this.focusedItem = this.items.length - 1;
+        }
         e = this.items[this.focusedItem];
       } while (this.focusedItem !== t && !e.isEnabled());
-      this.focusedItem !== t || e.isEnabled() || (this.focusedItem = void 0);
+      if (!(this.focusedItem !== t || e.isEnabled())) {
+        this.focusedItem = void 0;
+      }
 
       this.updateFocus();
     };
@@ -503,7 +553,9 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
     };
 
     t.prototype.dispose = function() {
-      null !== this.items && this.clear();
+      if (null !== this.items) {
+        this.clear();
+      }
 
       this.items = null;
 

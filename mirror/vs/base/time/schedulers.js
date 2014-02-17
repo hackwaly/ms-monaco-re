@@ -16,7 +16,10 @@ define("vs/base/time/schedulers", ["require", "exports"], function(e, t) {
     };
 
     e.prototype.cancel = function() {
-      -1 !== this.timeoutToken && (clearTimeout(this.timeoutToken), this.timeoutToken = -1);
+      if (-1 !== this.timeoutToken) {
+        clearTimeout(this.timeoutToken);
+        this.timeoutToken = -1;
+      }
     };
 
     e.prototype.setRunner = function(e) {
@@ -36,7 +39,9 @@ define("vs/base/time/schedulers", ["require", "exports"], function(e, t) {
     e.prototype.onTimeout = function() {
       this.timeoutToken = -1;
 
-      this.runner && this.runner();
+      if (this.runner) {
+        this.runner();
+      }
     };
 
     return e;

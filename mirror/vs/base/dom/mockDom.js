@@ -296,7 +296,9 @@ define("vs/base/dom/mockDom", ["require", "exports"], function(e, t) {
     };
 
     t.prototype.setAttribute = function(e, t) {
-      this.hasAttribute(e) && this.removeAttribute(e);
+      if (this.hasAttribute(e)) {
+        this.removeAttribute(e);
+      }
       var n = this.ownerDocument.createAttribute(e);
       n.ownerElement = this;
 
@@ -693,7 +695,9 @@ define("vs/base/dom/mockDom", ["require", "exports"], function(e, t) {
     };
 
     e.prototype.onTransition = function(e, t) {
-      "attributeValue" !== t && (this.tag.attributes[this.attributeName] = this.attributeValue);
+      if ("attributeValue" !== t) {
+        this.tag.attributes[this.attributeName] = this.attributeValue;
+      }
     };
 
     return e;
@@ -763,7 +767,10 @@ define("vs/base/dom/mockDom", ["require", "exports"], function(e, t) {
     e.prototype.parse = function(e) {
       for (var t = new m(e); t.more();) {
         var n = this.activeState.consumeCharacter(t);
-        n !== this.activeState && (this.activeState.onTransition(this, n.name), this.activeState = n);
+        if (n !== this.activeState) {
+          this.activeState.onTransition(this, n.name);
+          this.activeState = n;
+        }
       }
       if ("error" === this.activeState.name) throw new Error(this.activeState.message);
       if (0 !== this.openElements.length) throw new Error("Elements not closed: " + this.openElements.map(function(e) {

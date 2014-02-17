@@ -18,7 +18,9 @@ define("vs/editor/editorExtensions", ["require", "exports", "vs/base/ui/actions"
   t.defaultPrecondition = s.TextFocus | s.Writeable | s.UpdateOnModelChange;
   var a = function(e) {
     function n(n, o, r) {
-      "undefined" == typeof r && (r = t.defaultPrecondition);
+      if ("undefined" == typeof r) {
+        r = t.defaultPrecondition;
+      }
       var a = this;
       e.call(this, o.id);
 
@@ -38,38 +40,51 @@ define("vs/editor/editorExtensions", ["require", "exports", "vs/base/ui/actions"
 
       this.bindings = [];
 
-      o.label && (this.label = o.label);
+      if (o.label) {
+        this.label = o.label;
+      }
 
       this.hasFocus = !1;
 
-      this.needsTextFocus && (this.toUnhook.push(this.editor.addListener("focus", function() {
-        return a.onFocusChanged(!0);
-      })), this.toUnhook.push(this.editor.addListener("blur", function() {
-        return a.onFocusChanged(!1);
-      })));
+      if (this.needsTextFocus) {
+        this.toUnhook.push(this.editor.addListener("focus", function() {
+          return a.onFocusChanged(!0);
+        }));
+        this.toUnhook.push(this.editor.addListener("blur", function() {
+          return a.onFocusChanged(!1);
+        }));
+      }
 
       this.hasWidgetFocus = !1;
 
-      this.needsWidgetFocus && (this.toUnhook.push(this.editor.addListener("widgetFocus", function() {
-        return a.onWidgetFocusChanges(!0);
-      })), this.toUnhook.push(this.editor.addListener("widgetBlur", function() {
-        return a.onWidgetFocusChanges(!1);
-      })));
+      if (this.needsWidgetFocus) {
+        this.toUnhook.push(this.editor.addListener("widgetFocus", function() {
+          return a.onWidgetFocusChanges(!0);
+        }));
+        this.toUnhook.push(this.editor.addListener("widgetBlur", function() {
+          return a.onWidgetFocusChanges(!1);
+        }));
+      }
 
       this.isReadOnly = this.editor.getConfiguration().readOnly;
 
-      this.needsWritable && this.toUnhook.push(this.editor.addListener(i.EventType.ConfigurationChanged, function(e) {
-        return a.onConfigurationChanged(e);
-      }));
+      if (this.needsWritable) {
+        this.toUnhook.push(this.editor.addListener(i.EventType.ConfigurationChanged, function(e) {
+          return a.onConfigurationChanged(e);
+        }));
+      }
 
-      r & s.UpdateOnModelChange && this.toUnhook.push(this.editor.addListener(i.EventType.ModelChanged, function() {
-        return a.updateEnablementState();
-      }));
-
-      r & s.UpdateOnConfigurationChange && this.toUnhook.push(this.editor.addListener(i.EventType.ConfigurationChanged,
-        function() {
+      if (r & s.UpdateOnModelChange) {
+        this.toUnhook.push(this.editor.addListener(i.EventType.ModelChanged, function() {
           return a.updateEnablementState();
         }));
+      }
+
+      if (r & s.UpdateOnConfigurationChange) {
+        this.toUnhook.push(this.editor.addListener(i.EventType.ConfigurationChanged, function() {
+          return a.updateEnablementState();
+        }));
+      }
 
       this.enabled = this.getEnablementState();
     }

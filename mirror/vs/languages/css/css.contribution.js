@@ -5,8 +5,10 @@ define("vs/languages/css/css.contribution", ["require", "exports", "vs/nls!vs/ed
   var l = i.Registry.as(o.Extensions.EditorModes);
   l.registerMode(["text/css"], new i.DeferredDescriptor("vs/languages/css/css", "CSSMode"));
 
-  u.enableGlobalCSSRuleChecker && l.registerWorkerParticipant("vs.languages.css", new i.DeferredDescriptor(
-    "vs/languages/css/monacoParticipant", "WorkerParticipant"));
+  if (u.enableGlobalCSSRuleChecker) {
+    l.registerWorkerParticipant("vs.languages.css", new i.DeferredDescriptor("vs/languages/css/monacoParticipant",
+      "WorkerParticipant"));
+  }
 
   i.Registry.as(r.Extensions.EditorContributions).registerEditorContribution(new i.BaseDescriptor(a.ColorContribution));
   var c = i.Registry.as(s.Extensions.Configuration);

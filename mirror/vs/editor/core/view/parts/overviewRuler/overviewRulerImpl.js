@@ -38,8 +38,15 @@ define("vs/editor/core/view/parts/overviewRuler/overviewRulerImpl", ["require", 
 
         this._domNode.style.right = e.right + "px";
 
-        (this._width !== e.width || this._height !== e.height) && (this._width = e.width, this._height = e.height, this
-          ._domNode.width = this._width, this._domNode.height = this._height, t && this.render());
+        if (this._width !== e.width || this._height !== e.height) {
+          this._width = e.width;
+          this._height = e.height;
+          this._domNode.width = this._width;
+          this._domNode.height = this._height;
+          if (t) {
+            this.render();
+          }
+        }
       };
 
       e.prototype.getLanesCount = function() {
@@ -49,7 +56,9 @@ define("vs/editor/core/view/parts/overviewRuler/overviewRulerImpl", ["require", 
       e.prototype.setLanesCount = function(e, t) {
         this._lanesCount = e;
 
-        t && this.render();
+        if (t) {
+          this.render();
+        }
       };
 
       e.prototype.getDomNode = function() {
@@ -67,32 +76,46 @@ define("vs/editor/core/view/parts/overviewRuler/overviewRulerImpl", ["require", 
       e.prototype.setScrollHeight = function(e, t) {
         this._outerHeight = e;
 
-        t && this.render();
+        if (t) {
+          this.render();
+        }
       };
 
       e.prototype.setLineHeight = function(e, t) {
         this._lineHeight = e;
 
-        t && this.render();
+        if (t) {
+          this.render();
+        }
       };
 
       e.prototype.setZones = function(e, t) {
         this._zones = e;
 
-        t && this.render();
+        if (t) {
+          this.render();
+        }
       };
 
       e.prototype._insertZone = function(e, t, n, i, o, r) {
         var s = Math.floor((t + n) / 2);
 
         var a = n - s;
-        a > o / 2 && (a = o / 2);
+        if (a > o / 2) {
+          a = o / 2;
+        }
 
-        i / 2 > a && (a = i / 2);
+        if (i / 2 > a) {
+          a = i / 2;
+        }
 
-        0 > s - a && (s = a);
+        if (0 > s - a) {
+          s = a;
+        }
 
-        s + a > this._height && (s = this._height - a);
+        if (s + a > this._height) {
+          s = this._height - a;
+        }
 
         e[r] = e[r] || [];
 

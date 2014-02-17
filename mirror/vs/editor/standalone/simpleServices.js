@@ -41,7 +41,9 @@ define("vs/editor/standalone/simpleServices", ["require", "exports", "vs/base/li
   t.SimpleModel = u;
   var l = function() {
     function e(e) {
-      e && this.setEditor(e);
+      if (e) {
+        this.setEditor(e);
+      }
     }
     e.prototype.setEditor = function(e) {
       this.editor = new a(e);

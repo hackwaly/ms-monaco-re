@@ -2,7 +2,9 @@ define("vs/base/ui/scrollbar/impl/horizontalScrollbar", ["require", "exports",
   "vs/base/ui/scrollbar/impl/abstractScrollbar", "vs/base/dom/mouseEvent"
 ], function(e, t, n, i) {
   function o(e, t, n) {
-    e.style[t] !== n && (e.style[t] = n);
+    if (e.style[t] !== n) {
+      e.style[t] = n;
+    }
   }
   var r = function(e) {
     function t(t, i, o) {

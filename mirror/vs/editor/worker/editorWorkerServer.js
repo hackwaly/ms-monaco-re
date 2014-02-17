@@ -1,1501 +1,1583 @@
-"undefined" == typeof WinJS && (! function(e) {
-  e.setImmediate || (e.setImmediate = function(t) {
-    return e.setTimeout(t, 0);
-  });
-}(this), function(e, t) {
-  "use strict";
+if ("undefined" == typeof WinJS) {
+  ! function(e) {
+    if (!e.setImmediate) {
+      e.setImmediate = function(t) {
+        return e.setTimeout(t, 0);
+      };
+    }
+  }(this);
+  (function(e, t) {
+    "use strict";
 
-  function n(e, n) {
+    function n(e, n) {
+      var i;
+
+      var o;
+
+      var r;
+
+      var s = Object.keys(n);
+      for (o = 0, r = s.length; r > o; o++) {
+        var a = s[o];
+
+        var u = 95 !== a.charCodeAt(0);
+
+        var l = n[a];
+        !l || "object" != typeof l || l.value === t && "function" != typeof l.get && "function" != typeof l.set ? u ?
+          e[a] = l : (i = i || {}, i[a] = {
+            value: l,
+            enumerable: u,
+            configurable: !0,
+            writable: !0
+          }) : (l.enumerable === t && (l.enumerable = u), i = i || {}, i[a] = l);
+      }
+      if (i) {
+        Object.defineProperties(e, i);
+      }
+    }! function(t) {
+      function i(e, t, i) {
+        for (var o = e, r = t.split("."), s = 0, a = r.length; a > s; s++) {
+          var u = r[s];
+          if (!o[u]) {
+            Object.defineProperty(o, u, {
+              value: {},
+              writable: !1,
+              enumerable: !0,
+              configurable: !0
+            });
+          }
+
+          o = o[u];
+        }
+        i && n(o, i);
+
+        return o;
+      }
+
+      function o(t, n) {
+        return i(e, t, n);
+      }
+      if (!e[t]) {
+        e[t] = Object.create(Object.prototype);
+      }
+      var r = e[t];
+      if (!r.Namespace) {
+        r.Namespace = Object.create(Object.prototype);
+      }
+
+      Object.defineProperties(r.Namespace, {
+        defineWithParent: {
+          value: i,
+          writable: !0,
+          enumerable: !0,
+          configurable: !0
+        },
+        define: {
+          value: o,
+          writable: !0,
+          enumerable: !0,
+          configurable: !0
+        }
+      });
+    }("WinJS");
+
+    (function(e) {
+      function t(t, i, o) {
+        t = t || function() {};
+
+        e.Utilities.markSupportedForProcessing(t);
+
+        i && n(t.prototype, i);
+
+        o && n(t, o);
+
+        return t;
+      }
+
+      function i(i, o, r, s) {
+        if (i) {
+          o = o || function() {};
+          var a = i.prototype;
+          o.prototype = Object.create(a);
+
+          e.Utilities.markSupportedForProcessing(o);
+
+          Object.defineProperty(o.prototype, "constructor", {
+            value: o,
+            writable: !0,
+            configurable: !0,
+            enumerable: !0
+          });
+
+          r && n(o.prototype, r);
+
+          s && n(o, s);
+
+          return o;
+        }
+        return t(o, r, s);
+      }
+
+      function o(e) {
+        e = e || function() {};
+        var t;
+
+        var i;
+        for (t = 1, i = arguments.length; i > t; t++) {
+          n(e.prototype, arguments[t]);
+        }
+        return e;
+      }
+      e.Namespace.define("WinJS.Class", {
+        define: t,
+        derive: i,
+        mix: o
+      });
+    })(WinJS);
+  })(this);
+  (function(e, t) {
+    "use strict";
+
+    function n(e) {
+      return e;
+    }
+
+    function i(e, t, n) {
+      return e.split(".").reduce(function(e, t) {
+        return e ? n(e[t]) : null;
+      }, t);
+    }
+    var o = !! e.Windows;
+
+    var r = {
+      notSupportedForProcessing: "Value is not supported within a declarative processing context, if you want it to be supported mark it using WinJS.Utilities.markSupportedForProcessing. The value was: '{0}'"
+    };
+    t.Namespace.define("WinJS.Utilities", {
+      _setHasWinRT: {
+        value: function(e) {
+          o = e;
+        },
+        configurable: !1,
+        writable: !1,
+        enumerable: !1
+      },
+      hasWinRT: {
+        get: function() {
+          return o;
+        },
+        configurable: !1,
+        enumerable: !0
+      },
+      _getMemberFiltered: i,
+      getMember: function(t, o) {
+        return t ? i(t, o || e, n) : null;
+      },
+      ready: function(n, i) {
+        return new t.Promise(function(o, r) {
+          function s() {
+            if (n) try {
+              n();
+
+              o();
+            } catch (e) {
+              r(e);
+            } else {
+              o();
+            }
+          }
+          var a = t.Utilities.testReadyState;
+          if (!a) {
+            a = e.document ? document.readyState : "complete";
+          }
+
+          "complete" === a || e.document && null !== document.body ? i ? e.setImmediate(s) : s() : e.addEventListener(
+            "DOMContentLoaded", s, !1);
+        });
+      },
+      strictProcessing: {
+        get: function() {
+          return !0;
+        },
+        configurable: !1,
+        enumerable: !0
+      },
+      markSupportedForProcessing: {
+        value: function(e) {
+          e.supportedForProcessing = !0;
+
+          return e;
+        },
+        configurable: !1,
+        writable: !1,
+        enumerable: !0
+      },
+      requireSupportedForProcessing: {
+        value: function(n) {
+          var i = !0;
+          switch (i = i && !(n === e), i = i && !(n === e.location), i = i && !(n instanceof HTMLIFrameElement), i =
+            i && !("function" == typeof n && !n.supportedForProcessing), e.frames.length) {
+            case 0:
+              break;
+            case 1:
+              i = i && !(n === e.frames[0]);
+              break;
+            default:
+              for (var o = 0, s = e.frames.length; i && s > o; o++) {
+                i = i && !(n === e.frames[o]);
+              }
+          }
+          if (i) {
+            return n;
+          }
+          throw new t.ErrorFromName("WinJS.Utilities.requireSupportedForProcessing", t.Resources._formatString(r.notSupportedForProcessing,
+            n));
+        },
+        configurable: !1,
+        writable: !1,
+        enumerable: !0
+      }
+    });
+
+    t.Namespace.define("WinJS", {
+      validation: !1,
+      strictProcessing: {
+        value: function() {},
+        configurable: !1,
+        writable: !1,
+        enumerable: !1
+      }
+    });
+  })(this, WinJS);
+  (function() {
+    "use strict";
+
+    function e(e, t, n) {
+      var r = e;
+      "function" == typeof r && (r = r());
+
+      return (n && o.test(n) ? "" : n ? n + ": " : "") + (t ? t.replace(i, ":") + ": " : "") + r;
+    }
+
+    function t(e, t, n) {
+      var i = WinJS.Utilities.formatLog(e, t, n);
+      console[n && o.test(n) ? n : "log"](i);
+    }
+
+    function n(e) {
+      return e.replace(/[-[\]{}()*+?.,\\^$|#]/g, "\\$&");
+    }
+    var i = /\s+/g;
+
+    var o = /^(error|warn|info|log)$/;
+    WinJS.Namespace.define("WinJS.Utilities", {
+      startLog: function(e) {
+        e = e || {};
+
+        if ("string" == typeof e) {
+          e = {
+            tags: e
+          };
+        }
+        var o = e.type && new RegExp("^(" + n(e.type).replace(i, " ").split(" ").join("|") + ")$");
+
+        var r = e.excludeTags && new RegExp("(^|\\s)(" + n(e.excludeTags).replace(i, " ").split(" ").join("|") +
+          ")(\\s|$)", "i");
+
+        var s = e.tags && new RegExp("(^|\\s)(" + n(e.tags).replace(i, " ").split(" ").join("|") + ")(\\s|$)", "i");
+
+        var a = e.action || t;
+        if (!(o || r || s || WinJS.log)) {
+          WinJS.log = a;
+          return void 0;
+        }
+        var u = function(e, t, n) {
+          if (!(o && !o.test(n) || r && r.test(t) || s && !s.test(t))) {
+            a(e, t, n);
+          }
+
+          if (u.next) {
+            u.next(e, t, n);
+          }
+        };
+        u.next = WinJS.log;
+
+        WinJS.log = u;
+      },
+      stopLog: function() {
+        delete WinJS.log;
+      },
+      formatLog: e
+    });
+  })();
+  (function(e) {
+    "use strict";
+
+    function t(e) {
+      var t = "_on" + e + "state";
+      return {
+        get: function() {
+          var e = this[t];
+          return e && e.userHandler;
+        },
+        set: function(n) {
+          var i = this[t];
+          n ? (i || (i = {
+            wrapper: function(e) {
+              return i.userHandler(e);
+            },
+            userHandler: n
+          }, Object.defineProperty(this, t, {
+            value: i,
+            enumerable: !1,
+            writable: !0,
+            configurable: !0
+          }), this.addEventListener(e, i.wrapper, !1)), i.userHandler = n) : i && (this.removeEventListener(e, i.wrapper, !
+            1), this[t] = null);
+        },
+        enumerable: !0
+      };
+    }
+
+    function n() {
+      for (var e = {}, n = 0, i = arguments.length; i > n; n++) {
+        var o = arguments[n];
+        e["on" + o] = t(o);
+      }
+      return e;
+    }
+    var i = e.Class.define(function(e, t, n) {
+      this.detail = t;
+
+      this.target = n;
+
+      this.timeStamp = Date.now();
+
+      this.type = e;
+    }, {
+      bubbles: {
+        value: !1,
+        writable: !1
+      },
+      cancelable: {
+        value: !1,
+        writable: !1
+      },
+      currentTarget: {
+        get: function() {
+          return this.target;
+        }
+      },
+      defaultPrevented: {
+        get: function() {
+          return this._preventDefaultCalled;
+        }
+      },
+      trusted: {
+        value: !1,
+        writable: !1
+      },
+      eventPhase: {
+        value: 0,
+        writable: !1
+      },
+      target: null,
+      timeStamp: null,
+      type: null,
+      preventDefault: function() {
+        this._preventDefaultCalled = !0;
+      },
+      stopImmediatePropagation: function() {
+        this._stopImmediatePropagationCalled = !0;
+      },
+      stopPropagation: function() {}
+    }, {
+      supportedForProcessing: !1
+    });
+
+    var o = {
+      _listeners: null,
+      addEventListener: function(e, t, n) {
+        n = n || !1;
+
+        this._listeners = this._listeners || {};
+        for (var i = this._listeners[e] = this._listeners[e] || [], o = 0, r = i.length; r > o; o++) {
+          var s = i[o];
+          if (s.useCapture === n && s.listener === t) return;
+        }
+        i.push({
+          listener: t,
+          useCapture: n
+        });
+      },
+      dispatchEvent: function(e, t) {
+        var n = this._listeners && this._listeners[e];
+        if (n) {
+          var o = new i(e, t, this);
+          n = n.slice(0, n.length);
+          for (var r = 0, s = n.length; s > r && !o._stopImmediatePropagationCalled; r++) {
+            n[r].listener(o);
+          }
+          return o.defaultPrevented || !1;
+        }
+        return !1;
+      },
+      removeEventListener: function(e, t, n) {
+        n = n || !1;
+        var i = this._listeners && this._listeners[e];
+        if (i)
+          for (var o = 0, r = i.length; r > o; o++) {
+            var s = i[o];
+            if (s.listener === t && s.useCapture === n) {
+              i.splice(o, 1);
+
+              if (0 === i.length) {
+                delete this._listeners[e];
+              }
+              break;
+            }
+          }
+      }
+    };
+    e.Namespace.define("WinJS.Utilities", {
+      _createEventProperty: t,
+      createEventProperties: n,
+      eventMixin: o
+    });
+  })(WinJS);
+  (function(e, t, n) {
+    "use strict";
+    var i;
+
+    var o = !1;
+
+    var r = "contextchanged";
+
+    var s = t.Class.mix(t.Class.define(null, {}, {
+      supportedForProcessing: !1
+    }), t.Utilities.eventMixin);
+
+    var a = new s;
+
+    var u = {
+      malformedFormatStringInput: "Malformed, did you mean to escape your '{0}'?"
+    };
+    t.Namespace.define("WinJS.Resources", {
+      addEventListener: function(e, n, i) {
+        if (t.Utilities.hasWinRT && !o && e === r) try {
+          Windows.ApplicationModel.Resources.Core.ResourceManager.current.defaultContext.qualifierValues.addEventListener(
+            "mapchanged", function(e) {
+              t.Resources.dispatchEvent(r, {
+                qualifier: e.key,
+                changed: e.target[e.key]
+              });
+            }, !1);
+
+          o = !0;
+        } catch (s) {}
+        a.addEventListener(e, n, i);
+      },
+      removeEventListener: a.removeEventListener.bind(a),
+      dispatchEvent: a.dispatchEvent.bind(a),
+      _formatString: function(e) {
+        var n = arguments;
+        n.length > 1 && (e = e.replace(/({{)|(}})|{(\d+)}|({)|(})/g, function(e, i, o, r, s, a) {
+          if (s || a) throw t.Resources._formatString(u.malformedFormatStringInput, s || a);
+          return i && "{" || o && "}" || n[(0 | r) + 1];
+        }));
+
+        return e;
+      },
+      _getStringWinRT: function(e) {
+        if (!i) {
+          var t = Windows.ApplicationModel.Resources.Core.ResourceManager.current.mainResourceMap;
+          try {
+            i = t.getSubtree("Resources");
+          } catch (o) {}
+          if (!i) {
+            i = t;
+          }
+        }
+        var r;
+
+        var s;
+
+        var a;
+        try {
+          a = i.getValue(e);
+
+          if (a) {
+            r = a.valueAsString;
+            if (r === n) {
+              r = a.toString();
+            }
+          }
+        } catch (o) {}
+        if (!r) {
+          return {
+            value: e,
+            empty: !0
+          };
+        }
+        try {
+          s = a.getQualifierValue("Language");
+        } catch (o) {
+          return {
+            value: r
+          };
+        }
+        return {
+          value: r,
+          lang: s
+        };
+      },
+      _getStringJS: function(t) {
+        var n = e.strings && e.strings[t];
+        "string" == typeof n && (n = {
+          value: n
+        });
+
+        return n || {
+          value: t,
+          empty: !0
+        };
+      }
+    });
+
+    Object.defineProperties(t.Resources, t.Utilities.createEventProperties(r));
+    var l;
+    t.Resources.getString = function(e) {
+      l = l || (t.Utilities.hasWinRT ? t.Resources._getStringWinRT : t.Resources._getStringJS);
+
+      return l(e);
+    };
+  })(this, WinJS);
+  (function(e, t) {
+    "use strict";
+
+    function n() {}
+
+    function i(e, t) {
+      var n;
+      n = t && "object" == typeof t && "function" == typeof t.then ? k : R;
+
+      e._value = t;
+
+      e._setState(n);
+    }
+
+    function o(e, t, n, i, o, r) {
+      return {
+        exception: e,
+        error: t,
+        promise: n,
+        handler: r,
+        id: i,
+        parent: o
+      };
+    }
+
+    function r(e, t, n, i) {
+      var r = n._isException;
+
+      var s = n._errorId;
+      return o(r ? t : null, r ? null : t, e, s, n, i);
+    }
+
+    function s(e, t, n) {
+      var i = n._isException;
+
+      var r = n._errorId;
+      m(e, r, i);
+
+      return o(i ? t : null, i ? null : t, e, r, n);
+    }
+
+    function a(e, t) {
+      var n = ++H;
+      m(e, n);
+
+      return o(null, t, e, n);
+    }
+
+    function u(e, t) {
+      var n = ++H;
+      m(e, n, !0);
+
+      return o(t, null, e, n);
+    }
+
+    function l(e, t, n, i) {
+      g(e, {
+        c: t,
+        e: n,
+        p: i
+      });
+    }
+
+    function c(e, t, n, i) {
+      e._value = t;
+
+      p(e, t, n, i);
+
+      e._setState(A);
+    }
+
+    function d(e, t) {
+      var n = e._value;
+
+      var i = e._listeners;
+      if (i) {
+        e._listeners = null;
+        var o;
+
+        var r;
+        for (o = 0, r = Array.isArray(i) ? i.length : 1; r > o; o++) {
+          var s = 1 === r ? i : i[o];
+
+          var a = s.c;
+
+          var u = s.promise;
+          if (u) {
+            try {
+              u._setCompleteValue(a ? a(n) : n);
+            } catch (l) {
+              u._setExceptionValue(l);
+            }
+            if (u._state !== k && u._listeners) {
+              t.push(u);
+            }
+          } else {
+            z.prototype.done.call(e, a);
+          }
+        }
+      }
+    }
+
+    function h(e, t) {
+      var n = e._value;
+
+      var i = e._listeners;
+      if (i) {
+        e._listeners = null;
+        var o;
+
+        var s;
+        for (o = 0, s = Array.isArray(i) ? i.length : 1; s > o; o++) {
+          var a = 1 === s ? i : i[o];
+
+          var u = a.e;
+
+          var l = a.promise;
+          if (l) {
+            try {
+              u ? (u.handlesOnError || p(l, n, r, e, u), l._setCompleteValue(u(n))) : l._setChainedErrorValue(n, e);
+            } catch (c) {
+              l._setExceptionValue(c);
+            }
+            if (l._state !== k && l._listeners) {
+              t.push(l);
+            }
+          } else {
+            B.prototype.done.call(e, null, u);
+          }
+        }
+      }
+    }
+
+    function p(e, t, n, i, o) {
+      if (E._listeners[S]) {
+        if (t instanceof Error && t.message === L) return;
+        E.dispatchEvent(S, n(e, t, i, o));
+      }
+    }
+
+    function f(e, t) {
+      var n = e._listeners;
+      if (n) {
+        var i;
+
+        var o;
+        for (i = 0, o = Array.isArray(n) ? n.length : 1; o > i; i++) {
+          var r = 1 === o ? n : n[i];
+
+          var s = r.p;
+          if (s) try {
+            s(t);
+          } catch (a) {}
+          if (!(r.c || r.e || !r.promise)) {
+            r.promise._progress(t);
+          }
+        }
+      }
+    }
+
+    function g(e, t) {
+      var n = e._listeners;
+      n ? (n = Array.isArray(n) ? n : [n], n.push(t)) : n = t;
+
+      e._listeners = n;
+    }
+
+    function m(e, t, n) {
+      e._isException = n || !1;
+
+      e._errorId = t;
+    }
+
+    function v(e, t, n, i) {
+      e._value = t;
+
+      p(e, t, n, i);
+
+      e._setState(W);
+    }
+
+    function y(e, t) {
+      var n;
+      n = t && "object" == typeof t && "function" == typeof t.then ? k : P;
+
+      e._value = t;
+
+      e._setState(n);
+    }
+
+    function _(e, t, n, i) {
+      var o = new U(e);
+      g(e, {
+        promise: o,
+        c: t,
+        e: n,
+        p: i
+      });
+
+      return o;
+    }
+
+    function b(e) {
+      var t;
+      return new WinJS.Promise(function(n) {
+        e ? t = setTimeout(n, e) : setImmediate(n);
+      }, function() {
+        if (t) {
+          clearTimeout(t);
+        }
+      });
+    }
+
+    function C(e, t) {
+      var n = function() {
+        t.cancel();
+      };
+
+      var i = function() {
+        e.cancel();
+      };
+      e.then(n);
+
+      t.then(i, i);
+
+      return t;
+    }
+    if (e.Debug) {
+      e.Debug.setNonUserCodeExceptions = !0;
+    }
+    var w = WinJS.Class.mix(WinJS.Class.define(null, {}, {
+      supportedForProcessing: !1
+    }), WinJS.Utilities.eventMixin);
+
+    var E = new w;
+    E._listeners = {};
+    var S = "error";
+
+    var L = "Canceled";
+
+    var T = !1;
+
+    var x = {
+      promise: 1,
+      thenPromise: 2,
+      errorPromise: 4,
+      exceptionPromise: 8,
+      completePromise: 16
+    };
+    x.all = x.promise | x.thenPromise | x.errorPromise | x.exceptionPromise | x.completePromise;
+    var N;
+
+    var M;
+
+    var k;
+
+    var I;
+
+    var D;
+
+    var O;
+
+    var R;
+
+    var P;
+
+    var A;
+
+    var W;
+
+    var H = 1;
+    N = {
+      name: "created",
+      enter: function(e) {
+        e._setState(M);
+      },
+      cancel: n,
+      done: n,
+      then: n,
+      _completed: n,
+      _error: n,
+      _notify: n,
+      _progress: n,
+      _setCompleteValue: n,
+      _setErrorValue: n
+    };
+
+    M = {
+      name: "working",
+      enter: n,
+      cancel: function(e) {
+        e._setState(D);
+      },
+      done: l,
+      then: _,
+      _completed: i,
+      _error: c,
+      _notify: n,
+      _progress: f,
+      _setCompleteValue: y,
+      _setErrorValue: v
+    };
+
+    k = {
+      name: "waiting",
+      enter: function(e) {
+        var t = e._value;
+
+        var n = function(i) {
+          t._errorId ? e._chainedError(i, t) : (p(e, i, r, t, n), e._error(i));
+        };
+        n.handlesOnError = !0;
+
+        t.then(e._completed.bind(e), n, e._progress.bind(e));
+      },
+      cancel: function(e) {
+        e._setState(I);
+      },
+      done: l,
+      then: _,
+      _completed: i,
+      _error: c,
+      _notify: n,
+      _progress: f,
+      _setCompleteValue: y,
+      _setErrorValue: v
+    };
+
+    I = {
+      name: "waiting_canceled",
+      enter: function(e) {
+        e._setState(O);
+        var t = e._value;
+        if (t.cancel) {
+          t.cancel();
+        }
+      },
+      cancel: n,
+      done: l,
+      then: _,
+      _completed: i,
+      _error: c,
+      _notify: n,
+      _progress: f,
+      _setCompleteValue: y,
+      _setErrorValue: v
+    };
+
+    D = {
+      name: "canceled",
+      enter: function(e) {
+        e._setState(O);
+
+        e._cancelAction();
+      },
+      cancel: n,
+      done: l,
+      then: _,
+      _completed: i,
+      _error: c,
+      _notify: n,
+      _progress: f,
+      _setCompleteValue: y,
+      _setErrorValue: v
+    };
+
+    O = {
+      name: "canceling",
+      enter: function(e) {
+        var t = new Error(L);
+        t.name = t.message;
+
+        e._value = t;
+
+        e._setState(A);
+      },
+      cancel: n,
+      done: n,
+      then: n,
+      _completed: n,
+      _error: n,
+      _notify: n,
+      _progress: n,
+      _setCompleteValue: n,
+      _setErrorValue: n
+    };
+
+    R = {
+      name: "complete_notify",
+      enter: function(e) {
+        if (e.done = z.prototype.done, e.then = z.prototype.then, e._listeners)
+          for (var t, n = [e]; n.length;) {
+            t = n.pop();
+            t._state._notify(t, n);
+          }
+        e._setState(P);
+      },
+      cancel: n,
+      done: null,
+      then: null,
+      _completed: n,
+      _error: n,
+      _notify: d,
+      _progress: n,
+      _setCompleteValue: n,
+      _setErrorValue: n
+    };
+
+    P = {
+      name: "success",
+      enter: function(e) {
+        e.done = z.prototype.done;
+
+        e.then = z.prototype.then;
+
+        e._cleanupAction();
+      },
+      cancel: n,
+      done: null,
+      then: null,
+      _completed: n,
+      _error: n,
+      _notify: d,
+      _progress: n,
+      _setCompleteValue: n,
+      _setErrorValue: n
+    };
+
+    A = {
+      name: "error_notify",
+      enter: function(e) {
+        if (e.done = B.prototype.done, e.then = B.prototype.then, e._listeners)
+          for (var t, n = [e]; n.length;) {
+            t = n.pop();
+            t._state._notify(t, n);
+          }
+        e._setState(W);
+      },
+      cancel: n,
+      done: null,
+      then: null,
+      _completed: n,
+      _error: n,
+      _notify: h,
+      _progress: n,
+      _setCompleteValue: n,
+      _setErrorValue: n
+    };
+
+    W = {
+      name: "error",
+      enter: function(e) {
+        e.done = B.prototype.done;
+
+        e.then = B.prototype.then;
+
+        e._cleanupAction();
+      },
+      cancel: n,
+      done: null,
+      then: null,
+      _completed: n,
+      _error: n,
+      _notify: h,
+      _progress: n,
+      _setCompleteValue: n,
+      _setErrorValue: n
+    };
+    var V;
+
+    var F = WinJS.Class.define(null, {
+      _listeners: null,
+      _nextState: null,
+      _state: null,
+      _value: null,
+      cancel: function() {
+        this._state.cancel(this);
+
+        this._run();
+      },
+      done: function(e, t, n) {
+        this._state.done(this, e, t, n);
+      },
+      then: function(e, t, n) {
+        return this._state.then(this, e, t, n);
+      },
+      _chainedError: function(e, t) {
+        var n = this._state._error(this, e, s, t);
+        this._run();
+
+        return n;
+      },
+      _completed: function(e) {
+        var t = this._state._completed(this, e);
+        this._run();
+
+        return t;
+      },
+      _error: function(e) {
+        var t = this._state._error(this, e, a);
+        this._run();
+
+        return t;
+      },
+      _progress: function(e) {
+        this._state._progress(this, e);
+      },
+      _setState: function(e) {
+        this._nextState = e;
+      },
+      _setCompleteValue: function(e) {
+        this._state._setCompleteValue(this, e);
+
+        this._run();
+      },
+      _setChainedErrorValue: function(e, t) {
+        var n = this._state._setErrorValue(this, e, s, t);
+        this._run();
+
+        return n;
+      },
+      _setExceptionValue: function(e) {
+        var t = this._state._setErrorValue(this, e, u);
+        this._run();
+
+        return t;
+      },
+      _run: function() {
+        for (; this._nextState;) {
+          this._state = this._nextState;
+          this._nextState = null;
+          this._state.enter(this);
+        }
+      }
+    }, {
+      supportedForProcessing: !1
+    });
+
+    var U = WinJS.Class.derive(F, function(e) {
+      if (T && (T === !0 || T & x.thenPromise)) {
+        this._stack = WinJS.Promise._getStack();
+      }
+
+      this._creator = e;
+
+      this._setState(N);
+
+      this._run();
+    }, {
+      _creator: null,
+      _cancelAction: function() {
+        if (this._creator) {
+          this._creator.cancel();
+        }
+      },
+      _cleanupAction: function() {
+        this._creator = null;
+      }
+    }, {
+      supportedForProcessing: !1
+    });
+
+    var B = WinJS.Class.define(function(e) {
+      if (T && (T === !0 || T & x.errorPromise)) {
+        this._stack = WinJS.Promise._getStack();
+      }
+
+      this._value = e;
+
+      p(this, e, a);
+    }, {
+      cancel: function() {},
+      done: function(e, t) {
+        var n = this._value;
+        if (t) try {
+          if (!t.handlesOnError) {
+            p(null, n, r, this, t);
+          }
+          var i = t(n);
+          i && "object" == typeof i && "function" == typeof i.done && i.done();
+
+          return void 0;
+        } catch (o) {
+          n = o;
+        }
+        if (!(n instanceof Error && n.message === L)) {
+          setImmediate(function() {
+            throw n;
+          });
+        }
+      },
+      then: function(e, t) {
+        if (!t) {
+          return this;
+        }
+        var n;
+
+        var i = this._value;
+        try {
+          if (!t.handlesOnError) {
+            p(null, i, r, this, t);
+          }
+
+          n = new z(t(i));
+        } catch (o) {
+          n = o === i ? this : new q(o);
+        }
+        return n;
+      }
+    }, {
+      supportedForProcessing: !1
+    });
+
+    var q = WinJS.Class.derive(B, function(e) {
+      if (T && (T === !0 || T & x.exceptionPromise)) {
+        this._stack = WinJS.Promise._getStack();
+      }
+
+      this._value = e;
+
+      p(this, e, u);
+    }, {}, {
+      supportedForProcessing: !1
+    });
+
+    var z = WinJS.Class.define(function(e) {
+      if (T && (T === !0 || T & x.completePromise) && (this._stack = WinJS.Promise._getStack()), e && "object" ==
+        typeof e && "function" == typeof e.then) {
+        var t = new U(null);
+        t._setCompleteValue(e);
+
+        return t;
+      }
+      this._value = e;
+    }, {
+      cancel: function() {},
+      done: function(e) {
+        if (e) try {
+          var t = e(this._value);
+          if (t && "object" == typeof t && "function" == typeof t.done) {
+            t.done();
+          }
+        } catch (n) {
+          setImmediate(function() {
+            throw n;
+          });
+        }
+      },
+      then: function(e) {
+        try {
+          var t = e ? e(this._value) : this._value;
+          return t === this._value ? this : new z(t);
+        } catch (n) {
+          return new q(n);
+        }
+      }
+    }, {
+      supportedForProcessing: !1
+    });
+
+    var j = WinJS.Class.derive(F, function(e, t) {
+      if (T && (T === !0 || T & x.promise)) {
+        this._stack = WinJS.Promise._getStack();
+      }
+
+      this._oncancel = t;
+
+      this._setState(N);
+
+      this._run();
+      try {
+        var n = this._completed.bind(this);
+
+        var i = this._error.bind(this);
+
+        var o = this._progress.bind(this);
+        e(n, i, o);
+      } catch (r) {
+        this._setExceptionValue(r);
+      }
+    }, {
+      _oncancel: null,
+      _cancelAction: function() {
+        if (!this._oncancel) throw new Error("Promise did not implement oncancel");
+        try {
+          this._oncancel();
+        } catch (e) {
+          {
+            e.message;
+
+            e.stack;
+          }
+          E.dispatchEvent("error", e);
+        }
+      },
+      _cleanupAction: function() {
+        this._oncancel = null;
+      }
+    }, {
+      addEventListener: function(e, t, n) {
+        E.addEventListener(e, t, n);
+      },
+      any: function(e) {
+        return new j(function(t, n) {
+          {
+            var i = Object.keys(e);
+            Array.isArray(e) ? [] : {};
+          }
+          if (0 === i.length) {
+            t();
+          }
+          var o = 0;
+          i.forEach(function(r) {
+            j.as(e[r]).then(function() {
+              t({
+                key: r,
+                value: e[r]
+              });
+            }, function(s) {
+              return s instanceof Error && s.name === L ? (++o === i.length && t(WinJS.Promise.cancel), void 0) :
+                (n({
+                key: r,
+                value: e[r]
+              }), void 0);
+            });
+          });
+        }, function() {
+          var t = Object.keys(e);
+          t.forEach(function(t) {
+            var n = j.as(e[t]);
+            if ("function" == typeof n.cancel) {
+              n.cancel();
+            }
+          });
+        });
+      },
+      as: function(e) {
+        return e && "object" == typeof e && "function" == typeof e.then ? e : new z(e);
+      },
+      cancel: {
+        get: function() {
+          return V = V || new B(new WinJS.ErrorFromName(L));
+        }
+      },
+      dispatchEvent: function(e, t) {
+        return E.dispatchEvent(e, t);
+      },
+      is: function(e) {
+        return e && "object" == typeof e && "function" == typeof e.then;
+      },
+      join: function(e) {
+        return new j(function(n, i, o) {
+          var r = Object.keys(e);
+
+          var s = Array.isArray(e) ? [] : {};
+
+          var a = Array.isArray(e) ? [] : {};
+
+          var u = 0;
+
+          var l = r.length;
+
+          var c = function(e) {
+            if (0 === --l) {
+              var t = Object.keys(s).length;
+              if (0 === t) {
+                n(a);
+              } else {
+                var u = 0;
+                r.forEach(function(e) {
+                  var t = s[e];
+                  if (t instanceof Error && t.name === L) {
+                    u++;
+                  }
+                });
+
+                u === t ? n(WinJS.Promise.cancel) : i(s);
+              }
+            } else {
+              o({
+                Key: e,
+                Done: !0
+              });
+            }
+          };
+          r.forEach(function(n) {
+            var i = e[n];
+            i === t ? u++ : j.then(i, function(e) {
+              a[n] = e;
+
+              c(n);
+            }, function(e) {
+              s[n] = e;
+
+              c(n);
+            });
+          });
+
+          l -= u;
+
+          return 0 === l ? (n(a), void 0) : void 0;
+        }, function() {
+          Object.keys(e).forEach(function(t) {
+            var n = j.as(e[t]);
+            if ("function" == typeof n.cancel) {
+              n.cancel();
+            }
+          });
+        });
+      },
+      removeEventListener: function(e, t, n) {
+        E.removeEventListener(e, t, n);
+      },
+      supportedForProcessing: !1,
+      then: function(e, t, n, i) {
+        return j.as(e).then(t, n, i);
+      },
+      thenEach: function(e, t, n, i) {
+        var o = Array.isArray(e) ? [] : {};
+        Object.keys(e).forEach(function(r) {
+          o[r] = j.as(e[r]).then(t, n, i);
+        });
+
+        return j.join(o);
+      },
+      timeout: function(e, t) {
+        var n = b(e);
+        return t ? C(n, t) : n;
+      },
+      wrap: function(e) {
+        return new z(e);
+      },
+      wrapError: function(e) {
+        return new B(e);
+      },
+      _veryExpensiveTagWithStack: {
+        get: function() {
+          return T;
+        },
+        set: function(e) {
+          T = e;
+        }
+      },
+      _veryExpensiveTagWithStack_tag: x,
+      _getStack: function() {
+        if (Debug.debuggerEnabled) try {
+          throw new Error;
+        } catch (e) {
+          return e.stack;
+        }
+      }
+    });
+    Object.defineProperties(j, WinJS.Utilities.createEventProperties(S));
+    var G = WinJS.Class.derive(F, function(e) {
+      this._oncancel = e;
+
+      this._setState(N);
+
+      this._run();
+    }, {
+      _cancelAction: function() {
+        if (this._oncancel) {
+          this._oncancel();
+        }
+      },
+      _cleanupAction: function() {
+        this._oncancel = null;
+      }
+    }, {
+      supportedForProcessing: !1
+    });
+
+    var K = WinJS.Class.define(function(e) {
+      this._promise = new G(e);
+    }, {
+      promise: {
+        get: function() {
+          return this._promise;
+        }
+      },
+      cancel: function() {
+        this._promise.cancel();
+      },
+      complete: function(e) {
+        this._promise._completed(e);
+      },
+      error: function(e) {
+        this._promise._error(e);
+      },
+      progress: function(e) {
+        this._promise._progress(e);
+      }
+    }, {
+      supportedForProcessing: !1
+    });
+    WinJS.Namespace.define("WinJS", {
+      Promise: j,
+      _Signal: K
+    });
+  })(this);
+  (function(e, t) {
+    "use strict";
+    t.Namespace.define("WinJS", {
+      ErrorFromName: t.Class.derive(Error, function(e, t) {
+        this.name = e;
+
+        this.message = t || e;
+      }, {}, {
+        supportedForProcessing: !1
+      })
+    });
+  })(this, WinJS);
+  (function() {
+    "use strict";
+    WinJS.Namespace.define("WinJS", {
+      xhr: function(e) {
+        var t;
+        return new WinJS.Promise(function(n, i, o) {
+          t = new XMLHttpRequest;
+
+          t.onreadystatechange = function() {
+            if (!t._canceled) {
+              4 === t.readyState ? (t.status >= 200 && t.status < 300 || 1223 === t.status ? n(t) : i(t), t.onreadystatechange =
+                function() {}) : o(t);
+            }
+          };
+
+          t.open(e.type || "GET", e.url, !0, e.user, e.password);
+
+          t.responseType = e.responseType || "";
+
+          Object.keys(e.headers || {}).forEach(function(n) {
+            t.setRequestHeader(n, e.headers[n]);
+          });
+
+          t.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+
+          if (e.customRequestInitializer) {
+            e.customRequestInitializer(t);
+          }
+
+          t.send(e.data);
+        }, function() {
+          t._canceled = !0;
+
+          t.abort();
+        });
+      }
+    });
+  })();
+  (function(e) {
+    "use strict";
+    var t;
+
+    var n;
+
     var i;
 
     var o;
 
     var r;
 
-    var s = Object.keys(n);
-    for (o = 0, r = s.length; r > o; o++) {
-      var a = s[o];
+    var s;
 
-      var u = 95 !== a.charCodeAt(0);
-
-      var l = n[a];
-      !l || "object" != typeof l || l.value === t && "function" != typeof l.get && "function" != typeof l.set ? u ? e[
-        a] = l : (i = i || {}, i[a] = {
-        value: l,
-        enumerable: u,
-        configurable: !0,
-        writable: !0
-      }) : (l.enumerable === t && (l.enumerable = u), i = i || {}, i[a] = l);
-    }
-    i && Object.defineProperties(e, i);
-  }! function(t) {
-    function i(e, t, i) {
-      for (var o = e, r = t.split("."), s = 0, a = r.length; a > s; s++) {
-        var u = r[s];
-        o[u] || Object.defineProperty(o, u, {
-          value: {},
-          writable: !1,
-          enumerable: !0,
-          configurable: !0
-        });
-
-        o = o[u];
-      }
-      i && n(o, i);
-
-      return o;
-    }
-
-    function o(t, n) {
-      return i(e, t, n);
-    }
-    e[t] || (e[t] = Object.create(Object.prototype));
-    var r = e[t];
-    r.Namespace || (r.Namespace = Object.create(Object.prototype));
-
-    Object.defineProperties(r.Namespace, {
-      defineWithParent: {
-        value: i,
-        writable: !0,
-        enumerable: !0,
-        configurable: !0
-      },
-      define: {
-        value: o,
-        writable: !0,
-        enumerable: !0,
-        configurable: !0
-      }
-    });
-  }("WinJS");
-
-  (function(e) {
-    function t(t, i, o) {
-      t = t || function() {};
-
-      e.Utilities.markSupportedForProcessing(t);
-
-      i && n(t.prototype, i);
-
-      o && n(t, o);
-
-      return t;
-    }
-
-    function i(i, o, r, s) {
-      if (i) {
-        o = o || function() {};
-        var a = i.prototype;
-        o.prototype = Object.create(a);
-
-        e.Utilities.markSupportedForProcessing(o);
-
-        Object.defineProperty(o.prototype, "constructor", {
-          value: o,
-          writable: !0,
-          configurable: !0,
-          enumerable: !0
-        });
-
-        r && n(o.prototype, r);
-
-        s && n(o, s);
-
-        return o;
-      }
-      return t(o, r, s);
-    }
-
-    function o(e) {
-      e = e || function() {};
-      var t;
-
-      var i;
-      for (t = 1, i = arguments.length; i > t; t++) {
-        n(e.prototype, arguments[t]);
-      }
-      return e;
-    }
-    e.Namespace.define("WinJS.Class", {
-      define: t,
-      derive: i,
-      mix: o
-    });
-  })(WinJS);
-}(this), function(e, t) {
-  "use strict";
-
-  function n(e) {
-    return e;
-  }
-
-  function i(e, t, n) {
-    return e.split(".").reduce(function(e, t) {
-      return e ? n(e[t]) : null;
-    }, t);
-  }
-  var o = !! e.Windows;
-
-  var r = {
-    notSupportedForProcessing: "Value is not supported within a declarative processing context, if you want it to be supported mark it using WinJS.Utilities.markSupportedForProcessing. The value was: '{0}'"
-  };
-  t.Namespace.define("WinJS.Utilities", {
-    _setHasWinRT: {
-      value: function(e) {
-        o = e;
-      },
-      configurable: !1,
-      writable: !1,
-      enumerable: !1
-    },
-    hasWinRT: {
-      get: function() {
-        return o;
-      },
-      configurable: !1,
-      enumerable: !0
-    },
-    _getMemberFiltered: i,
-    getMember: function(t, o) {
-      return t ? i(t, o || e, n) : null;
-    },
-    ready: function(n, i) {
-      return new t.Promise(function(o, r) {
-        function s() {
-          if (n) try {
-            n();
-
-            o();
-          } catch (e) {
-            r(e);
-          } else {
-            o();
-          }
-        }
-        var a = t.Utilities.testReadyState;
-        a || (a = e.document ? document.readyState : "complete");
-
-        "complete" === a || e.document && null !== document.body ? i ? e.setImmediate(s) : s() : e.addEventListener(
-          "DOMContentLoaded", s, !1);
-      });
-    },
-    strictProcessing: {
-      get: function() {
-        return !0;
-      },
-      configurable: !1,
-      enumerable: !0
-    },
-    markSupportedForProcessing: {
-      value: function(e) {
-        e.supportedForProcessing = !0;
-
-        return e;
-      },
-      configurable: !1,
-      writable: !1,
-      enumerable: !0
-    },
-    requireSupportedForProcessing: {
-      value: function(n) {
-        var i = !0;
-        switch (i = i && !(n === e), i = i && !(n === e.location), i = i && !(n instanceof HTMLIFrameElement), i =
-          i && !("function" == typeof n && !n.supportedForProcessing), e.frames.length) {
-          case 0:
-            break;
-          case 1:
-            i = i && !(n === e.frames[0]);
-            break;
-          default:
-            for (var o = 0, s = e.frames.length; i && s > o; o++) {
-              i = i && !(n === e.frames[o]);
-            }
-        }
-        if (i) {
-          return n;
-        }
-        throw new t.ErrorFromName("WinJS.Utilities.requireSupportedForProcessing", t.Resources._formatString(r.notSupportedForProcessing,
-          n));
-      },
-      configurable: !1,
-      writable: !1,
-      enumerable: !0
-    }
-  });
-
-  t.Namespace.define("WinJS", {
-    validation: !1,
-    strictProcessing: {
-      value: function() {},
-      configurable: !1,
-      writable: !1,
-      enumerable: !1
-    }
-  });
-}(this, WinJS), function() {
-  "use strict";
-
-  function e(e, t, n) {
-    var r = e;
-    "function" == typeof r && (r = r());
-
-    return (n && o.test(n) ? "" : n ? n + ": " : "") + (t ? t.replace(i, ":") + ": " : "") + r;
-  }
-
-  function t(e, t, n) {
-    var i = WinJS.Utilities.formatLog(e, t, n);
-    console[n && o.test(n) ? n : "log"](i);
-  }
-
-  function n(e) {
-    return e.replace(/[-[\]{}()*+?.,\\^$|#]/g, "\\$&");
-  }
-  var i = /\s+/g;
-
-  var o = /^(error|warn|info|log)$/;
-  WinJS.Namespace.define("WinJS.Utilities", {
-    startLog: function(e) {
-      e = e || {};
-
-      "string" == typeof e && (e = {
-        tags: e
-      });
-      var o = e.type && new RegExp("^(" + n(e.type).replace(i, " ").split(" ").join("|") + ")$");
-
-      var r = e.excludeTags && new RegExp("(^|\\s)(" + n(e.excludeTags).replace(i, " ").split(" ").join("|") +
-        ")(\\s|$)", "i");
-
-      var s = e.tags && new RegExp("(^|\\s)(" + n(e.tags).replace(i, " ").split(" ").join("|") + ")(\\s|$)", "i");
-
-      var a = e.action || t;
-      if (!(o || r || s || WinJS.log)) {
-        WinJS.log = a;
-        return void 0;
-      }
-      var u = function(e, t, n) {
-        o && !o.test(n) || r && r.test(t) || s && !s.test(t) || a(e, t, n);
-
-        u.next && u.next(e, t, n);
-      };
-      u.next = WinJS.log;
-
-      WinJS.log = u;
-    },
-    stopLog: function() {
-      delete WinJS.log;
-    },
-    formatLog: e
-  });
-}(), function(e) {
-  "use strict";
-
-  function t(e) {
-    var t = "_on" + e + "state";
-    return {
-      get: function() {
-        var e = this[t];
-        return e && e.userHandler;
-      },
-      set: function(n) {
-        var i = this[t];
-        n ? (i || (i = {
-          wrapper: function(e) {
-            return i.userHandler(e);
-          },
-          userHandler: n
-        }, Object.defineProperty(this, t, {
-          value: i,
-          enumerable: !1,
-          writable: !0,
-          configurable: !0
-        }), this.addEventListener(e, i.wrapper, !1)), i.userHandler = n) : i && (this.removeEventListener(e, i.wrapper, !
-          1), this[t] = null);
-      },
-      enumerable: !0
+    var a = {
+      nonStaticHTML: "Unable to add dynamic content. A script attempted to inject dynamic content, or elements previously modified dynamically, that might be unsafe. For example, using the innerHTML property or the document.write method to add a script element will generate this exception. If the content is safe and from a trusted source, use a method to explicitly manipulate elements and attributes, such as createElement, or use setInnerHTMLUnsafe (or other unsafe method)."
     };
-  }
-
-  function n() {
-    for (var e = {}, n = 0, i = arguments.length; i > n; n++) {
-      var o = arguments[n];
-      e["on" + o] = t(o);
-    }
-    return e;
-  }
-  var i = e.Class.define(function(e, t, n) {
-    this.detail = t;
-
-    this.target = n;
-
-    this.timeStamp = Date.now();
-
-    this.type = e;
-  }, {
-    bubbles: {
-      value: !1,
-      writable: !1
-    },
-    cancelable: {
-      value: !1,
-      writable: !1
-    },
-    currentTarget: {
-      get: function() {
-        return this.target;
-      }
-    },
-    defaultPrevented: {
-      get: function() {
-        return this._preventDefaultCalled;
-      }
-    },
-    trusted: {
-      value: !1,
-      writable: !1
-    },
-    eventPhase: {
-      value: 0,
-      writable: !1
-    },
-    target: null,
-    timeStamp: null,
-    type: null,
-    preventDefault: function() {
-      this._preventDefaultCalled = !0;
-    },
-    stopImmediatePropagation: function() {
-      this._stopImmediatePropagationCalled = !0;
-    },
-    stopPropagation: function() {}
-  }, {
-    supportedForProcessing: !1
-  });
-
-  var o = {
-    _listeners: null,
-    addEventListener: function(e, t, n) {
-      n = n || !1;
-
-      this._listeners = this._listeners || {};
-      for (var i = this._listeners[e] = this._listeners[e] || [], o = 0, r = i.length; r > o; o++) {
-        var s = i[o];
-        if (s.useCapture === n && s.listener === t) return;
-      }
-      i.push({
-        listener: t,
-        useCapture: n
-      });
-    },
-    dispatchEvent: function(e, t) {
-      var n = this._listeners && this._listeners[e];
-      if (n) {
-        var o = new i(e, t, this);
-        n = n.slice(0, n.length);
-        for (var r = 0, s = n.length; s > r && !o._stopImmediatePropagationCalled; r++) {
-          n[r].listener(o);
-        }
-        return o.defaultPrevented || !1;
-      }
-      return !1;
-    },
-    removeEventListener: function(e, t, n) {
-      n = n || !1;
-      var i = this._listeners && this._listeners[e];
-      if (i)
-        for (var o = 0, r = i.length; r > o; o++) {
-          var s = i[o];
-          if (s.listener === t && s.useCapture === n) {
-            i.splice(o, 1);
-
-            0 === i.length && delete this._listeners[e];
-            break;
-          }
-        }
-    }
-  };
-  e.Namespace.define("WinJS.Utilities", {
-    _createEventProperty: t,
-    createEventProperties: n,
-    eventMixin: o
-  });
-}(WinJS), function(e, t, n) {
-  "use strict";
-  var i;
-
-  var o = !1;
-
-  var r = "contextchanged";
-
-  var s = t.Class.mix(t.Class.define(null, {}, {
-    supportedForProcessing: !1
-  }), t.Utilities.eventMixin);
-
-  var a = new s;
-
-  var u = {
-    malformedFormatStringInput: "Malformed, did you mean to escape your '{0}'?"
-  };
-  t.Namespace.define("WinJS.Resources", {
-    addEventListener: function(e, n, i) {
-      if (t.Utilities.hasWinRT && !o && e === r) try {
-        Windows.ApplicationModel.Resources.Core.ResourceManager.current.defaultContext.qualifierValues.addEventListener(
-          "mapchanged", function(e) {
-            t.Resources.dispatchEvent(r, {
-              qualifier: e.key,
-              changed: e.target[e.key]
-            });
-          }, !1);
-
-        o = !0;
-      } catch (s) {}
-      a.addEventListener(e, n, i);
-    },
-    removeEventListener: a.removeEventListener.bind(a),
-    dispatchEvent: a.dispatchEvent.bind(a),
-    _formatString: function(e) {
-      var n = arguments;
-      n.length > 1 && (e = e.replace(/({{)|(}})|{(\d+)}|({)|(})/g, function(e, i, o, r, s, a) {
-        if (s || a) throw t.Resources._formatString(u.malformedFormatStringInput, s || a);
-        return i && "{" || o && "}" || n[(0 | r) + 1];
-      }));
-
-      return e;
-    },
-    _getStringWinRT: function(e) {
-      if (!i) {
-        var t = Windows.ApplicationModel.Resources.Core.ResourceManager.current.mainResourceMap;
-        try {
-          i = t.getSubtree("Resources");
-        } catch (o) {}
-        i || (i = t);
-      }
-      var r;
-
-      var s;
-
-      var a;
-      try {
-        a = i.getValue(e);
-
-        a && (r = a.valueAsString, r === n && (r = a.toString()));
-      } catch (o) {}
-      if (!r) {
-        return {
-          value: e,
-          empty: !0
-        };
-      }
-      try {
-        s = a.getQualifierValue("Language");
-      } catch (o) {
-        return {
-          value: r
-        };
-      }
-      return {
-        value: r,
-        lang: s
-      };
-    },
-    _getStringJS: function(t) {
-      var n = e.strings && e.strings[t];
-      "string" == typeof n && (n = {
-        value: n
-      });
-
-      return n || {
-        value: t,
-        empty: !0
-      };
-    }
-  });
-
-  Object.defineProperties(t.Resources, t.Utilities.createEventProperties(r));
-  var l;
-  t.Resources.getString = function(e) {
-    l = l || (t.Utilities.hasWinRT ? t.Resources._getStringWinRT : t.Resources._getStringJS);
-
-    return l(e);
-  };
-}(this, WinJS), function(e, t) {
-  "use strict";
-
-  function n() {}
-
-  function i(e, t) {
-    var n;
-    n = t && "object" == typeof t && "function" == typeof t.then ? k : R;
-
-    e._value = t;
-
-    e._setState(n);
-  }
-
-  function o(e, t, n, i, o, r) {
-    return {
-      exception: e,
-      error: t,
-      promise: n,
-      handler: r,
-      id: i,
-      parent: o
-    };
-  }
-
-  function r(e, t, n, i) {
-    var r = n._isException;
-
-    var s = n._errorId;
-    return o(r ? t : null, r ? null : t, e, s, n, i);
-  }
-
-  function s(e, t, n) {
-    var i = n._isException;
-
-    var r = n._errorId;
-    m(e, r, i);
-
-    return o(i ? t : null, i ? null : t, e, r, n);
-  }
-
-  function a(e, t) {
-    var n = ++H;
-    m(e, n);
-
-    return o(null, t, e, n);
-  }
-
-  function u(e, t) {
-    var n = ++H;
-    m(e, n, !0);
-
-    return o(t, null, e, n);
-  }
-
-  function l(e, t, n, i) {
-    g(e, {
-      c: t,
-      e: n,
-      p: i
-    });
-  }
-
-  function c(e, t, n, i) {
-    e._value = t;
-
-    p(e, t, n, i);
-
-    e._setState(A);
-  }
-
-  function d(e, t) {
-    var n = e._value;
-
-    var i = e._listeners;
-    if (i) {
-      e._listeners = null;
-      var o;
-
-      var r;
-      for (o = 0, r = Array.isArray(i) ? i.length : 1; r > o; o++) {
-        var s = 1 === r ? i : i[o];
-
-        var a = s.c;
-
-        var u = s.promise;
-        if (u) {
-          try {
-            u._setCompleteValue(a ? a(n) : n);
-          } catch (l) {
-            u._setExceptionValue(l);
-          }
-          u._state !== k && u._listeners && t.push(u);
-        } else {
-          z.prototype.done.call(e, a);
-        }
-      }
-    }
-  }
-
-  function h(e, t) {
-    var n = e._value;
-
-    var i = e._listeners;
-    if (i) {
-      e._listeners = null;
-      var o;
-
-      var s;
-      for (o = 0, s = Array.isArray(i) ? i.length : 1; s > o; o++) {
-        var a = 1 === s ? i : i[o];
-
-        var u = a.e;
-
-        var l = a.promise;
-        if (l) {
-          try {
-            u ? (u.handlesOnError || p(l, n, r, e, u), l._setCompleteValue(u(n))) : l._setChainedErrorValue(n, e);
-          } catch (c) {
-            l._setExceptionValue(c);
-          }
-          l._state !== k && l._listeners && t.push(l);
-        } else {
-          B.prototype.done.call(e, null, u);
-        }
-      }
-    }
-  }
-
-  function p(e, t, n, i, o) {
-    if (E._listeners[S]) {
-      if (t instanceof Error && t.message === L) return;
-      E.dispatchEvent(S, n(e, t, i, o));
-    }
-  }
-
-  function f(e, t) {
-    var n = e._listeners;
-    if (n) {
-      var i;
-
-      var o;
-      for (i = 0, o = Array.isArray(n) ? n.length : 1; o > i; i++) {
-        var r = 1 === o ? n : n[i];
-
-        var s = r.p;
-        if (s) try {
-          s(t);
-        } catch (a) {}
-        r.c || r.e || !r.promise || r.promise._progress(t);
-      }
-    }
-  }
-
-  function g(e, t) {
-    var n = e._listeners;
-    n ? (n = Array.isArray(n) ? n : [n], n.push(t)) : n = t;
-
-    e._listeners = n;
-  }
-
-  function m(e, t, n) {
-    e._isException = n || !1;
-
-    e._errorId = t;
-  }
-
-  function v(e, t, n, i) {
-    e._value = t;
-
-    p(e, t, n, i);
-
-    e._setState(W);
-  }
-
-  function y(e, t) {
-    var n;
-    n = t && "object" == typeof t && "function" == typeof t.then ? k : P;
-
-    e._value = t;
-
-    e._setState(n);
-  }
-
-  function _(e, t, n, i) {
-    var o = new U(e);
-    g(e, {
-      promise: o,
-      c: t,
-      e: n,
-      p: i
-    });
-
-    return o;
-  }
-
-  function b(e) {
-    var t;
-    return new WinJS.Promise(function(n) {
-      e ? t = setTimeout(n, e) : setImmediate(n);
-    }, function() {
-      t && clearTimeout(t);
-    });
-  }
-
-  function C(e, t) {
-    var n = function() {
-      t.cancel();
-    };
-
-    var i = function() {
-      e.cancel();
-    };
-    e.then(n);
-
-    t.then(i, i);
-
-    return t;
-  }
-  e.Debug && (e.Debug.setNonUserCodeExceptions = !0);
-  var w = WinJS.Class.mix(WinJS.Class.define(null, {}, {
-    supportedForProcessing: !1
-  }), WinJS.Utilities.eventMixin);
-
-  var E = new w;
-  E._listeners = {};
-  var S = "error";
-
-  var L = "Canceled";
-
-  var T = !1;
-
-  var x = {
-    promise: 1,
-    thenPromise: 2,
-    errorPromise: 4,
-    exceptionPromise: 8,
-    completePromise: 16
-  };
-  x.all = x.promise | x.thenPromise | x.errorPromise | x.exceptionPromise | x.completePromise;
-  var N;
-
-  var M;
-
-  var k;
-
-  var I;
-
-  var D;
-
-  var O;
-
-  var R;
-
-  var P;
-
-  var A;
-
-  var W;
-
-  var H = 1;
-  N = {
-    name: "created",
-    enter: function(e) {
-      e._setState(M);
-    },
-    cancel: n,
-    done: n,
-    then: n,
-    _completed: n,
-    _error: n,
-    _notify: n,
-    _progress: n,
-    _setCompleteValue: n,
-    _setErrorValue: n
-  };
-
-  M = {
-    name: "working",
-    enter: n,
-    cancel: function(e) {
-      e._setState(D);
-    },
-    done: l,
-    then: _,
-    _completed: i,
-    _error: c,
-    _notify: n,
-    _progress: f,
-    _setCompleteValue: y,
-    _setErrorValue: v
-  };
-
-  k = {
-    name: "waiting",
-    enter: function(e) {
-      var t = e._value;
-
-      var n = function(i) {
-        t._errorId ? e._chainedError(i, t) : (p(e, i, r, t, n), e._error(i));
-      };
-      n.handlesOnError = !0;
-
-      t.then(e._completed.bind(e), n, e._progress.bind(e));
-    },
-    cancel: function(e) {
-      e._setState(I);
-    },
-    done: l,
-    then: _,
-    _completed: i,
-    _error: c,
-    _notify: n,
-    _progress: f,
-    _setCompleteValue: y,
-    _setErrorValue: v
-  };
-
-  I = {
-    name: "waiting_canceled",
-    enter: function(e) {
-      e._setState(O);
-      var t = e._value;
-      t.cancel && t.cancel();
-    },
-    cancel: n,
-    done: l,
-    then: _,
-    _completed: i,
-    _error: c,
-    _notify: n,
-    _progress: f,
-    _setCompleteValue: y,
-    _setErrorValue: v
-  };
-
-  D = {
-    name: "canceled",
-    enter: function(e) {
-      e._setState(O);
-
-      e._cancelAction();
-    },
-    cancel: n,
-    done: l,
-    then: _,
-    _completed: i,
-    _error: c,
-    _notify: n,
-    _progress: f,
-    _setCompleteValue: y,
-    _setErrorValue: v
-  };
-
-  O = {
-    name: "canceling",
-    enter: function(e) {
-      var t = new Error(L);
-      t.name = t.message;
-
-      e._value = t;
-
-      e._setState(A);
-    },
-    cancel: n,
-    done: n,
-    then: n,
-    _completed: n,
-    _error: n,
-    _notify: n,
-    _progress: n,
-    _setCompleteValue: n,
-    _setErrorValue: n
-  };
-
-  R = {
-    name: "complete_notify",
-    enter: function(e) {
-      if (e.done = z.prototype.done, e.then = z.prototype.then, e._listeners)
-        for (var t, n = [e]; n.length;) {
-          t = n.pop();
-          t._state._notify(t, n);
-        }
-      e._setState(P);
-    },
-    cancel: n,
-    done: null,
-    then: null,
-    _completed: n,
-    _error: n,
-    _notify: d,
-    _progress: n,
-    _setCompleteValue: n,
-    _setErrorValue: n
-  };
-
-  P = {
-    name: "success",
-    enter: function(e) {
-      e.done = z.prototype.done;
-
-      e.then = z.prototype.then;
-
-      e._cleanupAction();
-    },
-    cancel: n,
-    done: null,
-    then: null,
-    _completed: n,
-    _error: n,
-    _notify: d,
-    _progress: n,
-    _setCompleteValue: n,
-    _setErrorValue: n
-  };
-
-  A = {
-    name: "error_notify",
-    enter: function(e) {
-      if (e.done = B.prototype.done, e.then = B.prototype.then, e._listeners)
-        for (var t, n = [e]; n.length;) {
-          t = n.pop();
-          t._state._notify(t, n);
-        }
-      e._setState(W);
-    },
-    cancel: n,
-    done: null,
-    then: null,
-    _completed: n,
-    _error: n,
-    _notify: h,
-    _progress: n,
-    _setCompleteValue: n,
-    _setErrorValue: n
-  };
-
-  W = {
-    name: "error",
-    enter: function(e) {
-      e.done = B.prototype.done;
-
-      e.then = B.prototype.then;
-
-      e._cleanupAction();
-    },
-    cancel: n,
-    done: null,
-    then: null,
-    _completed: n,
-    _error: n,
-    _notify: h,
-    _progress: n,
-    _setCompleteValue: n,
-    _setErrorValue: n
-  };
-  var V;
-
-  var F = WinJS.Class.define(null, {
-    _listeners: null,
-    _nextState: null,
-    _state: null,
-    _value: null,
-    cancel: function() {
-      this._state.cancel(this);
-
-      this._run();
-    },
-    done: function(e, t, n) {
-      this._state.done(this, e, t, n);
-    },
-    then: function(e, t, n) {
-      return this._state.then(this, e, t, n);
-    },
-    _chainedError: function(e, t) {
-      var n = this._state._error(this, e, s, t);
-      this._run();
-
-      return n;
-    },
-    _completed: function(e) {
-      var t = this._state._completed(this, e);
-      this._run();
-
-      return t;
-    },
-    _error: function(e) {
-      var t = this._state._error(this, e, a);
-      this._run();
-
-      return t;
-    },
-    _progress: function(e) {
-      this._state._progress(this, e);
-    },
-    _setState: function(e) {
-      this._nextState = e;
-    },
-    _setCompleteValue: function(e) {
-      this._state._setCompleteValue(this, e);
-
-      this._run();
-    },
-    _setChainedErrorValue: function(e, t) {
-      var n = this._state._setErrorValue(this, e, s, t);
-      this._run();
-
-      return n;
-    },
-    _setExceptionValue: function(e) {
-      var t = this._state._setErrorValue(this, e, u);
-      this._run();
-
-      return t;
-    },
-    _run: function() {
-      for (; this._nextState;) {
-        this._state = this._nextState;
-        this._nextState = null;
-        this._state.enter(this);
-      }
-    }
-  }, {
-    supportedForProcessing: !1
-  });
-
-  var U = WinJS.Class.derive(F, function(e) {
-    T && (T === !0 || T & x.thenPromise) && (this._stack = WinJS.Promise._getStack());
-
-    this._creator = e;
-
-    this._setState(N);
-
-    this._run();
-  }, {
-    _creator: null,
-    _cancelAction: function() {
-      this._creator && this._creator.cancel();
-    },
-    _cleanupAction: function() {
-      this._creator = null;
-    }
-  }, {
-    supportedForProcessing: !1
-  });
-
-  var B = WinJS.Class.define(function(e) {
-    T && (T === !0 || T & x.errorPromise) && (this._stack = WinJS.Promise._getStack());
-
-    this._value = e;
-
-    p(this, e, a);
-  }, {
-    cancel: function() {},
-    done: function(e, t) {
-      var n = this._value;
-      if (t) try {
-        t.handlesOnError || p(null, n, r, this, t);
-        var i = t(n);
-        i && "object" == typeof i && "function" == typeof i.done && i.done();
-
-        return void 0;
-      } catch (o) {
-        n = o;
-      }
-      n instanceof Error && n.message === L || setImmediate(function() {
-        throw n;
-      });
-    },
-    then: function(e, t) {
-      if (!t) {
-        return this;
-      }
-      var n;
-
-      var i = this._value;
-      try {
-        t.handlesOnError || p(null, i, r, this, t);
-
-        n = new z(t(i));
-      } catch (o) {
-        n = o === i ? this : new q(o);
-      }
-      return n;
-    }
-  }, {
-    supportedForProcessing: !1
-  });
-
-  var q = WinJS.Class.derive(B, function(e) {
-    T && (T === !0 || T & x.exceptionPromise) && (this._stack = WinJS.Promise._getStack());
-
-    this._value = e;
-
-    p(this, e, u);
-  }, {}, {
-    supportedForProcessing: !1
-  });
-
-  var z = WinJS.Class.define(function(e) {
-    if (T && (T === !0 || T & x.completePromise) && (this._stack = WinJS.Promise._getStack()), e && "object" ==
-      typeof e && "function" == typeof e.then) {
-      var t = new U(null);
-      t._setCompleteValue(e);
-
-      return t;
-    }
-    this._value = e;
-  }, {
-    cancel: function() {},
-    done: function(e) {
-      if (e) try {
-        var t = e(this._value);
-        t && "object" == typeof t && "function" == typeof t.done && t.done();
-      } catch (n) {
-        setImmediate(function() {
-          throw n;
-        });
-      }
-    },
-    then: function(e) {
-      try {
-        var t = e ? e(this._value) : this._value;
-        return t === this._value ? this : new z(t);
-      } catch (n) {
-        return new q(n);
-      }
-    }
-  }, {
-    supportedForProcessing: !1
-  });
-
-  var j = WinJS.Class.derive(F, function(e, t) {
-    T && (T === !0 || T & x.promise) && (this._stack = WinJS.Promise._getStack());
-
-    this._oncancel = t;
-
-    this._setState(N);
-
-    this._run();
-    try {
-      var n = this._completed.bind(this);
-
-      var i = this._error.bind(this);
-
-      var o = this._progress.bind(this);
-      e(n, i, o);
-    } catch (r) {
-      this._setExceptionValue(r);
-    }
-  }, {
-    _oncancel: null,
-    _cancelAction: function() {
-      if (!this._oncancel) throw new Error("Promise did not implement oncancel");
-      try {
-        this._oncancel();
-      } catch (e) {
-        {
-          e.message;
-
-          e.stack;
-        }
-        E.dispatchEvent("error", e);
-      }
-    },
-    _cleanupAction: function() {
-      this._oncancel = null;
-    }
-  }, {
-    addEventListener: function(e, t, n) {
-      E.addEventListener(e, t, n);
-    },
-    any: function(e) {
-      return new j(function(t, n) {
-        {
-          var i = Object.keys(e);
-          Array.isArray(e) ? [] : {};
-        }
-        0 === i.length && t();
-        var o = 0;
-        i.forEach(function(r) {
-          j.as(e[r]).then(function() {
-            t({
-              key: r,
-              value: e[r]
-            });
-          }, function(s) {
-            return s instanceof Error && s.name === L ? (++o === i.length && t(WinJS.Promise.cancel), void 0) :
-              (n({
-              key: r,
-              value: e[r]
-            }), void 0);
-          });
-        });
-      }, function() {
-        var t = Object.keys(e);
-        t.forEach(function(t) {
-          var n = j.as(e[t]);
-          "function" == typeof n.cancel && n.cancel();
-        });
-      });
-    },
-    as: function(e) {
-      return e && "object" == typeof e && "function" == typeof e.then ? e : new z(e);
-    },
-    cancel: {
-      get: function() {
-        return V = V || new B(new WinJS.ErrorFromName(L));
-      }
-    },
-    dispatchEvent: function(e, t) {
-      return E.dispatchEvent(e, t);
-    },
-    is: function(e) {
-      return e && "object" == typeof e && "function" == typeof e.then;
-    },
-    join: function(e) {
-      return new j(function(n, i, o) {
-        var r = Object.keys(e);
-
-        var s = Array.isArray(e) ? [] : {};
-
-        var a = Array.isArray(e) ? [] : {};
-
-        var u = 0;
-
-        var l = r.length;
-
-        var c = function(e) {
-          if (0 === --l) {
-            var t = Object.keys(s).length;
-            if (0 === t) {
-              n(a);
-            } else {
-              var u = 0;
-              r.forEach(function(e) {
-                var t = s[e];
-                t instanceof Error && t.name === L && u++;
-              });
-
-              u === t ? n(WinJS.Promise.cancel) : i(s);
-            }
-          } else {
-            o({
-              Key: e,
-              Done: !0
-            });
-          }
-        };
-        r.forEach(function(n) {
-          var i = e[n];
-          i === t ? u++ : j.then(i, function(e) {
-            a[n] = e;
-
-            c(n);
-          }, function(e) {
-            s[n] = e;
-
-            c(n);
-          });
-        });
-
-        l -= u;
-
-        return 0 === l ? (n(a), void 0) : void 0;
-      }, function() {
-        Object.keys(e).forEach(function(t) {
-          var n = j.as(e[t]);
-          "function" == typeof n.cancel && n.cancel();
-        });
-      });
-    },
-    removeEventListener: function(e, t, n) {
-      E.removeEventListener(e, t, n);
-    },
-    supportedForProcessing: !1,
-    then: function(e, t, n, i) {
-      return j.as(e).then(t, n, i);
-    },
-    thenEach: function(e, t, n, i) {
-      var o = Array.isArray(e) ? [] : {};
-      Object.keys(e).forEach(function(r) {
-        o[r] = j.as(e[r]).then(t, n, i);
-      });
-
-      return j.join(o);
-    },
-    timeout: function(e, t) {
-      var n = b(e);
-      return t ? C(n, t) : n;
-    },
-    wrap: function(e) {
-      return new z(e);
-    },
-    wrapError: function(e) {
-      return new B(e);
-    },
-    _veryExpensiveTagWithStack: {
-      get: function() {
-        return T;
-      },
-      set: function(e) {
-        T = e;
-      }
-    },
-    _veryExpensiveTagWithStack_tag: x,
-    _getStack: function() {
-      if (Debug.debuggerEnabled) try {
-        throw new Error;
-      } catch (e) {
-        return e.stack;
-      }
-    }
-  });
-  Object.defineProperties(j, WinJS.Utilities.createEventProperties(S));
-  var G = WinJS.Class.derive(F, function(e) {
-    this._oncancel = e;
-
-    this._setState(N);
-
-    this._run();
-  }, {
-    _cancelAction: function() {
-      this._oncancel && this._oncancel();
-    },
-    _cleanupAction: function() {
-      this._oncancel = null;
-    }
-  }, {
-    supportedForProcessing: !1
-  });
-
-  var K = WinJS.Class.define(function(e) {
-    this._promise = new G(e);
-  }, {
-    promise: {
-      get: function() {
-        return this._promise;
-      }
-    },
-    cancel: function() {
-      this._promise.cancel();
-    },
-    complete: function(e) {
-      this._promise._completed(e);
-    },
-    error: function(e) {
-      this._promise._error(e);
-    },
-    progress: function(e) {
-      this._promise._progress(e);
-    }
-  }, {
-    supportedForProcessing: !1
-  });
-  WinJS.Namespace.define("WinJS", {
-    Promise: j,
-    _Signal: K
-  });
-}(this), function(e, t) {
-  "use strict";
-  t.Namespace.define("WinJS", {
-    ErrorFromName: t.Class.derive(Error, function(e, t) {
-      this.name = e;
-
-      this.message = t || e;
-    }, {}, {
-      supportedForProcessing: !1
-    })
-  });
-}(this, WinJS), function() {
-  "use strict";
-  WinJS.Namespace.define("WinJS", {
-    xhr: function(e) {
-      var t;
-      return new WinJS.Promise(function(n, i, o) {
-        t = new XMLHttpRequest;
-
-        t.onreadystatechange = function() {
-          t._canceled || (4 === t.readyState ? (t.status >= 200 && t.status < 300 || 1223 === t.status ? n(t) : i(
-            t), t.onreadystatechange = function() {}) : o(t));
-        };
-
-        t.open(e.type || "GET", e.url, !0, e.user, e.password);
-
-        t.responseType = e.responseType || "";
-
-        Object.keys(e.headers || {}).forEach(function(n) {
-          t.setRequestHeader(n, e.headers[n]);
-        });
-
-        t.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-
-        e.customRequestInitializer && e.customRequestInitializer(t);
-
-        t.send(e.data);
-      }, function() {
-        t._canceled = !0;
-
-        t.abort();
-      });
-    }
-  });
-}(), function(e) {
-  "use strict";
-  var t;
-
-  var n;
-
-  var i;
-
-  var o;
-
-  var r;
-
-  var s;
-
-  var a = {
-    nonStaticHTML: "Unable to add dynamic content. A script attempted to inject dynamic content, or elements previously modified dynamically, that might be unsafe. For example, using the innerHTML property or the document.write method to add a script element will generate this exception. If the content is safe and from a trusted source, use a method to explicitly manipulate elements and attributes, such as createElement, or use setInnerHTMLUnsafe (or other unsafe method)."
-  };
-  t = n = function(e, t) {
-    e.innerHTML = t;
-  };
-
-  i = o = function(e, t) {
-    e.outerHTML = t;
-  };
-
-  r = s = function(e, t, n) {
-    e.insertAdjacentHTML(t, n);
-  };
-  var u = e.MSApp;
-  if (u) {
-    n = function(e, t) {
-      u.execUnsafeLocalFunction(function() {
-        e.innerHTML = t;
-      });
-    };
-    o = function(e, t) {
-      u.execUnsafeLocalFunction(function() {
-        e.outerHTML = t;
-      });
-    };
-    s = function(e, t, n) {
-      u.execUnsafeLocalFunction(function() {
-        e.insertAdjacentHTML(t, n);
-      });
-    };
-  } else if (e.msIsStaticHTML) {
-    var l = function(t) {
-      if (!e.msIsStaticHTML(t)) throw new WinJS.ErrorFromName("WinJS.Utitilies.NonStaticHTML", a.nonStaticHTML);
-    };
-    t = function(e, t) {
-      l(t);
-
+    t = n = function(e, t) {
       e.innerHTML = t;
     };
 
-    i = function(e, t) {
-      l(t);
-
+    i = o = function(e, t) {
       e.outerHTML = t;
     };
 
-    r = function(e, t, n) {
-      l(n);
-
+    r = s = function(e, t, n) {
       e.insertAdjacentHTML(t, n);
     };
-  }
-  WinJS.Namespace.define("WinJS.Utilities", {
-    setInnerHTML: t,
-    setInnerHTMLUnsafe: n,
-    setOuterHTML: i,
-    setOuterHTMLUnsafe: o,
-    insertAdjacentHTML: r,
-    insertAdjacentHTMLUnsafe: s
-  });
-}(this));
+    var u = e.MSApp;
+    if (u) {
+      n = function(e, t) {
+        u.execUnsafeLocalFunction(function() {
+          e.innerHTML = t;
+        });
+      };
+      o = function(e, t) {
+        u.execUnsafeLocalFunction(function() {
+          e.outerHTML = t;
+        });
+      };
+      s = function(e, t, n) {
+        u.execUnsafeLocalFunction(function() {
+          e.insertAdjacentHTML(t, n);
+        });
+      };
+    } else if (e.msIsStaticHTML) {
+      var l = function(t) {
+        if (!e.msIsStaticHTML(t)) throw new WinJS.ErrorFromName("WinJS.Utitilies.NonStaticHTML", a.nonStaticHTML);
+      };
+      t = function(e, t) {
+        l(t);
+
+        e.innerHTML = t;
+      };
+
+      i = function(e, t) {
+        l(t);
+
+        e.outerHTML = t;
+      };
+
+      r = function(e, t, n) {
+        l(n);
+
+        e.insertAdjacentHTML(t, n);
+      };
+    }
+    WinJS.Namespace.define("WinJS.Utilities", {
+      setInnerHTML: t,
+      setInnerHTMLUnsafe: n,
+      setOuterHTML: i,
+      setOuterHTMLUnsafe: o,
+      insertAdjacentHTML: r,
+      insertAdjacentHTMLUnsafe: s
+    });
+  })(this);
+}
 
 define("vs/base/lib/raw.winjs.base", [], {});
 
@@ -1563,16 +1645,20 @@ define("vs/base/types", ["require", "exports"], function(e, t) {
   }
 
   function p(e, n, i) {
-    "undefined" == typeof i && (i = !0);
+    if ("undefined" == typeof i) {
+      i = !0;
+    }
     var o;
 
     var r = {};
     for (o in e) {
-      (i || e.hasOwnProperty(o)) && t.isFunction(e[o]) && (r[o] = function(t) {
-        return function() {
-          return n(e, t, arguments);
-        };
-      }(o));
+      if ((i || e.hasOwnProperty(o)) && t.isFunction(e[o])) {
+        r[o] = function(t) {
+          return function() {
+            return n(e, t, arguments);
+          };
+        }(o);
+      }
     }
     return r;
   }
@@ -1690,7 +1776,9 @@ define("vs/base/objects", ["require", "exports", "./types"], function(e, t, n) {
   }
 
   function a(e, t, n) {
-    "undefined" == typeof e[t] && (e[t] = n);
+    if ("undefined" == typeof e[t]) {
+      e[t] = n;
+    }
   }
 
   function u(e) {
@@ -1701,11 +1789,15 @@ define("vs/base/objects", ["require", "exports", "./types"], function(e, t, n) {
   }
 
   function l(e, n) {
-    "undefined" == typeof n && (n = !1);
+    if ("undefined" == typeof n) {
+      n = !1;
+    }
 
-    n && (e = e.map(function(e) {
-      return e.toLowerCase();
-    }));
+    if (n) {
+      e = e.map(function(e) {
+        return e.toLowerCase();
+      });
+    }
     var i = t.arrayToHash(e);
     return n ? function(e) {
       return void 0 !== i[e.toLowerCase()] && i.hasOwnProperty(e.toLowerCase());
@@ -1896,7 +1988,9 @@ define("vs/base/strings", ["require", "exports", "vs/nls!vs/editor/worker/editor
   }
 
   function p(e, n) {
-    "undefined" == typeof n && (n = " ");
+    if ("undefined" == typeof n) {
+      n = " ";
+    }
     var i = t.ltrim(e, n);
     return t.rtrim(i, n);
   }
@@ -1988,9 +2082,18 @@ define("vs/base/strings", ["require", "exports", "vs/nls!vs/editor/worker/editor
 
   function E(e, t, n, i) {
     if ("" === e) throw new Error("Cannot create regex from empty string");
-    t || (e = e.replace(/[\-\\\{\}\*\+\?\|\^\$\.\,\[\]\(\)\#\s]/g, "\\$&"));
+    if (!t) {
+      e = e.replace(/[\-\\\{\}\*\+\?\|\^\$\.\,\[\]\(\)\#\s]/g, "\\$&");
+    }
 
-    i && (/\B/.test(e.charAt(0)) || (e = "\\b" + e), /\B/.test(e.charAt(e.length - 1)) || (e += "\\b"));
+    if (i) {
+      if (!/\B/.test(e.charAt(0))) {
+        e = "\\b" + e;
+      }
+      if (!/\B/.test(e.charAt(e.length - 1))) {
+        e += "\\b";
+      }
+    }
     var o = "g";
     n || (o += "i");
 
@@ -2075,7 +2178,9 @@ define("vs/base/strings", ["require", "exports", "vs/nls!vs/editor/worker/editor
   function A(e, t) {
     if (!z && (z = !0, window.Intl && o.isFunction(window.Intl.Collator))) {
       var n = new window.Intl.Collator;
-      o.isFunction(n.compare) && (q = n.compare);
+      if (o.isFunction(n.compare)) {
+        q = n.compare;
+      }
     }
     return q ? q.call(this, e, t) : e.localeCompare(t);
   }
@@ -2109,7 +2214,9 @@ define("vs/base/strings", ["require", "exports", "vs/nls!vs/editor/worker/editor
   }
 
   function V(e, t, n) {
-    "undefined" == typeof n && (n = 4);
+    if ("undefined" == typeof n) {
+      n = 4;
+    }
     var i = Math.abs(e.length - t.length);
     if (i > n) {
       return 0;
@@ -2393,7 +2500,9 @@ define("vs/base/network", ["require", "exports", "./assert", "./hash", "./string
         var o = this._spec.charAt(n);
         switch (o) {
           case "/":
-            3 === ++e && (t = n);
+            if (3 === ++e) {
+              t = n;
+            }
             break;
           case "?":
           case "#":
@@ -2474,7 +2583,10 @@ define("vs/base/injector", ["require", "exports", "vs/base/assert", "vs/base/typ
           if (i.isFunction(u)) {
             a = a.substring(r).toLowerCase();
             var l = this.findService(a, e);
-            i.isUndefinedOrNull(l) || (u.apply(e, [l]), s = !0);
+            if (!i.isUndefinedOrNull(l)) {
+              u.apply(e, [l]);
+              s = !0;
+            }
           }
         }
       return s;
@@ -2488,7 +2600,9 @@ define("vs/base/injector", ["require", "exports", "vs/base/assert", "vs/base/typ
     };
 
     e.prototype.findService = function(e, t) {
-      "undefined" == typeof t && (t = null);
+      if ("undefined" == typeof t) {
+        t = null;
+      }
       var n = this.map[e];
       !i.isUndefinedOrNull(n) && t !== n || null === this.parent || (n = this.parent.findService(e, t));
 
@@ -2511,7 +2625,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var i in t) {
-      t.hasOwnProperty(i) && (e[i] = t[i]);
+      if (t.hasOwnProperty(i)) {
+        e[i] = t[i];
+      }
     }
     n.prototype = t.prototype;
 
@@ -2816,7 +2932,9 @@ define("vs/base/dom/mockDom", ["require", "exports"], function(e, t) {
     };
 
     t.prototype.setAttribute = function(e, t) {
-      this.hasAttribute(e) && this.removeAttribute(e);
+      if (this.hasAttribute(e)) {
+        this.removeAttribute(e);
+      }
       var n = this.ownerDocument.createAttribute(e);
       n.ownerElement = this;
 
@@ -3213,7 +3331,9 @@ define("vs/base/dom/mockDom", ["require", "exports"], function(e, t) {
     };
 
     e.prototype.onTransition = function(e, t) {
-      "attributeValue" !== t && (this.tag.attributes[this.attributeName] = this.attributeValue);
+      if ("attributeValue" !== t) {
+        this.tag.attributes[this.attributeName] = this.attributeValue;
+      }
     };
 
     return e;
@@ -3283,7 +3403,10 @@ define("vs/base/dom/mockDom", ["require", "exports"], function(e, t) {
     e.prototype.parse = function(e) {
       for (var t = new m(e); t.more();) {
         var n = this.activeState.consumeCharacter(t);
-        n !== this.activeState && (this.activeState.onTransition(this, n.name), this.activeState = n);
+        if (n !== this.activeState) {
+          this.activeState.onTransition(this, n.name);
+          this.activeState = n;
+        }
       }
       if ("error" === this.activeState.name) throw new Error(this.activeState.message);
       if (0 !== this.openElements.length) throw new Error("Elements not closed: " + this.openElements.map(function(e) {
@@ -3446,7 +3569,9 @@ define("vs/base/dom/iframe", ["require", "exports"], function(e, t) {
 define("vs/base/lifecycle", ["require", "exports"], function(e, t) {
   function n(e) {
     for (var t = 0, n = e.length; n > t; t++) {
-      e[t] && e[t].dispose();
+      if (e[t]) {
+        e[t].dispose();
+      }
     }
     return [];
   }
@@ -3480,7 +3605,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var i in t) {
-      t.hasOwnProperty(i) && (e[i] = t[i]);
+      if (t.hasOwnProperty(i)) {
+        e[i] = t[i];
+      }
     }
     n.prototype = t.prototype;
 
@@ -3568,7 +3695,9 @@ define("vs/platform/markers/markers", ["require", "exports", "vs/base/assert", "
       var r = t.getGroup(e.getId());
       return r ? (i = new y(t.getAssociatedResource(), t.getGroup(y.DEFAULT_GROUP).getMarkers()), t.getGroups().forEach(
         function(e) {
-          e.getId() !== o.getId() && i.addGroup(e);
+          if (e.getId() !== o.getId()) {
+            i.addGroup(e);
+          }
         }), i.addGroup(o), i) : (t.addGroup(o), t);
     }
     if (e.getId() === y.DEFAULT_GROUP) {
@@ -3595,7 +3724,9 @@ define("vs/platform/markers/markers", ["require", "exports", "vs/base/assert", "
   t.createRangeTextMarker = c;
   var m = function() {
     function e(e) {
-      "undefined" == typeof e && (e = []);
+      if ("undefined" == typeof e) {
+        e = [];
+      }
 
       this.markers = e;
     }
@@ -3620,7 +3751,9 @@ define("vs/platform/markers/markers", ["require", "exports", "vs/base/assert", "
 
   var v = function(e) {
     function t(t, n, i) {
-      "undefined" == typeof i && (i = []);
+      if ("undefined" == typeof i) {
+        i = [];
+      }
 
       e.call(this, i);
 
@@ -3643,7 +3776,9 @@ define("vs/platform/markers/markers", ["require", "exports", "vs/base/assert", "
 
   var y = function(e) {
     function t(t, n) {
-      "undefined" == typeof n && (n = []);
+      if ("undefined" == typeof n) {
+        n = [];
+      }
 
       e.call(this, n);
 
@@ -3848,7 +3983,9 @@ define("vs/platform/markers/markersWorker", ["require", "exports", "vs/base/asse
       } finally {
         this.globalChangeCount--;
 
-        0 === this.globalChangeCount && this._publishReadyMarkerUpdates();
+        if (0 === this.globalChangeCount) {
+          this._publishReadyMarkerUpdates();
+        }
       }
     };
 
@@ -3931,7 +4068,9 @@ define("vs/platform/markers/markersWorker", ["require", "exports", "vs/base/asse
         var i = e.markerUpdates[n];
 
         var o = e._getMarkerUpdateChangeCount(i);
-        "undefined" == typeof o && t.push(e._convertToJson(i));
+        if ("undefined" == typeof o) {
+          t.push(e._convertToJson(i));
+        }
       });
 
       this.publisher.sendMessage("publishMarkerUpdates", t);
@@ -4111,12 +4250,18 @@ define("vs/editor/core/view/model/prefixSumComputer", ["require", "exports"], fu
 
       this.prefixSum.splice(e, 0, 0);
 
-      e - 1 < this.prefixSumValidIndex && (this.prefixSumValidIndex = e - 1);
+      if (e - 1 < this.prefixSumValidIndex) {
+        this.prefixSumValidIndex = e - 1;
+      }
     };
 
     e.prototype.changeValue = function(e, t) {
-      this.values[e] !== t && (this.values[e] = t, e - 1 < this.prefixSumValidIndex && (this.prefixSumValidIndex = e -
-        1));
+      if (this.values[e] !== t) {
+        this.values[e] = t;
+        if (e - 1 < this.prefixSumValidIndex) {
+          this.prefixSumValidIndex = e - 1;
+        }
+      }
     };
 
     e.prototype.removeValues = function(e, t) {
@@ -4124,7 +4269,9 @@ define("vs/editor/core/view/model/prefixSumComputer", ["require", "exports"], fu
 
       this.prefixSum.splice(e, t);
 
-      e - 1 < this.prefixSumValidIndex && (this.prefixSumValidIndex = e - 1);
+      if (e - 1 < this.prefixSumValidIndex) {
+        this.prefixSumValidIndex = e - 1;
+      }
     };
 
     e.prototype.getTotalValue = function() {
@@ -4139,7 +4286,10 @@ define("vs/editor/core/view/model/prefixSumComputer", ["require", "exports"], fu
         return this.prefixSum[e];
       }
       var t = this.prefixSumValidIndex + 1;
-      0 === t && (this.prefixSum[0] = this.values[0], t++);
+      if (0 === t) {
+        this.prefixSum[0] = this.values[0];
+        t++;
+      }
       for (var n = t; e >= n; n++) {
         this.prefixSum[n] = this.prefixSum[n - 1] + this.values[n];
       }
@@ -4528,7 +4678,9 @@ define("vs/base/arrays", ["require", "exports"], function(e, t) {
   }
 
   function o(e, t) {
-    "undefined" == typeof t && (t = null);
+    if ("undefined" == typeof t) {
+      t = null;
+    }
     for (var n = new Array(e); e-- > 0;) {
       n.push(t);
     }
@@ -4570,7 +4722,9 @@ define("vs/base/arrays", ["require", "exports"], function(e, t) {
   function u(e) {
     for (var t = [], n = 0; n < e.length; n++) {
       var i = e[n];
-      i && t.push(i);
+      if (i) {
+        t.push(i);
+      }
     }
     return t;
   }
@@ -4656,14 +4810,20 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
           var h;
           for (l = 0, c = a.length; c > l; l++) {
             h = a[l];
-            h.startIndex >= n - 1 && h.startIndex > 0 && (h.startIndex += u);
+            if (h.startIndex >= n - 1 && h.startIndex > 0) {
+              h.startIndex += u;
+            }
           }
         }
         var p;
         for (l = 0, c = this.markers.length; c > l; l++) {
           p = this.markers[l];
-          (p.column > n || p.column === n && (o || !p.stickToPreviousCharacter)) && (t[p.id] = !0, p.oldLineNumber =
-            p.oldLineNumber || this.lineNumber, p.oldColumn = p.oldColumn || p.column, p.column += u);
+          if (p.column > n || p.column === n && (o || !p.stickToPreviousCharacter)) {
+            t[p.id] = !0;
+            p.oldLineNumber = p.oldLineNumber || this.lineNumber;
+            p.oldColumn = p.oldColumn || p.column;
+            p.column += u;
+          }
         }
         this.text = d;
 
@@ -4755,7 +4915,9 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
 
     e.prototype.removeMarker = function(e) {
       var t = this._indexOfMarkerId(e.id);
-      t >= 0 && this.markers.splice(t, 1);
+      if (t >= 0) {
+        this.markers.splice(t, 1);
+      }
 
       e.line = null;
     };
@@ -4987,7 +5149,9 @@ define("vs/base/errors", ["require", "exports", "vs/nls!vs/editor/worker/editorW
   }
 
   function a(e, n) {
-    "undefined" == typeof n && (n = null);
+    if ("undefined" == typeof n) {
+      n = null;
+    }
 
     t.errorHandler.onUnexpectedError(e, n);
   }
@@ -5109,9 +5273,13 @@ define("vs/base/errors", ["require", "exports", "vs/nls!vs/editor/worker/editorW
     };
 
     e.prototype.emit = function(e, t, n) {
-      "undefined" == typeof t && (t = null);
+      if ("undefined" == typeof t) {
+        t = null;
+      }
 
-      "undefined" == typeof n && (n = null);
+      if ("undefined" == typeof n) {
+        n = null;
+      }
 
       this.listeners.forEach(function(i) {
         i(e, t, n);
@@ -5131,7 +5299,9 @@ define("vs/base/errors", ["require", "exports", "vs/nls!vs/editor/worker/editorW
     };
 
     e.prototype.onUnexpectedError = function(e, n) {
-      "undefined" == typeof n && (n = null);
+      if ("undefined" == typeof n) {
+        n = null;
+      }
 
       this.unexpectedErrorHandler(e, n);
 
@@ -5209,7 +5379,9 @@ define("vs/base/lib/winjs.base", ["./raw.winjs.base", "vs/base/errors"], functio
 
           console.log(i);
 
-          i.exception && console.log(i.exception.stack);
+          if (i.exception) {
+            console.log(i.exception.stack);
+          }
         });
       }, 0), void 0);
   }
@@ -5231,11 +5403,15 @@ define("vs/base/lib/winjs.base", ["./raw.winjs.base", "vs/base/errors"], functio
       e.cancel();
     });
     e.then(function(e) {
-      t && t(e);
+      if (t) {
+        t(e);
+      }
 
       i(e);
     }, function(e) {
-      n && n(e);
+      if (n) {
+        n(e);
+      }
 
       o(e);
     }, r);
@@ -5268,7 +5444,9 @@ define("vs/editor/worker/dispatcherService", ["require", "exports", "vs/base/lib
       } else
         for (var t in e) {
           var n = e[t];
-          i.isFunction(n) && (this.table[t] = n.bind(e));
+          if (i.isFunction(n)) {
+            this.table[t] = n.bind(e);
+          }
         }
     };
 
@@ -5289,7 +5467,9 @@ define("vs/editor/worker/dispatcherService", ["require", "exports", "vs/base/lib
     e.prototype.deserialize = function(e) {
       for (var t = [], n = 0; n < e.length; n++) {
         var r = e[n];
-        !i.isUndefinedOrNull(r) && i.isString(r.$url) && (r = new o.URL(r.$url));
+        if (!i.isUndefinedOrNull(r) && i.isString(r.$url)) {
+          r = new o.URL(r.$url);
+        }
 
         t.push(r);
       }
@@ -5306,7 +5486,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var i in t) {
-      t.hasOwnProperty(i) && (e[i] = t[i]);
+      if (t.hasOwnProperty(i)) {
+        e[i] = t[i];
+      }
     }
     n.prototype = t.prototype;
 
@@ -5344,7 +5526,9 @@ define("vs/base/async", ["require", "exports", "vs/base/errors", "vs/base/lib/wi
     }
 
     function n(e) {
-      e && o.push(e);
+      if (e) {
+        o.push(e);
+      }
       var r = t();
       return r ? r.then(n) : i.Promise.as(o);
     }
@@ -5418,7 +5602,9 @@ define("vs/base/async", ["require", "exports", "vs/base/errors", "vs/base/lib/wi
       this.task = null;
     }
     e.prototype.trigger = function(e, t) {
-      "undefined" == typeof t && (t = this.defaultDelay);
+      if ("undefined" == typeof t) {
+        t = this.defaultDelay;
+      }
       var n = this;
       this.task = e;
 
@@ -5454,11 +5640,17 @@ define("vs/base/async", ["require", "exports", "vs/base/errors", "vs/base/lib/wi
     e.prototype.cancel = function() {
       this.cancelTimeout();
 
-      this.completionPromise && (this.completionPromise.cancel(), this.completionPromise = null);
+      if (this.completionPromise) {
+        this.completionPromise.cancel();
+        this.completionPromise = null;
+      }
     };
 
     e.prototype.cancelTimeout = function() {
-      this.timeoutPromise && (this.timeoutPromise.cancel(), this.timeoutPromise = null);
+      if (this.timeoutPromise) {
+        this.timeoutPromise.cancel();
+        this.timeoutPromise = null;
+      }
     };
 
     return e;
@@ -5493,7 +5685,9 @@ define("vs/base/async", ["require", "exports", "vs/base/errors", "vs/base/lib/wi
 define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], function(e, t, n) {
   var i = function() {
     function e(e, t, n) {
-      "undefined" == typeof n && (n = null);
+      if ("undefined" == typeof n) {
+        n = null;
+      }
 
       this._type = e;
 
@@ -5547,7 +5741,11 @@ define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], functio
       this._listeners.hasOwnProperty(e) ? this._listeners[e].push(t) : this._listeners[e] = [t];
       var n = this;
       return function() {
-        n && (n._removeListener(e, t), n = null, t = null);
+        if (n) {
+          n._removeListener(e, t);
+          n = null;
+          t = null;
+        }
       };
     };
 
@@ -5595,7 +5793,9 @@ define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], functio
     };
 
     e.prototype.addEmitter = function(e, t) {
-      "undefined" == typeof t && (t = null);
+      if ("undefined" == typeof t) {
+        t = null;
+      }
       var n = this;
       return e.addBulkListener(function(e) {
         var o = e;
@@ -5659,12 +5859,16 @@ define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], functio
     };
 
     e.prototype._emitEvents = function(e) {
-      this._bulkListeners.length > 0 && this._emitToBulkListeners(e);
+      if (this._bulkListeners.length > 0) {
+        this._emitToBulkListeners(e);
+      }
       for (var t = 0, n = e.length; n > t; t++) {
         var i = e[t];
         this._emitToSpecificTypeListeners(i.getType(), i.getData());
 
-        i.getEmitterType() && this._emitToSpecificTypeListeners(i.getType() + "/" + i.getEmitterType(), i.getData());
+        if (i.getEmitterType()) {
+          this._emitToSpecificTypeListeners(i.getType() + "/" + i.getEmitterType(), i.getData());
+        }
       }
     };
 
@@ -5691,7 +5895,9 @@ define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], functio
       var e = this._collectedEvents;
       this._collectedEvents = [];
 
-      e.length > 0 && this._emitEvents(e);
+      if (e.length > 0) {
+        this._emitEvents(e);
+      }
     };
 
     return e;
@@ -5704,7 +5910,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var i in t) {
-      t.hasOwnProperty(i) && (e[i] = t[i]);
+      if (t.hasOwnProperty(i)) {
+        e[i] = t[i];
+      }
     }
     n.prototype = t.prototype;
 
@@ -5774,7 +5982,9 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
     };
 
     t.prototype.getValue = function(e, t) {
-      "undefined" == typeof t && (t = !1);
+      if ("undefined" == typeof t) {
+        t = !1;
+      }
       var n = this.getFullModelRange();
 
       var i = this.getValueInRange(n, e);
@@ -5782,7 +5992,9 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
     };
 
     t.prototype.getValueInRange = function(e, t) {
-      "undefined" == typeof t && (t = 0);
+      if ("undefined" == typeof t) {
+        t = 0;
+      }
       var n = this.validateRange(e);
       if (n.isEmpty()) {
         return "";
@@ -5880,20 +6092,37 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
           for (n = 0; m > n && u > n; n++) {
             r = g.charCodeAt(n);
             o = s.charCodeAt(n);
-            b && r !== o && (b = !1);
-            b || (r === c && h++, o === c && h++);
+            if (b && r !== o) {
+              b = !1;
+            }
+            if (!b) {
+              if (r === c) {
+                h++;
+              }
+              if (o === c) {
+                h++;
+              }
+            }
           }
           for (; m > n; n++) {
             r = g.charCodeAt(n);
-            r === c && h++;
+            if (r === c) {
+              h++;
+            }
           }
           for (; u > n; n++) {
             o = s.charCodeAt(n);
-            o === c && h++;
+            if (o === c) {
+              h++;
+            }
           }
-          1 === h && (h = 0);
+          if (1 === h) {
+            h = 0;
+          }
 
-          h > 0 && (v[h] = (v[h] || 0) + 1);
+          if (h > 0) {
+            v[h] = (v[h] || 0) + 1;
+          }
 
           m = u;
 
@@ -5960,7 +6189,10 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
       var g = 0;
       for (l = Math.max(a.length, p.length); l >= 2; l--) {
         c = (p[l] || 0) + (a[l] || 0);
-        c > g && (f = l, g = c);
+        if (c > g) {
+          f = l;
+          g = c;
+        }
       }
       return {
         insertSpaces: !0,
@@ -6006,11 +6238,17 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
       var t = e.lineNumber ? e.lineNumber : 1;
 
       var n = e.column ? e.column : 1;
-      1 > t && (t = 1);
+      if (1 > t) {
+        t = 1;
+      }
 
-      t > this._lines.length && (t = this._lines.length);
+      if (t > this._lines.length) {
+        t = this._lines.length;
+      }
 
-      1 > n && (n = 1);
+      if (1 > n) {
+        n = 1;
+      }
       var i = this.getLineMaxColumn(t);
       n > i && (n = i);
 
@@ -6040,7 +6278,10 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
       var i = e.split(/\r?\n/);
 
       var r = "";
-      i[0].length > 0 && i[0].charCodeAt(0) === l && (r = String.fromCharCode(l), i[0] = i[0].substr(1));
+      if (i[0].length > 0 && i[0].charCodeAt(0) === l) {
+        r = String.fromCharCode(l);
+        i[0] = i[0].substr(1);
+      }
       var s;
 
       var a;
@@ -6092,7 +6333,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var i in t) {
-      t.hasOwnProperty(i) && (e[i] = t[i]);
+      if (t.hasOwnProperty(i)) {
+        e[i] = t[i];
+      }
     }
     n.prototype = t.prototype;
 
@@ -6108,7 +6351,9 @@ define("vs/editor/core/model/mirrorModel", ["require", "exports", "vs/editor/cor
 
       this.wordsRegexp = null;
 
-      r || (r = {});
+      if (!r) {
+        r = {};
+      }
 
       this._setVersionId(n);
 
@@ -6351,7 +6596,9 @@ define("vs/editor/core/model/mirrorModel", ["require", "exports", "vs/editor/cor
             console.warn("Unknown model event: " + r.type);
         }
       }
-      t && this.emit("changed", {});
+      if (t) {
+        this.emit("changed", {});
+      }
     };
 
     t.prototype._onLinesFlushed = function(e) {
@@ -6374,7 +6621,9 @@ define("vs/editor/core/model/mirrorModel", ["require", "exports", "vs/editor/cor
       var t = e.fromLineNumber - 1;
 
       var n = e.toLineNumber - 1;
-      this._lineStarts && this._lineStarts.removeValues(t, n - t + 1);
+      if (this._lineStarts) {
+        this._lineStarts.removeValues(t, n - t + 1);
+      }
 
       this._lines.splice(t, n - t + 1);
     };
@@ -6388,7 +6637,9 @@ define("vs/editor/core/model/mirrorModel", ["require", "exports", "vs/editor/cor
 
       var o = e.detail.split("\n");
       for (t = e.fromLineNumber - 1, n = 0; t < e.toLineNumber; t++, n++) {
-        this._lineStarts && this._lineStarts.insertValue(t, o[n].length + i);
+        if (this._lineStarts) {
+          this._lineStarts.insertValue(t, o[n].length + i);
+        }
         this._lines.splice(t, 0, new r.ModelLine(0, o[n]));
       }
     };
@@ -6403,7 +6654,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var i in t) {
-      t.hasOwnProperty(i) && (e[i] = t[i]);
+      if (t.hasOwnProperty(i)) {
+        e[i] = t[i];
+      }
     }
     n.prototype = t.prototype;
 
@@ -6412,7 +6665,9 @@ var __extends = this.__extends || function(e, t) {
 
 define("vs/base/collections", ["require", "exports", "vs/base/errors"], function(e, t, n) {
   function i(e, t, n) {
-    "undefined" == typeof n && (n = null);
+    if ("undefined" == typeof n) {
+      n = null;
+    }
     var i = String(t);
     return e.hasOwnProperty(i) ? e[i] : n;
   }
@@ -6433,7 +6688,9 @@ define("vs/base/collections", ["require", "exports", "vs/base/errors"], function
   function a(e) {
     var t = [];
     for (var n in e) {
-      e.hasOwnProperty(n) && t.push(e[n]);
+      if (e.hasOwnProperty(n)) {
+        t.push(e[n]);
+      }
     }
     return t;
   }
@@ -6457,7 +6714,10 @@ define("vs/base/collections", ["require", "exports", "vs/base/errors"], function
       var i = t(e);
 
       var o = n.lookup(i);
-      o || (o = [], n.add(i, o));
+      if (!o) {
+        o = [];
+        n.add(i, o);
+      }
 
       o.push(e);
     });
@@ -6714,7 +6974,9 @@ define("vs/base/collections", ["require", "exports", "vs/base/errors"], function
 
     t.prototype.add = function(e, t) {
       var n = this.hashFn(e);
-      this._data.hasOwnProperty(n) || (this._count += 1);
+      if (!this._data.hasOwnProperty(n)) {
+        this._count += 1;
+      }
 
       this._data[n] = {
         key: e,
@@ -6729,7 +6991,10 @@ define("vs/base/collections", ["require", "exports", "vs/base/errors"], function
 
     t.prototype.remove = function(e) {
       var t = this.hashFn(e);
-      this._data.hasOwnProperty(t) && (this._count -= 1, delete this._data[t]);
+      if (this._data.hasOwnProperty(t)) {
+        this._count -= 1;
+        delete this._data[t];
+      }
     };
 
     t.prototype.containsKey = function(e) {
@@ -6752,7 +7017,9 @@ define("vs/base/collections", ["require", "exports", "vs/base/errors"], function
   t.StringDictionary = y;
   var _ = function(e) {
     function t(t) {
-      "undefined" == typeof t && (t = 10);
+      if ("undefined" == typeof t) {
+        t = 10;
+      }
 
       e.call(this);
 
@@ -6928,7 +7195,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var i in t) {
-      t.hasOwnProperty(i) && (e[i] = t[i]);
+      if (t.hasOwnProperty(i)) {
+        e[i] = t[i];
+      }
     }
     n.prototype = t.prototype;
 
@@ -7048,17 +7317,23 @@ define("vs/base/performance/timer", ["require", "exports", "vs/base/env", "vs/ba
 
       this.emit("eventStart", e);
 
-      this.collectedEvents.length > this.eventCacheLimit && this.collectedEvents.shift();
+      if (this.collectedEvents.length > this.eventCacheLimit) {
+        this.collectedEvents.shift();
+      }
     };
 
     i.prototype.cleanupTimers = function() {
       var e = this;
-      null === this.timeoutId && (this.timeoutId = setTimeout(function() {
-        var t = Date.now();
-        e.collectedEvents.forEach(function(n) {
-          !n.stopTime && t - n.startTime >= e.maxTimerLength && n.stop();
-        });
-      }, this.cleanupInterval));
+      if (null === this.timeoutId) {
+        this.timeoutId = setTimeout(function() {
+          var t = Date.now();
+          e.collectedEvents.forEach(function(n) {
+            if (!n.stopTime && t - n.startTime >= e.maxTimerLength) {
+              n.stop();
+            }
+          });
+        }, this.cleanupInterval);
+      }
     };
 
     i.prototype.dispose = function() {
@@ -7077,12 +7352,17 @@ define("vs/base/performance/timer", ["require", "exports", "vs/base/env", "vs/ba
 
     i.prototype.setInitialCollectedEvents = function(e, t) {
       var n = this;
-      this.enabled() !== !1 && (t && (i.PARSE_TIME = t), e.forEach(function(e) {
-        var t = new l(n, e.name, e.topic, e.startTime);
-        t.stop(e.stopTime);
+      if (this.enabled() !== !1) {
+        if (t) {
+          i.PARSE_TIME = t;
+        }
+        e.forEach(function(e) {
+          var t = new l(n, e.name, e.topic, e.startTime);
+          t.stop(e.stopTime);
 
-        n.addEvent(t);
-      }));
+          n.addEvent(t);
+        });
+      }
     };
 
     i.EVENT_ID = 1;
@@ -7105,7 +7385,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var i in t) {
-      t.hasOwnProperty(i) && (e[i] = t[i]);
+      if (t.hasOwnProperty(i)) {
+        e[i] = t[i];
+      }
     }
     n.prototype = t.prototype;
 
@@ -7208,7 +7490,9 @@ define("vs/platform/services", ["require", "exports", "vs/base/lib/winjs.base", 
   t.AsyncDescriptor = p;
   var f = function() {
     function e(e, t, n) {
-      "undefined" == typeof n && (n = {});
+      if ("undefined" == typeof n) {
+        n = {};
+      }
 
       this.workspace = e;
 
@@ -7250,9 +7534,13 @@ define("vs/platform/services", ["require", "exports", "vs/base/lib/winjs.base", 
         if (this.contextService = e, this.contextService.getConfiguration()) {
           this.origin = this.contextService.getConfiguration().paths.PUBLIC_WORKSPACE_URL;
           var t = (new r.URL(this.origin)).getPath();
-          t && t.length > 0 && (this.origin = this.origin.substring(0, this.origin.length - t.length + 1));
+          if (t && t.length > 0) {
+            this.origin = this.origin.substring(0, this.origin.length - t.length + 1);
+          }
 
-          o.endsWith(this.origin, "/") || (this.origin += "/");
+          if (!o.endsWith(this.origin, "/")) {
+            this.origin += "/";
+          }
         } else {
           this.origin = "/";
         }
@@ -7305,7 +7593,9 @@ define("vs/platform/services", ["require", "exports", "vs/base/lib/winjs.base", 
       }, !1));
 
       return i.always(n.xhr(e), function(e) {
-        t.data && (t.data.status = e.status);
+        if (t.data) {
+          t.data.status = e.status;
+        }
 
         t.stop();
       });
@@ -7376,7 +7666,9 @@ define("vs/platform/services", ["require", "exports", "vs/base/lib/winjs.base", 
         }, function(e) {
           r(e);
         }, function(e) {
-          3 === e.readyState && i(e.responseText);
+          if (3 === e.readyState) {
+            i(e.responseText);
+          }
         });
       }, function() {
         c = !0;
@@ -7507,7 +7799,10 @@ define("vs/platform/services", ["require", "exports", "vs/base/lib/winjs.base", 
         return this._enabled;
       },
       set: function(e) {
-        this._enabled !== e && (this._enabled = e, this.emit("enabled", this));
+        if (this._enabled !== e) {
+          this._enabled = e;
+          this.emit("enabled", this);
+        }
       },
       enumerable: !0,
       configurable: !0
@@ -7740,7 +8035,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var i in t) {
-      t.hasOwnProperty(i) && (e[i] = t[i]);
+      if (t.hasOwnProperty(i)) {
+        e[i] = t[i];
+      }
     }
     n.prototype = t.prototype;
 
@@ -7791,13 +8088,17 @@ define("vs/editor/worker/resourceService", ["require", "exports", "vs/base/event
     t.prototype.insertLinked = function(e, t, n) {
       if (this.contains(e)) {
         var o = e.toExternal();
-        this.linked.hasOwnProperty(o) || (this.linked[o] = {});
+        if (!this.linked.hasOwnProperty(o)) {
+          this.linked[o] = {};
+        }
 
         this.linked[o][t] = n;
 
-        i.isFunction(n.onChange) && this.unbinds[o].push(this.data[o].addBulkListener(function(e) {
-          n.onChange(e);
-        }));
+        if (i.isFunction(n.onChange)) {
+          this.unbinds[o].push(this.data[o].addBulkListener(function(e) {
+            n.onChange(e);
+          }));
+        }
       }
     };
 
@@ -7845,7 +8146,9 @@ define("vs/editor/worker/resourceService", ["require", "exports", "vs/base/event
       for (var s in this.linked[n])
         if (this.linked.hasOwnProperty(s)) {
           var a = this.linked[n][s];
-          i.isFunction(a.onRemove) && a.onRemove();
+          if (i.isFunction(a.onRemove)) {
+            a.onRemove();
+          }
         }
       delete this.unbinds[n];
 
@@ -7903,7 +8206,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var i in t) {
-      t.hasOwnProperty(i) && (e[i] = t[i]);
+      if (t.hasOwnProperty(i)) {
+        e[i] = t[i];
+      }
     }
     n.prototype = t.prototype;
 
@@ -7929,7 +8234,9 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
 
       this.detail = e.detail || 1;
 
-      "dblclick" === e.type && (this.detail = 2);
+      if ("dblclick" === e.type) {
+        this.detail = 2;
+      }
 
       this.posx = 0;
 
@@ -7996,17 +8303,21 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
           o(r.wheelDeltaX) : "undefined" != typeof s.HORIZONTAL_AXIS && s.axis === s.HORIZONTAL_AXIS && (this.deltaX = -
             e.detail / 3);
 
-        0 === this.deltaY && 0 === this.deltaX && e.wheelDelta && (this.deltaY = o(e.wheelDelta));
+        if (0 === this.deltaY && 0 === this.deltaX && e.wheelDelta) {
+          this.deltaY = o(e.wheelDelta);
+        }
       }
     }
     e.prototype.preventDefault = function() {
-      this.browserEvent && (this.browserEvent.preventDefault ? this.browserEvent.preventDefault() : this.browserEvent
-        .returnValue = !1);
+      if (this.browserEvent) {
+        this.browserEvent.preventDefault ? this.browserEvent.preventDefault() : this.browserEvent.returnValue = !1;
+      }
     };
 
     e.prototype.stopPropagation = function() {
-      this.browserEvent && (this.browserEvent.stopPropagation ? this.browserEvent.stopPropagation() : this.browserEvent
-        .cancelBubble = !0);
+      if (this.browserEvent) {
+        this.browserEvent.stopPropagation ? this.browserEvent.stopPropagation() : this.browserEvent.cancelBubble = !0;
+      }
     };
 
     return e;
@@ -8107,7 +8418,9 @@ define("vs/base/dom/keyboardEvent", ["require", "vs/base/lib/winjs.base", "vs/ba
     var t = {};
     ! function() {
       for (var n in e) {
-        e.hasOwnProperty(n) && (t[e[n]] = n);
+        if (e.hasOwnProperty(n)) {
+          t[e[n]] = n;
+        }
       }
     }();
 
@@ -8216,7 +8529,12 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
       n(e);
     };
     return i.isFunction(e.addEventListener) ? (e.addEventListener(t, r, o || !1), function() {
-      r && (e.removeEventListener(t, r, o || !1), r = null, e = null, n = null);
+      if (r) {
+        e.removeEventListener(t, r, o || !1);
+        r = null;
+        e = null;
+        n = null;
+      }
     }) : (e.attachEvent("on" + t, r), function() {
       e.detachEvent("on" + t, r);
     });
@@ -8246,7 +8564,9 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
       for (var i = t.relatedTarget || t.toElement; i && i !== e;) {
         i = i.parentNode;
       }
-      i !== e && n(t);
+      if (i !== e) {
+        n(t);
+      }
     });
   }
 
@@ -8258,9 +8578,13 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
   }
 
   function v(e, n, i, o, r) {
-    "undefined" == typeof o && (o = B);
+    if ("undefined" == typeof o) {
+      o = B;
+    }
 
-    "undefined" == typeof r && (r = 0);
+    if ("undefined" == typeof r) {
+      r = 0;
+    }
     var s = null;
 
     var a = 0;
@@ -8287,7 +8611,10 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
     var h = t.addListener(e, n, function(e) {
       s = o(s, e);
 
-      l || (l = !0, t.scheduleAtNextAnimationFrame(d, Number.MAX_VALUE));
+      if (!l) {
+        l = !0;
+        t.scheduleAtNextAnimationFrame(d, Number.MAX_VALUE);
+      }
     });
     return function() {
       u = !0;
@@ -8297,9 +8624,13 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
   }
 
   function y(e, n, i, o, r) {
-    "undefined" == typeof o && (o = B);
+    if ("undefined" == typeof o) {
+      o = B;
+    }
 
-    "undefined" == typeof r && (r = U);
+    if ("undefined" == typeof r) {
+      r = U;
+    }
     var s = null;
 
     var a = 0;
@@ -8322,7 +8653,9 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
       t >= r ? (-1 !== u && window.clearTimeout(u), l()) : -1 === u && (u = window.setTimeout(l, r - t));
     });
     return function() {
-      -1 !== u && window.clearTimeout(u);
+      if (-1 !== u) {
+        window.clearTimeout(u);
+      }
 
       c();
     };
@@ -8358,10 +8691,17 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
       e !== document.documentElement;) {
       i -= e.scrollTop;
       var r = t.getComputedStyle(e);
-      r && (o -= "rtl" !== r.direction ? e.scrollLeft : -e.scrollLeft);
+      if (r) {
+        o -= "rtl" !== r.direction ? e.scrollLeft : -e.scrollLeft;
+      }
 
-      e === n && (o += z.getBorderLeftWidth(e), i += z.getBorderTopWidth(e), i += e.offsetTop, o += e.offsetLeft, n =
-        e.offsetParent);
+      if (e === n) {
+        o += z.getBorderLeftWidth(e);
+        i += z.getBorderTopWidth(e);
+        i += e.offsetTop;
+        o += e.offsetLeft;
+        n = e.offsetParent;
+      }
     }
     return {
       left: o,
@@ -8448,7 +8788,12 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
   }
 
   function R(e, t) {
-    t && (j || D(), j.sheet.insertRule(e + "{" + t + "}", 0));
+    if (t) {
+      if (!j) {
+        D();
+      }
+      j.sheet.insertRule(e + "{" + t + "}", 0);
+    }
   }
 
   function P(e) {
@@ -8472,7 +8817,9 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
         var o = t[i];
 
         var r = o.selectorText.replace(/::/gi, ":");
-        0 === r.indexOf(e) && n.push(i);
+        if (0 === r.indexOf(e)) {
+          n.push(i);
+        }
       }
       for (var i = n.length - 1; i >= 0; i--) {
         j.sheet.deleteRule(n[i]);
@@ -8489,7 +8836,9 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
     try {
       e.select();
 
-      e.setSelectionRange && e.setSelectionRange(0, 9999);
+      if (e.setSelectionRange) {
+        e.setSelectionRange(0, 9999);
+      }
     } catch (t) {}
   }
 
@@ -8525,13 +8874,23 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
     var l = function() {
       r = !1;
 
-      i || (i = !0, s.emit("focus", {}));
+      if (!i) {
+        i = !0;
+        s.emit("focus", {});
+      }
     };
 
     var c = function() {
-      i && (r = !0, n.isTesting() ? r && (r = !1, i = !1, s.emit("blur", {})) : window.setTimeout(function() {
-        r && (r = !1, i = !1, s.emit("blur", {}));
-      }, 0));
+      if (i) {
+        r = !0;
+        n.isTesting() ? r && (r = !1, i = !1, s.emit("blur", {})) : window.setTimeout(function() {
+          if (r) {
+            r = !1;
+            i = !1;
+            s.emit("blur", {});
+          }
+        }, 0);
+      }
     };
     a.push(t.addListener(e, t.EventType.FOCUS, l, !0));
 
@@ -8613,15 +8972,21 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
     t.removeClass = function(t, o) {
       e(t, o);
 
-      - 1 !== n && (t.className = t.className.substring(0, n) + t.className.substring(i));
+      if (-1 !== n) {
+        t.className = t.className.substring(0, n) + t.className.substring(i);
+      }
     };
 
     t.toggleClass = function(i, o, r) {
       e(i, o);
 
-      - 1 === n || r || t.removeClass(i, o);
+      if (!(-1 === n || r)) {
+        t.removeClass(i, o);
+      }
 
-      - 1 === n && r && t.addClass(i, o);
+      if (-1 === n && r) {
+        t.addClass(i, o);
+      }
     };
   })();
 
@@ -8637,7 +9002,12 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
 
     return {
       dispose: function() {
-        o && (e.removeEventListener(t, o, i || !1), o = null, e = null, n = null);
+        if (o) {
+          e.removeEventListener(t, o, i || !1);
+          o = null;
+          e = null;
+          n = null;
+        }
       }
     };
   };
@@ -8711,7 +9081,9 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
 
     var r = !1;
     t.scheduleAtNextAnimationFrame = function(t, r) {
-      "undefined" == typeof r && (r = 0);
+      if ("undefined" == typeof r) {
+        r = 0;
+      }
       var s = i.length;
       i.push({
         cancelled: !1,
@@ -8731,7 +9103,9 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
     t.cancelAtNextAnimationFrame = function(e) {
       if ("undefined" != typeof e) {
         var t = e - n;
-        0 > t || t >= i.length || (i[t].cancelled = !0);
+        if (!(0 > t || t >= i.length)) {
+          i[t].cancelled = !0;
+        }
       }
     };
   })();
@@ -8869,7 +9243,9 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
     stop: function(e, t) {
       e.preventDefault ? e.preventDefault() : e.returnValue = !1;
 
-      t && (e.stopPropagation ? e.stopPropagation() : e.cancelBubble = !0);
+      if (t) {
+        e.stopPropagation ? e.stopPropagation() : e.cancelBubble = !0;
+      }
     }
   };
 
@@ -8911,7 +9287,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var i in t) {
-      t.hasOwnProperty(i) && (e[i] = t[i]);
+      if (t.hasOwnProperty(i)) {
+        e[i] = t[i];
+      }
     }
     n.prototype = t.prototype;
 
@@ -8956,13 +9334,20 @@ define("vs/base/time/idleMonitor", ["require", "exports", "vs/base/dom/dom", "vs
       this.referenceCount = 0;
     }
     e.prototype.increment = function() {
-      0 === this.referenceCount && this.construct();
+      if (0 === this.referenceCount) {
+        this.construct();
+      }
 
       this.referenceCount++;
     };
 
     e.prototype.decrement = function() {
-      this.referenceCount > 0 && (this.referenceCount--, 0 === this.referenceCount && this.dispose());
+      if (this.referenceCount > 0) {
+        this.referenceCount--;
+        if (0 === this.referenceCount) {
+          this.dispose();
+        }
+      }
     };
 
     e.prototype.construct = function() {
@@ -9026,11 +9411,18 @@ define("vs/base/time/idleMonitor", ["require", "exports", "vs/base/dom/dom", "vs
     r.prototype.onUserActive = function() {
       this.lastActiveTime = (new Date).getTime();
 
-      1 !== this.status && (this.status = 1, this.scheduleIdleCheck(), this.eventEmitter.emit("onActive"));
+      if (1 !== this.status) {
+        this.status = 1;
+        this.scheduleIdleCheck();
+        this.eventEmitter.emit("onActive");
+      }
     };
 
     r.prototype.onUserIdle = function() {
-      0 !== this.status && (this.status = 0, this.eventEmitter.emit("onIdle"));
+      if (0 !== this.status) {
+        this.status = 0;
+        this.eventEmitter.emit("onIdle");
+      }
     };
 
     r.prototype.scheduleIdleCheck = function() {
@@ -9046,7 +9438,10 @@ define("vs/base/time/idleMonitor", ["require", "exports", "vs/base/dom/dom", "vs
     };
 
     r.prototype.cancelIdleCheck = function() {
-      -1 !== this.idleCheckTimeout && (clearTimeout(this.idleCheckTimeout), this.idleCheckTimeout = -1);
+      if (-1 !== this.idleCheckTimeout) {
+        clearTimeout(this.idleCheckTimeout);
+        this.idleCheckTimeout = -1;
+      }
     };
 
     r.prototype.checkIfUserIsIdle = function() {
@@ -9065,9 +9460,13 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
 ], function(e, t, n, i, o, r, s, a, u) {
   var l = function() {
     function e(t, r) {
-      "undefined" == typeof t && (t = !0);
+      if ("undefined" == typeof t) {
+        t = !0;
+      }
 
-      "undefined" == typeof r && (r = null);
+      if ("undefined" == typeof r) {
+        r = null;
+      }
 
       this.eventQueue = [];
 
@@ -9093,7 +9492,11 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
 
       this.toUnbind.push(o.errorHandler.addListener(this.onErrorEvent.bind(this)));
 
-      r || s.isInWebWorker() === !1 && (r = new a.IdleMonitor);
+      if (!r) {
+        if (s.isInWebWorker() === !1) {
+          r = new a.IdleMonitor;
+        }
+      }
 
       this.idleMonitor = r;
 
@@ -9105,9 +9508,13 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
       }
       this.timeKeeper.dispose();
 
-      this.idleMonitor && this.idleMonitor.dispose();
+      if (this.idleMonitor) {
+        this.idleMonitor.dispose();
+      }
 
-      this.oldOnError && (self.onerror = this.oldOnError);
+      if (this.oldOnError) {
+        self.onerror = this.oldOnError;
+      }
     };
 
     e.prototype.onTelemetryTimerEventStop = function(e) {
@@ -9118,9 +9525,13 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
     };
 
     e.prototype.onErrorEvent = function(e, t, n) {
-      "undefined" == typeof t && (t = null);
+      if ("undefined" == typeof t) {
+        t = null;
+      }
 
-      "undefined" == typeof n && (n = null);
+      if ("undefined" == typeof n) {
+        n = null;
+      }
 
       this.publicLog("UnhandledError", {
         friendlyMessage: t,
@@ -9131,13 +9542,17 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
     };
 
     e.prototype.enableGlobalErrorHandler = function() {
-      r.isFunction(self.onerror) && (this.oldOnError = self.onerror);
+      if (r.isFunction(self.onerror)) {
+        this.oldOnError = self.onerror;
+      }
       var e = this;
 
       var t = function(t, n, i, o, r) {
         e.onUncaughtError(t, n, i, o, r);
 
-        e.oldOnError && e.oldOnError.apply(this, arguments);
+        if (e.oldOnError) {
+          e.oldOnError.apply(this, arguments);
+        }
       };
       self.onerror = t;
     };
@@ -9149,11 +9564,13 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
         line: n,
         column: i
       };
-      o && (r.error = {
-        name: o.name,
-        message: o.message,
-        stack: this.authFilter(o.stack)
-      });
+      if (o) {
+        r.error = {
+          name: o.name,
+          message: o.message,
+          stack: this.authFilter(o.stack)
+        };
+      }
 
       this.publicLog("UncaughtError", r);
     };
@@ -9176,7 +9593,9 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
     };
 
     e.prototype.log = function(e, t) {
-      this.publicOnly || this.handleEvent("restricted", e, t);
+      if (!this.publicOnly) {
+        this.handleEvent("restricted", e, t);
+      }
     };
 
     e.prototype.publicLog = function(e, t) {
@@ -9184,26 +9603,36 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
     };
 
     e.prototype.handleEvent = function(e, t, n) {
-      this.eventQueue.length >= this.eventMaxQueueSize || (n = n || {}, n.source = "client", n.version = {
-        clientVersion: s.version
-      }, this.eventQueue.push({
-        name: t,
-        kind: e,
-        timestamp: new Date,
-        data: JSON.stringify(n),
-        activeExperiments: this.getEnabledExperiments(),
-        sessionID: this.sessionID
-      }), this.sendingEvents || this.failureCount > 0 || (this.eventQueue.length > this.eventBatchSize ? (
-        clearTimeout(this.waitIntervalId), this.waitIntervalId = null, this.sendEvents()) : this.sendSoon()));
+      if (!(this.eventQueue.length >= this.eventMaxQueueSize)) {
+        n = n || {};
+        n.source = "client";
+        n.version = {
+          clientVersion: s.version
+        };
+        this.eventQueue.push({
+          name: t,
+          kind: e,
+          timestamp: new Date,
+          data: JSON.stringify(n),
+          activeExperiments: this.getEnabledExperiments(),
+          sessionID: this.sessionID
+        });
+        if (!(this.sendingEvents || this.failureCount > 0)) {
+          this.eventQueue.length > this.eventBatchSize ? (clearTimeout(this.waitIntervalId), this.waitIntervalId =
+            null, this.sendEvents()) : this.sendSoon();
+        }
+      }
     };
 
     e.prototype.sendSoon = function() {
       var t = this;
-      null === this.waitIntervalId && (this.waitIntervalId = setTimeout(function() {
-        t.waitIntervalId = null;
+      if (null === this.waitIntervalId) {
+        this.waitIntervalId = setTimeout(function() {
+          t.waitIntervalId = null;
 
-        t.sendEvents();
-      }, e.EVENT_INTERVAL * Math.pow(2, this.failureCount)));
+          t.sendEvents();
+        }, e.EVENT_INTERVAL * Math.pow(2, this.failureCount));
+      }
     };
 
     e.prototype.sendEvents = function() {
@@ -9220,7 +9649,9 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
         }).done(function() {
           e.sendingEvents = !1;
 
-          e.eventQueue.length > 0 && e.sendSoon();
+          if (e.eventQueue.length > 0) {
+            e.sendSoon();
+          }
         });
       }
     };
@@ -9345,8 +9776,9 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
       this.m_modifiedCount = 0;
     }
     e.prototype.MarkNextChange = function() {
-      (this.m_originalCount > 0 || this.m_modifiedCount > 0) && this.m_changes.push(new n.DiffChange(this.m_originalStart,
-        this.m_originalCount, this.m_modifiedStart, this.m_modifiedCount));
+      if (this.m_originalCount > 0 || this.m_modifiedCount > 0) {
+        this.m_changes.push(new n.DiffChange(this.m_originalStart, this.m_originalCount, this.m_modifiedStart, this.m_modifiedCount));
+      }
 
       this.m_originalCount = 0;
 
@@ -9392,7 +9824,9 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
 
   var a = function() {
     function e(e, t, n) {
-      "undefined" == typeof n && (n = null);
+      if ("undefined" == typeof n) {
+        n = null;
+      }
 
       this.OriginalSequence = e;
 
@@ -9513,7 +9947,12 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
         b === S || L > b && c[b - 1] < c[b + 1] ? (h = c[b + 1], g = h - T - o, x > h && E.MarkNextChange(), x = h, E
           .AddModifiedElement(h + 1, g), T = b + 1 - e) : (h = c[b - 1] + 1, g = h - T - o, x > h && E.MarkNextChange(),
           x = h - 1, E.AddOriginalElement(h, g + 1), T = b - 1 - e);
-        N >= 0 && (c = this.m_forwardHistory[N], e = c[0], S = 1, L = c.length - 1);
+        if (N >= 0) {
+          c = this.m_forwardHistory[N];
+          e = c[0];
+          S = 1;
+          L = c.length - 1;
+        }
       } while (--N >= -1);
       if (C = E.getReverseChanges(), _[0]) {
         var M = f[0] + 1;
@@ -9543,7 +9982,12 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
           b === S || L > b && d[b - 1] >= d[b + 1] ? (h = d[b + 1] - 1, g = h - T - l, h > x && E.MarkNextChange(), x =
             h + 1, E.AddOriginalElement(h + 1, g + 1), T = b + 1 - r) : (h = d[b - 1], g = h - T - l, h > x && E.MarkNextChange(),
             x = h, E.AddModifiedElement(h + 1, g + 1), T = b - 1 - r);
-          N >= 0 && (d = this.m_reverseHistory[N], r = d[0], S = 1, L = d.length - 1);
+          if (N >= 0) {
+            d = this.m_reverseHistory[N];
+            r = d[0];
+            S = 1;
+            L = d.length - 1;
+          }
         } while (--N >= -1);
         w = E.getChanges();
       }
@@ -9724,7 +10168,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var i in t) {
-      t.hasOwnProperty(i) && (e[i] = t[i]);
+      if (t.hasOwnProperty(i)) {
+        e[i] = t[i];
+      }
     }
     n.prototype = t.prototype;
 
@@ -9821,7 +10267,10 @@ define("vs/editor/diff/diffComputer", ["require", "exports", "vs/base/diff/diff"
         u += t[i];
         s = 1;
         a = t[i].length + 1;
-        n && (s = this._getFirstNonBlankColumn(t[i], 1), a = this._getLastNonBlankColumn(t[i], 1));
+        if (n) {
+          s = this._getFirstNonBlankColumn(t[i], 1);
+          a = this._getLastNonBlankColumn(t[i], 1);
+        }
         l.push({
           offset: r + s - 1,
           lineNumber: i + 1,
@@ -9915,7 +10364,9 @@ define("vs/editor/diff/diffComputer", ["require", "exports", "vs/base/diff/diff"
         var c = new n.LcsDiff(a, l, r);
 
         var d = c.ComputeDiff();
-        s && (d = i(d));
+        if (s) {
+          d = i(d);
+        }
 
         this.charChanges = [];
         for (var h = 0, p = d.length; p > h; h++) {
@@ -9996,7 +10447,10 @@ define("vs/base/filters", ["require", "exports", "vs/base/strings"], function(e,
     if (0 === n.length || n.length < t.length) {
       return null;
     }
-    e && (t = t.toLowerCase(), n = n.toLowerCase());
+    if (e) {
+      t = t.toLowerCase();
+      n = n.toLowerCase();
+    }
     for (var i = 0; i < t.length; i++)
       if (t[i] !== n[i]) {
         return null;
@@ -10117,7 +10571,10 @@ define("vs/base/filters", ["require", "exports", "vs/base/strings"], function(e,
     function e() {}
     e.matches = function(t, i) {
       var o = e.RegExpCache[t];
-      o || (o = new RegExp(n.convertSimple2RegExpPattern(t), "i"), e.RegExpCache[t] = o);
+      if (!o) {
+        o = new RegExp(n.convertSimple2RegExpPattern(t), "i");
+        e.RegExpCache[t] = o;
+      }
       var r = o.exec(i);
       return r ? [{
         start: r.index,
@@ -10225,7 +10682,9 @@ define("vs/editor/worker/modesWorker", ["require", "exports", "vs/base/lib/winjs
     };
 
     e.prototype.triggerValidateParticipation = function(e, t, n) {
-      "undefined" == typeof n && (n = null);
+      if ("undefined" == typeof n) {
+        n = null;
+      }
       var i = this.resourceService.get(e);
       this.workerParticipants.forEach(function(e) {
         try {
@@ -10254,14 +10713,18 @@ define("vs/editor/worker/modesWorker", ["require", "exports", "vs/base/lib/winjs
 
       this.workerParticipants.forEach(function(e) {
         try {
-          "function" == typeof e.suggest && o.push(e.suggest(t, r));
+          if ("function" == typeof e.suggest) {
+            o.push(e.suggest(t, r));
+          }
         } catch (n) {}
       });
 
       return n.Promise.join(o).then(function(e) {
         for (var t = i.getSuggestionFilterMain(), n = 0; n < e.length; n++) {
           e[n].forEach(function(e) {
-            t(s, e) && a.suggestions.push(e);
+            if (t(s, e)) {
+              a.suggestions.push(e);
+            }
           });
         }
         return a;
@@ -10307,7 +10770,9 @@ define("vs/editor/worker/modesWorker", ["require", "exports", "vs/base/lib/winjs
     e.prototype.getSuggestionFilterMain = function() {
       var e = this.getSuggestionFilter();
       this.workerParticipants.forEach(function(t) {
-        "function" == typeof t.filter && (e = o.and(e, t.filter));
+        if ("function" == typeof t.filter) {
+          e = o.and(e, t.filter);
+        }
       });
 
       return e;
@@ -10324,9 +10789,11 @@ define("vs/editor/worker/modesWorker", ["require", "exports", "vs/base/lib/winjs
 
       var r = [];
       i.getAllWordsWithRange().forEach(function(e) {
-        e.text === o && r.push({
-          range: e.range
-        });
+        if (e.text === o) {
+          r.push({
+            range: e.range
+          });
+        }
       });
 
       return n.TPromise.as(r.slice(0, 1e3));
@@ -10381,7 +10848,9 @@ define("vs/editor/worker/modesWorker", ["require", "exports", "vs/base/lib/winjs
         value: null
       };
       if (i) {
-        t.startColumn === t.endColumn && (t.endColumn += 1);
+        if (t.startColumn === t.endColumn) {
+          t.endColumn += 1;
+        }
         o = r.getValueInRange(t);
         s.range = t;
       } else {
@@ -10560,10 +11029,17 @@ define("vs/editor/worker/modesWorker", ["require", "exports", "vs/base/lib/winjs
           C = !1;
           y === l ? (" " === _ || "	" === _ || _ === m) && (r.push(this.createLink(p, t, v, f)), C = !0) : y === u ?
             " " === _ || "	" === _ || _ === m ? C = !0 : y = l : s[y].hasOwnProperty(_) ? y = s[y][_] : C = !0;
-          C && (y = a, v = f + 1, b = p.charCodeAt(f), m = b < d.length ? d[b] : _);
+          if (C) {
+            y = a;
+            v = f + 1;
+            b = p.charCodeAt(f);
+            m = b < d.length ? d[b] : _;
+          }
           f++;
         }
-        y === l && r.push(this.createLink(p, t, v, g));
+        if (y === l) {
+          r.push(this.createLink(p, t, v, g));
+        }
       }
       return n.TPromise.as(r);
     };
@@ -10592,7 +11068,9 @@ define("vs/editor/worker/editorWorkerServer", ["require", "exports", "vs/base/li
 
     e.prototype.createPublisher = function() {
       for (var e = this.resourceService.all(), t = [], n = 0, i = e.length; i > n; n++) {
-        e[n] instanceof c.MirrorModel && t.push(e[n]);
+        if (e[n] instanceof c.MirrorModel) {
+          t.push(e[n]);
+        }
       }
       return new l.MarkerPublisher(t, this.publisher);
     };

@@ -5,7 +5,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var r in t) {
-      t.hasOwnProperty(r) && (e[r] = t[r]);
+      if (t.hasOwnProperty(r)) {
+        e[r] = t[r];
+      }
     }
     n.prototype = t.prototype;
 
@@ -28,8 +30,10 @@ define("vs/languages/typescript/participants/nlsParticipant", ["require", "expor
       var a = this.position() + i.leadingTriviaWidth();
 
       var l = i.width();
-      i.kind() === s.SyntaxKind.StringLiteral && i.text().charCodeAt(0) === t._DoubleQuote && this._markers.push(o.createTextMarker(
-        r.Severity.Info, 0, n.localize("vs_languages_typescript_participants_nlsParticipant", 0), a, l));
+      if (i.kind() === s.SyntaxKind.StringLiteral && i.text().charCodeAt(0) === t._DoubleQuote) {
+        this._markers.push(o.createTextMarker(r.Severity.Info, 0, n.localize(
+          "vs_languages_typescript_participants_nlsParticipant", 0), a, l));
+      }
 
       e.prototype.visitToken.call(this, i);
     };

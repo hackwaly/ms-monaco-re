@@ -7,7 +7,9 @@ define("vs/editor/core/model/mirrorModel", ["require", "exports", "vs/editor/cor
 
       this.wordsRegexp = null;
 
-      r || (r = {});
+      if (!r) {
+        r = {};
+      }
 
       this._setVersionId(n);
 
@@ -250,7 +252,9 @@ define("vs/editor/core/model/mirrorModel", ["require", "exports", "vs/editor/cor
             console.warn("Unknown model event: " + r.type);
         }
       }
-      t && this.emit("changed", {});
+      if (t) {
+        this.emit("changed", {});
+      }
     };
 
     t.prototype._onLinesFlushed = function(e) {
@@ -273,7 +277,9 @@ define("vs/editor/core/model/mirrorModel", ["require", "exports", "vs/editor/cor
       var t = e.fromLineNumber - 1;
 
       var n = e.toLineNumber - 1;
-      this._lineStarts && this._lineStarts.removeValues(t, n - t + 1);
+      if (this._lineStarts) {
+        this._lineStarts.removeValues(t, n - t + 1);
+      }
 
       this._lines.splice(t, n - t + 1);
     };
@@ -287,7 +293,9 @@ define("vs/editor/core/model/mirrorModel", ["require", "exports", "vs/editor/cor
 
       var o = e.detail.split("\n");
       for (t = e.fromLineNumber - 1, n = 0; t < e.toLineNumber; t++, n++) {
-        this._lineStarts && this._lineStarts.insertValue(t, o[n].length + i);
+        if (this._lineStarts) {
+          this._lineStarts.insertValue(t, o[n].length + i);
+        }
         this._lines.splice(t, 0, new r.ModelLine(0, o[n]));
       }
     };

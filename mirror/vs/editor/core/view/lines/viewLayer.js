@@ -88,7 +88,10 @@ define("vs/editor/core/view/lines/viewLayer", ["require", "exports", "vs/base/do
       var t = e.lineNumber - this._rendLineNumberStart;
 
       var n = !1;
-      t >= 0 && t < this._lines.length && (this._lines[t].onContentChanged(), n = !0);
+      if (t >= 0 && t < this._lines.length) {
+        this._lines[t].onContentChanged();
+        n = !0;
+      }
       for (var i = Math.max(t, 0); i < this._lines.length; i++) {
         this._lines[i].onLineChangedAbove();
         n = !0;
@@ -330,7 +333,12 @@ define("vs/editor/core/view/lines/viewLayer", ["require", "exports", "vs/base/do
         var m;
         for (n = 0; n < e.linesLength; n++) {
           i = e.lines[n];
-          s[n] && (m = f.firstChild, g = i.getDomNode(), g.parentNode.replaceChild(m, g), i.setDomNode(m));
+          if (s[n]) {
+            m = f.firstChild;
+            g = i.getDomNode();
+            g.parentNode.replaceChild(m, g);
+            i.setDomNode(m);
+          }
         }
       }
     };

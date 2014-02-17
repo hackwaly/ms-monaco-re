@@ -50,11 +50,17 @@ define("vs/editor/core/view/parts/viewCursors/viewCursor", ["require", "exports"
     };
 
     e.prototype.show = function() {
-      this._isVisible || (this._domNode.style.display = "block", this._isVisible = !0);
+      if (!this._isVisible) {
+        this._domNode.style.display = "block";
+        this._isVisible = !0;
+      }
     };
 
     e.prototype.hide = function() {
-      this._isVisible && (this._domNode.style.display = "none", this._isVisible = !1);
+      if (this._isVisible) {
+        this._domNode.style.display = "none";
+        this._isVisible = !1;
+      }
     };
 
     e.prototype.onModelFlushed = function() {

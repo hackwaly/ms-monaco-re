@@ -29,9 +29,16 @@ define("vs/editor/modes/monarch/monarchCommon", ["require", "exports"], function
   function u(e, t) {
     if (e) {
       var n = document.getElementById(e);
-      n && (a(n, t + "\n"), n.scrollTop && (n.scrollTop = n.scrollHeight));
+      if (n) {
+        a(n, t + "\n");
+        if (n.scrollTop) {
+          n.scrollTop = n.scrollHeight;
+        }
+      }
     }
-    console && console.log(t);
+    if (console) {
+      console.log(t);
+    }
   }
 
   function l(e, t) {
@@ -42,10 +49,14 @@ define("vs/editor/modes/monarch/monarchCommon", ["require", "exports"], function
     if (!e) throw new Error(t);
     if (t = e.displayName + " highlighter: " + t, e.logConsole) {
       var n = document.getElementById(e.logConsole);
-      n && a(n, t + "\n");
+      if (n) {
+        a(n, t + "\n");
+      }
     }
     if (!e.noThrow) throw new Error(t);
-    console && console.log(t);
+    if (console) {
+      console.log(t);
+    }
   }
 
   function d(e, n, i, o, r) {

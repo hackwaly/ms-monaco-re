@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -158,15 +160,22 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/base/types", "vs/pla
       var e = this.editor.getPosition();
 
       var f = this.editor.getSelection();
-      f.isEmpty() || (f.startColumn = 1);
+      if (!f.isEmpty()) {
+        f.startColumn = 1;
+      }
       var g = f;
-      f.isEmpty() && (g = new p.Range(1, 1, b.getLineCount(), b.getLineMaxColumn(b.getLineCount())));
+      if (f.isEmpty()) {
+        g = new p.Range(1, 1, b.getLineCount(), b.getLineMaxColumn(b.getLineCount()));
+      }
       var h = {
         tabSize: this.editor.getConfiguration().tabSize,
         insertSpaces: this.editor.getConfiguration().insertSpaces
       };
       return d.format(b.getAssociatedResource(), g, h).then(function(b) {
-        m.isString(b) && (a.apply(a.editor, e, f, b), a.editor.focus());
+        if (m.isString(b)) {
+          a.apply(a.editor, e, f, b);
+          a.editor.focus();
+        }
       });
     };
 

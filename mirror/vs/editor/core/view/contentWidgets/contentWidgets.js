@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -97,8 +99,9 @@ define(["require", "exports", "vs/editor/core/view/viewContext", "vs/editor/edit
       this.contentWidth = a.contentWidth;
       var b;
       for (b in this.widgets) {
-        this.widgets.hasOwnProperty(b) && (this.widgets[b].widget.getDomNode().style.maxWidth = this.contentWidth +
-          "px");
+        if (this.widgets.hasOwnProperty(b)) {
+          this.widgets[b].widget.getDomNode().style.maxWidth = this.contentWidth + "px";
+        }
       }
       return !0;
     };
@@ -272,7 +275,12 @@ define(["require", "exports", "vs/editor/core/view/viewContext", "vs/editor/edit
 
       var d;
       for (d in this.widgets) {
-        this.widgets.hasOwnProperty(d) && (c = this.prepareRenderWidget(this.widgets[d], a), c && (b[d] = c));
+        if (this.widgets.hasOwnProperty(d)) {
+          c = this.prepareRenderWidget(this.widgets[d], a);
+          if (c) {
+            b[d] = c;
+          }
+        }
       }
       return b;
     };
@@ -286,9 +294,12 @@ define(["require", "exports", "vs/editor/core/view/viewContext", "vs/editor/edit
 
       var e;
       for (c in this.widgets) {
-        this.widgets.hasOwnProperty(c) && (d = this.widgets[c], e = this.widgets[c].widget.getDomNode(), a.hasOwnProperty(
-            c) ? (e.style.top = a[c].top + "px", e.style.left = a[c].left + "px", d.isVisible || (d.isVisible = !0)) :
-          d.isVisible && (d.isVisible = !1, e.style.top = "-1000px"));
+        if (this.widgets.hasOwnProperty(c)) {
+          d = this.widgets[c];
+          e = this.widgets[c].widget.getDomNode();
+          a.hasOwnProperty(c) ? (e.style.top = a[c].top + "px", e.style.left = a[c].left + "px", d.isVisible || (d.isVisible = !
+            0)) : d.isVisible && (d.isVisible = !1, e.style.top = "-1000px");
+        }
       }
     };
 

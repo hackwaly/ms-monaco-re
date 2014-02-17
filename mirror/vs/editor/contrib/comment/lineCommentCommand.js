@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -48,8 +50,10 @@ define(["require", "exports", "vs/editor/contrib/comment/blockCommentCommand", "
       var d = this._selection;
       this._moveEndPositionDown = !1;
 
-      d.startLineNumber < d.endLineNumber && d.endColumn === 1 && (this._moveEndPositionDown = !0, d = d.setEndPosition(
-        d.endLineNumber - 1, b.getLineMaxColumn(d.endLineNumber - 1)));
+      if (d.startLineNumber < d.endLineNumber && d.endColumn === 1) {
+        this._moveEndPositionDown = !0;
+        d = d.setEndPosition(d.endLineNumber - 1, b.getLineMaxColumn(d.endLineNumber - 1));
+      }
       var e = b.getModeAtPosition(d.startLineNumber, d.startColumn).commentsSupport;
       if (!e) return;
       if (!this._hasLineCommentTokensSupportForLines(b, d.startLineNumber, d.endLineNumber)) {
@@ -90,8 +94,12 @@ define(["require", "exports", "vs/editor/contrib/comment/blockCommentCommand", "
       for (u = d.startLineNumber; u <= d.endLineNumber; u++) {
         t = b.getModeAtPosition(u, 1).commentsSupport.getCommentsConfiguration().lineCommentTokens[0];
         r[u - d.startLineNumber] = t;
-        o && (p = b.getLineContent(u), s = g.firstNonWhitespaceIndex(p), s === -1 ? o = !1 : this._haystackHasNeedleAtOffset(
-          p, t, s) || (o = !1), q[u - d.startLineNumber] = s);
+        if (o) {
+          p = b.getLineContent(u);
+          s = g.firstNonWhitespaceIndex(p);
+          s === -1 ? o = !1 : this._haystackHasNeedleAtOffset(p, t, s) || (o = !1);
+          q[u - d.startLineNumber] = s;
+        }
       }
       if (o)
         for (u = d.startLineNumber; u <= d.endLineNumber; u++) {

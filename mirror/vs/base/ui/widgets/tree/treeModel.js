@@ -206,7 +206,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
     };
 
     t.prototype.reveal = function(e) {
-      "undefined" == typeof e && (e = null);
+      if ("undefined" == typeof e) {
+        e = null;
+      }
       var t = {
         item: this,
         relativeTop: e
@@ -246,7 +248,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
     };
 
     t.prototype.collapse = function(e) {
-      "undefined" == typeof e && (e = !1);
+      if ("undefined" == typeof e) {
+        e = !1;
+      }
       var t = this;
       if (e) {
         var n = o.Promise.as(null);
@@ -303,7 +307,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
 
       var t = [];
       for (e in this.traits) {
-        this.traits.hasOwnProperty(e) && this.traits[e] && t.push(e);
+        if (this.traits.hasOwnProperty(e) && this.traits[e]) {
+          t.push(e);
+        }
       }
       return t;
     };
@@ -313,9 +319,13 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
     };
 
     t.prototype.refreshChildren = function(e, n, i) {
-      "undefined" == typeof n && (n = !1);
+      if ("undefined" == typeof n) {
+        n = !1;
+      }
 
-      "undefined" == typeof i && (i = !1);
+      if ("undefined" == typeof i) {
+        i = !1;
+      }
       var r = this;
       if (!i && !this.isExpanded()) {
         this.needsChildrenRefresh = !0;
@@ -345,14 +355,18 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
             var l = r.context.dataSource.getId(r.context.tree, u);
 
             var c = i[l] || new t(l, r.registry, r.context, r.lock, u);
-            e && (c.needsChildrenRefresh = e);
+            if (e) {
+              c.needsChildrenRefresh = e;
+            }
 
             delete i[l];
 
             r.addChild(c);
           }
           for (var d in i) {
-            i.hasOwnProperty(d) && i[d].dispose();
+            if (i.hasOwnProperty(d)) {
+              i[d].dispose();
+            }
           }
           return e ? o.Promise.join(r.mapEachChild(function(t) {
             return t.doRefresh(e, !0);
@@ -365,7 +379,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
     };
 
     t.prototype.doRefresh = function(e, t) {
-      "undefined" == typeof t && (t = !1);
+      if ("undefined" == typeof t) {
+        t = !1;
+      }
       var n = {
         item: this
       };
@@ -403,7 +419,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
     };
 
     t.prototype.addChild = function(e, t) {
-      "undefined" == typeof t && (t = this.lastChild);
+      if ("undefined" == typeof t) {
+        t = this.lastChild;
+      }
       var n = null === this.firstChild;
 
       var i = null === t;
@@ -539,7 +557,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
 
   var c = function() {
     function e(e, t) {
-      "undefined" == typeof t && (t = !0);
+      if ("undefined" == typeof t) {
+        t = !0;
+      }
 
       this.item = e;
 
@@ -564,7 +584,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
         for (; this.item && this.item !== this.start && !this.item.next;) {
           this.item = this.item.parent;
         }
-        this.item === this.start && (this.item = null);
+        if (this.item === this.start) {
+          this.item = null;
+        }
 
         this.item = this.item ? this.item.next : null;
       }
@@ -636,9 +658,14 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
 
       this.lock = new s;
 
-      this.input && this.input.dispose();
+      if (this.input) {
+        this.input.dispose();
+      }
 
-      this.registry && (this.registry.dispose(), this.unbindRegistryListener());
+      if (this.registry) {
+        this.registry.dispose();
+        this.unbindRegistryListener();
+      }
 
       this.registry = new a;
 
@@ -674,9 +701,13 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
     };
 
     t.prototype.refresh = function(e, t) {
-      "undefined" == typeof e && (e = null);
+      if ("undefined" == typeof e) {
+        e = null;
+      }
 
-      "undefined" == typeof t && (t = !0);
+      if ("undefined" == typeof t) {
+        t = !0;
+      }
       var n = this;
 
       var i = this.getItem(e);
@@ -695,7 +726,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
     };
 
     t.prototype.refreshAll = function(e, t) {
-      "undefined" == typeof t && (t = !0);
+      if ("undefined" == typeof t) {
+        t = !0;
+      }
       var n = this;
 
       var i = [];
@@ -721,17 +754,26 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
     };
 
     t.prototype.collapse = function(e, t) {
-      "undefined" == typeof t && (t = !1);
+      if ("undefined" == typeof t) {
+        t = !1;
+      }
       var n = this.getItem(e);
       return n ? n.collapse(t) : o.Promise.as(!1);
     };
 
     t.prototype.collapseAll = function(e, t) {
-      "undefined" == typeof e && (e = null);
+      if ("undefined" == typeof e) {
+        e = null;
+      }
 
-      "undefined" == typeof t && (t = !1);
+      if ("undefined" == typeof t) {
+        t = !1;
+      }
 
-      e || (e = [this.input], t = !0);
+      if (!e) {
+        e = [this.input];
+        t = !0;
+      }
       for (var n = [], i = 0, r = e.length; r > i; i++) {
         n.push(this.collapse(e[i], t));
       }
@@ -755,7 +797,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
     };
 
     t.prototype.reveal = function(e, t) {
-      "undefined" == typeof t && (t = null);
+      if ("undefined" == typeof t) {
+        t = null;
+      }
       var n = this;
       return this.resolveUnknownParentChain(e).then(function(e) {
         var t = o.Promise.as(null);
@@ -768,7 +812,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
         return t;
       }).then(function() {
         var i = n.getItem(e);
-        i && i.reveal(t);
+        if (i) {
+          i.reveal(t);
+        }
       });
     };
 
@@ -848,7 +894,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
     };
 
     t.prototype.selectNext = function(e, t) {
-      "undefined" == typeof e && (e = 1);
+      if ("undefined" == typeof e) {
+        e = 1;
+      }
       for (var n, i = this.getSelection(), o = i.length > 0 ? i[0] : this.input, r = this.getNavigator(o, !1), s = 0; e >
         s && (n = r.next(), n); s++) {
         o = n;
@@ -857,7 +905,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
     };
 
     t.prototype.selectPrevious = function(e, t) {
-      "undefined" == typeof e && (e = 1);
+      if ("undefined" == typeof e) {
+        e = 1;
+      }
       var n = this.getSelection();
 
       var i = null;
@@ -886,7 +936,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
       var i = this.getNavigator(n, !1);
 
       var o = i.parent();
-      o && this.setSelection([o], e);
+      if (o) {
+        this.setSelection([o], e);
+      }
     };
 
     t.prototype.setFocus = function(e, t) {
@@ -909,7 +961,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
     };
 
     t.prototype.focusNext = function(e, t) {
-      "undefined" == typeof e && (e = 1);
+      if ("undefined" == typeof e) {
+        e = 1;
+      }
       for (var n, i = this.getFocus() || this.input, o = this.getNavigator(i, !1), r = 0; e > r && (n = o.next(), n); r++) {
         i = n;
       }
@@ -917,7 +971,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
     };
 
     t.prototype.focusPrevious = function(e, t) {
-      "undefined" == typeof e && (e = 1);
+      if ("undefined" == typeof e) {
+        e = 1;
+      }
       for (var n, i = this.getFocus() || this.input, o = this.getNavigator(i, !1), r = 0; e > r && (n = o.previous(),
         n); r++) {
         i = n;
@@ -931,21 +987,27 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
       var n = this.getNavigator(t, !1);
 
       var i = n.parent();
-      i && this.setFocus(i, e);
+      if (i) {
+        this.setFocus(i, e);
+      }
     };
 
     t.prototype.focusFirst = function(e) {
       var t = this.getNavigator(this.input);
 
       var n = t.first();
-      n && this.setFocus(n, e);
+      if (n) {
+        this.setFocus(n, e);
+      }
     };
 
     t.prototype.focusLast = function(e) {
       var t = this.getNavigator(this.input);
 
       var n = t.last();
-      n && this.setFocus(n, e);
+      if (n) {
+        this.setFocus(n, e);
+      }
     };
 
     t.prototype.getNavigator = function(e, t) {
@@ -970,7 +1032,10 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
     t.prototype.addTraits = function(e, t) {
       for (var n, i = this.traitsToItems[e] || {}, o = 0, r = t.length; r > o; o++) {
         n = this.getItem(t[o]);
-        n && (n.addTrait(e), i[n.id] = n);
+        if (n) {
+          n.addTrait(e);
+          i[n.id] = n;
+        }
       }
       this.traitsToItems[e] = i;
     };
@@ -983,13 +1048,19 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
       var o = this.traitsToItems[e] || {};
       if (0 === t.length) {
         for (i in o) {
-          o.hasOwnProperty(i) && (n = o[i], n.removeTrait(e));
+          if (o.hasOwnProperty(i)) {
+            n = o[i];
+            n.removeTrait(e);
+          }
         }
         delete this.traitsToItems[e];
       } else
         for (var r = 0, s = t.length; s > r; r++) {
           n = this.getItem(t[r]);
-          n && (n.removeTrait(e), delete o[n.id]);
+          if (n) {
+            n.removeTrait(e);
+            delete o[n.id];
+          }
         }
     };
 
@@ -999,7 +1070,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
       } else {
         for (var n, i = {}, o = 0, r = t.length; r > o; o++) {
           n = this.getItem(t[o]);
-          n && (i[n.id] = n);
+          if (n) {
+            i[n.id] = n;
+          }
         }
         var s;
 
@@ -1007,7 +1080,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
 
         var u = [];
         for (s in a) {
-          a.hasOwnProperty(s) && (i.hasOwnProperty(s) ? delete i[s] : u.push(a[s]));
+          if (a.hasOwnProperty(s)) {
+            i.hasOwnProperty(s) ? delete i[s] : u.push(a[s]);
+          }
         }
         for (var o = 0, r = u.length; r > o; o++) {
           n = u[o];
@@ -1015,7 +1090,11 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
           delete a[n.id];
         }
         for (s in i) {
-          i.hasOwnProperty(s) && (n = i[s], n.addTrait(e), a[s] = n);
+          if (i.hasOwnProperty(s)) {
+            n = i[s];
+            n.addTrait(e);
+            a[s] = n;
+          }
         }
         this.traitsToItems[e] = a;
       }
@@ -1028,13 +1107,18 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
 
       var i = this.traitsToItems[e] || {};
       for (t in i) {
-        i.hasOwnProperty(t) && n.push(i[t].getElement());
+        if (i.hasOwnProperty(t)) {
+          n.push(i[t].getElement());
+        }
       }
       return n;
     };
 
     t.prototype.dispose = function() {
-      this.registry && (this.registry.dispose(), this.registry = null);
+      if (this.registry) {
+        this.registry.dispose();
+        this.registry = null;
+      }
 
       e.prototype.dispose.call(this);
     };

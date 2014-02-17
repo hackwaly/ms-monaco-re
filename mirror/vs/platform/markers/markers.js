@@ -79,7 +79,9 @@ define("vs/platform/markers/markers", ["require", "exports", "vs/base/assert", "
       var r = t.getGroup(e.getId());
       return r ? (i = new y(t.getAssociatedResource(), t.getGroup(y.DEFAULT_GROUP).getMarkers()), t.getGroups().forEach(
         function(e) {
-          e.getId() !== o.getId() && i.addGroup(e);
+          if (e.getId() !== o.getId()) {
+            i.addGroup(e);
+          }
         }), i.addGroup(o), i) : (t.addGroup(o), t);
     }
     if (e.getId() === y.DEFAULT_GROUP) {
@@ -106,7 +108,9 @@ define("vs/platform/markers/markers", ["require", "exports", "vs/base/assert", "
   t.createRangeTextMarker = c;
   var m = function() {
     function e(e) {
-      "undefined" == typeof e && (e = []);
+      if ("undefined" == typeof e) {
+        e = [];
+      }
 
       this.markers = e;
     }
@@ -131,7 +135,9 @@ define("vs/platform/markers/markers", ["require", "exports", "vs/base/assert", "
 
   var v = function(e) {
     function t(t, n, i) {
-      "undefined" == typeof i && (i = []);
+      if ("undefined" == typeof i) {
+        i = [];
+      }
 
       e.call(this, i);
 
@@ -154,7 +160,9 @@ define("vs/platform/markers/markers", ["require", "exports", "vs/base/assert", "
 
   var y = function(e) {
     function t(t, n) {
-      "undefined" == typeof n && (n = []);
+      if ("undefined" == typeof n) {
+        n = [];
+      }
 
       e.call(this, n);
 

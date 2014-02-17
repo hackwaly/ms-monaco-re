@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -73,7 +75,10 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
 
       c = c || {};
       var g = null;
-      c.model && (g = c.model, delete c.model);
+      if (c.model) {
+        g = c.model;
+        delete c.model;
+      }
 
       this.configuration = new D.Configuration(c);
 
@@ -91,7 +96,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
 
       this.injectorService = d;
 
-      d && z.isFunction(d.injectTo) && d.injectTo(this);
+      if (d && z.isFunction(d.injectTo)) {
+        d.injectTo(this);
+      }
 
       this.handlerService ? (this.bindings = this.configuration.bindKeys(this.handlerService), this.bindings.deactivate(),
         this.lifetimeListeners.push(this.addListener("blur", function() {
@@ -114,7 +121,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
         var l = i[j];
 
         var m = l.createNew(this, l);
-        d && z.isFunction(d.injectTo) && d.injectTo(m);
+        if (d && z.isFunction(d.injectTo)) {
+          d.injectTo(m);
+        }
 
         this.contributions[m.getId()] = m;
       }
@@ -136,7 +145,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
       }
       var b;
       for (b in this.contributions) {
-        this.contributions.hasOwnProperty(b) && this.contributions[b].dispose();
+        if (this.contributions.hasOwnProperty(b)) {
+          this.contributions[b].dispose();
+        }
       }
       this.contributions = {};
 
@@ -144,7 +155,10 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
 
       this.overlayWidgets = {};
 
-      this.bindings && (this.bindings.dispose(), this.bindings = null);
+      if (this.bindings) {
+        this.bindings.dispose();
+        this.bindings = null;
+      }
 
       this.focusTracker.dispose();
 
@@ -172,7 +186,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
     };
 
     b.prototype.getValue = function(a) {
-      typeof a == "undefined" && (a = null);
+      if (typeof a == "undefined") {
+        a = null;
+      }
       if (this.model) {
         var b = a && a.preserveBOM ? !0 : !1;
 
@@ -186,7 +202,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
     };
 
     b.prototype.setValue = function(a) {
-      this.model && this.model.setValue(a);
+      if (this.model) {
+        this.model.setValue(a);
+      }
     };
 
     b.prototype.getView = function() {
@@ -198,7 +216,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
     };
 
     b.prototype.setModel = function(a) {
-      typeof a == "undefined" && (a = null);
+      if (typeof a == "undefined") {
+        a = null;
+      }
       if (this.model === a) return;
       this._detachModel();
 
@@ -216,11 +236,17 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
     };
 
     b.prototype.setPosition = function(a, b, c, d) {
-      typeof b == "undefined" && (b = !1);
+      if (typeof b == "undefined") {
+        b = !1;
+      }
 
-      typeof c == "undefined" && (c = !1);
+      if (typeof c == "undefined") {
+        c = !1;
+      }
 
-      typeof d == "undefined" && (d = !1);
+      if (typeof d == "undefined") {
+        d = !1;
+      }
       if (!this.cursor) return;
       if (!J.isIPosition(a)) throw new Error("Invalid arguments");
       this.cursor.setSelections("api", [{
@@ -230,13 +256,19 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
         positionColumn: a.column
       }]);
 
-      b && this.revealPosition(a, c, d);
+      if (b) {
+        this.revealPosition(a, c, d);
+      }
     };
 
     b.prototype.revealPosition = function(a, b, c) {
-      typeof b == "undefined" && (b = !1);
+      if (typeof b == "undefined") {
+        b = !1;
+      }
 
-      typeof c == "undefined" && (c = !1);
+      if (typeof c == "undefined") {
+        c = !1;
+      }
       if (!J.isIPosition(a)) throw new Error("Invalid arguments");
       this.revealRange({
         startLineNumber: a.lineNumber,
@@ -264,11 +296,17 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
     };
 
     b.prototype.setSelection = function(a, b, c, d) {
-      typeof b == "undefined" && (b = !1);
+      if (typeof b == "undefined") {
+        b = !1;
+      }
 
-      typeof c == "undefined" && (c = !1);
+      if (typeof c == "undefined") {
+        c = !1;
+      }
 
-      typeof d == "undefined" && (d = !1);
+      if (typeof d == "undefined") {
+        d = !1;
+      }
       var e = L.isISelection(a);
 
       var f = K.isIRange(a);
@@ -291,13 +329,19 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
       var e = new L.Selection(a.selectionStartLineNumber, a.selectionStartColumn, a.positionLineNumber, a.positionColumn);
       this.cursor.setSelections("api", [e]);
 
-      b && this.revealRange(e, c, d);
+      if (b) {
+        this.revealRange(e, c, d);
+      }
     };
 
     b.prototype.revealRange = function(a, b, c) {
-      typeof b == "undefined" && (b = !1);
+      if (typeof b == "undefined") {
+        b = !1;
+      }
 
-      typeof c == "undefined" && (c = !1);
+      if (typeof c == "undefined") {
+        c = !1;
+      }
       if (!this.model || !this.cursor) return;
       if (!K.isIRange(a)) throw new Error("Invalid arguments");
       var d = this.model.validateRange(a);
@@ -371,7 +415,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
     };
 
     b.prototype.layout = function() {
-      this.hasView && this.view.layout();
+      if (this.hasView) {
+        this.view.layout();
+      }
     };
 
     b.prototype.onVisible = function() {};
@@ -394,7 +440,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
       for (b in this.contributions)
         if (this.contributions.hasOwnProperty(b)) {
           var c = this.contributions[b];
-          O.isAction(c) && a.push(c);
+          if (O.isAction(c)) {
+            a.push(c);
+          }
         }
       return a;
     };
@@ -424,7 +472,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
       };
       this.contentWidgets[a.getId()] = b;
 
-      this.hasView && this.view.addContentWidget(b);
+      if (this.hasView) {
+        this.view.addContentWidget(b);
+      }
     };
 
     b.prototype.layoutContentWidget = function(a) {
@@ -433,7 +483,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
         var c = this.contentWidgets[b];
         c.position = a.getPosition();
 
-        this.hasView && this.view.layoutContentWidget(c);
+        if (this.hasView) {
+          this.view.layoutContentWidget(c);
+        }
       }
     };
 
@@ -443,7 +495,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
         var c = this.contentWidgets[b];
         delete this.contentWidgets[b];
 
-        this.hasView && this.view.removeContentWidget(c);
+        if (this.hasView) {
+          this.view.removeContentWidget(c);
+        }
       }
     };
 
@@ -454,7 +508,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
       };
       this.overlayWidgets[a.getId()] = b;
 
-      this.hasView && this.view.addOverlayWidget(b);
+      if (this.hasView) {
+        this.view.addOverlayWidget(b);
+      }
     };
 
     b.prototype.layoutOverlayWidget = function(a) {
@@ -463,7 +519,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
         var c = this.overlayWidgets[b];
         c.position = a.getPosition();
 
-        this.hasView && this.view.layoutOverlayWidget(c);
+        if (this.hasView) {
+          this.view.layoutOverlayWidget(c);
+        }
       }
     };
 
@@ -473,7 +531,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
         var c = this.overlayWidgets[b];
         delete this.overlayWidgets[b];
 
-        this.hasView && this.view.removeOverlayWidget(c);
+        if (this.hasView) {
+          this.view.removeOverlayWidget(c);
+        }
       }
     };
 
@@ -497,7 +557,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
     b.prototype.addTypingListener = function(a, b) {
       var c = this;
       return this.cursor ? (this.cursor.addTypingListener(a, b), function() {
-        c.cursor && c.cursor.removeTypingListener(a, b);
+        if (c.cursor) {
+          c.cursor.removeTypingListener(a, b);
+        }
       }) : null;
     };
 
@@ -531,7 +593,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
         var c = this.configuration.getWrappingColumn();
 
         var d = -1;
-        c > 0 && (d = c);
+        if (c > 0) {
+          d = c;
+        }
         var e = new G.CharacterHardWrappingLineMapperFactory(this.configuration.editor.wordWrapBreakBeforeCharacters,
           this.configuration.editor.wordWrapBreakAfterCharacters, this.configuration.editor.wordWrapBreakObtrusiveCharacters
         );
@@ -607,7 +671,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
           }));
 
         this.listenersToRemove.push(this.model.addListener(x.EventType.ModelContentChanged, function(a) {
-          a.changeType === x.EventType.ModelContentChangedFlush && a.modeChanged && b.emit(x.EventType.ModelModeChanged);
+          if (a.changeType === x.EventType.ModelContentChangedFlush && a.modeChanged) {
+            b.emit(x.EventType.ModelModeChanged);
+          }
 
           b.emit("change", {});
         }));
@@ -633,10 +699,14 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
         this.view.renderOnce(function() {
           var a;
           for (a in b.contentWidgets) {
-            b.contentWidgets.hasOwnProperty(a) && b.view.addContentWidget(b.contentWidgets[a]);
+            if (b.contentWidgets.hasOwnProperty(a)) {
+              b.view.addContentWidget(b.contentWidgets[a]);
+            }
           }
           for (a in b.overlayWidgets) {
-            b.overlayWidgets.hasOwnProperty(a) && b.view.addOverlayWidget(b.overlayWidgets[a]);
+            if (b.overlayWidgets.hasOwnProperty(a)) {
+              b.view.addOverlayWidget(b.overlayWidgets[a]);
+            }
           }
           b.view.render();
 
@@ -656,13 +726,26 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
 
       this.listenersToRemove = [];
 
-      this.cursor && (this.cursor.dispose(), this.cursor = null);
+      if (this.cursor) {
+        this.cursor.dispose();
+        this.cursor = null;
+      }
 
-      this.view && (this.view.dispose(), this.domElement.removeChild(this.view.domNode), this.view = null);
+      if (this.view) {
+        this.view.dispose();
+        this.domElement.removeChild(this.view.domNode);
+        this.view = null;
+      }
 
-      this.viewModel && (this.viewModel.dispose(), this.viewModel = null);
+      if (this.viewModel) {
+        this.viewModel.dispose();
+        this.viewModel = null;
+      }
 
-      this.model && (this.model.removeAllDecorationsWithOwnerId(this.id), this.model = null);
+      if (this.model) {
+        this.model.removeAllDecorationsWithOwnerId(this.id);
+        this.model = null;
+      }
     };
 
     return b;

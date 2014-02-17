@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -177,10 +179,18 @@ define(["require", "exports", "vs/editor/core/view/viewEventHandler", "vs/css!./
           top: e.EXTERN,
           bottom: e.EXTERN
         };
-        l > 0 && (f = a[l - 1].left, g = a[l - 1].left + a[l - 1].width, c === f ? j.top = e.FLAT : c > f && (j.top =
-          e.INTERN), d === g ? k.top = e.FLAT : f < d && d < g && (k.top = e.INTERN));
-        l + 1 < m && (h = a[l + 1].left, i = a[l + 1].left + a[l + 1].width, c === h ? j.bottom = e.FLAT : h < c && c <
-          i && (j.bottom = e.INTERN), d === i ? k.bottom = e.FLAT : d < i && (k.bottom = e.INTERN));
+        if (l > 0) {
+          f = a[l - 1].left;
+          g = a[l - 1].left + a[l - 1].width;
+          c === f ? j.top = e.FLAT : c > f && (j.top = e.INTERN);
+          d === g ? k.top = e.FLAT : f < d && d < g && (k.top = e.INTERN);
+        }
+        if (l + 1 < m) {
+          h = a[l + 1].left;
+          i = a[l + 1].left + a[l + 1].width;
+          c === h ? j.bottom = e.FLAT : h < c && c < i && (j.bottom = e.INTERN);
+          d === i ? k.bottom = e.FLAT : d < i && (k.bottom = e.INTERN);
+        }
         b.startStyle = j;
         b.endStyle = k;
       }
@@ -242,24 +252,43 @@ define(["require", "exports", "vs/editor/core/view/viewEventHandler", "vs/css!./
             this.createSelectionPiece(b.SELECTION_CLASS_NAME, l.top, l.left - b.ROUNDED_PIECE_WIDTH, b.ROUNDED_PIECE_WIDTH,
               j, c, d, f, g);
             i = b.EDITOR_BACKGROUND_CLASS_NAME;
-            l.startStyle.top === e.INTERN && (i += " " + b.SELECTION_TOP_RIGHT);
-            l.startStyle.bottom === e.INTERN && (i += " " + b.SELECTION_BOTTOM_RIGHT);
+            if (l.startStyle.top === e.INTERN) {
+              i += " " + b.SELECTION_TOP_RIGHT;
+            }
+            if (l.startStyle.bottom === e.INTERN) {
+              i += " " + b.SELECTION_BOTTOM_RIGHT;
+            }
             this.createSelectionPiece(i, l.top, l.left - b.ROUNDED_PIECE_WIDTH, b.ROUNDED_PIECE_WIDTH, j, c, d, f, g);
           }
           if (l.endStyle.top === e.INTERN || l.endStyle.bottom === e.INTERN) {
             this.createSelectionPiece(b.SELECTION_CLASS_NAME, l.top, l.left + l.width, b.ROUNDED_PIECE_WIDTH, j, c, d,
               f, g);
             i = b.EDITOR_BACKGROUND_CLASS_NAME;
-            l.endStyle.top === e.INTERN && (i += " " + b.SELECTION_TOP_LEFT);
-            l.endStyle.bottom === e.INTERN && (i += " " + b.SELECTION_BOTTOM_LEFT);
+            if (l.endStyle.top === e.INTERN) {
+              i += " " + b.SELECTION_TOP_LEFT;
+            }
+            if (l.endStyle.bottom === e.INTERN) {
+              i += " " + b.SELECTION_BOTTOM_LEFT;
+            }
             this.createSelectionPiece(i, l.top, l.left + l.width, b.ROUNDED_PIECE_WIDTH, j, c, d, f, g);
           }
         }
         i = b.SELECTION_CLASS_NAME;
 
-        h && (l.startStyle.top === e.EXTERN && (i += " " + b.SELECTION_TOP_LEFT), l.startStyle.bottom === e.EXTERN &&
-          (i += " " + b.SELECTION_BOTTOM_LEFT), l.endStyle.top === e.EXTERN && (i += " " + b.SELECTION_TOP_RIGHT), l.endStyle
-          .bottom === e.EXTERN && (i += " " + b.SELECTION_BOTTOM_RIGHT));
+        if (h) {
+          if (l.startStyle.top === e.EXTERN) {
+            i += " " + b.SELECTION_TOP_LEFT;
+          }
+          if (l.startStyle.bottom === e.EXTERN) {
+            i += " " + b.SELECTION_BOTTOM_LEFT;
+          }
+          if (l.endStyle.top === e.EXTERN) {
+            i += " " + b.SELECTION_TOP_RIGHT;
+          }
+          if (l.endStyle.bottom === e.EXTERN) {
+            i += " " + b.SELECTION_BOTTOM_RIGHT;
+          }
+        }
 
         this.createSelectionPiece(i, l.top, l.left, l.width, j, c, d, f, g);
       }

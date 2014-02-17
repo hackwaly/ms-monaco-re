@@ -4,9 +4,13 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
 ], function(e, t, n, i, o, r, s, a, u, l, c, d, h) {
   var p = function() {
     function e(e, t, n) {
-      "undefined" == typeof t && (t = 0);
+      if ("undefined" == typeof t) {
+        t = 0;
+      }
 
-      "undefined" == typeof n && (n = e.length);
+      if ("undefined" == typeof n) {
+        n = e.length;
+      }
 
       this.items = e;
 
@@ -70,7 +74,9 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
 
       this._styles = {};
 
-      t.isExpanded() && this.addClass("expanded");
+      if (t.isExpanded()) {
+        this.addClass("expanded");
+      }
     }
     Object.defineProperty(e.prototype, "expanded", {
       set: function(e) {
@@ -122,13 +128,17 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
     };
 
     e.prototype.render = function(e) {
-      "undefined" == typeof e && (e = !1);
+      if ("undefined" == typeof e) {
+        e = !1;
+      }
       var t = this;
       if (this.row) {
         var n = ["row"];
         n.push.apply(n, Object.keys(this._styles));
 
-        this.model.hasChildren() && n.push("has-children");
+        if (this.model.hasChildren()) {
+          n.push("has-children");
+        }
 
         this.row.className = n.join(" ");
 
@@ -139,13 +149,21 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
         this.row.style.paddingLeft = this.context.options.twistiePixels + (this.model.getDepth() - 1) * this.context.options
           .indentPixels + "px";
         var i = this.context.dnd.getDragURI(this.context.tree, this.model.getElement());
-        i !== this.uri && (this.unbindDragStart && (this.unbindDragStart(), delete this.unbindDragStart), i ? (this.uri =
-          i, this.draggable = !0, this.unbindDragStart = r.addListener(this.row, "dragstart", function(e) {
-            t.onDragStart(e);
-          })) : this.uri = null);
+        if (i !== this.uri) {
+          if (this.unbindDragStart) {
+            this.unbindDragStart();
+            delete this.unbindDragStart;
+          }
+          i ? (this.uri = i, this.draggable = !0, this.unbindDragStart = r.addListener(this.row, "dragstart",
+            function(e) {
+              t.onDragStart(e);
+            })) : this.uri = null;
+        }
 
-        e || (this.renderCleanupFn = this.context.renderer.render(this.context.tree, this.model.getElement(), this.row
-          .firstChild, this.renderCleanupFn));
+        if (!e) {
+          this.renderCleanupFn = this.context.renderer.render(this.context.tree, this.model.getElement(), this.row.firstChild,
+            this.renderCleanupFn);
+        }
       }
     };
 
@@ -160,13 +178,25 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
 
         this.row.appendChild(n);
       }
-      this.row.parentElement || (null === t ? e.appendChild(this.row) : e.insertBefore(this.row, t), this.render());
+      if (!this.row.parentElement) {
+        null === t ? e.appendChild(this.row) : e.insertBefore(this.row, t);
+        this.render();
+      }
     };
 
     e.prototype.removeFromDOM = function() {
-      this.row && (this.unbindDragStart && (this.unbindDragStart(), this.unbindDragStart = null), this.renderCleanupFn &&
-        this.renderCleanupFn(this.context.tree, this.model.getElement()), this.uri = null, this.row.parentElement.removeChild(
-          this.row), this.row = null);
+      if (this.row) {
+        if (this.unbindDragStart) {
+          this.unbindDragStart();
+          this.unbindDragStart = null;
+        }
+        if (this.renderCleanupFn) {
+          this.renderCleanupFn(this.context.tree, this.model.getElement());
+        }
+        this.uri = null;
+        this.row.parentElement.removeChild(this.row);
+        this.row = null;
+      }
     };
 
     e.prototype.dispose = function() {
@@ -193,7 +223,9 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
         var e = ["monaco-vtree-wrapper"];
         e.push.apply(e, Object.keys(this._styles));
 
-        this.model.hasChildren() && e.push("has-children");
+        if (this.model.hasChildren()) {
+          e.push("has-children");
+        }
 
         this.row.className = e.join(" ");
       }
@@ -224,7 +256,9 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
     };
 
     t.prototype.onInsertItems = function(e, t) {
-      "undefined" == typeof t && (t = null);
+      if ("undefined" == typeof t) {
+        t = null;
+      }
       var n;
 
       var i;
@@ -271,7 +305,9 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
         a -= n.height;
         delete this.indexes[t];
         this.onRemoveItem(n);
-        null === r && (r = i);
+        if (null === r) {
+          r = i;
+        }
       }
       if (0 !== a)
         for (this.heightMap.splice(r, i - r + 1), i = r; i < this.heightMap.length; i++) {
@@ -321,7 +357,9 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
     };
 
     t.prototype.onRefreshItem = function(e, t) {
-      "undefined" == typeof t && (t = !1);
+      if ("undefined" == typeof t) {
+        t = !1;
+      }
     };
 
     t.prototype.itemsCount = function() {
@@ -403,9 +441,13 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
 
       this.domNode.tabIndex = 0;
 
-      this.treeContext.options.alwaysFocused && r.addClass(this.domNode, "focused");
+      if (this.treeContext.options.alwaysFocused) {
+        r.addClass(this.domNode, "focused");
+      }
 
-      this.treeContext.options.bare && r.addClass(this.domNode, "bare");
+      if (this.treeContext.options.bare) {
+        r.addClass(this.domNode, "bare");
+      }
 
       this.wrapper = document.createElement("div");
 
@@ -476,21 +518,25 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
         return o.onTouchChange(e);
       }));
 
-      i.browser.isIE11orEarlier && (this.viewListeners.push(r.addListener(this.wrapper, "MSPointerDown", function(e) {
-        return o.onMsPointerDown(e);
-      })), this.viewListeners.push(r.addListener(this.wrapper, "MSGestureTap", function(e) {
-        return o.onMsGestureTap(e);
-      })), this.viewListeners.push(r.addThrottledListener(this.wrapper, "MSGestureChange", function(e) {
-        return o.onThrottledMsGestureChange(e);
-      }, function(e, t) {
-        var n = {
-          translationY: t.translationY,
-          translationX: t.translationX
-        };
-        e && (n.translationY += e.translationY, n.translationX += e.translationX);
+      if (i.browser.isIE11orEarlier) {
+        this.viewListeners.push(r.addListener(this.wrapper, "MSPointerDown", function(e) {
+          return o.onMsPointerDown(e);
+        }));
+        this.viewListeners.push(r.addListener(this.wrapper, "MSGestureTap", function(e) {
+          return o.onMsGestureTap(e);
+        }));
+        this.viewListeners.push(r.addThrottledListener(this.wrapper, "MSGestureChange", function(e) {
+          return o.onThrottledMsGestureChange(e);
+        }, function(e, t) {
+          var n = {
+            translationY: t.translationY,
+            translationX: t.translationX
+          };
+          e && (n.translationY += e.translationY, n.translationX += e.translationX);
 
-        return n;
-      })));
+          return n;
+        }));
+      }
 
       this.viewListeners.push(r.addListener(window, "dragover", function(e) {
         return o.onDragOver(e);
@@ -570,9 +616,12 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
 
       this.scrollableElement.onElementInternalDimensions();
 
-      i.browser.isIE11orEarlier && (this.msGesture = new MSGesture, setTimeout(function() {
-        return e.msGesture.target = e.wrapper;
-      }, 100));
+      if (i.browser.isIE11orEarlier) {
+        this.msGesture = new MSGesture;
+        setTimeout(function() {
+          return e.msGesture.target = e.wrapper;
+        }, 100);
+      }
     };
 
     t.prototype.onHidden = function() {
@@ -584,9 +633,13 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
     };
 
     t.prototype.layout = function(e) {
-      this.isTreeVisible() && (this.viewTop = r.getTopLeftOffset(this.wrapper).top, this.viewHeight = e || r.getContentHeight(
-          this.wrapper), this.scrollTop = this.scrollTop, this.scrollableElement.onElementDimensions(), this.scrollableElement
-        .onElementInternalDimensions());
+      if (this.isTreeVisible()) {
+        this.viewTop = r.getTopLeftOffset(this.wrapper).top;
+        this.viewHeight = e || r.getContentHeight(this.wrapper);
+        this.scrollTop = this.scrollTop;
+        this.scrollableElement.onElementDimensions();
+        this.scrollableElement.onElementInternalDimensions();
+      }
     };
 
     t.prototype.render = function(e, t) {
@@ -616,7 +669,9 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
         this.removeItemFromDOM(this.itemAtIndex(n));
       }
       var l = this.itemAtIndex(this.indexAt(s));
-      l && (this.rowsContainer.style.top = l.top - s + "px");
+      if (l) {
+        this.rowsContainer.style.top = l.top - s + "px";
+      }
 
       this.renderTop = s;
 
@@ -680,7 +735,9 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
             this.onItemRemoveTrait(r);
         }
       }
-      t.length > 0 && this.onItemsRefresh(t);
+      if (t.length > 0) {
+        this.onItemsRefresh(t);
+      }
     };
 
     t.prototype.onRefreshing = function() {
@@ -694,7 +751,10 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
     };
 
     t.prototype.onRowsChanged = function() {
-      this.isRefreshing || (this.scrollTop = this.scrollTop, this.scrollableElement.onElementInternalDimensions());
+      if (!this.isRefreshing) {
+        this.scrollTop = this.scrollTop;
+        this.scrollableElement.onElementInternalDimensions();
+      }
     };
 
     t.prototype.withFakeRow = function(e) {
@@ -715,9 +775,11 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
         var r = this.scrollTop;
         this.scrollTop += this.viewHeight;
 
-        this.scrollTop !== r && setTimeout(function() {
-          t.focusNextPage(e);
-        }, 0);
+        if (this.scrollTop !== r) {
+          setTimeout(function() {
+            t.focusNextPage(e);
+          }, 0);
+        }
       }
     };
 
@@ -735,9 +797,11 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
         var r = this.scrollTop;
         this.scrollTop -= this.viewHeight;
 
-        this.scrollTop !== r && setTimeout(function() {
-          n.focusPreviousPage(e);
-        }, 0);
+        if (this.scrollTop !== r) {
+          setTimeout(function() {
+            n.focusPreviousPage(e);
+          }, 0);
+        }
       }
     };
 
@@ -804,7 +868,10 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
 
     t.prototype.onClearingInput = function(e) {
       var t = e.item;
-      t && (this.onRemoveItems(t.getNavigator()), this.onRowsChanged());
+      if (t) {
+        this.onRemoveItems(t.getNavigator());
+        this.onRowsChanged();
+      }
     };
 
     t.prototype.onSetInput = function(e) {
@@ -863,7 +930,9 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
             this.onInsertItems(new p(r, h.modifiedStart, h.modifiedStart + h.modifiedLength), f ? f.id : null);
           }
         }
-        l.length && this.onRowsChanged();
+        if (l.length) {
+          this.onRowsChanged();
+        }
       }
     };
 
@@ -887,14 +956,22 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
       var t = e.item;
 
       var n = this.items[t.id];
-      n && (n.expanded = !0, this.onInsertItems(t.getNavigator(), t.id), this.onRowsChanged());
+      if (n) {
+        n.expanded = !0;
+        this.onInsertItems(t.getNavigator(), t.id);
+        this.onRowsChanged();
+      }
     };
 
     t.prototype.onItemCollapsing = function(e) {
       var t = e.item;
 
       var n = this.items[t.id];
-      n && (n.expanded = !1, this.onRemoveItems(t.getNavigator()), this.onRowsChanged());
+      if (n) {
+        n.expanded = !1;
+        this.onRemoveItems(t.getNavigator());
+        this.onRowsChanged();
+      }
     };
 
     t.prototype.onItemReveal = function(e) {
@@ -924,10 +1001,17 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
       var n = e.trait;
 
       var i = this.items[t.id];
-      i && i.addClass(n);
+      if (i) {
+        i.addClass(n);
+      }
 
-      "highlighted" === n && (r.addClass(this.domNode, n), this.highlightedItemWasDraggable = !! i.draggable, i.draggable &&
-        (i.draggable = !1));
+      if ("highlighted" === n) {
+        r.addClass(this.domNode, n);
+        this.highlightedItemWasDraggable = !! i.draggable;
+        if (i.draggable) {
+          i.draggable = !1;
+        }
+      }
     };
 
     t.prototype.onItemRemoveTrait = function(e) {
@@ -936,10 +1020,17 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
       var n = e.trait;
 
       var i = this.items[t.id];
-      i && i.removeClass(n);
+      if (i) {
+        i.removeClass(n);
+      }
 
-      "highlighted" === n && (r.removeClass(this.domNode, n), this.highlightedItemWasDraggable && (i.draggable = !0),
-        delete this.highlightedItemWasDraggable);
+      if ("highlighted" === n) {
+        r.removeClass(this.domNode, n);
+        if (this.highlightedItemWasDraggable) {
+          i.draggable = !0;
+        }
+        delete this.highlightedItemWasDraggable;
+      }
     };
 
     t.prototype.onInsertItem = function(e) {
@@ -956,7 +1047,9 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
     };
 
     t.prototype.onRefreshItem = function(e, t) {
-      "undefined" == typeof t && (t = !1);
+      if ("undefined" == typeof t) {
+        t = !1;
+      }
 
       e.needsRender = e.needsRender || t;
 
@@ -986,13 +1079,17 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
         var t = new c.StandardMouseEvent(e);
 
         var n = this.getItemAround(t.target);
-        n && this.treeContext.controller.onClick(this.treeContext.tree, n.model.getElement(), t);
+        if (n) {
+          this.treeContext.controller.onClick(this.treeContext.tree, n.model.getElement(), t);
+        }
       }
     };
 
     t.prototype.onTap = function(e) {
       var t = this.getItemAround(e.initialTarget);
-      t && this.treeContext.controller.onTap(this.treeContext.tree, t.model.getElement(), e);
+      if (t) {
+        this.treeContext.controller.onTap(this.treeContext.tree, t.model.getElement(), e);
+      }
     };
 
     t.prototype.onTouchChange = function(e) {
@@ -1033,14 +1130,20 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
       var t = new d.KeyboardEvent(e);
       this.didJustPressContextMenuKey = "ContextMenu" === t.key || t.shiftKey && "F10" === t.key;
 
-      this.didJustPressContextMenuKey && (t.preventDefault(), t.stopPropagation());
+      if (this.didJustPressContextMenuKey) {
+        t.preventDefault();
+        t.stopPropagation();
+      }
 
-      t.target && t.target.tagName && "input" === t.target.tagName.toLowerCase() || this.treeContext.controller.onKeyDown(
-        this.treeContext.tree, t);
+      if (!(t.target && t.target.tagName && "input" === t.target.tagName.toLowerCase())) {
+        this.treeContext.controller.onKeyDown(this.treeContext.tree, t);
+      }
     };
 
     t.prototype.onKeyUp = function(e) {
-      this.didJustPressContextMenuKey && this.onContextMenu(e);
+      if (this.didJustPressContextMenuKey) {
+        this.onContextMenu(e);
+      }
 
       this.didJustPressContextMenuKey = !1;
 
@@ -1058,7 +1161,9 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
 
       t.dataTransfer.setData("URL", e.uri);
 
-      t.dataTransfer.setDragImage && e.row && t.dataTransfer.setDragImage(e.row, t.offsetX || 6, t.offsetY || 6);
+      if (t.dataTransfer.setDragImage && e.row) {
+        t.dataTransfer.setDragImage(e.row, t.offsetX || 6, t.offsetY || 6);
+      }
 
       this.currentDragAndDropData = new f([e.model.getElement()]);
 
@@ -1067,34 +1172,42 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
 
     t.prototype.setupDragAndDropScrollInterval = function() {
       var e = this;
-      this.dragAndDropScrollInterval || (this.dragAndDropScrollInterval = window.setInterval(function() {
-        if (void 0 !== e.dragAndDropMouseY) {
-          var t = e.dragAndDropMouseY - e.viewTop;
+      if (!this.dragAndDropScrollInterval) {
+        this.dragAndDropScrollInterval = window.setInterval(function() {
+          if (void 0 !== e.dragAndDropMouseY) {
+            var t = e.dragAndDropMouseY - e.viewTop;
 
-          var n = 0;
+            var n = 0;
 
-          var i = e.viewHeight - 35;
-          35 > t ? n = Math.max(-14, .2 * (t - 35)) : t > i && (n = Math.min(14, .2 * (t - i)));
+            var i = e.viewHeight - 35;
+            35 > t ? n = Math.max(-14, .2 * (t - 35)) : t > i && (n = Math.min(14, .2 * (t - i)));
 
-          e.scrollTop += n;
-        }
-      }, 10), this.cancelDragAndDropScrollTimeout(), this.dragAndDropScrollTimeout = window.setTimeout(function() {
-        e.cancelDragAndDropScrollInterval();
+            e.scrollTop += n;
+          }
+        }, 10);
+        this.cancelDragAndDropScrollTimeout();
+        this.dragAndDropScrollTimeout = window.setTimeout(function() {
+          e.cancelDragAndDropScrollInterval();
 
-        e.dragAndDropScrollTimeout = null;
-      }, 1e3));
+          e.dragAndDropScrollTimeout = null;
+        }, 1e3);
+      }
     };
 
     t.prototype.cancelDragAndDropScrollInterval = function() {
-      this.dragAndDropScrollInterval && (window.clearInterval(this.dragAndDropScrollInterval), this.dragAndDropScrollInterval =
-        null);
+      if (this.dragAndDropScrollInterval) {
+        window.clearInterval(this.dragAndDropScrollInterval);
+        this.dragAndDropScrollInterval = null;
+      }
 
       this.cancelDragAndDropScrollTimeout();
     };
 
     t.prototype.cancelDragAndDropScrollTimeout = function() {
-      this.dragAndDropScrollTimeout && (window.clearTimeout(this.dragAndDropScrollTimeout), this.dragAndDropScrollTimeout =
-        null);
+      if (this.dragAndDropScrollTimeout) {
+        window.clearTimeout(this.dragAndDropScrollTimeout);
+        this.dragAndDropScrollTimeout = null;
+      }
     };
 
     t.prototype.onDragOver = function(e) {
@@ -1149,7 +1262,10 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
           2 === s)
           for (var d, h = a.getNavigator(); d = h.next();) {
             i = this.items[d.id];
-            i && (i.dropTarget = !0, this.currentDropTargets.push(i));
+            if (i) {
+              i.dropTarget = !0;
+              this.currentDropTargets.push(i);
+            }
           }
         this.currentDropPromise = o.Promise.timeout(500).then(function() {
           return t.treeContext.tree.expand(t.currentDropElement).then(function() {
@@ -1175,11 +1291,17 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
     };
 
     t.prototype.onDragEnd = function() {
-      this.currentDropTarget && (this.currentDropTargets.forEach(function(e) {
-        return e.dropTarget = !1;
-      }), this.currentDropTargets = []);
+      if (this.currentDropTarget) {
+        this.currentDropTargets.forEach(function(e) {
+          return e.dropTarget = !1;
+        });
+        this.currentDropTargets = [];
+      }
 
-      this.currentDropPromise && (this.currentDropPromise.cancel(), this.currentDropPromise = null);
+      if (this.currentDropPromise) {
+        this.currentDropPromise.cancel();
+        this.currentDropPromise = null;
+      }
 
       this.cancelDragAndDropScrollInterval();
 
@@ -1193,11 +1315,15 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
     };
 
     t.prototype.onFocus = function() {
-      this.treeContext.options.alwaysFocused || r.addClass(this.domNode, "focused");
+      if (!this.treeContext.options.alwaysFocused) {
+        r.addClass(this.domNode, "focused");
+      }
     };
 
     t.prototype.onBlur = function() {
-      this.treeContext.options.alwaysFocused || r.removeClass(this.domNode, "focused");
+      if (!this.treeContext.options.alwaysFocused) {
+        r.removeClass(this.domNode, "focused");
+      }
     };
 
     t.prototype.onMsPointerDown = function(e) {
@@ -1206,7 +1332,9 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
         this.lastPointerType = t === (e.MSPOINTER_TYPE_MOUSE || "mouse") ? "mouse" : t === (e.MSPOINTER_TYPE_TOUCH ||
           "touch") ? "touch" : "pen";
 
-        "mouse" !== this.lastPointerType && this.msGesture.addPointer(e.pointerId);
+        if ("mouse" !== this.lastPointerType) {
+          this.msGesture.addPointer(e.pointerId);
+        }
       }
     };
 
@@ -1224,7 +1352,9 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
       var t = null;
 
       var n = this.itemAfter(e);
-      n && n.row && (t = n.row);
+      if (n && n.row) {
+        t = n.row;
+      }
 
       e.insertInDOM(this.rowsContainer, t);
     };
@@ -1264,11 +1394,16 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
       }
       this.viewListeners = null;
 
-      this.domNode.parentNode && this.domNode.parentNode.removeChild(this.domNode);
+      if (this.domNode.parentNode) {
+        this.domNode.parentNode.removeChild(this.domNode);
+      }
 
       this.domNode = null;
 
-      this.wrapperGesture && (this.wrapperGesture.dispose(), this.wrapperGesture = null);
+      if (this.wrapperGesture) {
+        this.wrapperGesture.dispose();
+        this.wrapperGesture = null;
+      }
 
       e.prototype.dispose.call(this);
     };

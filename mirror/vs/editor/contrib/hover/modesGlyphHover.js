@@ -29,9 +29,11 @@ define("vs/editor/contrib/hover/modesGlyphHover", ["require", "exports", "vs/edi
       var o = this._editor.getLineDecorations(this._lineNumber);
       for (e = 0, t = o.length; t > e; e++) {
         n = o[e];
-        n.options.glyphMarginClassName && n.options.hoverMessage && i.push({
-          value: n.options.hoverMessage
-        });
+        if (n.options.glyphMarginClassName && n.options.hoverMessage) {
+          i.push({
+            value: n.options.hoverMessage
+          });
+        }
       }
       return i;
     };
@@ -65,12 +67,21 @@ define("vs/editor/contrib/hover/modesGlyphHover", ["require", "exports", "vs/edi
     __extends(t, e);
 
     t.prototype.onModelDecorationsChanged = function() {
-      this._isVisible && (this._hoverOperation.cancel(), this._computer.clearResult(), this._hoverOperation.start());
+      if (this._isVisible) {
+        this._hoverOperation.cancel();
+        this._computer.clearResult();
+        this._hoverOperation.start();
+      }
     };
 
     t.prototype.startShowingAt = function(e) {
-      this._lastLineNumber !== e && (this._hoverOperation.cancel(), this.hide(), this._lastLineNumber = e, this._computer
-        .setLineNumber(e), this._hoverOperation.start());
+      if (this._lastLineNumber !== e) {
+        this._hoverOperation.cancel();
+        this.hide();
+        this._lastLineNumber = e;
+        this._computer.setLineNumber(e);
+        this._hoverOperation.start();
+      }
     };
 
     t.prototype.hide = function() {

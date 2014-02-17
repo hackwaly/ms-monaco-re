@@ -97,11 +97,17 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
 
   var f = function() {
     function e(e, t, n) {
-      "undefined" == typeof e && (e = null);
+      if ("undefined" == typeof e) {
+        e = null;
+      }
 
-      "undefined" == typeof t && (t = null);
+      if ("undefined" == typeof t) {
+        t = null;
+      }
 
-      "undefined" == typeof n && (n = !1);
+      if ("undefined" == typeof n) {
+        n = !1;
+      }
 
       this.id = e;
 
@@ -175,9 +181,12 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
 
     e.prototype._registerWorker = function(e) {
       var t = this;
-      e && (this.workerPool.push(e), Object.keys(this.models).forEach(function(n) {
-        e.bindModel(t.models[n]);
-      }));
+      if (e) {
+        this.workerPool.push(e);
+        Object.keys(this.models).forEach(function(n) {
+          e.bindModel(t.models[n]);
+        });
+      }
     };
 
     e.prototype._newCustomWorker = function(n, i) {
@@ -187,7 +196,9 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
       if (!this.contextService) {
         return null;
       }
-      o.isUndefinedOrNull(i) && (i = this.workerModule.substring(this.workerModule.lastIndexOf("/") + 1));
+      if (o.isUndefinedOrNull(i)) {
+        i = this.workerModule.substring(this.workerModule.lastIndexOf("/") + 1);
+      }
       var s = [];
 
       var a = this.getId();
@@ -219,7 +230,9 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
     };
 
     e.prototype.workerRequest = function(e, t, i) {
-      "undefined" == typeof t && (t = null);
+      if ("undefined" == typeof t) {
+        t = null;
+      }
       var o = c.start(1, e.commandName || e.command);
 
       var r = function() {
@@ -231,11 +244,18 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
     };
 
     e.prototype.ensureWorkers = function() {
-      this.nullWorker || (this.nullWorker = this._getOrCreateNullWorker(), this._registerWorker(this.nullWorker));
+      if (!this.nullWorker) {
+        this.nullWorker = this._getOrCreateNullWorker();
+        this._registerWorker(this.nullWorker);
+      }
 
-      this._defaultWorker || (this._defaultWorker = this._newCustomWorker());
+      if (!this._defaultWorker) {
+        this._defaultWorker = this._newCustomWorker();
+      }
 
-      this._defaultWorker || (this._defaultWorker = this.nullWorker);
+      if (!this._defaultWorker) {
+        this._defaultWorker = this.nullWorker;
+      }
     };
 
     e.prototype.bindModel = function(e) {
@@ -500,10 +520,12 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
       var d = null;
       n = n.clone();
 
-      (s.length <= 0 || s[s.length - 1].mode !== this) && s.push({
-        startIndex: i,
-        mode: this
-      });
+      if (s.length <= 0 || s[s.length - 1].mode !== this) {
+        s.push({
+          startIndex: i,
+          mode: this
+        });
+      }
       for (var h = Math.min(o - i, t.length), f = 0; c.pos() < h;) {
         l = c.pos();
         do {
@@ -595,7 +617,9 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
 
           c < l.length - 1 ? (e = s.substring(a, l[c + 1].startIndex), a = l[c + 1].startIndex) : e = s.substr(a);
           var h = "token";
-          d.type && (h += " " + d.type.split(".").join(" "));
+          if (d.type) {
+            h += " " + d.type.split(".").join(" ");
+          }
 
           n.children.push({
             tagName: "span",
@@ -603,9 +627,11 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
             text: e
           });
         }
-        r < i.length - 1 && n.children.push({
-          tagName: "br"
-        });
+        if (r < i.length - 1) {
+          n.children.push({
+            tagName: "br"
+          });
+        }
       }
       return n;
     };
@@ -615,7 +641,9 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
   t.TextToHtmlTokenizer = g;
   var m = function() {
     function e(e, t) {
-      "undefined" == typeof t && (t = null);
+      if ("undefined" == typeof t) {
+        t = null;
+      }
 
       this.mode = e;
 
@@ -696,7 +724,9 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
     };
 
     e.prototype.registerWorkerParticipant = function(e, t) {
-      v.hasOwnProperty(e) || (v[e] = []);
+      if (!v.hasOwnProperty(e)) {
+        v[e] = [];
+      }
 
       v[e].push(t);
     };
@@ -736,7 +766,9 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
     e.prototype.doConfigureMode = function(e, t, n, o) {
       if (n.hasOwnProperty(e)) {
         var r = n[e];
-        r && r.configSupport && r.configSupport.configure(t);
+        if (r && r.configSupport) {
+          r.configSupport.configure(t);
+        }
       } else {
         var s = o[e] || {};
         s = i.mixin(s, t);

@@ -58,7 +58,9 @@ define("vs/editor/contrib/zoneWidget/zoneWidget", ["require", "exports", "vs/bas
 
   var h = function(e) {
     function t(t, n) {
-      "undefined" == typeof n && (n = {});
+      if ("undefined" == typeof n) {
+        n = {};
+      }
       var o = this;
       e.call(this);
 
@@ -148,17 +150,32 @@ define("vs/editor/contrib/zoneWidget/zoneWidget", ["require", "exports", "vs/bas
       var u = 0;
 
       var h = 0;
-      this.options.showArrow && (u = Math.round(s / 3), a -= 2 * u, r = document.createElement("div"), r.className =
-        "zone-widget-arrow below", r.style.top = -u + "px", r.style.borderWidth = u + "px", r.style.left = this.editor
-        .getOffsetForColumn(i.lineNumber, i.column) + "px", r.style.borderBottomColor = this.options.frameColor, o.appendChild(
-          r));
+      if (this.options.showArrow) {
+        u = Math.round(s / 3);
+        a -= 2 * u;
+        r = document.createElement("div");
+        r.className = "zone-widget-arrow below";
+        r.style.top = -u + "px";
+        r.style.borderWidth = u + "px";
+        r.style.left = this.editor.getOffsetForColumn(i.lineNumber, i.column) + "px";
+        r.style.borderBottomColor = this.options.frameColor;
+        o.appendChild(r);
+      }
 
-      this.options.showFrame && (h = Math.round(s / 9), a -= 2 * h);
+      if (this.options.showFrame) {
+        h = Math.round(s / 9);
+        a -= 2 * h;
+      }
 
       this.editor.changeViewZones(function(e) {
-        -1 !== n.zoneId && e.removeZone(n.zoneId);
+        if (-1 !== n.zoneId) {
+          e.removeZone(n.zoneId);
+        }
 
-        n.overlayWidget && (n.editor.removeOverlayWidget(n.overlayWidget), n.overlayWidget = null);
+        if (n.overlayWidget) {
+          n.editor.removeOverlayWidget(n.overlayWidget);
+          n.overlayWidget = null;
+        }
         var r = new c(o, i.lineNumber, t, function(e) {
           return n.onViewZoneTop(e);
         }, function(e) {
@@ -171,12 +188,14 @@ define("vs/editor/contrib/zoneWidget/zoneWidget", ["require", "exports", "vs/bas
         n.editor.addOverlayWidget(n.overlayWidget);
       });
 
-      this.options.showFrame && this.container.style({
-        borderTopColor: this.options.frameColor,
-        borderBottomColor: this.options.frameColor,
-        borderTopWidth: h + "px",
-        borderBottomWidth: h + "px"
-      });
+      if (this.options.showFrame) {
+        this.container.style({
+          borderTopColor: this.options.frameColor,
+          borderBottomColor: this.options.frameColor,
+          borderTopWidth: h + "px",
+          borderBottomWidth: h + "px"
+        });
+      }
 
       this.container.style({
         top: u + "px",
@@ -204,13 +223,18 @@ define("vs/editor/contrib/zoneWidget/zoneWidget", ["require", "exports", "vs/bas
 
       this.listenersToRemove = [];
 
-      this.overlayWidget && (this.editor.removeOverlayWidget(this.overlayWidget), this.overlayWidget = null);
+      if (this.overlayWidget) {
+        this.editor.removeOverlayWidget(this.overlayWidget);
+        this.overlayWidget = null;
+      }
 
-      - 1 !== this.zoneId && this.editor.changeViewZones(function(t) {
-        t.removeZone(e.zoneId);
+      if (-1 !== this.zoneId) {
+        this.editor.changeViewZones(function(t) {
+          t.removeZone(e.zoneId);
 
-        e.zoneId = -1;
-      });
+          e.zoneId = -1;
+        });
+      }
     };
 
     t.prototype.fillContainer = function() {};

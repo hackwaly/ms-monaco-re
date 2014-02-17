@@ -37,8 +37,12 @@ define("vs/editor/core/model/tokenIterator", ["require", "exports"], function(e,
             this._next = this._current();
             break;
           }
-        null === this._next && (this._currentLineTokens = this._model._getInternalTokens(this._currentLineNumber),
-          this._currentTokenIndex = this._currentLineTokens.length, this._advancePrev(), this._next = null);
+        if (null === this._next) {
+          this._currentLineTokens = this._model._getInternalTokens(this._currentLineNumber);
+          this._currentTokenIndex = this._currentLineTokens.length;
+          this._advancePrev();
+          this._next = null;
+        }
       }
     };
 

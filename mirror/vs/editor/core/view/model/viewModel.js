@@ -66,11 +66,15 @@ define("vs/editor/core/view/model/viewModel", ["require", "exports", "vs/base/ev
         var n = t.lines.setTabSize(e, function(e, n) {
           return t.emit(e, n);
         });
-        n && (t.emit(i.EventNames.LineMappingChangedEvent), t.decorations.onLineMappingChanged(function(e, n) {
-          return t.emit(e, n);
-        }), t.cursors.onLineMappingChanged(function(e, n) {
-          return t.emit(e, n);
-        }));
+        if (n) {
+          t.emit(i.EventNames.LineMappingChangedEvent);
+          t.decorations.onLineMappingChanged(function(e, n) {
+            return t.emit(e, n);
+          });
+          t.cursors.onLineMappingChanged(function(e, n) {
+            return t.emit(e, n);
+          });
+        }
       });
     };
 
@@ -106,7 +110,9 @@ define("vs/editor/core/view/model/viewModel", ["require", "exports", "vs/base/ev
           return n.emit(e, t);
         })) : n.restoreCurrentCenteredModelRange = null;
 
-        n.isHandlingExternalEvents || n.restoreCenteredModelRange();
+        if (!n.isHandlingExternalEvents) {
+          n.restoreCenteredModelRange();
+        }
       });
     };
 
@@ -190,11 +196,16 @@ define("vs/editor/core/view/model/viewModel", ["require", "exports", "vs/base/ev
             console.info("View received unkown event: ");
 
             console.info(s);
-        }!l && c && (t.emit(i.EventNames.LineMappingChangedEvent), t.decorations.onLineMappingChanged(function(e, n) {
-          return t.emit(e, n);
-        }), t.cursors.onLineMappingChanged(function(e, n) {
-          return t.emit(e, n);
-        }));
+        }
+        if (!l && c) {
+          t.emit(i.EventNames.LineMappingChangedEvent);
+          t.decorations.onLineMappingChanged(function(e, n) {
+            return t.emit(e, n);
+          });
+          t.cursors.onLineMappingChanged(function(e, n) {
+            return t.emit(e, n);
+          });
+        }
       });
 
       this.restoreCenteredModelRange();
@@ -254,13 +265,21 @@ define("vs/editor/core/view/model/viewModel", ["require", "exports", "vs/base/ev
     };
 
     t.prototype.validateViewPosition = function(e, t, n) {
-      1 > e && (e = 1);
+      if (1 > e) {
+        e = 1;
+      }
       var i = this.getLineCount();
-      e > i && (e = i);
+      if (e > i) {
+        e = i;
+      }
       var o = this.getLineMaxColumn(e);
-      1 > t && (t = 1);
+      if (1 > t) {
+        t = 1;
+      }
 
-      t > o && (t = o);
+      if (t > o) {
+        t = o;
+      }
       var r = this.convertViewPositionToModelPosition(e, t);
       return r.equals(n) ? new c.Position(e, t) : this.convertModelPositionToViewPosition(n.lineNumber, n.column);
     };

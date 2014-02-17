@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -190,13 +192,20 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
     };
 
     a.prototype.show = function() {
-      this.isVisible || (this.isVisible = !0, this.domNode.style.display = "block", this.editor.layoutContentWidget(
-        this));
+      if (!this.isVisible) {
+        this.isVisible = !0;
+        this.domNode.style.display = "block";
+        this.editor.layoutContentWidget(this);
+      }
     };
 
     a.prototype.hide = function() {
-      this.isVisible && (this.setExpanded(!1), this.isVisible = !1, this.domNode.style.display = "none", this.editor.layoutContentWidget(
-        this));
+      if (this.isVisible) {
+        this.setExpanded(!1);
+        this.isVisible = !1;
+        this.domNode.style.display = "none";
+        this.editor.layoutContentWidget(this);
+      }
     };
 
     a.prototype.getPosition = function() {
@@ -218,7 +227,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
         var f = c[e];
         if (f instanceof w.ActionDescriptor) {
           var g = f;
-          g.keybindings && g.keybindings.length > 0 && (d[g.id] = x.asString(g.keybindings[0]));
+          if (g.keybindings && g.keybindings.length > 0) {
+            d[g.id] = x.asString(g.keybindings[0]);
+          }
         }
       }
       var h = this.model.getActions();
@@ -242,8 +253,11 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
     };
 
     a.prototype.setExpanded = function(a) {
-      this.isVisible && (this.expanded = a, this.expanded ? (this.details.show(), this.trigger.addClass("active"),
-        this.actionBar.focus()) : (this.details.hide(), this.trigger.removeClass("active")));
+      if (this.isVisible) {
+        this.expanded = a;
+        this.expanded ? (this.details.show(), this.trigger.addClass("active"), this.actionBar.focus()) : (this.details
+          .hide(), this.trigger.removeClass("active"));
+      }
     };
 
     a.prototype.getDomNode = function() {
@@ -289,7 +303,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
       while (this.toUnhook.length > 0) {
         this.toUnhook.pop()();
       }
-      this.domNode && this.domNode.parentElement.removeChild(this.domNode);
+      if (this.domNode) {
+        this.domNode.parentElement.removeChild(this.domNode);
+      }
 
       this.actionBar.dispose();
 
@@ -329,7 +345,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
     b.prototype.injectHandlerService = function(b) {
       a.prototype.injectHandlerService.call(this, b);
 
-      this.widget || (this.widget = new L(this.editor, this.handlerService, this.model));
+      if (!this.widget) {
+        this.widget = new L(this.editor, this.handlerService, this.model);
+      }
     };
 
     b.prototype.run = function() {
@@ -342,9 +360,15 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
     b.prototype.dispose = function() {
       a.prototype.dispose.call(this);
 
-      this.model && (this.model.dispose(), this.model = null);
+      if (this.model) {
+        this.model.dispose();
+        this.model = null;
+      }
 
-      this.widget && (this.widget.dispose(), this.widget = null);
+      if (this.widget) {
+        this.widget.dispose();
+        this.widget = null;
+      }
     };
 
     b.ID = "editor.action.inEditorActions.now";

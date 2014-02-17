@@ -11,7 +11,9 @@ define(["require", "exports", "vs/editor/modes/modes"], function(a, b, c) {
       var b;
       for (var c = 0; c < this.brackets.length; c++) {
         b = this.brackets[c];
-        b.isElectric && a.push(b.close);
+        if (b.isElectric) {
+          a.push(b.close);
+        }
       }
       return a;
     };

@@ -86,7 +86,9 @@ define("vs/languages/vsxml/vsxml", ["require", "exports", "vs/base/objects", "vs
   t.VSXMLEmbeddedState = p;
   var h = function(e) {
     function t(t, n, r, i) {
-      "undefined" == typeof i && (i = "");
+      if ("undefined" == typeof i) {
+        i = "";
+      }
 
       e.call(this, t);
 

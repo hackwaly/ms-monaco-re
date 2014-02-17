@@ -50,11 +50,17 @@ define(["require", "exports"], function(a, b) {
     };
 
     a.prototype.show = function() {
-      this.isVisible || (this.domNode.style.display = "block", this.isVisible = !0);
+      if (!this.isVisible) {
+        this.domNode.style.display = "block";
+        this.isVisible = !0;
+      }
     };
 
     a.prototype.hide = function() {
-      this.isVisible && (this.domNode.style.display = "none", this.isVisible = !1);
+      if (this.isVisible) {
+        this.domNode.style.display = "none";
+        this.isVisible = !1;
+      }
     };
 
     a.prototype.onConfigurationLineHeightChanged = function() {

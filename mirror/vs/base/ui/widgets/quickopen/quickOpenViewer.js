@@ -54,7 +54,9 @@ define("vs/base/ui/widgets/quickopen/quickOpenViewer", ["require", "exports", "v
 
   var d = function(e) {
     function t(t) {
-      "undefined" == typeof t && (t = new c);
+      if ("undefined" == typeof t) {
+        t = new c;
+      }
 
       e.call(this, t);
     }
@@ -73,26 +75,35 @@ define("vs/base/ui/widgets/quickopen/quickOpenViewer", ["require", "exports", "v
         }
         if (a instanceof s.QuickOpenEntryGroup) {
           var l = a;
-          l.showBorder() && u(n).addClass("results-group-separator");
+          if (l.showBorder()) {
+            u(n).addClass("results-group-separator");
+          }
 
-          l.getGroupLabel() && u(n).div(function(e) {
-            e.addClass("results-group");
+          if (l.getGroupLabel()) {
+            u(n).div(function(e) {
+              e.addClass("results-group");
 
-            e.attr({
-              text: l.getGroupLabel()
+              e.attr({
+                text: l.getGroupLabel()
+              });
             });
-          });
+          }
         }
         u(n).div(function(e) {
           e.addClass("quick-open-entry");
 
-          a.getIcon() && e.append(u("span", {
-            "class": "quick-open-entry-icon " + a.getIcon()
-          }));
+          if (a.getIcon()) {
+            e.append(u("span", {
+              "class": "quick-open-entry-icon " + a.getIcon()
+            }));
+          }
           var t = a.getHighlights();
           if (t && t.length > 0) {
             var n = e.getProperty("highlightedLabel");
-            n || (n = new r.HighlightedLabel(e), e.setProperty("highlightedLabel", n));
+            if (!n) {
+              n = new r.HighlightedLabel(e);
+              e.setProperty("highlightedLabel", n);
+            }
 
             o = function() {
               n.destroy();
@@ -100,20 +111,26 @@ define("vs/base/ui/widgets/quickopen/quickOpenViewer", ["require", "exports", "v
 
             n.setValue(a.getLabel(), t);
           } else {
-            a.getLabel() && e.span({
-              text: a.getLabel(),
-              "class": "quick-open-entry-label"
+            if (a.getLabel()) {
+              e.span({
+                text: a.getLabel(),
+                "class": "quick-open-entry-label"
+              });
+            }
+          }
+          if (a.getMeta()) {
+            e.span({
+              text: a.getMeta(),
+              "class": "quick-open-entry-meta"
             });
           }
-          a.getMeta() && e.span({
-            text: a.getMeta(),
-            "class": "quick-open-entry-meta"
-          });
 
-          a.getDescription() && e.span({
-            text: a.getDescription(),
-            "class": "quick-open-entry-description"
-          });
+          if (a.getDescription()) {
+            e.span({
+              text: a.getDescription(),
+              "class": "quick-open-entry-description"
+            });
+          }
         });
       }
       return o;

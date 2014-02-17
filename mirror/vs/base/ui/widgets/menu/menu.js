@@ -5,7 +5,9 @@ define("vs/base/ui/widgets/menu/menu", ["require", "exports", "vs/base/dom/build
 
   var s = function(e) {
     function t(t, n, o) {
-      "undefined" == typeof o && (o = {});
+      if ("undefined" == typeof o) {
+        o = {};
+      }
 
       e.call(this);
 
@@ -34,9 +36,15 @@ define("vs/base/ui/widgets/menu/menu", ["require", "exports", "vs/base/dom/build
     t.prototype.dispose = function() {
       e.prototype.dispose.call(this);
 
-      this.actionBar && (this.actionBar.dispose(), this.actionBar = null);
+      if (this.actionBar) {
+        this.actionBar.dispose();
+        this.actionBar = null;
+      }
 
-      this.listener && (this.listener.dispose(), this.listener = null);
+      if (this.listener) {
+        this.listener.dispose();
+        this.listener = null;
+      }
     };
 
     return t;

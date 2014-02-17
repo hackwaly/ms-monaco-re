@@ -11,7 +11,9 @@ define("vs/editor/core/command/shiftCommand", ["require", "exports", "vs/editor/
       var i = this._selection.startLineNumber;
 
       var o = this._selection.endLineNumber;
-      1 === this._selection.endColumn && i !== o && (o -= 1);
+      if (1 === this._selection.endColumn && i !== o) {
+        o -= 1;
+      }
       var r;
       if (this._isUnshift) {
         var s = this._configuration.getIndentationOptions().tabSize;
@@ -29,7 +31,9 @@ define("vs/editor/core/command/shiftCommand", ["require", "exports", "vs/editor/
               }
               if (" " !== u.charAt(a)) break;
             }
-          0 !== a && t.addEditOperation(new n.Range(r, 1, r, a + 1), null);
+          if (0 !== a) {
+            t.addEditOperation(new n.Range(r, 1, r, a + 1), null);
+          }
         }
       } else {
         var l = this._configuration.getOneIndent();

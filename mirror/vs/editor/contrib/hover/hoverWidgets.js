@@ -35,7 +35,10 @@ define("vs/editor/contrib/hover/hoverWidgets", ["require", "exports", "vs/editor
       e.prototype.showAt = function(e) {
         this._showAtPosition = new i.Position(e.lineNumber, e.column);
 
-        this._isVisible || (this._isVisible = !0, this._containerDomNode.style.display = "block");
+        if (!this._isVisible) {
+          this._isVisible = !0;
+          this._containerDomNode.style.display = "block";
+        }
         var t = parseInt(this._containerDomNode.style.maxWidth, 10);
         this._containerDomNode.style.width = t + "px";
 
@@ -55,8 +58,11 @@ define("vs/editor/contrib/hover/hoverWidgets", ["require", "exports", "vs/editor
       };
 
       e.prototype.hide = function() {
-        this._isVisible && (this._isVisible = !1, this._containerDomNode.style.display = "none", this._editor.layoutContentWidget(
-          this));
+        if (this._isVisible) {
+          this._isVisible = !1;
+          this._containerDomNode.style.display = "none";
+          this._editor.layoutContentWidget(this);
+        }
       };
 
       e.prototype.getPosition = function() {
@@ -106,7 +112,10 @@ define("vs/editor/contrib/hover/hoverWidgets", ["require", "exports", "vs/editor
       e.prototype.showAt = function(e) {
         this._showAtLineNumber = e;
 
-        this._isVisible || (this._isVisible = !0, this._domNode.style.display = "block");
+        if (!this._isVisible) {
+          this._isVisible = !0;
+          this._domNode.style.display = "block";
+        }
         var t = this._editor.getLayoutInfo();
 
         var n = this._editor.getTopForLineNumber(this._showAtLineNumber);
@@ -118,7 +127,10 @@ define("vs/editor/contrib/hover/hoverWidgets", ["require", "exports", "vs/editor
       };
 
       e.prototype.hide = function() {
-        this._isVisible && (this._isVisible = !1, this._domNode.style.display = "none");
+        if (this._isVisible) {
+          this._isVisible = !1;
+          this._domNode.style.display = "none";
+        }
       };
 
       e.prototype.getPosition = function() {

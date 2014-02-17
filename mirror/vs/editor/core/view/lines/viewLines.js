@@ -145,8 +145,13 @@ define("vs/editor/core/view/lines/viewLines", ["require", "exports", "vs/editor/
             s[y].top = (s[y].top / f + .5 | 0) * f + n;
             s[y].height = f;
           }
-          i && o > a && (d = h, h = this._context.model.convertViewPositionToModelPosition(a + 1, 1).lineNumber, d !==
-            h && (s[s.length - 1].width += t.LINE_FEED_WIDTH));
+          if (i && o > a) {
+            d = h;
+            h = this._context.model.convertViewPositionToModelPosition(a + 1, 1).lineNumber;
+            if (d !== h) {
+              s[s.length - 1].width += t.LINE_FEED_WIDTH;
+            }
+          }
 
           p = p.concat(s);
         }
@@ -169,7 +174,9 @@ define("vs/editor/core/view/lines/viewLines", ["require", "exports", "vs/editor/
         var s = this._context.configuration.getWrappingColumn();
 
         var a = 0 === s;
-        a || this._ensureMaxLineWidth(o.maxHorizontalOffset);
+        if (!a) {
+          this._ensureMaxLineWidth(o.maxHorizontalOffset);
+        }
 
         this._layoutProvider.setScrollLeft(o.scrollLeft);
       }
@@ -199,7 +206,10 @@ define("vs/editor/core/view/lines/viewLines", ["require", "exports", "vs/editor/
     };
 
     t.prototype._ensureMaxLineWidth = function(e) {
-      this._maxLineWidth < e && (this._maxLineWidth = e, this._layoutProvider.onMaxLineWidthChanged(this._maxLineWidth));
+      if (this._maxLineWidth < e) {
+        this._maxLineWidth = e;
+        this._layoutProvider.onMaxLineWidthChanged(this._maxLineWidth);
+      }
     };
 
     t.prototype._computeScrollTopToRevealRange = function(e, t, n) {
@@ -217,7 +227,9 @@ define("vs/editor/core/view/lines/viewLines", ["require", "exports", "vs/editor/
       o = this._layoutProvider.getVerticalOffsetForLineNumber(t.endLineNumber) + this._layoutProvider.heightInPxForLine(
         t.endLineNumber);
 
-      n || (o += this._context.configuration.editor.lineHeight);
+      if (!n) {
+        o += this._context.configuration.editor.lineHeight;
+      }
       var u;
       if (n) {
         var l = (i + o) / 2;
@@ -258,8 +270,12 @@ define("vs/editor/core/view/lines/viewLines", ["require", "exports", "vs/editor/
       var c;
       for (l = 0; l < s.length; l++) {
         c = s[l];
-        c.left < a && (a = c.left);
-        c.left + c.width > u && (u = c.left + c.width);
+        if (c.left < a) {
+          a = c.left;
+        }
+        if (c.left + c.width > u) {
+          u = c.left + c.width;
+        }
       }
       n = u;
 

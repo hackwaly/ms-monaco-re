@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -301,9 +303,15 @@ define(["require", "exports", "vs/nls", "vs/base/env", "vs/base/network", "vs/ba
     };
 
     b.prototype.clear = function() {
-      this.closeBinding !== null && (this.closeBinding.dispose(), this.closeBinding = null);
+      if (this.closeBinding !== null) {
+        this.closeBinding.dispose();
+        this.closeBinding = null;
+      }
 
-      this.widget && (this.widget.dispose(), this.widget = null);
+      if (this.widget) {
+        this.widget.dispose();
+        this.widget = null;
+      }
     };
 
     b.prototype.dispose = function() {
@@ -398,8 +406,11 @@ define(["require", "exports", "vs/nls", "vs/base/env", "vs/base/network", "vs/ba
           this.removeDecorations();
           return;
         }
-        this.currentWordUnderMouse && this.currentPositionUnderMouse && (this.currentPositionUnderMouse.lineNumber !==
-          e.lineNumber || this.currentWordUnderMouse.startColumn !== f.startColumn);
+        if (this.currentWordUnderMouse && this.currentPositionUnderMouse) {
+          if (!(this.currentPositionUnderMouse.lineNumber !== e.lineNumber)) {
+            this.currentWordUnderMouse.startColumn !== f.startColumn;
+          }
+        }
 
         this.currentPositionUnderMouse = e;
 
@@ -428,11 +439,15 @@ define(["require", "exports", "vs/nls", "vs/base/env", "vs/base/network", "vs/ba
                   m === null ? (o = x.trim(x.trim(h[n], "	")), m = h[n].substr(0, h[n].length - o.length)) : h[n].indexOf(
                     m) === 0 ? o = h[n].substring(m.length).replace("	", "    ") : o = h[n];
 
-                  o && i.push(o);
+                  if (o) {
+                    i.push(o);
+                  }
                 }
                 g = i.join("\n");
 
-                l - k >= a.MAX_SOURCE_PREVIEW_LINES && (g += "\n…");
+                if (l - k >= a.MAX_SOURCE_PREVIEW_LINES) {
+                  g += "\n…";
+                }
               }
             }
             d.addDecoration({
@@ -452,11 +467,13 @@ define(["require", "exports", "vs/nls", "vs/base/env", "vs/base/network", "vs/ba
 
     a.prototype.addDecoration = function(a, b) {
       var c = null;
-      b && (c = [{
-        tagName: "div",
-        className: "goto-definition-link-hover",
-        children: [J.TextToHtmlTokenizer.tokenize(b, this.editor.getModel().getMode())]
-      }]);
+      if (b) {
+        c = [{
+          tagName: "div",
+          className: "goto-definition-link-hover",
+          children: [J.TextToHtmlTokenizer.tokenize(b, this.editor.getModel().getMode())]
+        }];
+      }
       var d = [];
       d.push({
         range: a,
@@ -471,11 +488,14 @@ define(["require", "exports", "vs/nls", "vs/base/env", "vs/base/network", "vs/ba
 
     a.prototype.removeDecorations = function() {
       var a = this;
-      this.decorations.length > 0 && (this.editor.changeDecorations(function(b) {
-        for (var c = 0, d = a.decorations.length; c < d; c++) {
-          b.removeDecoration(a.decorations[c]);
-        }
-      }), this.decorations = []);
+      if (this.decorations.length > 0) {
+        this.editor.changeDecorations(function(b) {
+          for (var c = 0, d = a.decorations.length; c < d; c++) {
+            b.removeDecoration(a.decorations[c]);
+          }
+        });
+        this.decorations = [];
+      }
 
       this.currentWordUnderMouse = null;
 
@@ -483,22 +503,28 @@ define(["require", "exports", "vs/nls", "vs/base/env", "vs/base/network", "vs/ba
     };
 
     a.prototype.onEditorKeyDown = function(b) {
-      b.key === a.TRIGGER_KEY_VALUE && this.lastMouseEvent && this.onEditorMouseMove(this.lastMouseEvent, b);
+      if (b.key === a.TRIGGER_KEY_VALUE && this.lastMouseEvent) {
+        this.onEditorMouseMove(this.lastMouseEvent, b);
+      }
     };
 
     a.prototype.onEditorKeyUp = function(b) {
-      b.key === a.TRIGGER_KEY_VALUE && this.removeDecorations();
+      if (b.key === a.TRIGGER_KEY_VALUE) {
+        this.removeDecorations();
+      }
     };
 
     a.prototype.onEditorMouseUp = function(a) {
       var b = this;
-      this.isEnabled(a) && this.gotoDefinition(a.target).done(function() {
-        b.removeDecorations();
-      }, function(a) {
-        b.removeDecorations();
+      if (this.isEnabled(a)) {
+        this.gotoDefinition(a.target).done(function() {
+          b.removeDecorations();
+        }, function(a) {
+          b.removeDecorations();
 
-        y.onUnexpectedError(a);
-      });
+          y.onUnexpectedError(a);
+        });
+      }
     };
 
     a.prototype.isEnabled = function(b, c) {

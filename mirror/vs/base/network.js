@@ -96,7 +96,9 @@ define("vs/base/network", ["require", "exports", "./assert", "./hash", "./string
         var o = this._spec.charAt(n);
         switch (o) {
           case "/":
-            3 === ++e && (t = n);
+            if (3 === ++e) {
+              t = n;
+            }
             break;
           case "?":
           case "#":

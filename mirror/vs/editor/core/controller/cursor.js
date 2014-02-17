@@ -18,18 +18,20 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
 
       this.viewModelHelper = s;
 
-      this.viewModelHelper || (this.viewModelHelper = {
-        viewModel: this.model,
-        convertModelPositionToViewPosition: function(e, t) {
-          return new h.Position(e, t);
-        },
-        convertViewToModelPosition: function(e, t) {
-          return new h.Position(e, t);
-        },
-        validateViewPosition: function(e, t, n) {
-          return n;
-        }
-      });
+      if (!this.viewModelHelper) {
+        this.viewModelHelper = {
+          viewModel: this.model,
+          convertModelPositionToViewPosition: function(e, t) {
+            return new h.Position(e, t);
+          },
+          convertViewToModelPosition: function(e, t) {
+            return new h.Position(e, t);
+          },
+          validateViewPosition: function(e, t, n) {
+            return n;
+          }
+        };
+      }
 
       this.cursors = new c.CursorCollection(this.editorId, this.model, this.configuration, this.viewModelHelper);
 
@@ -91,15 +93,23 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
         var r = 1;
 
         var s = 1;
-        t.position && t.position.lineNumber && (r = t.position.lineNumber);
+        if (t.position && t.position.lineNumber) {
+          r = t.position.lineNumber;
+        }
 
-        t.position && t.position.column && (s = t.position.column);
+        if (t.position && t.position.column) {
+          s = t.position.column;
+        }
         var a = r;
 
         var l = s;
-        t.selectionStart && t.selectionStart.lineNumber && (a = t.selectionStart.lineNumber);
+        if (t.selectionStart && t.selectionStart.lineNumber) {
+          a = t.selectionStart.lineNumber;
+        }
 
-        t.selectionStart && t.selectionStart.column && (l = t.selectionStart.column);
+        if (t.selectionStart && t.selectionStart.column) {
+          l = t.selectionStart.column;
+        }
 
         i.push({
           selectionStartLineNumber: a,
@@ -124,7 +134,9 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
     };
 
     t.prototype.addTypingListener = function(e, t) {
-      this.typingListeners.hasOwnProperty(e) || (this.typingListeners[e] = []);
+      if (!this.typingListeners.hasOwnProperty(e)) {
+        this.typingListeners[e] = [];
+      }
 
       this.typingListeners[e].push(t);
     };
@@ -247,14 +259,23 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
             y = !0;
           } else {
             for (var d = 0, _ = u.length; !y && _ > d; d++) {
-              u[d].equalsSelection(m[d]) || (y = !0);
+              if (!u[d].equalsSelection(m[d])) {
+                y = !0;
+              }
             }
             for (var d = 0, _ = l.length; !y && _ > d; d++) {
-              l[d].equalsSelection(v[d]) || (y = !0);
+              if (!l[d].equalsSelection(v[d])) {
+                y = !0;
+              }
             }
           }
-          y && (i.emitCursorPositionChanged(c, e), r && i.emitCursorRevealRange(s, a), i.emitCursorSelectionChanged(
-            c, e));
+          if (y) {
+            i.emitCursorPositionChanged(c, e);
+            if (r) {
+              i.emitCursorRevealRange(s, a);
+            }
+            i.emitCursorSelectionChanged(c, e);
+          }
         });
       } catch (r) {
         d.onUnexpectedError(r);
@@ -265,13 +286,19 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
     };
 
     t.prototype._interpretHandlerContext = function(e) {
-      e.shouldPushStackElementBefore && (this.model.pushStackElement(), e.shouldPushStackElementBefore = !1);
+      if (e.shouldPushStackElementBefore) {
+        this.model.pushStackElement();
+        e.shouldPushStackElementBefore = !1;
+      }
 
       this._internalExecuteCommands(e.executeCommands, e.postOperationRunnables);
 
       e.executeCommands = [];
 
-      e.shouldPushStackElementAfter && (this.model.pushStackElement(), e.shouldPushStackElementAfter = !1);
+      if (e.shouldPushStackElementAfter) {
+        this.model.pushStackElement();
+        e.shouldPushStackElementAfter = !1;
+      }
       for (var t = !1, n = 0, i = e.postOperationRunnables.length; i > n; n++)
         if (e.postOperationRunnables[n]) {
           t = !0;
@@ -377,9 +404,17 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
 
           o[i.toString()] = !0;
           for (var a = 0; a < e.length; a++) {
-            e[a].identifier.major === i && (e.splice(a, 1), s > a && s--, a--);
+            if (e[a].identifier.major === i) {
+              e.splice(a, 1);
+              if (s > a) {
+                s--;
+              }
+              a--;
+            }
           }
-          s > 0 && s--;
+          if (s > 0) {
+            s--;
+          }
         }
       return o;
     };
@@ -433,7 +468,9 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
         return !1;
       }
       for (var f = [], d = 0; d < a.length; d++) {
-        p.hasOwnProperty(a[d].identifier.major.toString()) || f.push(a[d]);
+        if (!p.hasOwnProperty(a[d].identifier.major.toString())) {
+          f.push(a[d]);
+        }
       }
       var g;
 
@@ -467,7 +504,9 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
 
       var v = [];
       for (g in p) {
-        p.hasOwnProperty(g) && v.push(parseInt(g, 10));
+        if (p.hasOwnProperty(g)) {
+          v.push(parseInt(g, 10));
+        }
       }
       v.sort(function(e, t) {
         return t - e;
@@ -495,7 +534,9 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
       var l = !0;
       if (this.model.hasEditableRange()) {
         var c = this.model.getEditableRange();
-        c.containsPosition(i) || (l = !1);
+        if (!c.containsPosition(i)) {
+          l = !1;
+        }
       }
       var d = {
         position: i,
@@ -792,14 +833,20 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
         };
       };
       for (o in n) {
-        n.hasOwnProperty(o) && this.configuration.handlerDispatcher.setHandler(o, r(o, n[o]));
+        if (n.hasOwnProperty(o)) {
+          this.configuration.handlerDispatcher.setHandler(o, r(o, n[o]));
+        }
       }
     };
 
     t.prototype._invokeForAll = function(e, t, n, i) {
-      "undefined" == typeof n && (n = !0);
+      if ("undefined" == typeof n) {
+        n = !0;
+      }
 
-      "undefined" == typeof i && (i = !0);
+      if ("undefined" == typeof i) {
+        i = !0;
+      }
       var o;
 
       var r = !1;
@@ -821,8 +868,12 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
           shouldPushStackElementAfter: !1
         };
         r = t(a, s[a], o) || r;
-        0 === a && (e.cursorPositionChangeReason = o.cursorPositionChangeReason, e.shouldRevealHorizontal = o.shouldRevealHorizontal,
-          e.shouldReveal = o.shouldReveal, e.shouldRevealVerticalInCenter = o.shouldRevealVerticalInCenter);
+        if (0 === a) {
+          e.cursorPositionChangeReason = o.cursorPositionChangeReason;
+          e.shouldRevealHorizontal = o.shouldRevealHorizontal;
+          e.shouldReveal = o.shouldReveal;
+          e.shouldRevealVerticalInCenter = o.shouldRevealVerticalInCenter;
+        }
         e.shouldPushStackElementBefore = e.shouldPushStackElementBefore || o.shouldPushStackElementBefore;
         e.shouldPushStackElementAfter = e.shouldPushStackElementAfter || o.shouldPushStackElementAfter;
         e.executeCommands[a] = o.executeCommand;

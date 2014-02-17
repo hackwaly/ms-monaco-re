@@ -1,6 +1,8 @@
 define("vs/editor/modes/nullMode", ["require", "exports", "vs/editor/modes/modes"], function(e, t) {
   function n(e, t, n, i) {
-    "undefined" == typeof i && (i = 0);
+    if ("undefined" == typeof i) {
+      i = 0;
+    }
     var o = [{
       startIndex: i,
       type: "",

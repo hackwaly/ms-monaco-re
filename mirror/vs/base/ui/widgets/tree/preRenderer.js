@@ -50,8 +50,17 @@ define("vs/base/ui/widgets/tree/preRenderer", ["require", "exports", "vs/base/do
     };
 
     e.prototype.cleanupBinding = function(e) {
-      e && (e.cleanupFn && (e.cleanupFn(e.tree, e.element), delete e.cleanupFn), e.container && delete e.container,
-        delete e.tree, delete e.element);
+      if (e) {
+        if (e.cleanupFn) {
+          e.cleanupFn(e.tree, e.element);
+          delete e.cleanupFn;
+        }
+        if (e.container) {
+          delete e.container;
+        }
+        delete e.tree;
+        delete e.element;
+      }
     };
 
     e.prototype.renderContents = function() {
@@ -64,11 +73,14 @@ define("vs/base/ui/widgets/tree/preRenderer", ["require", "exports", "vs/base/do
 
     e.prototype.dispose = function() {
       var e = this;
-      this.cache && (Object.keys(this.cache).forEach(function(t) {
-        e.cleanupBinding(e.cache[t]);
+      if (this.cache) {
+        Object.keys(this.cache).forEach(function(t) {
+          e.cleanupBinding(e.cache[t]);
 
-        delete e.cache[t];
-      }), delete this.cache);
+          delete e.cache[t];
+        });
+        delete this.cache;
+      }
     };
 
     e.BINDING = "monaco-tree-actionsRenderer";

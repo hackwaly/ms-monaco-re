@@ -46,7 +46,10 @@ define("vs/editor/core/model/textModelWithMarkers", ["require", "exports", "vs/e
         var o = this._markerIdToMarker[e];
 
         var r = this.validatePosition(new i.Position(t, n));
-        r.lineNumber !== o.line.lineNumber && (o.line.removeMarker(o), this._lines[r.lineNumber - 1].addMarker(o));
+        if (r.lineNumber !== o.line.lineNumber) {
+          o.line.removeMarker(o);
+          this._lines[r.lineNumber - 1].addMarker(o);
+        }
 
         o.column = r.column;
       }
@@ -55,7 +58,9 @@ define("vs/editor/core/model/textModelWithMarkers", ["require", "exports", "vs/e
     t.prototype._changeMarkerStickiness = function(e, t) {
       if (this._markerIdToMarker.hasOwnProperty(e)) {
         var n = this._markerIdToMarker[e];
-        n.stickToPreviousCharacter !== t && (n.stickToPreviousCharacter = t);
+        if (n.stickToPreviousCharacter !== t) {
+          n.stickToPreviousCharacter = t;
+        }
       }
     };
 
@@ -85,7 +90,9 @@ define("vs/editor/core/model/textModelWithMarkers", ["require", "exports", "vs/e
 
       var n = [];
       for (t in e) {
-        e.hasOwnProperty(t) && this._markerIdToMarker.hasOwnProperty(t) && n.push(this._markerIdToMarker[t]);
+        if (e.hasOwnProperty(t) && this._markerIdToMarker.hasOwnProperty(t)) {
+          n.push(this._markerIdToMarker[t]);
+        }
       }
       return n;
     };

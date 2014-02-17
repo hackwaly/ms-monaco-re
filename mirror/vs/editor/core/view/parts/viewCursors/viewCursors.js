@@ -34,7 +34,10 @@ define("vs/editor/core/view/parts/viewCursors/viewCursors", ["require", "exports
     t.prototype.dispose = function() {
       e.prototype.dispose.call(this);
 
-      - 1 !== this._blinkTimer && (window.clearInterval(this._blinkTimer), this._blinkTimer = -1);
+      if (-1 !== this._blinkTimer) {
+        window.clearInterval(this._blinkTimer);
+        this._blinkTimer = -1;
+      }
     };
 
     t.prototype.getDomNode = function() {
@@ -137,13 +140,19 @@ define("vs/editor/core/view/parts/viewCursors/viewCursors", ["require", "exports
     };
 
     t.prototype._updateBlinking = function() {
-      var e = this; - 1 !== this._blinkTimer && (window.clearInterval(this._blinkTimer), this._blinkTimer = -1);
+      var e = this;
+      if (-1 !== this._blinkTimer) {
+        window.clearInterval(this._blinkTimer);
+        this._blinkTimer = -1;
+      }
       var n = this._getRenderType();
       1 === n || 2 === n ? this._show() : this._hide();
 
-      2 === n && (this._blinkTimer = window.setInterval(function() {
-        return e._blink();
-      }, t.BLINK_INTERVAL));
+      if (2 === n) {
+        this._blinkTimer = window.setInterval(function() {
+          return e._blink();
+        }, t.BLINK_INTERVAL);
+      }
     };
 
     t.prototype._blink = function() {

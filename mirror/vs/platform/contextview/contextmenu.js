@@ -16,22 +16,30 @@ define("vs/platform/contextview/contextmenu", ["require", "exports", "vs/base/do
       this.toDispose = [];
       var n = !1;
       this.toDispose.push(this.actionRunner.addListener2(u.EventType.BEFORE_RUN, function(e) {
-        t.telemetryService && t.telemetryService.publicLog("workbenchActionExecuted", {
-          id: e.action.id,
-          From: "contextMenu"
-        });
+        if (t.telemetryService) {
+          t.telemetryService.publicLog("workbenchActionExecuted", {
+            id: e.action.id,
+            From: "contextMenu"
+          });
+        }
 
         n = !! e.retainActionItem;
 
-        n || t.contextViewService.hideContextView(!1);
+        if (!n) {
+          t.contextViewService.hideContextView(!1);
+        }
       }));
 
       this.toDispose.push(this.actionRunner.addListener2(u.EventType.RUN, function(e) {
-        n && t.contextViewService.hideContextView(!1);
+        if (n) {
+          t.contextViewService.hideContextView(!1);
+        }
 
         n = !1;
 
-        e.error && t.messageService.show(2, e.error);
+        if (e.error) {
+          t.messageService.show(2, e.error);
+        }
       }));
     }
     e.prototype.injectContextViewService = function(e) {
@@ -48,11 +56,17 @@ define("vs/platform/contextview/contextmenu", ["require", "exports", "vs/base/do
 
     e.prototype.setContainer = function(e) {
       var t = this;
-      this.$el && (this.$el.off(["click", "mousedown"]), this.$el = null);
+      if (this.$el) {
+        this.$el.off(["click", "mousedown"]);
+        this.$el = null;
+      }
 
-      e && (this.$el = l(e), this.$el.on("mousedown", function(e) {
-        return t.onMouseDown(e);
-      }));
+      if (e) {
+        this.$el = l(e);
+        this.$el.on("mousedown", function(e) {
+          return t.onMouseDown(e);
+        });
+      }
     };
 
     e.prototype.showContextMenu = function(e, t) {
@@ -83,7 +97,9 @@ define("vs/platform/contextview/contextmenu", ["require", "exports", "vs/base/do
             return i.combinedDispose(s, l, r);
           },
           onHide: function(e) {
-            t.onHide && t.onHide(e);
+            if (t.onHide) {
+              t.onHide(e);
+            }
 
             n.menuContainerElement = null;
           }

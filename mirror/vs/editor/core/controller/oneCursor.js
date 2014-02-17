@@ -59,11 +59,20 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
     };
 
     e.prototype.dispose = function() {
-      this.positionMarkerId && (this.model._removeMarker(this.positionMarkerId), this.positionMarkerId = null);
+      if (this.positionMarkerId) {
+        this.model._removeMarker(this.positionMarkerId);
+        this.positionMarkerId = null;
+      }
 
-      this.selStartMarkerId && (this.model._removeMarker(this.selStartMarkerId), this.selStartMarkerId = null);
+      if (this.selStartMarkerId) {
+        this.model._removeMarker(this.selStartMarkerId);
+        this.selStartMarkerId = null;
+      }
 
-      this.selEndMarkerId && (this.model._removeMarker(this.selEndMarkerId), this.selEndMarkerId = null);
+      if (this.selEndMarkerId) {
+        this.model._removeMarker(this.selEndMarkerId);
+        this.selEndMarkerId = null;
+      }
 
       this.bracketDecorations = this.model.deltaDecorations(this.bracketDecorations, [], this.editorId);
     };
@@ -72,7 +81,9 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
       var e = null;
 
       var t = this.getSelection();
-      t.isEmpty() && !this.configuration.editor.readOnly && (e = this.model.matchBracket(this.position, !0));
+      if (t.isEmpty() && !this.configuration.editor.readOnly) {
+        e = this.model.matchBracket(this.position, !0);
+      }
       var n = [];
       if (e && e.brackets) {
         var i = {
@@ -152,10 +163,14 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
     };
 
     e.prototype._setPosition = function(e, t, n, i, o) {
-      "undefined" == typeof o && (o = 0);
+      if ("undefined" == typeof o) {
+        o = 0;
+      }
 
-      this.inSelectionMode && this.viewSelectionStart.isEmpty() && this.viewSelectionStart.startLineNumber === n &&
-        this.viewSelectionStart.startColumn === i && this._stopSelectionMode();
+      if (this.inSelectionMode && this.viewSelectionStart.isEmpty() && this.viewSelectionStart.startLineNumber === n &&
+        this.viewSelectionStart.startColumn === i) {
+        this._stopSelectionMode();
+      }
 
       this.position = new r.Position(e, t);
 
@@ -349,7 +364,11 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
       var i = this.position.column;
 
       var o = !1;
-      1 === i && n > 1 && (o = !0, n -= 1, i = this.model.getLineMaxColumn(n));
+      if (1 === i && n > 1) {
+        o = !0;
+        n -= 1;
+        i = this.model.getLineMaxColumn(n);
+      }
       var s = this.helper.findWord(new r.Position(n, i), "left", !0);
       i = s ? o || i > s.end + 1 ? s.end + 1 : s.start + 1 : 1;
 
@@ -388,7 +407,11 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
       var i = this.position.column;
 
       var o = !1;
-      i === this.model.getLineMaxColumn(n) && n < this.model.getLineCount() && (o = !0, n += 1, i = 1);
+      if (i === this.model.getLineMaxColumn(n) && n < this.model.getLineCount()) {
+        o = !0;
+        n += 1;
+        i = 1;
+      }
       var s = this.helper.findWord(new r.Position(n, i), "right", !0);
       i = s ? o || i < s.start + 1 ? s.start + 1 : s.end + 1 : this.model.getLineMaxColumn(n);
 
@@ -532,7 +555,13 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
         var s = this.model.getEditableRange();
 
         var a = this.getSelection();
-        a.equalsRange(s) || (r = !1, t = s.startLineNumber, n = s.startColumn, i = s.endLineNumber, o = s.endColumn);
+        if (!a.equalsRange(s)) {
+          r = !1;
+          t = s.startLineNumber;
+          n = s.startColumn;
+          i = s.endLineNumber;
+          o = s.endColumn;
+        }
       }
       r && (t = 1, n = 1, i = this.model.getLineCount(), o = this.model.getLineMaxColumn(i));
 
@@ -606,9 +635,13 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
           var d = this.model.getLineMaxColumn(l.lineNumber);
           l.column === d || "left" === n ? (o = l.column - 1, r = l.column) : (o = l.column, r = l.column + 1);
 
-          1 >= o && (o = 1);
+          if (1 >= o) {
+            o = 1;
+          }
 
-          r >= d && (r = d);
+          if (r >= d) {
+            r = d;
+          }
         }
         var h = new s.Range(l.lineNumber, o, l.lineNumber, r);
 
@@ -656,9 +689,13 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
     };
 
     e.prototype._enter = function(e, t, n, o) {
-      "undefined" == typeof n && (n = this.position);
+      if ("undefined" == typeof n) {
+        n = this.position;
+      }
 
-      "undefined" == typeof o && (o = this.getSelection());
+      if ("undefined" == typeof o) {
+        o = this.getSelection();
+      }
 
       t.shouldPushStackElementBefore = !0;
       var r;
@@ -775,7 +812,11 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
         for (u = this.model.getLineContent(i), o = i === n.startLineNumber ? n.startColumn - 1 : 0, r = i === n.endLineNumber ?
           n.endColumn - 1 : u.length, s = o; r > s; s++) {
           a = u.charCodeAt(s);
-          a !== d && a !== h && (c = !1, i = n.endLineNumber + 1, s = r);
+          if (a !== d && a !== h) {
+            c = !1;
+            i = n.endLineNumber + 1;
+            s = r;
+          }
         }
       if (c) {
         return !1;
@@ -839,7 +880,9 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
           }
         } else if (l) {
           var C = -l.length;
-          t.advanceCount && (C += t.advanceCount);
+          if (t.advanceCount) {
+            C += t.advanceCount;
+          }
 
           e.shouldPushStackElementAfter = !0;
 
@@ -1100,7 +1143,9 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
     };
 
     e.prototype.findWord = function(e, t, n) {
-      "undefined" == typeof n && (n = !1);
+      if ("undefined" == typeof n) {
+        n = !1;
+      }
       var i;
 
       var o;

@@ -92,8 +92,13 @@ define("vs/editor/core/view/lines/viewLine", ["require", "exports", "vs/base/env
 
       n.lastRenderedPartIndex = l;
 
-      p.length > 0 && (n.output.push('<span class="'), n.output.push(s), n.output.push('" style="color:grey">'), n.output
-        .push(p), n.output.push("&hellip;</span>"));
+      if (p.length > 0) {
+        n.output.push('<span class="');
+        n.output.push(s);
+        n.output.push('" style="color:grey">');
+        n.output.push(p);
+        n.output.push("&hellip;</span>");
+      }
     } else {
       n.output.push("<span>&nbsp;</span>");
     }
@@ -120,7 +125,10 @@ define("vs/editor/core/view/lines/viewLine", ["require", "exports", "vs/base/env
     function e(e, t) {
       this._context = e;
 
-      t && (this._domNode = document.createElement("div"), this._domNode.className = i.ClassNames.VIEW_LINE);
+      if (t) {
+        this._domNode = document.createElement("div");
+        this._domNode.className = i.ClassNames.VIEW_LINE;
+      }
 
       this._isInvalid = !0;
 
@@ -226,12 +234,17 @@ define("vs/editor/core/view/lines/viewLine", ["require", "exports", "vs/base/env
 
     e.prototype.layoutLine = function(e, t) {
       var n = this._domNode.getAttribute("lineNumber");
-      n !== e.toString() && this._domNode.setAttribute("lineNumber", e.toString());
+      if (n !== e.toString()) {
+        this._domNode.setAttribute("lineNumber", e.toString());
+      }
       var i = this._domNode.style.top;
-      i !== t + "px" && (this._domNode.style.top = t + "px");
+      if (i !== t + "px") {
+        this._domNode.style.top = t + "px";
+      }
       var o = this._domNode.style.height;
-      o !== this._context.configuration.editor.lineHeight + "px" && (this._domNode.style.height = this._context.configuration
-        .editor.lineHeight + "px");
+      if (o !== this._context.configuration.editor.lineHeight + "px") {
+        this._domNode.style.height = this._context.configuration.editor.lineHeight + "px";
+      }
     };
 
     e.prototype._computeLineParts = function(e) {
@@ -383,8 +396,10 @@ define("vs/editor/core/view/lines/viewLine", ["require", "exports", "vs/base/env
 
       var l = a;
 
-      var c = r; - 1 !== this._context.configuration.editor.stopRenderingLineAfter && (c = Math.min(this._context.configuration
-        .editor.stopRenderingLineAfter - 1, r));
+      var c = r;
+      if (-1 !== this._context.configuration.editor.stopRenderingLineAfter) {
+        c = Math.min(this._context.configuration.editor.stopRenderingLineAfter - 1, r);
+      }
       for (var d, h, p, f, g; c > l;) {
         if (u = Math.floor((l + c) / 2), d = this._charOffsetInPart[u], h = u === r ? Number.MAX_VALUE : u + 1 === r ?
           s : this._charOffsetInPart[u + 1], p = u === a ? Number.MIN_VALUE : this._charOffsetInPart[u - 1], f = (p +
@@ -447,7 +462,9 @@ define("vs/editor/core/view/lines/viewLine", ["require", "exports", "vs/base/env
         var d = l[0];
 
         var h = !0;
-        c.top === d.top && (h = c.left <= d.left);
+        if (c.top === d.top) {
+          h = c.left <= d.left;
+        }
         var p = a[a.length - 1];
         h && p.top === d.top && p.left < d.left ? p.width = d.left - p.left : p.top > d.top && a.splice(a.length - 1,
           1);

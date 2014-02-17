@@ -44,7 +44,9 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
   }
 
   function m(e, t) {
-    c(e) && delete l(e)[t];
+    if (c(e)) {
+      delete l(e)[t];
+    }
   }
 
   function v(e, n) {
@@ -140,7 +142,9 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
     };
 
     e.prototype.and = function(t) {
-      t instanceof e || t instanceof N || (t = new e(t, this.offdom));
+      if (!(t instanceof e || t instanceof N)) {
+        t = new e(t, this.offdom);
+      }
       var n = [this];
       if (t instanceof N)
         for (var i = 0; i < t.length; i++) {
@@ -183,7 +187,9 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
 
       r.ok(s.isHTMLElement(t), "The container must either be a HTMLElement or a Builder.");
       var o = t;
-      this.currentElement.parentNode && this.currentElement.parentNode.removeChild(this.currentElement);
+      if (this.currentElement.parentNode) {
+        this.currentElement.parentNode.removeChild(this.currentElement);
+      }
       var a = o.childNodes;
       i.isNumber(n) && n < a.length ? o.insertBefore(this.currentElement, a[n]) : o.appendChild(this.currentElement);
 
@@ -288,7 +294,9 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
     };
 
     e.prototype.domSelect = function(e) {
-      "undefined" == typeof e && (e = null);
+      if ("undefined" == typeof e) {
+        e = null;
+      }
       var t = this.currentElement;
       t.select();
 
@@ -328,7 +336,9 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
 
         this.setProperty(w, l);
 
-        n && i.isArray(n) && n.push(u);
+        if (n && i.isArray(n)) {
+          n.push(u);
+        }
       }
       return this;
     };
@@ -374,7 +384,9 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
       var i = function(e) {
         e.preventDefault();
 
-        t && (e.stopPropagation ? e.stopPropagation() : e.cancelBubble = !0);
+        if (t) {
+          e.stopPropagation ? e.stopPropagation() : e.cancelBubble = !0;
+        }
       };
       return this.on(e, i, n);
     };
@@ -393,7 +405,9 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
     };
 
     e.prototype.doSetAttr = function(e, t) {
-      "class" === e && (e = "addClass");
+      if ("class" === e) {
+        e = "addClass";
+      }
 
       this[e] ? i.isArray(t) ? this[e].apply(this, t) : this[e].call(this, t) : this.currentElement.setAttribute(e, t);
     };
@@ -469,7 +483,9 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
         if (i.isString(e) && !i.isString(t)) {
           return this.currentElement.style[this.cssKeyToJavaScriptProperty(e)];
         }
-        i.isString(e) && i.isString(t) && this.doSetStyle(e, t);
+        if (i.isString(e) && i.isString(t)) {
+          this.doSetStyle(e, t);
+        }
       }
       return this;
     };
@@ -495,7 +511,9 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
           e = e + i.charAt(0).toUpperCase() + i.substr(1);
         }
       } else {
-        "float" === e && (e = "cssFloat");
+        if ("float" === e) {
+          e = "cssFloat";
+        }
       }
       return e;
     };
@@ -715,7 +733,10 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
 
     e.prototype.cancelVisibilityPromise = function() {
       var e = this.getProperty(E);
-      e && (e.cancel(), this.removeProperty(E));
+      if (e) {
+        e.cancel();
+        this.removeProperty(E);
+      }
     };
 
     e.prototype.border = function(e, t, n) {
@@ -946,7 +967,9 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
     };
 
     e.prototype.getPositionRelativeTo = function(t) {
-      t instanceof e && (t = t.getHTMLElement());
+      if (t instanceof e) {
+        t = t.getHTMLElement();
+      }
       var n = s.getRelativeLeft(this.currentElement, t);
 
       var i = s.getRelativeTop(this.currentElement, t);
@@ -1012,21 +1035,30 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
           for (var n, o = Array.prototype.slice.call(arguments), r = !1, a = 0; a < s.length; a++) {
             var u = s.item(a)[e].apply(s.item(a), o);
             if (u instanceof t) {
-              n || (n = []);
+              if (!n) {
+                n = [];
+              }
 
               r = !0;
               for (var l = 0; l < u.length; l++) {
                 n.push(u.item(l));
               }
             } else {
-              i.isUndefined(u) || u instanceof T || (n || (n = []), n.push(u));
+              if (!(i.isUndefined(u) || u instanceof T)) {
+                if (!n) {
+                  n = [];
+                }
+                n.push(u);
+              }
             }
           }
           return n && r ? new t(n) : n || s;
         };
       };
       for (var u in T.prototype) {
-        "clone" !== u && "and" !== u && T.prototype.hasOwnProperty(u) && i.isFunction(T.prototype[u]) && a(u);
+        if ("clone" !== u && "and" !== u && T.prototype.hasOwnProperty(u) && i.isFunction(T.prototype[u])) {
+          a(u);
+        }
       }
     }
     __extends(t, e);
@@ -1092,7 +1124,9 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
     };
 
     t.prototype.and = function(e) {
-      e instanceof T || e instanceof t || (e = new T(e));
+      if (!(e instanceof T || e instanceof t)) {
+        e = new T(e);
+      }
       var n = [];
       if (e instanceof t)
         for (var i = 0; i < e.length; i++) {

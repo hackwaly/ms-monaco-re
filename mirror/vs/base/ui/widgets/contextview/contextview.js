@@ -34,15 +34,24 @@ define("vs/base/ui/widgets/contextview/contextview", ["require", "exports", "vs/
 
     t.prototype.setContainer = function(e) {
       var n = this;
-      this.$container && (this.$container.off(t.EVENTS), this.$container = null);
+      if (this.$container) {
+        this.$container.off(t.EVENTS);
+        this.$container = null;
+      }
 
-      e && (this.$container = s(e), this.$view.appendTo(this.$container), this.$container.on(t.EVENTS, function(e) {
-        n.onDOMEvent(e, document.activeElement);
-      }));
+      if (e) {
+        this.$container = s(e);
+        this.$view.appendTo(this.$container);
+        this.$container.on(t.EVENTS, function(e) {
+          n.onDOMEvent(e, document.activeElement);
+        });
+      }
     };
 
     t.prototype.show = function(e) {
-      this.isVisible() && this.hide();
+      if (this.isVisible()) {
+        this.hide();
+      }
 
       this.$view.setClass("context-view").empty().style({
         top: "0px",
@@ -62,7 +71,9 @@ define("vs/base/ui/widgets/contextview/contextview", ["require", "exports", "vs/
           this.hide();
           return void 0;
         }
-        this.delegate.layout && this.delegate.layout();
+        if (this.delegate.layout) {
+          this.delegate.layout();
+        }
 
         this.doLayout();
       }
@@ -138,11 +149,16 @@ define("vs/base/ui/widgets/contextview/contextview", ["require", "exports", "vs/
     };
 
     t.prototype.hide = function(e) {
-      this.delegate && this.delegate.onHide && this.delegate.onHide(e);
+      if (this.delegate && this.delegate.onHide) {
+        this.delegate.onHide(e);
+      }
 
       this.delegate = null;
 
-      this.toDisposeOnClean && (this.toDisposeOnClean.dispose(), this.toDisposeOnClean = null);
+      if (this.toDisposeOnClean) {
+        this.toDisposeOnClean.dispose();
+        this.toDisposeOnClean = null;
+      }
 
       this.$view.hide();
     };

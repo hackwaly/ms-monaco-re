@@ -18,7 +18,9 @@ define("vs/base/lib/winjs.base", ["./raw.winjs.base", "vs/base/errors"], functio
 
           console.log(i);
 
-          i.exception && console.log(i.exception.stack);
+          if (i.exception) {
+            console.log(i.exception.stack);
+          }
         });
       }, 0), void 0);
   }
@@ -40,11 +42,15 @@ define("vs/base/lib/winjs.base", ["./raw.winjs.base", "vs/base/errors"], functio
       e.cancel();
     });
     e.then(function(e) {
-      t && t(e);
+      if (t) {
+        t(e);
+      }
 
       i(e);
     }, function(e) {
-      n && n(e);
+      if (n) {
+        n(e);
+      }
 
       o(e);
     }, r);

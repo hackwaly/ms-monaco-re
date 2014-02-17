@@ -13,8 +13,11 @@ define("vs/languages/typescript/lint/rules/layout", ["require", "exports", "vs/l
     }
     e.prototype.checkElement = function(e, t) {
       var n = e;
-      n.kind() === r.SyntaxKind.ElseClause && n.statement && n.statement.kind() === r.SyntaxKind.IfStatement || n.statement &&
-        n.statement.kind() !== r.SyntaxKind.Block && t.reportError(n.statement, this.name, this.code);
+      if (!(n.kind() === r.SyntaxKind.ElseClause && n.statement && n.statement.kind() === r.SyntaxKind.IfStatement)) {
+        if (n.statement && n.statement.kind() !== r.SyntaxKind.Block) {
+          t.reportError(n.statement, this.name, this.code);
+        }
+      }
     };
 
     return e;
@@ -29,7 +32,9 @@ define("vs/languages/typescript/lint/rules/layout", ["require", "exports", "vs/l
       this.filter = [r.SyntaxKind.Block];
     }
     e.prototype.checkElement = function(e, t) {
-      e.statements.childCount() > 0 || this._hasComment(e) || t.reportError(e, this.name, this.code);
+      if (!(e.statements.childCount() > 0 || this._hasComment(e))) {
+        t.reportError(e, this.name, this.code);
+      }
     };
 
     e.prototype._hasComment = function(e) {

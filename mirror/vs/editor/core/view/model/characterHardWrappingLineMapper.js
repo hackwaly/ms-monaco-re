@@ -121,13 +121,35 @@ define("vs/editor/core/view/model/characterHardWrappingLineMapper", ["require", 
         u = f.charCodeAt(t);
         l = u === v;
         c = u < p.length ? p[u] : 0;
-        c === r && (C = t, w = 0);
+        if (c === r) {
+          C = t;
+          w = 0;
+        }
         o = e.nextVisibleColumn(o, g, l);
-        o > m && 0 !== t && (-1 !== C ? (d = C, h = w) : -1 !== E ? (d = E, h = S) : (d = t, h = 0), _[b++] = d - y,
-          y = d, o = e.nextVisibleColumn(h, g, l), C = -1, w = 0, E = -1, S = 0); - 1 !== C && (w = e.nextVisibleColumn(
-          w, g, l)); - 1 !== E && (S = e.nextVisibleColumn(S, g, l));
-        c === s && (C = t + 1, w = 0);
-        c === a && (E = t + 1, S = 0);
+        if (o > m && 0 !== t) {
+          -1 !== C ? (d = C, h = w) : -1 !== E ? (d = E, h = S) : (d = t, h = 0);
+          _[b++] = d - y;
+          y = d;
+          o = e.nextVisibleColumn(h, g, l);
+          C = -1;
+          w = 0;
+          E = -1;
+          S = 0;
+        }
+        if (-1 !== C) {
+          w = e.nextVisibleColumn(w, g, l);
+        }
+        if (-1 !== E) {
+          S = e.nextVisibleColumn(S, g, l);
+        }
+        if (c === s) {
+          C = t + 1;
+          w = 0;
+        }
+        if (c === a) {
+          E = t + 1;
+          S = 0;
+        }
       }
       _[b++] = i - y;
 

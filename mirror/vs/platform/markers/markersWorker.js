@@ -72,7 +72,9 @@ define("vs/platform/markers/markersWorker", ["require", "exports", "vs/base/asse
       } finally {
         this.globalChangeCount--;
 
-        0 === this.globalChangeCount && this._publishReadyMarkerUpdates();
+        if (0 === this.globalChangeCount) {
+          this._publishReadyMarkerUpdates();
+        }
       }
     };
 
@@ -155,7 +157,9 @@ define("vs/platform/markers/markersWorker", ["require", "exports", "vs/base/asse
         var i = e.markerUpdates[n];
 
         var o = e._getMarkerUpdateChangeCount(i);
-        "undefined" == typeof o && t.push(e._convertToJson(i));
+        if ("undefined" == typeof o) {
+          t.push(e._convertToJson(i));
+        }
       });
 
       this.publisher.sendMessage("publishMarkerUpdates", t);

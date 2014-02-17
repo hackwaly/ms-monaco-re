@@ -57,7 +57,10 @@ define("vs/base/ui/scrollbar/impl/domNodeScrollable", ["require", "exports", "vs
 
       this.eventEmitterHelper.dispose();
 
-      this.gestureHandler && (this.gestureHandler.dispose(), this.gestureHandler = null);
+      if (this.gestureHandler) {
+        this.gestureHandler.dispose();
+        this.gestureHandler = null;
+      }
     };
 
     return e;

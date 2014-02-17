@@ -3,9 +3,13 @@ define("vs/editor/core/model/consoleModel", ["require", "exports", "./model", "v
 ], function(e, t, n, i, o) {
   var r = function(e) {
     function t(t, n, i, o) {
-      "undefined" == typeof i && (i = null);
+      if ("undefined" == typeof i) {
+        i = null;
+      }
 
-      "undefined" == typeof o && (o = null);
+      if ("undefined" == typeof o) {
+        o = null;
+      }
 
       e.call(this, "", n, i);
 
@@ -22,7 +26,9 @@ define("vs/editor/core/model/consoleModel", ["require", "exports", "./model", "v
     __extends(t, e);
 
     t.prototype.setValue = function(t, n) {
-      "undefined" == typeof n && (n = null);
+      if ("undefined" == typeof n) {
+        n = null;
+      }
 
       e.prototype.setValue.call(this, "", n);
 
@@ -134,9 +140,14 @@ define("vs/editor/core/model/consoleModel", ["require", "exports", "./model", "v
       var t = this;
       this.change(function(n) {
         for (var i = 0, o = 0, r = e.length; r > o; o++) {
-          "\n" === e.charAt(o) && (t.appendOutputPiece(n, e.substring(i, o), !0), i = o + 1);
+          if ("\n" === e.charAt(o)) {
+            t.appendOutputPiece(n, e.substring(i, o), !0);
+            i = o + 1;
+          }
         }
-        r > i && t.appendOutputPiece(n, e.substr(i), !1);
+        if (r > i) {
+          t.appendOutputPiece(n, e.substr(i), !1);
+        }
       });
     };
 
@@ -144,7 +155,9 @@ define("vs/editor/core/model/consoleModel", ["require", "exports", "./model", "v
       var e = this.promptText;
 
       var t = this.getLineContent(this.getLineCount());
-      "" !== t && (e = "\n" + e);
+      if ("" !== t) {
+        e = "\n" + e;
+      }
 
       this.forceAppendOutputColumn = 0;
 
@@ -157,11 +170,13 @@ define("vs/editor/core/model/consoleModel", ["require", "exports", "./model", "v
       var t = this;
 
       var n = this.getEditableRange();
-      this.promptText && this.promptText !== e && n.startColumn > this.promptText.length && this.change(function(i) {
-        var r = i.deleteText(new o.Range(n.startLineNumber, n.startColumn - t.promptText.length, n.startLineNumber,
-          n.startColumn));
-        i.insertText(r.position, e, !0);
-      });
+      if (this.promptText && this.promptText !== e && n.startColumn > this.promptText.length) {
+        this.change(function(i) {
+          var r = i.deleteText(new o.Range(n.startLineNumber, n.startColumn - t.promptText.length, n.startLineNumber,
+            n.startColumn));
+          i.insertText(r.position, e, !0);
+        });
+      }
 
       this.promptText = e || "";
 
@@ -178,11 +193,13 @@ define("vs/editor/core/model/consoleModel", ["require", "exports", "./model", "v
           var r = Number.MIN_VALUE;
           n = [];
           for (var s = 0; s < o.length; s++) {
-            o[s] !== r && n.push({
-              startIndex: s,
-              type: 0 === o[s] ? "" : "meta.code" + o[s] + ".terminal",
-              bracket: 0
-            });
+            if (o[s] !== r) {
+              n.push({
+                startIndex: s,
+                type: 0 === o[s] ? "" : "meta.code" + o[s] + ".terminal",
+                bracket: 0
+              });
+            }
             r = o[s];
           }
         }

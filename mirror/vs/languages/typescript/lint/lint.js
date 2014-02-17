@@ -6,7 +6,9 @@ define("vs/languages/typescript/lint/lint", ["require", "exports", "vs/nls!vs/la
     for (var n in e)
       if (e.hasOwnProperty(n)) {
         var r = e[n];
-        "function" == typeof r && (t[String(n).toLowerCase()] = r);
+        if ("function" == typeof r) {
+          t[String(n).toLowerCase()] = r;
+        }
       }
   }
 
@@ -22,10 +24,12 @@ define("vs/languages/typescript/lint/lint", ["require", "exports", "vs/nls!vs/la
     for (var s in e)
       if (e.hasOwnProperty(s)) {
         var p = o.lookup(t, String(s).toLowerCase());
-        p && n.push({
-          rule: i.create(p),
-          severity: r.fromValue(e[s])
-        });
+        if (p) {
+          n.push({
+            rule: i.create(p),
+            severity: r.fromValue(e[s])
+          });
+        }
       }
     return n;
   }
@@ -69,9 +73,13 @@ define("vs/languages/typescript/lint/lint", ["require", "exports", "vs/nls!vs/la
     };
 
     e.prototype.reportError = function(e, t, n, r, i) {
-      "undefined" == typeof r && (r = this.start(e));
+      if ("undefined" == typeof r) {
+        r = this.start(e);
+      }
 
-      "undefined" == typeof i && (i = "function" == typeof e.width ? e.width() : e.fullWidth());
+      if ("undefined" == typeof i) {
+        i = "function" == typeof e.width ? e.width() : e.fullWidth();
+      }
       var o = this._lineMap.getLineAndCharacterFromPosition(r);
 
       var s = this._lineMap.getLineAndCharacterFromPosition(r + i);

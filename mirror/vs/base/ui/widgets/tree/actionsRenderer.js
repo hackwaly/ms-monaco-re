@@ -30,15 +30,23 @@ define("vs/base/ui/widgets/tree/actionsRenderer", ["require", "exports", "vs/bas
           label: !1
         });
       }), l = u.addListener2(o.EventType.RUN, function(e) {
-        e.error && a.onError(e.error);
+        if (e.error) {
+          a.onError(e.error);
+        }
       })) : c.removeClass("has-actions");
       var h = this.renderContents(e, t, d.getHTMLElement(), function() {});
       return function() {
-        h && h(e, t);
+        if (h) {
+          h(e, t);
+        }
 
-        l && l.dispose();
+        if (l) {
+          l.dispose();
+        }
 
-        u && u.dispose();
+        if (u) {
+          u.dispose();
+        }
       };
     };
 

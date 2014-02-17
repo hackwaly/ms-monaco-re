@@ -42,7 +42,12 @@ define("vs/base/ui/widgets/findInput", ["require", "exports", "vs/nls!vs/editor/
 
       a(this.domNode).on("keydown", function(e) {
         var t = new r.KeyboardEvent(e);
-        ("Space" === t.key || "Enter" === t.key) && (s.isChecked = !s.isChecked, s.render(), s.onChange(), t.preventDefault());
+        if ("Space" === t.key || "Enter" === t.key) {
+          s.isChecked = !s.isChecked;
+          s.render();
+          s.onChange();
+          t.preventDefault();
+        }
       }, this.listenersToRemove);
     }
     e.prototype.render = function() {
@@ -108,7 +113,9 @@ define("vs/base/ui/widgets/findInput", ["require", "exports", "vs/nls!vs/editor/
 
       this.buildDomNode();
 
-      Boolean(e) && e.appendChild(this.domNode);
+      if (Boolean(e)) {
+        e.appendChild(this.domNode);
+      }
     }
     e.prototype.destroy = function() {
       this.regex.destroy();
@@ -182,7 +189,9 @@ define("vs/base/ui/widgets/findInput", ["require", "exports", "vs/nls!vs/editor/
     };
 
     e.prototype.setValue = function(e) {
-      this.inputBox.value !== e && (this.inputBox.value = e);
+      if (this.inputBox.value !== e) {
+        this.inputBox.value = e;
+      }
     };
 
     e.prototype.select = function() {

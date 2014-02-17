@@ -49,7 +49,9 @@ define("vs/editor/core/config/configuration", ["require", "exports", "vs/nls!vs/
         var a = n[t[i]];
 
         var u = this._editor[t[i]];
-        r.equals(a, u) || s.push(t[i]);
+        if (!r.equals(a, u)) {
+          s.push(t[i]);
+        }
       }
       return s;
     };
@@ -162,9 +164,13 @@ define("vs/editor/core/config/configuration", ["require", "exports", "vs/nls!vs/
 
   var b = function(e) {
     function t(t, n, i) {
-      "undefined" == typeof n && (n = null);
+      if ("undefined" == typeof n) {
+        n = null;
+      }
 
-      "undefined" == typeof i && (i = null);
+      if ("undefined" == typeof i) {
+        i = null;
+      }
       var o = this;
       e.call(this, [d.EventType.ConfigurationChanged]);
 
@@ -189,7 +195,9 @@ define("vs/editor/core/config/configuration", ["require", "exports", "vs/nls!vs/
         o.emit(d.EventType.ConfigurationChanged, t);
       });
 
-      this._configWithDefaults.getEditorOptions().automaticLayout && this._elementSizeObserver.startObserving();
+      if (this._configWithDefaults.getEditorOptions().automaticLayout) {
+        this._elementSizeObserver.startObserving();
+      }
 
       this.editor = this._computeInternalOptions();
     }
@@ -342,7 +350,9 @@ define("vs/editor/core/config/configuration", ["require", "exports", "vs/nls!vs/
 
       this._computedIndentationOptions = null;
 
-      t.length > 0 && this.emit(d.EventType.ConfigurationChanged, this._createConfigurationChangedEvent(t));
+      if (t.length > 0) {
+        this.emit(d.EventType.ConfigurationChanged, this._createConfigurationChangedEvent(t));
+      }
     };
 
     t.prototype._getEditorClassName = function(e) {
@@ -379,8 +389,9 @@ define("vs/editor/core/config/configuration", ["require", "exports", "vs/nls!vs/
         };
       }
       var t = null;
-      this._indentationGuesser && (t = "auto" !== e.tabSize ? this._indentationGuesser(e.tabSize) : this._indentationGuesser(
-        4));
+      if (this._indentationGuesser) {
+        t = "auto" !== e.tabSize ? this._indentationGuesser(e.tabSize) : this._indentationGuesser(4);
+      }
       var n = !1;
 
       var i = 4;
@@ -451,7 +462,9 @@ define("vs/editor/core/config/configuration", ["require", "exports", "vs/nls!vs/
       return t.getConfiguration().then(function(t) {
         if (t) {
           var i = n;
-          s.isArray(n) || (i = [n]);
+          if (!s.isArray(n)) {
+            i = [n];
+          }
           for (var o = 0; o < i.length; o++) {
             var r = i[o];
             if (r && s.isFunction(r.updateOptions)) {
@@ -460,11 +473,16 @@ define("vs/editor/core/config/configuration", ["require", "exports", "vs/nls!vs/
                 case d.EditorType.ICodeEditor:
                 case d.EditorType.IDiffEditor:
                   var l = t[e.EDITOR_SECTION];
-                  l && (delete l.readOnly, r.updateOptions(l));
+                  if (l) {
+                    delete l.readOnly;
+                    r.updateOptions(l);
+                  }
                   break;
                 case d.EditorType.ITerminal:
                   var c = t[e.TERMINAL_SECTION];
-                  c && r.updateOptions(c);
+                  if (c) {
+                    r.updateOptions(c);
+                  }
               }
             }
             if (t[e.LANGUAGES_SECTION]) {

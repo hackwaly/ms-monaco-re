@@ -111,17 +111,23 @@ define("vs/base/performance/timer", ["require", "exports", "vs/base/env", "vs/ba
 
       this.emit("eventStart", e);
 
-      this.collectedEvents.length > this.eventCacheLimit && this.collectedEvents.shift();
+      if (this.collectedEvents.length > this.eventCacheLimit) {
+        this.collectedEvents.shift();
+      }
     };
 
     i.prototype.cleanupTimers = function() {
       var e = this;
-      null === this.timeoutId && (this.timeoutId = setTimeout(function() {
-        var t = Date.now();
-        e.collectedEvents.forEach(function(n) {
-          !n.stopTime && t - n.startTime >= e.maxTimerLength && n.stop();
-        });
-      }, this.cleanupInterval));
+      if (null === this.timeoutId) {
+        this.timeoutId = setTimeout(function() {
+          var t = Date.now();
+          e.collectedEvents.forEach(function(n) {
+            if (!n.stopTime && t - n.startTime >= e.maxTimerLength) {
+              n.stop();
+            }
+          });
+        }, this.cleanupInterval);
+      }
     };
 
     i.prototype.dispose = function() {
@@ -140,12 +146,17 @@ define("vs/base/performance/timer", ["require", "exports", "vs/base/env", "vs/ba
 
     i.prototype.setInitialCollectedEvents = function(e, t) {
       var n = this;
-      this.enabled() !== !1 && (t && (i.PARSE_TIME = t), e.forEach(function(e) {
-        var t = new l(n, e.name, e.topic, e.startTime);
-        t.stop(e.stopTime);
+      if (this.enabled() !== !1) {
+        if (t) {
+          i.PARSE_TIME = t;
+        }
+        e.forEach(function(e) {
+          var t = new l(n, e.name, e.topic, e.startTime);
+          t.stop(e.stopTime);
 
-        n.addEvent(t);
-      }));
+          n.addEvent(t);
+        });
+      }
     };
 
     i.EVENT_ID = 1;

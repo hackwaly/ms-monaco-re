@@ -15,7 +15,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/base/types", "vs/bas
       } else
         for (var b in a) {
           var c = a[b];
-          g.isFunction(c) && (this.table[b] = c.bind(a));
+          if (g.isFunction(c)) {
+            this.table[b] = c.bind(a);
+          }
         }
     };
 
@@ -37,7 +39,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/base/types", "vs/bas
       var b = [];
       for (var c = 0; c < a.length; c++) {
         var d = a[c];
-        !g.isUndefinedOrNull(d) && g.isString(d.$url) && (d = new h.URL(d.$url));
+        if (!g.isUndefinedOrNull(d) && g.isString(d.$url)) {
+          d = new h.URL(d.$url);
+        }
 
         b.push(d);
       }

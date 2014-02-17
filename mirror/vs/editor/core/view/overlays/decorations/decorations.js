@@ -123,9 +123,18 @@ define("vs/editor/core/view/overlays/decorations/decorations", ["require", "expo
         if (t = f[a], n = t.range, t.options.className)
           if (t.options.isWholeLine)
             for (l = n.startLineNumber; l <= n.endLineNumber; l++) {
-              e.lineIsVisible(l) && (r = e.heightInPxForLine(l), s = e.getViewportVerticalOffsetForLineNumber(l), m++,
-                d.push('<div class="cdr '), d.push(t.options.className), d.push('" style="top:'), d.push(s.toString()),
-                d.push("px;left:0;width:100%;height:"), d.push(r.toString()), d.push('px;"></div>'));
+              if (e.lineIsVisible(l)) {
+                r = e.heightInPxForLine(l);
+                s = e.getViewportVerticalOffsetForLineNumber(l);
+                m++;
+                d.push('<div class="cdr ');
+                d.push(t.options.className);
+                d.push('" style="top:');
+                d.push(s.toString());
+                d.push("px;left:0;width:100%;height:");
+                d.push(r.toString());
+                d.push('px;"></div>');
+              }
             } else if (i = e.visibleRangesForRange(n, !1))
               for (l = 0, c = i.length; c > l; l++) {
                 o = i[l];

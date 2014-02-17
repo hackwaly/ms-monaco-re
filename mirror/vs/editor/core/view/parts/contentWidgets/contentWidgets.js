@@ -66,8 +66,9 @@ define("vs/editor/core/view/parts/contentWidgets/contentWidgets", ["require", "e
       this._requestModificationFrameBeforeRendering(function() {
         var e;
         for (e in t._widgets) {
-          t._widgets.hasOwnProperty(e) && (t._widgets[e].widget.getDomNode().style.maxWidth = t._contentWidth +
-            "px");
+          if (t._widgets.hasOwnProperty(e)) {
+            t._widgets[e].widget.getDomNode().style.maxWidth = t._contentWidth + "px";
+          }
         }
       });
 
@@ -239,8 +240,15 @@ define("vs/editor/core/view/parts/contentWidgets/contentWidgets", ["require", "e
 
       var r = {};
       for (i in this._widgets) {
-        this._widgets.hasOwnProperty(i) && (n = this._prepareRenderWidget(this._widgets[i], e), n && (t && t.renderedContentWidgets++,
-          r[i] = n));
+        if (this._widgets.hasOwnProperty(i)) {
+          n = this._prepareRenderWidget(this._widgets[i], e);
+          if (n) {
+            if (t) {
+              t.renderedContentWidgets++;
+            }
+            r[i] = n;
+          }
+        }
       }
       this._requestModificationFrame(function() {
         var e;
@@ -249,9 +257,12 @@ define("vs/editor/core/view/parts/contentWidgets/contentWidgets", ["require", "e
 
         var n;
         for (e in o._widgets) {
-          o._widgets.hasOwnProperty(e) && (t = o._widgets[e], n = o._widgets[e].widget.getDomNode(), r.hasOwnProperty(
-            e) ? (n.style.top = r[e].top + "px", n.style.left = r[e].left + "px", t.isVisible || (t.isVisible = !
-            0)) : t.isVisible && (t.isVisible = !1, n.style.top = "-1000px"));
+          if (o._widgets.hasOwnProperty(e)) {
+            t = o._widgets[e];
+            n = o._widgets[e].widget.getDomNode();
+            r.hasOwnProperty(e) ? (n.style.top = r[e].top + "px", n.style.left = r[e].left + "px", t.isVisible || (
+              t.isVisible = !0)) : t.isVisible && (t.isVisible = !1, n.style.top = "-1000px");
+          }
         }
       });
     };

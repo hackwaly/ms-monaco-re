@@ -39,7 +39,9 @@ define("vs/base/ui/widgets/progressbar", ["require", "exports", "vs/base/lib/win
               t.animationRunning = e.type === s.EventType.ANIMATION_START;
               break;
             case s.EventType.ANIMATION_ITERATION:
-              t.animationStopToken && t.animationStopToken(null);
+              if (t.animationStopToken) {
+                t.animationStopToken(null);
+              }
           }
         }, t.toUnbind);
 
@@ -104,8 +106,10 @@ define("vs/base/ui/widgets/progressbar", ["require", "exports", "vs/base/lib/win
 
       var o = function() {
         n.Promise.timeout(50).then(function() {
-          e === t.currentProgressToken && (t.element.hasClass(u) ? (t.bit.style.display = "none", t.bit.style.left =
-            "0") : t.element.isHidden() ? o() : (i = (i + 1) % 95, t.bit.style.left = i + "%", o()));
+          if (e === t.currentProgressToken) {
+            t.element.hasClass(u) ? (t.bit.style.display = "none", t.bit.style.left = "0") : t.element.isHidden() ?
+              o() : (i = (i + 1) % 95, t.bit.style.left = i + "%", o());
+          }
         });
       };
       o();

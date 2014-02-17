@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -70,18 +72,22 @@ define(["require", "exports", "vs/editor/core/position", "vs/editor/core/constan
 
       this.listenersToRemove.push(this.editor.addListener(j.EventType.CursorPositionChanged, function(a) {
         if (a.reason === "explicit" || a.reason === "undo" || a.reason === "redo") {
-          c.highlightedDecorationId !== null && c.editor.changeDecorations(function(a) {
-            a.changeDecorationOptions(c.highlightedDecorationId, c.createFindMatchDecorationOptions(!1));
+          if (c.highlightedDecorationId !== null) {
+            c.editor.changeDecorations(function(a) {
+              a.changeDecorationOptions(c.highlightedDecorationId, c.createFindMatchDecorationOptions(!1));
 
-            c.highlightedDecorationId = null;
-          });
+              c.highlightedDecorationId = null;
+            });
+          }
           c.startPosition = c.editor.getPosition();
           c.decorationIndex = -1;
         }
       }));
 
       this.listenersToRemove.push(this.editor.getModel().addListener(j.EventType.ModelContentChanged, function(a) {
-        a.changeType === j.EventType.ModelContentChangedFlush && (c.decorations = []);
+        if (a.changeType === j.EventType.ModelContentChangedFlush) {
+          c.decorations = [];
+        }
 
         c.startPosition = c.editor.getPosition();
         if (c.updateDecorationsTimeout !== null) {
@@ -133,7 +139,9 @@ define(["require", "exports", "vs/editor/core/position", "vs/editor/core/constan
 
     b.prototype.updateDecorations = function(a) {
       var b = this;
-      this.didReplace && this.next();
+      if (this.didReplace) {
+        this.next();
+      }
 
       this.editor.changeDecorations(function(a) {
         b.removeOldDecorations(a);
@@ -159,20 +167,36 @@ define(["require", "exports", "vs/editor/core/position", "vs/editor/core/constan
 
     b.prototype.update = function(a, b) {
       var c = !1;
-      this.isRegex !== a.properties.isRegex && (this.isRegex = a.properties.isRegex, c = !0);
+      if (this.isRegex !== a.properties.isRegex) {
+        this.isRegex = a.properties.isRegex;
+        c = !0;
+      }
 
-      this.matchCase !== a.properties.matchCase && (this.matchCase = a.properties.matchCase, c = !0);
+      if (this.matchCase !== a.properties.matchCase) {
+        this.matchCase = a.properties.matchCase;
+        c = !0;
+      }
 
-      this.wholeWord !== a.properties.wholeWord && (this.wholeWord = a.properties.wholeWord, c = !0);
+      if (this.wholeWord !== a.properties.wholeWord) {
+        this.wholeWord = a.properties.wholeWord;
+        c = !0;
+      }
 
-      a.searchString !== this.searchString && (this.searchString = a.searchString, c = !0);
+      if (a.searchString !== this.searchString) {
+        this.searchString = a.searchString;
+        c = !0;
+      }
 
       this.replaceString = a.replaceString;
 
-      a.isReplaceEnabled !== this.searchOnlyEditableRange && (this.searchOnlyEditableRange = a.isReplaceEnabled, c = !
-        0);
+      if (a.isReplaceEnabled !== this.searchOnlyEditableRange) {
+        this.searchOnlyEditableRange = a.isReplaceEnabled;
+        c = !0;
+      }
 
-      c && this.updateDecorations(b);
+      if (c) {
+        this.updateDecorations(b);
+      }
     };
 
     b.prototype.start = function(a, b) {
@@ -201,22 +225,29 @@ define(["require", "exports", "vs/editor/core/position", "vs/editor/core/constan
     };
 
     b.prototype.prev = function() {
-      this.decorations.length > 0 && (this.decorationIndex === -1 && (this.decorationIndex = this.indexAfterPosition(
-        this.startPosition)), this.decorationIndex = this.previousIndex(this.decorationIndex), this.setSelectionToDecoration(
-        this.decorations[this.decorationIndex]));
+      if (this.decorations.length > 0) {
+        if (this.decorationIndex === -1) {
+          this.decorationIndex = this.indexAfterPosition(this.startPosition);
+        }
+        this.decorationIndex = this.previousIndex(this.decorationIndex);
+        this.setSelectionToDecoration(this.decorations[this.decorationIndex]);
+      }
     };
 
     b.prototype.next = function() {
-      this.decorations.length > 0 && (this.decorationIndex === -1 ? this.decorationIndex = this.indexAfterPosition(
-        this.startPosition) : this.decorationIndex = this.nextIndex(this.decorationIndex), this.setSelectionToDecoration(
-        this.decorations[this.decorationIndex]));
+      if (this.decorations.length > 0) {
+        this.decorationIndex === -1 ? this.decorationIndex = this.indexAfterPosition(this.startPosition) : this.decorationIndex =
+          this.nextIndex(this.decorationIndex);
+        this.setSelectionToDecoration(this.decorations[this.decorationIndex]);
+      }
     };
 
     b.prototype.setSelectionToDecoration = function(a) {
       var b = this;
       this.editor.changeDecorations(function(c) {
-        b.highlightedDecorationId !== null && c.changeDecorationOptions(b.highlightedDecorationId, b.createFindMatchDecorationOptions(!
-          1));
+        if (b.highlightedDecorationId !== null) {
+          c.changeDecorationOptions(b.highlightedDecorationId, b.createFindMatchDecorationOptions(!1));
+        }
 
         c.changeDecorationOptions(a, b.createFindMatchDecorationOptions(!0));
 

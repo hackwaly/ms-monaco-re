@@ -124,12 +124,19 @@ define("vs/editor/core/view/overlays/glyphMargin/glyphMargin", ["require", "expo
         if (o = f[a], o.options.glyphMarginClassName)
           if (r = o.range, o.options.isWholeLine)
             for (h = r.startLineNumber; h <= r.endLineNumber; h++) {
-              e.lineIsVisible(h) && (l = e.getViewportVerticalOffsetForLineNumber(h), m.hasOwnProperty(l.toString()) ||
-                (m[l.toString()] = {}), m[l.toString()][o.options.glyphMarginClassName] = !0);
+              if (e.lineIsVisible(h)) {
+                l = e.getViewportVerticalOffsetForLineNumber(h);
+                if (!m.hasOwnProperty(l.toString())) {
+                  m[l.toString()] = {};
+                }
+                m[l.toString()][o.options.glyphMarginClassName] = !0;
+              }
             } else if (s = e.visibleRangesForRange(r, !1))
               for (h = 0, p = s.length; p > h; h++) {
                 l = s[h].top;
-                m.hasOwnProperty(l.toString()) || (m[l.toString()] = {});
+                if (!m.hasOwnProperty(l.toString())) {
+                  m[l.toString()] = {};
+                }
                 m[l.toString()][o.options.glyphMarginClassName] = !0;
               }
       t.push('<div class="');

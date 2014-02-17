@@ -1,7 +1,9 @@
 define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], function(e, t, n) {
   var i = function() {
     function e(e, t, n) {
-      "undefined" == typeof n && (n = null);
+      if ("undefined" == typeof n) {
+        n = null;
+      }
 
       this._type = e;
 
@@ -55,7 +57,11 @@ define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], functio
       this._listeners.hasOwnProperty(e) ? this._listeners[e].push(t) : this._listeners[e] = [t];
       var n = this;
       return function() {
-        n && (n._removeListener(e, t), n = null, t = null);
+        if (n) {
+          n._removeListener(e, t);
+          n = null;
+          t = null;
+        }
       };
     };
 
@@ -103,7 +109,9 @@ define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], functio
     };
 
     e.prototype.addEmitter = function(e, t) {
-      "undefined" == typeof t && (t = null);
+      if ("undefined" == typeof t) {
+        t = null;
+      }
       var n = this;
       return e.addBulkListener(function(e) {
         var o = e;
@@ -167,12 +175,16 @@ define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], functio
     };
 
     e.prototype._emitEvents = function(e) {
-      this._bulkListeners.length > 0 && this._emitToBulkListeners(e);
+      if (this._bulkListeners.length > 0) {
+        this._emitToBulkListeners(e);
+      }
       for (var t = 0, n = e.length; n > t; t++) {
         var i = e[t];
         this._emitToSpecificTypeListeners(i.getType(), i.getData());
 
-        i.getEmitterType() && this._emitToSpecificTypeListeners(i.getType() + "/" + i.getEmitterType(), i.getData());
+        if (i.getEmitterType()) {
+          this._emitToSpecificTypeListeners(i.getType() + "/" + i.getEmitterType(), i.getData());
+        }
       }
     };
 
@@ -199,7 +211,9 @@ define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], functio
       var e = this._collectedEvents;
       this._collectedEvents = [];
 
-      e.length > 0 && this._emitEvents(e);
+      if (e.length > 0) {
+        this._emitEvents(e);
+      }
     };
 
     return e;

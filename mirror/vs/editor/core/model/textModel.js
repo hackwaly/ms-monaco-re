@@ -61,7 +61,9 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
     };
 
     t.prototype.getValue = function(e, t) {
-      "undefined" == typeof t && (t = !1);
+      if ("undefined" == typeof t) {
+        t = !1;
+      }
       var n = this.getFullModelRange();
 
       var i = this.getValueInRange(n, e);
@@ -69,7 +71,9 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
     };
 
     t.prototype.getValueInRange = function(e, t) {
-      "undefined" == typeof t && (t = 0);
+      if ("undefined" == typeof t) {
+        t = 0;
+      }
       var n = this.validateRange(e);
       if (n.isEmpty()) {
         return "";
@@ -167,20 +171,37 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
           for (n = 0; m > n && u > n; n++) {
             r = g.charCodeAt(n);
             o = s.charCodeAt(n);
-            b && r !== o && (b = !1);
-            b || (r === c && h++, o === c && h++);
+            if (b && r !== o) {
+              b = !1;
+            }
+            if (!b) {
+              if (r === c) {
+                h++;
+              }
+              if (o === c) {
+                h++;
+              }
+            }
           }
           for (; m > n; n++) {
             r = g.charCodeAt(n);
-            r === c && h++;
+            if (r === c) {
+              h++;
+            }
           }
           for (; u > n; n++) {
             o = s.charCodeAt(n);
-            o === c && h++;
+            if (o === c) {
+              h++;
+            }
           }
-          1 === h && (h = 0);
+          if (1 === h) {
+            h = 0;
+          }
 
-          h > 0 && (v[h] = (v[h] || 0) + 1);
+          if (h > 0) {
+            v[h] = (v[h] || 0) + 1;
+          }
 
           m = u;
 
@@ -247,7 +268,10 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
       var g = 0;
       for (l = Math.max(a.length, p.length); l >= 2; l--) {
         c = (p[l] || 0) + (a[l] || 0);
-        c > g && (f = l, g = c);
+        if (c > g) {
+          f = l;
+          g = c;
+        }
       }
       return {
         insertSpaces: !0,
@@ -293,11 +317,17 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
       var t = e.lineNumber ? e.lineNumber : 1;
 
       var n = e.column ? e.column : 1;
-      1 > t && (t = 1);
+      if (1 > t) {
+        t = 1;
+      }
 
-      t > this._lines.length && (t = this._lines.length);
+      if (t > this._lines.length) {
+        t = this._lines.length;
+      }
 
-      1 > n && (n = 1);
+      if (1 > n) {
+        n = 1;
+      }
       var i = this.getLineMaxColumn(t);
       n > i && (n = i);
 
@@ -327,7 +357,10 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
       var i = e.split(/\r?\n/);
 
       var r = "";
-      i[0].length > 0 && i[0].charCodeAt(0) === l && (r = String.fromCharCode(l), i[0] = i[0].substr(1));
+      if (i[0].length > 0 && i[0].charCodeAt(0) === l) {
+        r = String.fromCharCode(l);
+        i[0] = i[0].substr(1);
+      }
       var s;
 
       var a;

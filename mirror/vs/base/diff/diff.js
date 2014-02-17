@@ -34,8 +34,9 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
       this.m_modifiedCount = 0;
     }
     e.prototype.MarkNextChange = function() {
-      (this.m_originalCount > 0 || this.m_modifiedCount > 0) && this.m_changes.push(new n.DiffChange(this.m_originalStart,
-        this.m_originalCount, this.m_modifiedStart, this.m_modifiedCount));
+      if (this.m_originalCount > 0 || this.m_modifiedCount > 0) {
+        this.m_changes.push(new n.DiffChange(this.m_originalStart, this.m_originalCount, this.m_modifiedStart, this.m_modifiedCount));
+      }
 
       this.m_originalCount = 0;
 
@@ -81,7 +82,9 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
 
   var a = function() {
     function e(e, t, n) {
-      "undefined" == typeof n && (n = null);
+      if ("undefined" == typeof n) {
+        n = null;
+      }
 
       this.OriginalSequence = e;
 
@@ -202,7 +205,12 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
         b === S || L > b && c[b - 1] < c[b + 1] ? (h = c[b + 1], g = h - T - o, x > h && E.MarkNextChange(), x = h, E
           .AddModifiedElement(h + 1, g), T = b + 1 - e) : (h = c[b - 1] + 1, g = h - T - o, x > h && E.MarkNextChange(),
           x = h - 1, E.AddOriginalElement(h, g + 1), T = b - 1 - e);
-        N >= 0 && (c = this.m_forwardHistory[N], e = c[0], S = 1, L = c.length - 1);
+        if (N >= 0) {
+          c = this.m_forwardHistory[N];
+          e = c[0];
+          S = 1;
+          L = c.length - 1;
+        }
       } while (--N >= -1);
       if (C = E.getReverseChanges(), _[0]) {
         var M = f[0] + 1;
@@ -232,7 +240,12 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
           b === S || L > b && d[b - 1] >= d[b + 1] ? (h = d[b + 1] - 1, g = h - T - l, h > x && E.MarkNextChange(), x =
             h + 1, E.AddOriginalElement(h + 1, g + 1), T = b + 1 - r) : (h = d[b - 1], g = h - T - l, h > x && E.MarkNextChange(),
             x = h, E.AddModifiedElement(h + 1, g + 1), T = b - 1 - r);
-          N >= 0 && (d = this.m_reverseHistory[N], r = d[0], S = 1, L = d.length - 1);
+          if (N >= 0) {
+            d = this.m_reverseHistory[N];
+            r = d[0];
+            S = 1;
+            L = d.length - 1;
+          }
         } while (--N >= -1);
         w = E.getChanges();
       }

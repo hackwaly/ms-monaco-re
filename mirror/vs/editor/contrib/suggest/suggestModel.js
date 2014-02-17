@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -40,13 +42,17 @@ define(["require", "exports", "vs/editor/contrib/snippet/snippet", "vs/base/lib/
   })(s || (s = {}));
   var t = function() {
     function a(a, b) {
-      typeof b == "undefined" && (b = a.getPosition());
+      if (typeof b == "undefined") {
+        b = a.getPosition();
+      }
       var c = a.getModel();
 
       var d = c.getLineContent(b.lineNumber);
       this.wordBefore = "";
       var e = c.getWordAtPosition(b, !1);
-      e && (this.wordBefore = d.substring(e.startColumn - 1, b.column - 1));
+      if (e) {
+        this.wordBefore = d.substring(e.startColumn - 1, b.column - 1);
+      }
 
       this.lineNumber = b.lineNumber;
 
@@ -115,9 +121,13 @@ define(["require", "exports", "vs/editor/contrib/snippet/snippet", "vs/base/lib/
     __extends(b, a);
 
     b.prototype.cancel = function(a, b) {
-      typeof a == "undefined" && (a = !1);
+      if (typeof a == "undefined") {
+        a = !1;
+      }
 
-      typeof b == "undefined" && (b = !1);
+      if (typeof b == "undefined") {
+        b = !1;
+      }
       var c = this.state !== s.NOT_ACTIVE;
       this.triggerAutoSuggestPromise && (this.triggerAutoSuggestPromise.cancel(), this.triggerAutoSuggestPromise =
         null);
@@ -154,7 +164,9 @@ define(["require", "exports", "vs/editor/contrib/snippet/snippet", "vs/base/lib/
     };
 
     b.prototype.trigger = function(a, b, c) {
-      typeof c == "undefined" && (c = !1);
+      if (typeof c == "undefined") {
+        c = !1;
+      }
       var d = this;
 
       var e = this.editor.getModel();
@@ -203,7 +215,9 @@ define(["require", "exports", "vs/editor/contrib/snippet/snippet", "vs/base/lib/
         var c = this.suggestions;
 
         var d = b.getFilter();
-        d && (c = c.filter(d.bind(null, a.wordBefore)));
+        if (d) {
+          c = c.filter(d.bind(null, a.wordBefore));
+        }
 
         c = c.sort(function(a, b) {
           return p.localeCompare(a.label.toLowerCase(), b.label.toLowerCase());
@@ -241,9 +255,12 @@ define(["require", "exports", "vs/editor/contrib/snippet/snippet", "vs/base/lib/
     b.prototype.destroy = function() {
       this.cancel(!0);
 
-      this.listenersToRemove && (this.listenersToRemove.forEach(function(a) {
-        a();
-      }), this.listenersToRemove = null);
+      if (this.listenersToRemove) {
+        this.listenersToRemove.forEach(function(a) {
+          a();
+        });
+        this.listenersToRemove = null;
+      }
 
       this.emit("destroy", null);
     };

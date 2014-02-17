@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -72,15 +74,19 @@ define(["require", "exports", "vs/nls", "vs/editor/contrib/snippet/snippet", "vs
     b.prototype.injectHandlerService = function(b) {
       a.prototype.injectHandlerService.call(this, b);
 
-      this.quickSuggestWidget || (this.quickSuggestWidget = new t.QuickSuggestWidget(this.editor, this.handlerService),
-        this.quickSuggestWidget.setModel(this.model));
+      if (!this.quickSuggestWidget) {
+        this.quickSuggestWidget = new t.QuickSuggestWidget(this.editor, this.handlerService);
+        this.quickSuggestWidget.setModel(this.model);
+      }
     };
 
     b.prototype.injectTelemetryService = function(b) {
       a.prototype.injectTelemetryService.call(this, b);
 
-      this.suggestWidget || (this.suggestWidget = new r.SuggestWidget(this.editor, this.telemetryService), this.suggestWidget
-        .setModel(this.model));
+      if (!this.suggestWidget) {
+        this.suggestWidget = new r.SuggestWidget(this.editor, this.telemetryService);
+        this.suggestWidget.setModel(this.model);
+      }
     };
 
     b.prototype.injectionDone = function() {
@@ -109,7 +115,9 @@ define(["require", "exports", "vs/nls", "vs/editor/contrib/snippet/snippet", "vs
             var d = a.editor.getModel().getLineContent(c.lineNumber);
 
             var e = a.editor.getModel().getRawLineTokens(c.lineNumber);
-            b.suggestSupport.shouldAutotriggerSuggest(d, e, c.column - 1) && a.triggerSuggest(!0).done(null, v.onUnexpectedError);
+            if (b.suggestSupport.shouldAutotriggerSuggest(d, e, c.column - 1)) {
+              a.triggerSuggest(!0).done(null, v.onUnexpectedError);
+            }
           };
           for (var e = 0; e < c.length; e++) {
             this.triggerCharacterListeners.push(this.editor.addTypingListener(c[e], function() {
@@ -192,13 +200,25 @@ define(["require", "exports", "vs/nls", "vs/editor/contrib/snippet/snippet", "vs
       while (this.triggerCharacterListeners.length > 0) {
         this.triggerCharacterListeners.pop()();
       }
-      this.quickSuggestWidget && (this.quickSuggestWidget.destroy(), this.quickSuggestWidget = null);
+      if (this.quickSuggestWidget) {
+        this.quickSuggestWidget.destroy();
+        this.quickSuggestWidget = null;
+      }
 
-      this.suggestWidget && (this.suggestWidget.destroy(), this.suggestWidget = null);
+      if (this.suggestWidget) {
+        this.suggestWidget.destroy();
+        this.suggestWidget = null;
+      }
 
-      this.model && (this.model.destroy(), this.model = null);
+      if (this.model) {
+        this.model.destroy();
+        this.model = null;
+      }
 
-      this.binding !== null && (this.binding.dispose(), this.binding = null);
+      if (this.binding !== null) {
+        this.binding.dispose();
+        this.binding = null;
+      }
     };
 
     b.prototype.accept = function() {

@@ -3,7 +3,9 @@ var __extends = this.__extends || function(a, b) {
       this.constructor = a;
     }
     for (var c in b) {
-      b.hasOwnProperty(c) && (a[c] = b[c]);
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
     d.prototype = b.prototype;
 
@@ -56,9 +58,15 @@ define(["require", "exports", "vs/base/types", "vs/editor/core/view/viewEventHan
 
       var c;
       for (a in this.zones) {
-        this.zones.hasOwnProperty(a) && (b = this.zones[a], c = this.heightInLinesToPixels(b.delegate.heightInLines),
-          e.isFunction(b.delegate.onComputedHeight) && b.delegate.onComputedHeight(c), b.delegate.domNode.style.height =
-          c + "px", this.whitespaceManager.changeWhitespace(parseInt(a, 10), c));
+        if (this.zones.hasOwnProperty(a)) {
+          b = this.zones[a];
+          c = this.heightInLinesToPixels(b.delegate.heightInLines);
+          if (e.isFunction(b.delegate.onComputedHeight)) {
+            b.delegate.onComputedHeight(c);
+          }
+          b.delegate.domNode.style.height = c + "px";
+          this.whitespaceManager.changeWhitespace(parseInt(a, 10), c);
+        }
       }
       return !0;
     };
@@ -190,14 +198,18 @@ define(["require", "exports", "vs/base/types", "vs/editor/core/view/viewEventHan
 
       var i;
       for (h in this.zones) {
-        this.zones.hasOwnProperty(h) && (i = this.zones[h], c.hasOwnProperty(h) ? (i.delegate.domNode.style.top = b.getScrolledTopFromAbsoluteTop(
-            c[h].verticalOffset) + "px", i.delegate.domNode.style.height = c[h].height + "px", i.isVisible || (i.delegate
-            .domNode.style.display = "block", i.isVisible = !0), e.isFunction(i.delegate.onDomNodeTop) && i.delegate
-          .onDomNodeTop(b.getScrolledTopFromAbsoluteTop(c[h].verticalOffset))) : (i.isVisible && (i.delegate.domNode
-          .style.display = "none", i.isVisible = !1), e.isFunction(i.delegate.onDomNodeTop) && i.delegate.onDomNodeTop(
-          b.getScrolledTopFromAbsoluteTop(-1e6))));
+        if (this.zones.hasOwnProperty(h)) {
+          i = this.zones[h];
+          c.hasOwnProperty(h) ? (i.delegate.domNode.style.top = b.getScrolledTopFromAbsoluteTop(c[h].verticalOffset) +
+            "px", i.delegate.domNode.style.height = c[h].height + "px", i.isVisible || (i.delegate.domNode.style.display =
+              "block", i.isVisible = !0), e.isFunction(i.delegate.onDomNodeTop) && i.delegate.onDomNodeTop(b.getScrolledTopFromAbsoluteTop(
+              c[h].verticalOffset))) : (i.isVisible && (i.delegate.domNode.style.display = "none", i.isVisible = !1),
+            e.isFunction(i.delegate.onDomNodeTop) && i.delegate.onDomNodeTop(b.getScrolledTopFromAbsoluteTop(-1e6)));
+        }
       }
-      g && (this.domNode.style.width = b.scrollWidth + "px");
+      if (g) {
+        this.domNode.style.width = b.scrollWidth + "px";
+      }
     };
 
     return b;

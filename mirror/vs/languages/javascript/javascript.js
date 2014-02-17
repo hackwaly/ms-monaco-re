@@ -5,7 +5,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var i in t) {
-      t.hasOwnProperty(i) && (e[i] = t[i]);
+      if (t.hasOwnProperty(i)) {
+        e[i] = t[i];
+      }
     }
     n.prototype = t.prototype;
 
@@ -100,7 +102,9 @@ define("vs/languages/vsxml/vsxml", ["require", "exports", "vs/base/objects", "vs
   t.VSXMLEmbeddedState = d;
   var h = function(e) {
     function t(t, n, i, r) {
-      "undefined" == typeof r && (r = "");
+      if ("undefined" == typeof r) {
+        r = "";
+      }
 
       e.call(this, t);
 
@@ -267,7 +271,9 @@ var __extends = this.__extends || function(e, t) {
       this.constructor = e;
     }
     for (var i in t) {
-      t.hasOwnProperty(i) && (e[i] = t[i]);
+      if (t.hasOwnProperty(i)) {
+        e[i] = t[i];
+      }
     }
     n.prototype = t.prototype;
 
@@ -498,7 +504,9 @@ define("vs/languages/javascript/javascript", ["require", "exports", "vs/base/lib
 
           e.next();
 
-          e.eos() || "-" !== e.peek() || e.next();
+          if (!(e.eos() || "-" !== e.peek())) {
+            e.next();
+          }
         } else {
           i = !0;
           e.next();

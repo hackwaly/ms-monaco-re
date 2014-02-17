@@ -13,7 +13,10 @@ define("vs/base/ui/widgets/leftRightWidget/leftRightWidget", ["require", "export
         });
     }
     e.prototype.dispose = function() {
-      this.$el && (this.$el.destroy(), this.$el = null);
+      if (this.$el) {
+        this.$el.destroy();
+        this.$el = null;
+      }
     };
 
     return e;

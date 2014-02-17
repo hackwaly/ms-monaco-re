@@ -29,7 +29,9 @@ define("vs/base/async", ["require", "exports", "vs/base/errors", "vs/base/lib/wi
     }
 
     function n(e) {
-      e && o.push(e);
+      if (e) {
+        o.push(e);
+      }
       var r = t();
       return r ? r.then(n) : i.Promise.as(o);
     }
@@ -103,7 +105,9 @@ define("vs/base/async", ["require", "exports", "vs/base/errors", "vs/base/lib/wi
       this.task = null;
     }
     e.prototype.trigger = function(e, t) {
-      "undefined" == typeof t && (t = this.defaultDelay);
+      if ("undefined" == typeof t) {
+        t = this.defaultDelay;
+      }
       var n = this;
       this.task = e;
 
@@ -139,11 +143,17 @@ define("vs/base/async", ["require", "exports", "vs/base/errors", "vs/base/lib/wi
     e.prototype.cancel = function() {
       this.cancelTimeout();
 
-      this.completionPromise && (this.completionPromise.cancel(), this.completionPromise = null);
+      if (this.completionPromise) {
+        this.completionPromise.cancel();
+        this.completionPromise = null;
+      }
     };
 
     e.prototype.cancelTimeout = function() {
-      this.timeoutPromise && (this.timeoutPromise.cancel(), this.timeoutPromise = null);
+      if (this.timeoutPromise) {
+        this.timeoutPromise.cancel();
+        this.timeoutPromise = null;
+      }
     };
 
     return e;

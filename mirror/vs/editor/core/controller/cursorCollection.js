@@ -102,7 +102,9 @@ define("vs/editor/core/controller/cursorCollection", ["require", "exports", "vs/
 
     e.prototype.addSecondaryCursor = function(e) {
       var t = new n.OneCursor(this.editorId, this.model, this.configuration, this.modeConfiguration, this.viewModelHelper);
-      e && t.setSelection(e);
+      if (e) {
+        t.setSelection(e);
+      }
 
       this.secondaryCursors.push(t);
 
@@ -139,13 +141,17 @@ define("vs/editor/core/controller/cursorCollection", ["require", "exports", "vs/
             this._removeSecondaryCursor(this.secondaryCursors.length - 1);
           }
       for (var r = 0; n > r; r++) {
-        e[r] && this.secondaryCursors[r].setSelection(e[r]);
+        if (e[r]) {
+          this.secondaryCursors[r].setSelection(e[r]);
+        }
       }
       return i;
     };
 
     e.prototype._removeSecondaryCursor = function(e) {
-      this.lastAddedCursorIndex >= e + 1 && this.lastAddedCursorIndex--;
+      if (this.lastAddedCursorIndex >= e + 1) {
+        this.lastAddedCursorIndex--;
+      }
 
       this.secondaryCursors[e].dispose();
 
@@ -202,7 +208,9 @@ define("vs/editor/core/controller/cursorCollection", ["require", "exports", "vs/
               e[h].setSelection(_);
             }
             for (var b = 0; b < t.length; b++) {
-              t[b].index > d && t[b].index--;
+              if (t[b].index > d) {
+                t[b].index--;
+              }
             }
             e.splice(d, 1);
 

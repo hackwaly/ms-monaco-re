@@ -24,13 +24,17 @@ define("vs/editor/core/view/viewEventDispatcher", ["require", "exports", "vs/bas
     e.prototype.emit = function(e, t) {
       this.eventQueue.push(new n.EmitterEvent(e, t));
 
-      this.isConsumingQueue || this.consumeQueue();
+      if (!this.isConsumingQueue) {
+        this.consumeQueue();
+      }
     };
 
     e.prototype.emitMany = function(e) {
       this.eventQueue = this.eventQueue.concat(e);
 
-      this.isConsumingQueue || this.consumeQueue();
+      if (!this.isConsumingQueue) {
+        this.consumeQueue();
+      }
     };
 
     e.prototype.consumeQueue = function() {

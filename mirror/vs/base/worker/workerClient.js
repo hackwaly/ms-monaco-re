@@ -60,7 +60,9 @@ define("vs/base/worker/workerClient", ["require", "exports", "vs/base/lib/winjs.
         try {
           t = JSON.parse(e.data);
         } catch (i) {}
-        t && n(t);
+        if (t) {
+          n(t);
+        }
       };
 
       i.addListener(window, "message", this.onMessage);
@@ -157,7 +159,9 @@ define("vs/base/worker/workerClient", ["require", "exports", "vs/base/lib/winjs.
       var s = !1;
       return new n.Promise(function(n, a, u) {
         o.onModuleLoaded.then(function() {
-          s || (r = o._sendMessage(e, t, i).then(n, a, u));
+          if (!s) {
+            r = o._sendMessage(e, t, i).then(n, a, u);
+          }
         }, a, u);
       }, function() {
         r ? r.cancel() : s = !0;
@@ -175,7 +179,9 @@ define("vs/base/worker/workerClient", ["require", "exports", "vs/base/lib/winjs.
 
         console.warn(this._promises);
         for (var t in this._promises) {
-          e.hasOwnProperty(t) && this._promises[t].error("Worker forcefully terminated");
+          if (e.hasOwnProperty(t)) {
+            this._promises[t].error("Worker forcefully terminated");
+          }
         }
       }
       this._worker.terminate();
@@ -190,7 +196,9 @@ define("vs/base/worker/workerClient", ["require", "exports", "vs/base/lib/winjs.
     };
 
     e.prototype._sendMessage = function(e, t, i) {
-      "undefined" == typeof i && (i = (new Date).getTime());
+      if ("undefined" == typeof i) {
+        i = (new Date).getTime();
+      }
       var o;
 
       var r;

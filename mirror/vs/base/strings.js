@@ -65,7 +65,9 @@ define("vs/base/strings", ["require", "exports", "vs/nls!vs/editor/worker/editor
   }
 
   function p(e, n) {
-    "undefined" == typeof n && (n = " ");
+    if ("undefined" == typeof n) {
+      n = " ";
+    }
     var i = t.ltrim(e, n);
     return t.rtrim(i, n);
   }
@@ -157,9 +159,18 @@ define("vs/base/strings", ["require", "exports", "vs/nls!vs/editor/worker/editor
 
   function E(e, t, n, i) {
     if ("" === e) throw new Error("Cannot create regex from empty string");
-    t || (e = e.replace(/[\-\\\{\}\*\+\?\|\^\$\.\,\[\]\(\)\#\s]/g, "\\$&"));
+    if (!t) {
+      e = e.replace(/[\-\\\{\}\*\+\?\|\^\$\.\,\[\]\(\)\#\s]/g, "\\$&");
+    }
 
-    i && (/\B/.test(e.charAt(0)) || (e = "\\b" + e), /\B/.test(e.charAt(e.length - 1)) || (e += "\\b"));
+    if (i) {
+      if (!/\B/.test(e.charAt(0))) {
+        e = "\\b" + e;
+      }
+      if (!/\B/.test(e.charAt(e.length - 1))) {
+        e += "\\b";
+      }
+    }
     var o = "g";
     n || (o += "i");
 
@@ -244,7 +255,9 @@ define("vs/base/strings", ["require", "exports", "vs/nls!vs/editor/worker/editor
   function A(e, t) {
     if (!z && (z = !0, window.Intl && o.isFunction(window.Intl.Collator))) {
       var n = new window.Intl.Collator;
-      o.isFunction(n.compare) && (q = n.compare);
+      if (o.isFunction(n.compare)) {
+        q = n.compare;
+      }
     }
     return q ? q.call(this, e, t) : e.localeCompare(t);
   }
@@ -278,7 +291,9 @@ define("vs/base/strings", ["require", "exports", "vs/nls!vs/editor/worker/editor
   }
 
   function V(e, t, n) {
-    "undefined" == typeof n && (n = 4);
+    if ("undefined" == typeof n) {
+      n = 4;
+    }
     var i = Math.abs(e.length - t.length);
     if (i > n) {
       return 0;
