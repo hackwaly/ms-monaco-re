@@ -81,6 +81,7 @@ function deobsecure(code) {
             });
             return ['toplevel', stmts];
         },
+        // FIXME: handle case of `if (x) expr_stmt`;
         "stat": function (expr) {
             if (expr == null) {
                 return ['stmt'];
