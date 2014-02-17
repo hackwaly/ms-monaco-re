@@ -4,7 +4,7 @@ define('vs/languages/vsxml/vsxml', [
   'vs/base/objects',
   'vs/base/errors',
   'vs/editor/modes/modesExtensions'
-], function(e, t, n, r, i) {
+], function(e, t, n, i, r) {
   var o = '<>"=/',
     s = '\t ',
     a = n.createKeywordMatcher([
@@ -14,7 +14,7 @@ define('vs/languages/vsxml/vsxml', [
       'param',
       'loc'
     ]),
-    l = n.createKeywordMatcher([
+    u = n.createKeywordMatcher([
       'type',
       'path',
       'name',
@@ -23,10 +23,10 @@ define('vs/languages/vsxml/vsxml', [
       'format',
       'optional'
     ]),
-    c = n.createKeywordMatcher(o.split('')),
-    u = function(e) {
-      function t(t, n, r) {
-        e.call(this, t), this.state = n, this.parentState = r;
+    l = n.createKeywordMatcher(o.split('')),
+    c = function(e) {
+      function t(t, n, i) {
+        e.call(this, t), this.state = n, this.parentState = i;
       }
       return __extends(t, e), t.prototype.getParentState = function() {
         return this.parentState;
@@ -38,10 +38,10 @@ define('vs/languages/vsxml/vsxml', [
           return !1;
         if (!(n instanceof t))
           return !1;
-        var r = n;
-        return null === this.state && null === r.state ? !0 : null === this.state || null === r.state ? !1 : null ===
-          this.parentState && null === r.parentState ? !0 : null === this.parentState || null === r.parentState ? !1 :
-          this.state.equals(r.state) && this.parentState.equals(r.parentState);
+        var i = n;
+        return null === this.state && null === i.state ? !0 : null === this.state || null === i.state ? !1 : null ===
+          this.parentState && null === i.parentState ? !0 : null === this.parentState || null === i.parentState ? !1 :
+          this.state.equals(i.state) && this.parentState.equals(i.parentState);
       }, t.prototype.setState = function(e) {
         this.state = e;
       }, t.prototype.postTokenize = function(e) {
@@ -50,23 +50,23 @@ define('vs/languages/vsxml/vsxml', [
         var t = this.state.tokenize(e);
         return void 0 !== t.nextState && this.setState(t.nextState), t.nextState = this, this.postTokenize(t, e);
       }, t;
-    }(i.AbstractState);
-  t.EmbeddedState = u;
-  var p = function(e) {
-    function t(t, n, r) {
-      e.call(this, t, n, r);
+    }(r.AbstractState);
+  t.EmbeddedState = c;
+  var d = function(e) {
+    function t(t, n, i) {
+      e.call(this, t, n, i);
     }
     return __extends(t, e), t.prototype.setState = function(t) {
       e.prototype.setState.call(this, t), this.getParentState().setVSXMLState(t);
     }, t.prototype.postTokenize = function(e, t) {
       return t.eos() && (e.nextState = this.getParentState()), e;
     }, t;
-  }(u);
-  t.VSXMLEmbeddedState = p;
+  }(c);
+  t.VSXMLEmbeddedState = d;
   var h = function(e) {
-    function t(t, n, r, i) {
-      'undefined' == typeof i && (i = ''), e.call(this, t), this.name = n, this.parent = r, this.whitespaceTokenType =
-        i;
+    function t(t, n, i, r) {
+      'undefined' == typeof r && (r = ''), e.call(this, t), this.name = n, this.parent = i, this.whitespaceTokenType =
+        r;
     }
     return __extends(t, e), t.prototype.equals = function(n) {
       return e.prototype.equals.call(this, n) ? n instanceof t && this.getMode() === n.getMode() && this.name === n.name &&
@@ -76,11 +76,11 @@ define('vs/languages/vsxml/vsxml', [
         type: this.whitespaceTokenType
       } : this.stateTokenize(e);
     }, t.prototype.stateTokenize = function() {
-      throw r.notImplemented();
+      throw i.notImplemented();
     }, t;
-  }(i.AbstractState);
+  }(r.AbstractState);
   t.VSXMLState = h;
-  var d = function(e) {
+  var p = function(e) {
     function t(t, n) {
       e.call(this, t, 'string', n, 'attribute.value.vs');
     }
@@ -101,8 +101,8 @@ define('vs/languages/vsxml/vsxml', [
       };
     }, t;
   }(h);
-  t.VSXMLString = d;
-  var m = function(e) {
+  t.VSXMLString = p;
+  var f = function(e) {
     function t(t, n) {
       e.call(this, t, 'expression', n, 'vs');
     }
@@ -116,15 +116,15 @@ define('vs/languages/vsxml/vsxml', [
         nextState: this.parent
       } : '"' === t ? {
         type: 'attribute.value.vs',
-        nextState: new d(this.getMode(), this)
-      } : (a(t) ? n = 'tag.vs' : l(t) ? n = 'attribute.name.vs' : c(t) && (n = 'delimiter.vs'), {
+        nextState: new p(this.getMode(), this)
+      } : (a(t) ? n = 'tag.vs' : u(t) ? n = 'attribute.name.vs' : l(t) && (n = 'delimiter.vs'), {
         type: n,
         nextState: this
       });
     }, t;
   }(h);
-  t.VSXMLTag = m;
-  var f = function(e) {
+  t.VSXMLTag = f;
+  var g = function(e) {
     function t(t, n) {
       e.call(this, t, 'expression', n, 'vs');
     }
@@ -134,12 +134,12 @@ define('vs/languages/vsxml/vsxml', [
       var t = e.nextToken();
       return '<' === t ? {
         type: 'delimiter.vs',
-        nextState: new m(this.getMode(), this)
+        nextState: new f(this.getMode(), this)
       } : {
         type: this.whitespaceTokenType,
         nextState: this
       };
     }, t;
   }(h);
-  t.VSXMLExpression = f;
+  t.VSXMLExpression = g;
 })

@@ -66,10 +66,24 @@ var _parseModule = (function () {
     }
 
     var baseModuleId;
+
+    function _foundDep(moduleId) {
+        foundModule(normalize(moduleId, baseModuleId));
+    }
+
+    function _foundDeps(deps) {
+        deps.elements.forEach(function (elm) {
+            if (elm.type === 'Literal' && typeof elm.value === 'string') {
+                if (elm.value !== 'require' && elm.value !== 'exports' && elm.value !== 'module') {
+                    _foundDep(elm.value);
+                }
+            }
+        });
+    }
+
     function collect(node) {
         if (node.type === 'Literal' && typeof node.value === 'string' && node.value.substring(0, 3) === 'vs/') {
-            var moduleId = normalize(node.value, baseModuleId);
-            foundModule(moduleId);
+            _foundDep(node.value);
         }
         if (node.type === 'CallExpression' && node.callee.type === 'Identifier') {
             if (node.callee.name === 'define') {
@@ -77,18 +91,13 @@ var _parseModule = (function () {
                 if (args.length > 1) {
                     if (args[0].type === 'Literal') {
                         extract(args[0].value, node);
-                    }
-                }
-                if (args.length > 2) {
-                    var deps = args[1];
-                    if (deps.type === 'ArrayExpression') {
-                        deps.elements.forEach(function (elm) {
-                            if (elm.type === 'Literal' && typeof elm.value === 'string') {
-                                if (elm.value !== 'require' && elm.value !== 'exports' && elm.value !== 'module') {
-                                    foundModule(elm.value);
-                                }
+                        if (args.length > 2) {
+                            if (args[1].type === 'ArrayExpression') {
+                                _foundDeps(args[1]);
                             }
-                        });
+                        }
+                    } else if (args[0].type === 'ArrayExpression') {
+                        _foundDeps(args[0]);
                     }
                 }
             } else if (node.callee.name === 'require') {

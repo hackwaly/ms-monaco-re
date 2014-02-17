@@ -1,14 +1,9 @@
-define(["require", "exports", 'vs/nls'], function(require, exports, __nls__) {
-  /*---------------------------------------------------------
-   * Copyright (C) Microsoft Corporation. All rights reserved.
-   *--------------------------------------------------------*/
-  'use strict';
-
-  var nls = __nls__;
-
-
-
-  exports.snippets = [{
+define('vs/languages/typescript/service/typescriptSnippets', [
+  'require',
+  'exports',
+  'vs/nls!vs/languages/typescript/typescriptWorker2'
+], function(e, t, n) {
+  t.snippets = [{
     type: 'snippet',
     label: 'foreach =>',
     codeSnippet: [
@@ -16,7 +11,7 @@ define(["require", "exports", 'vs/nls'], function(require, exports, __nls__) {
       '\t{{}}',
       '});'
     ].join('\n'),
-    documentationLabel: nls.localize('foreach.snippet', "For-Each Loop using =>")
+    documentationLabel: n.localize('vs_languages_typescript_service_typescriptSnippets', 0)
   }, {
     type: 'snippet',
     label: 'jsdoc comment',
@@ -25,7 +20,7 @@ define(["require", "exports", 'vs/nls'], function(require, exports, __nls__) {
       ' * {{}}',
       ' */'
     ].join('\n'),
-    documentationLabel: nls.localize('jsdoc.snippet', "jsdoc snippet")
+    documentationLabel: n.localize('vs_languages_typescript_service_typescriptSnippets', 1)
   }, {
     type: 'snippet',
     label: 'ctor',
@@ -38,7 +33,7 @@ define(["require", "exports", 'vs/nls'], function(require, exports, __nls__) {
       '\t{{}}',
       '}'
     ].join('\n'),
-    documentationLabel: nls.localize('constructor.snippet', "Constructor")
+    documentationLabel: n.localize('vs_languages_typescript_service_typescriptSnippets', 2)
   }, {
     type: 'snippet',
     label: 'class',
@@ -52,7 +47,7 @@ define(["require", "exports", 'vs/nls'], function(require, exports, __nls__) {
       '\t}',
       '}'
     ].join('\n'),
-    documentationLabel: nls.localize('class.snippet', "Class Definition")
+    documentationLabel: n.localize('vs_languages_typescript_service_typescriptSnippets', 3)
   }, {
     type: 'snippet',
     label: 'public method',
@@ -64,7 +59,7 @@ define(["require", "exports", 'vs/nls'], function(require, exports, __nls__) {
       '\t{{}}',
       '}'
     ].join('\n'),
-    documentationLabel: nls.localize('publicmethod.snippet', "Public Method Definition")
+    documentationLabel: n.localize('vs_languages_typescript_service_typescriptSnippets', 4)
   }, {
     type: 'snippet',
     label: 'private method',
@@ -73,6 +68,6 @@ define(["require", "exports", 'vs/nls'], function(require, exports, __nls__) {
       '\t{{}}',
       '}'
     ].join('\n'),
-    documentationLabel: nls.localize('privatemethod.snippet', "Private Method Definition")
+    documentationLabel: n.localize('vs_languages_typescript_service_typescriptSnippets', 5)
   }];
-});
+})
