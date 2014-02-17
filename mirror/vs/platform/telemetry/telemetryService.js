@@ -64,7 +64,13 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
       var t = e.data || {};
       t.duration = e.timeTaken();
 
-      "public" === e.topic ? this.publicLog(e.name, t) : this.log(e.name, t);
+      if ("public" === e.topic) {
+        this.publicLog(e.name, t);
+      }
+
+      {
+        this.log(e.name, t);
+      }
     };
 
     e.prototype.onErrorEvent = function(e, t, n) {
@@ -161,8 +167,13 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
           sessionID: this.sessionID
         });
         if (!(this.sendingEvents || this.failureCount > 0)) {
-          this.eventQueue.length > this.eventBatchSize ? (clearTimeout(this.waitIntervalId), this.waitIntervalId =
-            null, this.sendEvents()) : this.sendSoon();
+          if (this.eventQueue.length > this.eventBatchSize) {
+            clearTimeout(this.waitIntervalId);
+            this.waitIntervalId = null;
+            this.sendEvents();
+          } {
+            this.sendSoon();
+          }
         }
       }
     };

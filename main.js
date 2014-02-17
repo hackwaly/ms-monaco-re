@@ -64,18 +64,26 @@ function deobsecure(code) {
                 });
                 break;
             default:
-                if (notExpr && expr[0] == 'binary' && (
-                    expr[1] == '&&' || expr[1] == '||')) {
-                    var testExpr = expr[2];
-                    if (expr[1] == '||') {
-                        testExpr = ['unary-prefix', '!', testExpr];
+                if (notExpr) {
+                    if (expr[0] == 'binary' && (expr[1] == '&&' || expr[1] == '||')) {
+                        var testExpr = expr[2];
+                        if (expr[1] == '||') {
+                            testExpr = ['unary-prefix', '!', testExpr];
+                        }
+                        var ifBlockStmts = [];
+                        exprToStmts(expr[3], ifBlockStmts, false, true);
+                        stmts.push(['if', testExpr, ['block', ifBlockStmts]]);
+                        break;
+                    } else if (expr[0] == 'conditional') {
+                        var thenStmts = [];
+                        var elseStmts = [];
+                        exprToStmts(expr[2], thenStmts, false, true);
+                        exprToStmts(expr[3], elseStmts, false, true);
+                        stmts.push(['if', expr[1], ['block', thenStmts]], ['block', elseStmts]);
+                        break;
                     }
-                    var ifBlockStmts = [];
-                    exprToStmts(expr[3], ifBlockStmts, false, true);
-                    stmts.push(['if', testExpr, ['block', ifBlockStmts]]);
-                } else {
-                    stmts.push([addReturn ? 'return' : 'stat', walk(expr)]);
                 }
+                stmts.push([addReturn ? 'return' : 'stat', walk(expr)]);
                 break;
         }
     }

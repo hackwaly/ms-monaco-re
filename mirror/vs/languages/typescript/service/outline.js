@@ -157,7 +157,15 @@ define("vs/languages/typescript/service/outline", ["require", "exports", "vs/bas
 
     t.prototype.visitModuleDeclaration = function(t) {
       var n;
-      t.stringLiteral ? n = t.stringLiteral.valueText() : t.name && (n = t.name.fullText());
+      if (t.stringLiteral) {
+        n = t.stringLiteral.valueText();
+      }
+
+      {
+        if (t.name) {
+          n = t.name.fullText();
+        }
+      }
 
       if (n) {
         this.add(6, t, n);

@@ -357,12 +357,23 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
         };
         return 0 === l ? (i(null), void 0) : (s.references.forEach(function(i) {
           t.load(s.path, i, r).then(function(s) {
-            s && o[s.path] ? (i.file = s, i.error = {
-              message: "cyclic reference",
-              path: s.path
-            }) : (i.file = s, r.recursive && i.file instanceof e && (u(), s.resolve(t, n, r, o).then(function() {
-              c();
-            }, a)));
+            if (s && o[s.path]) {
+              i.file = s;
+              i.error = {
+                message: "cyclic reference",
+                path: s.path
+              };
+            }
+
+            {
+              i.file = s;
+              if (r.recursive && i.file instanceof e) {
+                u();
+                s.resolve(t, n, r, o).then(function() {
+                  c();
+                }, a);
+              }
+            }
 
             c();
           }, function(e) {
@@ -477,7 +488,11 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
           t();
 
           if (r.kind === n.SyntaxKind.CloseParenToken) {
-            a ? this.references.push(new m(c + 1, -2 + u, h)) : this.references.push(new f(c + 1, -2 + u, h));
+            if (a) {
+              this.references.push(new m(c + 1, -2 + u, h));
+            } {
+              this.references.push(new f(c + 1, -2 + u, h));
+            }
           }
         }
         if (r.kind === n.SyntaxKind.IdentifierName && "define" === r.text && (t(), r.kind === n.SyntaxKind.OpenParenToken &&

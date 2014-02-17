@@ -343,8 +343,17 @@ define("vs/editor/contrib/suggest/suggestWidget", ["require", "exports", "vs/nls
         }
 
         if (!t.auto) {
-          s ? n.shouldShowEmptySuggestionList ? (n.builder.removeClass("empty"), n.tree.setInput(e.NO_SUGGESTIONS_MESSAGE)
-            .done(null, o.onUnexpectedError), n.show()) : n.hide() : n.builder.addClass("empty");
+          if (s) {
+            if (n.shouldShowEmptySuggestionList) {
+              n.builder.removeClass("empty");
+              n.tree.setInput(e.NO_SUGGESTIONS_MESSAGE).done(null, o.onUnexpectedError);
+              n.show();
+            } {
+              n.hide();
+            }
+          } {
+            n.builder.addClass("empty");
+          }
           if (r) {
             r.data = {
               reason: "empty"

@@ -82,7 +82,14 @@ define("vs/editor/contrib/referenceSearch/referenceSearchWidget", ["require", "e
                 l = !0;
               }
             }
-            l ? (this.decorationIgnoreSet.add(a), o.push(n[r].id)) : a.range = u;
+            if (l) {
+              this.decorationIgnoreSet.add(a);
+              o.push(n[r].id);
+            }
+
+            {
+              a.range = u;
+            }
           }
         }
       }
@@ -513,8 +520,13 @@ define("vs/editor/contrib/referenceSearch/referenceSearchWidget", ["require", "e
 
       this.preview.layout();
 
-      this.position && g.containsPosition(e.range, this.position) ? this.show(this.position, 18) : this.show(e.range,
-        18);
+      if (this.position && g.containsPosition(e.range, this.position)) {
+        this.show(this.position, 18);
+      }
+
+      {
+        this.show(e.range, 18);
+      }
 
       this.focus();
     };
@@ -524,11 +536,22 @@ define("vs/editor/contrib/referenceSearch/referenceSearchWidget", ["require", "e
       this.editorService.resolveEditorModel({
         resource: e.resource
       }).done(function(i) {
-        i ? (t.preview.setModel(i.textEditorModel), t.preview.setSelection(e.range, !0, !0, !0)) : t.preview.setModel(
-          t.previewNotAvailableMessage);
+        if (i) {
+          t.preview.setModel(i.textEditorModel);
+          t.preview.setSelection(e.range, !0, !0, !0);
+        }
 
-        e.resource.getScheme() !== u.schemas.inMemory ? t.setTitle(e.name, e.directory) : t.setTitle(n.localize(
-          "vs_editor_contrib_referenceSearch_referenceSearchWidget", 3));
+        {
+          t.preview.setModel(t.previewNotAvailableMessage);
+        }
+
+        if (e.resource.getScheme() !== u.schemas.inMemory) {
+          t.setTitle(e.name, e.directory);
+        }
+
+        {
+          t.setTitle(n.localize("vs_editor_contrib_referenceSearch_referenceSearchWidget", 3));
+        }
       }, l.onUnexpectedError);
 
       this.tree.reveal(e);

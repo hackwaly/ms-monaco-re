@@ -22,7 +22,17 @@ define("vs/base/paths", ["require", "exports"], function(e, t) {
     }
     for (var o = 0; o < n.length; o++) {
       var s = n[o];
-      "." === s || 0 === s.length ? (n.splice(o, 1), o -= 1) : o > 0 && ".." === s && (n.splice(o - 1, 2), o -= 2);
+      if ("." === s || 0 === s.length) {
+        n.splice(o, 1);
+        o -= 1;
+      }
+
+      {
+        if (o > 0 && ".." === s) {
+          n.splice(o - 1, 2);
+          o -= 2;
+        }
+      }
     }
     r && n.splice(1, 0, "");
 

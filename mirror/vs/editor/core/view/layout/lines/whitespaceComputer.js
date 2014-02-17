@@ -18,7 +18,11 @@ define("vs/editor/core/view/layout/lines/whitespaceComputer", ["require", "expor
     e.findInsertionIndex = function(e, t) {
       for (var n, i = 0, o = e.length; o > i;) {
         n = Math.floor((i + o) / 2);
-        t < e[n] ? o = n : i = n + 1;
+        if (t < e[n]) {
+          o = n;
+        } {
+          i = n + 1;
+        }
       }
       return i;
     };
@@ -129,7 +133,13 @@ define("vs/editor/core/view/layout/lines/whitespaceComputer", ["require", "expor
       var o;
       for (i = 0, o = this.afterLineNumbers.length; o > i; i++) {
         n = this.afterLineNumbers[i];
-        n >= e && t >= n ? this.afterLineNumbers[i] = e - 1 : n > t && (this.afterLineNumbers[i] -= t - e + 1);
+        if (n >= e && t >= n) {
+          this.afterLineNumbers[i] = e - 1;
+        } {
+          if (n > t) {
+            this.afterLineNumbers[i] -= t - e + 1;
+          }
+        }
       }
     };
 

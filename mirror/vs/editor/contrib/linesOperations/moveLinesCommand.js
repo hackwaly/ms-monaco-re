@@ -19,20 +19,34 @@ define("vs/editor/contrib/linesOperations/moveLinesCommand", ["require", "export
           var s = r.startLineNumber;
 
           var a = this._isMovingDown ? s + 1 : s - 1;
-          1 === e.getLineMaxColumn(a) ? t.addEditOperation(new n.Range(1, 1, 1, 1), null) : (t.addEditOperation(new n
-            .Range(s, 1, s, 1), e.getLineContent(a)), t.addEditOperation(new n.Range(a, 1, a, e.getLineMaxColumn(a)),
-            null));
+          if (1 === e.getLineMaxColumn(a)) {
+            t.addEditOperation(new n.Range(1, 1, 1, 1), null);
+          }
+
+          {
+            t.addEditOperation(new n.Range(s, 1, s, 1), e.getLineContent(a));
+            t.addEditOperation(new n.Range(a, 1, a, e.getLineMaxColumn(a)), null);
+          }
 
           r = new i.Selection(a, 1, a, 1);
         } else {
           var u;
 
           var l;
-          this._isMovingDown ? (u = r.endLineNumber + 1, l = e.getLineContent(u), t.addEditOperation(new n.Range(u -
-            1, e.getLineMaxColumn(u - 1), u, e.getLineMaxColumn(u)), null), t.addEditOperation(new n.Range(r.startLineNumber,
-            1, r.startLineNumber, 1), l + "\n")) : (u = r.startLineNumber - 1, l = e.getLineContent(u), t.addEditOperation(
-            new n.Range(u, 1, u + 1, 1), null), t.addEditOperation(new n.Range(r.endLineNumber, e.getLineMaxColumn(
-            r.endLineNumber), r.endLineNumber, e.getLineMaxColumn(r.endLineNumber)), "\n" + l));
+          if (this._isMovingDown) {
+            u = r.endLineNumber + 1;
+            l = e.getLineContent(u);
+            t.addEditOperation(new n.Range(u - 1, e.getLineMaxColumn(u - 1), u, e.getLineMaxColumn(u)), null);
+            t.addEditOperation(new n.Range(r.startLineNumber, 1, r.startLineNumber, 1), l + "\n");
+          }
+
+          {
+            u = r.startLineNumber - 1;
+            l = e.getLineContent(u);
+            t.addEditOperation(new n.Range(u, 1, u + 1, 1), null);
+            t.addEditOperation(new n.Range(r.endLineNumber, e.getLineMaxColumn(r.endLineNumber), r.endLineNumber, e.getLineMaxColumn(
+              r.endLineNumber)), "\n" + l);
+          }
         }
         this._selectionId = t.trackSelection(r);
       }

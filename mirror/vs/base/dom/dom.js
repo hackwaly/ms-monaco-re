@@ -99,7 +99,16 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
     var d = function() {
       if (l = !1, !u) {
         var e = (new Date).getTime() - a;
-        e >= r ? c() : l || (l = !0, t.scheduleAtNextAnimationFrame(d, Number.MAX_VALUE));
+        if (e >= r) {
+          c();
+        }
+
+        {
+          if (!l) {
+            l = !0;
+            t.scheduleAtNextAnimationFrame(d, Number.MAX_VALUE);
+          }
+        }
       }
     };
 
@@ -145,7 +154,18 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
     var c = t.addListener(e, n, function(e) {
       s = o(s, e);
       var t = (new Date).getTime() - a;
-      t >= r ? (-1 !== u && window.clearTimeout(u), l()) : -1 === u && (u = window.setTimeout(l, r - t));
+      if (t >= r) {
+        if (-1 !== u) {
+          window.clearTimeout(u);
+        }
+        l();
+      }
+
+      {
+        if (-1 === u) {
+          u = window.setTimeout(l, r - t);
+        }
+      }
     });
     return function() {
       if (-1 !== u) {
@@ -378,13 +398,21 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
     var c = function() {
       if (i) {
         r = !0;
-        n.isTesting() ? r && (r = !1, i = !1, s.emit("blur", {})) : window.setTimeout(function() {
+        if (n.isTesting()) {
           if (r) {
             r = !1;
             i = !1;
             s.emit("blur", {});
           }
-        }, 0);
+        } {
+          window.setTimeout(function() {
+            if (r) {
+              r = !1;
+              i = !1;
+              s.emit("blur", {});
+            }
+          }, 0);
+        }
       }
     };
     a.push(t.addListener(e, t.EventType.FOCUS, l, !0));
@@ -461,7 +489,16 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
     };
 
     t.addClass = function(t, i) {
-      t.className ? (e(t, i), -1 === n && (t.className = t.className + " " + i)) : t.className = i;
+      if (t.className) {
+        e(t, i);
+        if (-1 === n) {
+          t.className = t.className + " " + i;
+        }
+      }
+
+      {
+        t.className = i;
+      }
     };
 
     t.removeClass = function(t, o) {
@@ -736,10 +773,20 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
 
   t.EventHelper = {
     stop: function(e, t) {
-      e.preventDefault ? e.preventDefault() : e.returnValue = !1;
+      if (e.preventDefault) {
+        e.preventDefault();
+      }
+
+      {
+        e.returnValue = !1;
+      }
 
       if (t) {
-        e.stopPropagation ? e.stopPropagation() : e.cancelBubble = !0;
+        if (e.stopPropagation) {
+          e.stopPropagation();
+        } {
+          e.cancelBubble = !0;
+        }
       }
     }
   };

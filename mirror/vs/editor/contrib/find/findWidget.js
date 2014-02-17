@@ -69,7 +69,13 @@ define("vs/editor/contrib/find/findWidget", ["require", "exports", "vs/nls!vs/ed
 
       this._replaceInputBox.value = e.replaceString;
 
-      e.isReplaceRevealed ? this._enableReplace(!1) : this._disableReplace(!1);
+      if (e.isReplaceRevealed) {
+        this._enableReplace(!1);
+      }
+
+      {
+        this._disableReplace(!1);
+      }
 
       this._onFindValueChange();
     };
@@ -93,20 +99,28 @@ define("vs/editor/contrib/find/findWidget", ["require", "exports", "vs/nls!vs/ed
       var t = this;
       this._removeModel();
 
-      e ? (this._model = e, this._modelListenersToDispose.push(this._model.addStartEventListener(function(e) {
-        t._reveal(e.shouldFocus);
+      if (e) {
+        this._model = e;
+        this._modelListenersToDispose.push(this._model.addStartEventListener(function(e) {
+          t._reveal(e.shouldFocus);
 
-        t._setState(e.state, e.selectionFindEnabled);
+          t._setState(e.state, e.selectionFindEnabled);
 
-        if (e.shouldFocus) {
-          t._findInput.select();
-        }
-      })), this._modelListenersToDispose.push(this._model.addMatchesUpdatedEventListener(function(e) {
-        r.toggleClass(t._domNode, "no-results", "" !== t._findInput.getValue() && 0 === e.count && !e.matchesOnlyOutsideSelection);
+          if (e.shouldFocus) {
+            t._findInput.select();
+          }
+        }));
+        this._modelListenersToDispose.push(this._model.addMatchesUpdatedEventListener(function(e) {
+          r.toggleClass(t._domNode, "no-results", "" !== t._findInput.getValue() && 0 === e.count && !e.matchesOnlyOutsideSelection);
 
-        r.toggleClass(t._domNode, "no-results-in-selection", "" !== t._findInput.getValue() && 0 === e.count &&
-          e.matchesOnlyOutsideSelection);
-      }))) : this._hide(!1);
+          r.toggleClass(t._domNode, "no-results-in-selection", "" !== t._findInput.getValue() && 0 === e.count &&
+            e.matchesOnlyOutsideSelection);
+        }));
+      }
+
+      {
+        this._hide(!1);
+      }
     };
 
     t.prototype._removeModel = function() {
@@ -180,11 +194,17 @@ define("vs/editor/contrib/find/findWidget", ["require", "exports", "vs/nls!vs/ed
         default:
           o = this._focusGrid.onKeyDown(this._findInput, e);
       }
-      o ? e.preventDefault() : setTimeout(function() {
-        t._onFindValueChange();
+      if (o) {
+        e.preventDefault();
+      }
 
-        t._emitUserInputEvent(!0);
-      }, 10);
+      {
+        setTimeout(function() {
+          t._onFindValueChange();
+
+          t._emitUserInputEvent(!0);
+        }, 10);
+      }
     };
 
     t.prototype._onReplaceInputKeyDown = function(e) {
@@ -218,9 +238,15 @@ define("vs/editor/contrib/find/findWidget", ["require", "exports", "vs/nls!vs/ed
         default:
           o = this._focusGrid.onKeyDown(this._replaceInputBox, e);
       }
-      o ? e.preventDefault() : setTimeout(function() {
-        t._emitUserInputEvent(!0);
-      }, 10);
+      if (o) {
+        e.preventDefault();
+      }
+
+      {
+        setTimeout(function() {
+          t._emitUserInputEvent(!0);
+        }, 10);
+      }
     };
 
     t.prototype._onFindValueChange = function() {
@@ -364,7 +390,13 @@ define("vs/editor/contrib/find/findWidget", ["require", "exports", "vs/nls!vs/ed
       var i = this._buildReplacePart();
       this._toggleReplaceBtn = (new p(n.localize("vs_editor_contrib_find_findWidget", 10), "toggle left")).onTrigger(
         function() {
-          e._isReplaceVisible ? e._disableReplace(!0) : e._enableReplace(!0);
+          if (e._isReplaceVisible) {
+            e._disableReplace(!0);
+          }
+
+          {
+            e._enableReplace(!0);
+          }
         });
 
       this._toggleReplaceBtn.toggleClass("expand", this._isReplaceVisible);

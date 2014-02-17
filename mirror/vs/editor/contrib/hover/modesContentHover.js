@@ -121,7 +121,13 @@ define("vs/editor/contrib/hover/modesContentHover", ["require", "exports", "vs/e
                 t.push(o);
               }
             }
-            t.length > 0 ? this._renderMessages(e, t) : this.hide();
+            if (t.length > 0) {
+              this._renderMessages(e, t);
+            }
+
+            {
+              this.hide();
+            }
           }
         this._lastRange = e;
 
@@ -144,7 +150,15 @@ define("vs/editor/contrib/hover/modesContentHover", ["require", "exports", "vs/e
     t.prototype._withResult = function(e, t) {
       this._messages = e;
 
-      this._messages.length > 0 ? this._renderMessages(this._lastRange, this._messages) : t && this.hide();
+      if (this._messages.length > 0) {
+        this._renderMessages(this._lastRange, this._messages);
+      }
+
+      {
+        if (t) {
+          this.hide();
+        }
+      }
     };
 
     t.prototype._renderMessages = function(e, t) {
@@ -170,9 +184,15 @@ define("vs/editor/contrib/hover/modesContentHover", ["require", "exports", "vs/e
             t.appendChild(a);
           }
 
-          e.htmlContent && e.htmlContent.length > 0 ? e.htmlContent.forEach(function(e) {
-            u.appendChild(s.renderHtml(e));
-          }) : u.textContent = e.value;
+          if (e.htmlContent && e.htmlContent.length > 0) {
+            e.htmlContent.forEach(function(e) {
+              u.appendChild(s.renderHtml(e));
+            });
+          }
+
+          {
+            u.textContent = e.value;
+          }
 
           r.appendChild(t);
         }

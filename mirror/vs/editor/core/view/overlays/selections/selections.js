@@ -158,14 +158,38 @@ define("vs/editor/core/view/overlays/selections/selections", ["require", "export
         if (c > 0) {
           o = e[c - 1].left;
           r = e[c - 1].left + e[c - 1].width;
-          n === o ? u.top = 2 : n > o && (u.top = 1);
-          i === r ? l.top = 2 : i > o && r > i && (l.top = 1);
+          if (n === o) {
+            u.top = 2;
+          } {
+            if (n > o) {
+              u.top = 1;
+            }
+          }
+          if (i === r) {
+            l.top = 2;
+          } {
+            if (i > o && r > i) {
+              l.top = 1;
+            }
+          }
         }
         if (d > c + 1) {
           s = e[c + 1].left;
           a = e[c + 1].left + e[c + 1].width;
-          n === s ? u.bottom = 2 : n > s && a > n && (u.bottom = 1);
-          i === a ? l.bottom = 2 : a > i && (l.bottom = 1);
+          if (n === s) {
+            u.bottom = 2;
+          } {
+            if (n > s && a > n) {
+              u.bottom = 1;
+            }
+          }
+          if (i === a) {
+            l.bottom = 2;
+          } {
+            if (a > i) {
+              l.bottom = 1;
+            }
+          }
         }
         t.startStyle = u;
         t.endStyle = l;

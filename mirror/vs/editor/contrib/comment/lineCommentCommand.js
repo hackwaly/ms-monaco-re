@@ -69,8 +69,14 @@ define("vs/editor/contrib/comment/lineCommentCommand", ["require", "exports",
           _[m - r.startLineNumber] = g;
           if (v) {
             p = t.getLineContent(m);
-            f = i.firstNonWhitespaceIndex(p); - 1 === f ? v = !1 : this._haystackHasNeedleAtOffset(p, g, f) || (v = !
-              1);
+            f = i.firstNonWhitespaceIndex(p);
+            if (-1 === f) {
+              v = !1;
+            } {
+              if (!this._haystackHasNeedleAtOffset(p, g, f)) {
+                v = !1;
+              }
+            }
             y[m - r.startLineNumber] = f;
           }
         }

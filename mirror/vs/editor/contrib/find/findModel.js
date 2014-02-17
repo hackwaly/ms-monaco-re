@@ -153,8 +153,15 @@ define("vs/editor/contrib/find/findModel", ["require", "exports", "vs/editor/cor
 
       this.decorationIndex = this.indexAfterPosition(this.startPosition);
 
-      this.didReplace || e ? this.decorations.length > 0 && this.setSelectionToDecoration(this.decorations[this.decorationIndex]) :
+      if (this.didReplace || e) {
+        if (this.decorations.length > 0) {
+          this.setSelectionToDecoration(this.decorations[this.decorationIndex]);
+        }
+      }
+
+      {
         this.decorationIndex = this.previousIndex(this.decorationIndex);
+      }
       var o = !1;
       if (0 === this.decorations.length && this.hasFindScope()) {
         o = this.editor.getModel().findMatches(this.searchString, this.editor.getModel().getFullModelRange(), this.isRegex,

@@ -427,9 +427,31 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
       var i = null === t;
 
       var o = t === this.lastChild;
-      n ? (this.firstChild = this.lastChild = e, e.next = e.previous = null) : i ? (this.firstChild.previous = e, e.next =
-        this.firstChild, e.previous = null, this.firstChild = e) : o ? (this.lastChild.next = e, e.next = null, e.previous =
-        this.lastChild, this.lastChild = e) : (e.previous = t, e.next = t.next, t.next.previous = e, t.next = e);
+      if (n) {
+        this.firstChild = this.lastChild = e;
+        e.next = e.previous = null;
+      }
+
+      {
+        if (i) {
+          this.firstChild.previous = e;
+          e.next = this.firstChild;
+          e.previous = null;
+          this.firstChild = e;
+        } {
+          if (o) {
+            this.lastChild.next = e;
+            e.next = null;
+            e.previous = this.lastChild;
+            this.lastChild = e;
+          } {
+            e.previous = t;
+            e.next = t.next;
+            t.next.previous = e;
+            t.next = e;
+          }
+        }
+      }
 
       e.parent = this;
 
@@ -444,8 +466,24 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
       var t = this.firstChild === e;
 
       var n = this.lastChild === e;
-      t && n ? this.firstChild = this.lastChild = null : t ? (e.next.previous = null, this.firstChild = e.next) : n ?
-        (e.previous.next = null, this.lastChild = e.previous) : (e.next.previous = e.previous, e.previous.next = e.next);
+      if (t && n) {
+        this.firstChild = this.lastChild = null;
+      }
+
+      {
+        if (t) {
+          e.next.previous = null;
+          this.firstChild = e.next;
+        } {
+          if (n) {
+            e.previous.next = null;
+            this.lastChild = e.previous;
+          } {
+            e.next.previous = e.previous;
+            e.previous.next = e.next;
+          }
+        }
+      }
 
       e.parent = null;
 
@@ -1081,7 +1119,11 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
         var u = [];
         for (s in a) {
           if (a.hasOwnProperty(s)) {
-            i.hasOwnProperty(s) ? delete i[s] : u.push(a[s]);
+            if (i.hasOwnProperty(s)) {
+              delete i[s];
+            } {
+              u.push(a[s]);
+            }
           }
         }
         for (var o = 0, r = u.length; r > o; o++) {

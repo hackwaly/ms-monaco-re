@@ -35,7 +35,13 @@ define("vs/editor/modes/monarch/monarch", ["require", "exports", "vs/platform/pl
         var s = "";
         s = r < t.length - 1 ? e.substr(t[r].startIndex, t[r + 1].startIndex - t[r].startIndex) : e.substr(t[r].startIndex);
 
-        t[r].startIndex < n ? i.push(s) : o.push(s);
+        if (t[r].startIndex < n) {
+          i.push(s);
+        }
+
+        {
+          o.push(s);
+        }
       }
     return {
       pre: " " + i.join(" ") + " ",
@@ -62,7 +68,13 @@ define("vs/editor/modes/monarch/monarch", ["require", "exports", "vs/platform/pl
     }
     var s = [];
     for (o = 0; o < n.length && n[o].startIndex < i; o++) {
-      1 === n[o].bracket ? s.push(o) : -1 === n[o].bracket && s.length > 0 && s.pop();
+      if (1 === n[o].bracket) {
+        s.push(o);
+      } {
+        if (-1 === n[o].bracket && s.length > 0) {
+          s.pop();
+        }
+      }
     }
     if (0 === s.length) {
       return null;
@@ -300,8 +312,13 @@ define("vs/editor/modes/monarch/monarch", ["require", "exports", "vs/platform/pl
             y = y.substr(1);
           }
 
-          s.findRules(this.lexer, y) ? this.stack[0] = y : s.throwError(this.lexer, "trying to switch to a state '" +
-            y + "' that is undefined in rule: " + d.name);
+          if (s.findRules(this.lexer, y)) {
+            this.stack[0] = y;
+          }
+
+          {
+            s.throwError(this.lexer, "trying to switch to a state '" + y + "' that is undefined in rule: " + d.name);
+          }
 
           c = null;
         } else if (u.transform && "function" == typeof u.transform) {
@@ -309,12 +326,18 @@ define("vs/editor/modes/monarch/monarch", ["require", "exports", "vs/platform/pl
           c = null;
         } else if (u.next)
           if ("@push" === u.next) {
-            this.stack.length >= this.lexer.maxStack ? s.throwError(this.lexer,
-              "maximum tokenizer stack size reached: [" + this.stack[0] + "," + this.stack[1] + ",...," + this.stack[
-                this.stack.length - 2] + "," + this.stack[this.stack.length - 1] + "]") : this.stack.unshift(o);
+            if (this.stack.length >= this.lexer.maxStack) {
+              s.throwError(this.lexer, "maximum tokenizer stack size reached: [" + this.stack[0] + "," + this.stack[1] +
+                ",...," + this.stack[this.stack.length - 2] + "," + this.stack[this.stack.length - 1] + "]");
+            } {
+              this.stack.unshift(o);
+            }
           } else if ("@pop" === u.next) {
-          this.stack.length <= 1 ? s.throwError(this.lexer, "trying to pop an empty stack in rule: " + d.name) : this
-            .stack.shift();
+          if (this.stack.length <= 1) {
+            s.throwError(this.lexer, "trying to pop an empty stack in rule: " + d.name);
+          } {
+            this.stack.shift();
+          }
         } else if ("@popall" === u.next) {
           if (this.stack.length > 1) {
             this.stack = [this.stack[this.stack.length - 1]];
@@ -325,8 +348,13 @@ define("vs/editor/modes/monarch/monarch", ["require", "exports", "vs/platform/pl
             y = y.substr(1);
           }
 
-          s.findRules(this.lexer, y) ? this.stack.unshift(y) : s.throwError(this.lexer,
-            "trying to set a next state '" + y + "' that is undefined in rule: " + d.name);
+          if (s.findRules(this.lexer, y)) {
+            this.stack.unshift(y);
+          }
+
+          {
+            s.throwError(this.lexer, "trying to set a next state '" + y + "' that is undefined in rule: " + d.name);
+          }
         }
         if (u.log && "string" == typeof u.log) {
           s.log(this.lexer, this.lexer.displayName + ": " + s.substituteMatches(this.lexer, u.log, a, r, o));

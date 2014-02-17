@@ -46,10 +46,24 @@ define("vs/editor/contrib/comment/blockCommentCommand", ["require", "exports", "
       var f = this._haystackHasNeedleAtOffset(i.getLineContent(r), c, s - 1 - d);
 
       var g = this._haystackHasNeedleAtOffset(i.getLineContent(a), h, u - 1);
-      f && g ? l ? o.addEditOperation(new n.Range(r, s - d, a, u + p), null) : (o.addEditOperation(new n.Range(r, s -
-        d, r, s), null), o.addEditOperation(new n.Range(a, u, a, u + p), null)) : l ? (o.addEditOperation(new n.Range(
-        r, s, a, u), c + h), this._usedEndToken = h) : (o.addEditOperation(new n.Range(r, s, r, s), c), o.addEditOperation(
-        new n.Range(a, u, a, u), h));
+      if (f && g) {
+        if (l) {
+          o.addEditOperation(new n.Range(r, s - d, a, u + p), null);
+        } {
+          o.addEditOperation(new n.Range(r, s - d, r, s), null);
+          o.addEditOperation(new n.Range(a, u, a, u + p), null);
+        }
+      }
+
+      {
+        if (l) {
+          o.addEditOperation(new n.Range(r, s, a, u), c + h);
+          this._usedEndToken = h;
+        } {
+          o.addEditOperation(new n.Range(r, s, r, s), c);
+          o.addEditOperation(new n.Range(a, u, a, u), h);
+        }
+      }
     };
 
     e.prototype.getEditOperations = function(e, t) {

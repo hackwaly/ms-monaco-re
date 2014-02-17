@@ -104,11 +104,19 @@ define("vs/editor/core/view/model/viewModel", ["require", "exports", "vs/base/ev
           return n.emit(e, t);
         });
 
-        o ? (n.emit(i.EventNames.LineMappingChangedEvent), n.decorations.onLineMappingChanged(function(e, t) {
-          return n.emit(e, t);
-        }), n.cursors.onLineMappingChanged(function(e, t) {
-          return n.emit(e, t);
-        })) : n.restoreCurrentCenteredModelRange = null;
+        if (o) {
+          n.emit(i.EventNames.LineMappingChangedEvent);
+          n.decorations.onLineMappingChanged(function(e, t) {
+            return n.emit(e, t);
+          });
+          n.cursors.onLineMappingChanged(function(e, t) {
+            return n.emit(e, t);
+          });
+        }
+
+        {
+          n.restoreCurrentCenteredModelRange = null;
+        }
 
         if (!n.isHandlingExternalEvents) {
           n.restoreCenteredModelRange();

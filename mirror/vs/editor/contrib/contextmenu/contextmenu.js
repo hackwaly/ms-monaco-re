@@ -141,7 +141,19 @@ define("vs/editor/contrib/contextmenu/contextmenu", ["require", "exports", "vs/n
       }
       for (var a = !1, u = e.length - 1; u >= 0; u--) {
         var s = e[u].id === h.Separator.ID;
-        s && !a ? e.splice(u, 1) : s ? s && (a = !1) : a = !0;
+        if (s && !a) {
+          e.splice(u, 1);
+        }
+
+        {
+          if (s) {
+            if (s) {
+              a = !1;
+            }
+          } {
+            a = !0;
+          }
+        }
       }
       return e;
     };

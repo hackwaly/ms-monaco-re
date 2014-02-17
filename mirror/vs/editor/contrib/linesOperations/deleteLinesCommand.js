@@ -25,7 +25,17 @@ define("vs/editor/contrib/linesOperations/deleteLinesCommand", ["require", "expo
         var r = 1;
 
         var s = e.getLineMaxColumn(o);
-        o < e.getLineCount() ? (o += 1, s = 1) : i > 1 && (i -= 1, r = e.getLineMaxColumn(i));
+        if (o < e.getLineCount()) {
+          o += 1;
+          s = 1;
+        }
+
+        {
+          if (i > 1) {
+            i -= 1;
+            r = e.getLineMaxColumn(i);
+          }
+        }
 
         t.addEditOperation(new n.Range(i, r, o, s), null);
       }

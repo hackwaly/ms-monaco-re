@@ -17,7 +17,15 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
       this._recreateLineTokens(null);
     }
     e.prototype._recreateLineTokens = function(t) {
-      0 === this.text.length ? t = e.DEFAULT_TOKENS_EMPTY_TEXT : t && 0 !== t.length || (t = e.DEFAULT_TOKENS_NON_EMPTY_TEXT);
+      if (0 === this.text.length) {
+        t = e.DEFAULT_TOKENS_EMPTY_TEXT;
+      }
+
+      {
+        if (!(t && 0 !== t.length)) {
+          t = e.DEFAULT_TOKENS_NON_EMPTY_TEXT;
+        }
+      }
 
       this.lineTokens = new r(t, this.text.length);
     };
@@ -104,10 +112,28 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
             var f = d[h].startIndex;
 
             var g = f;
-            f >= i - 1 ? g = f - a.length : f >= n - 1 && (g = n - 1);
+            if (f >= i - 1) {
+              g = f - a.length;
+            }
 
-            g >= p.length ? (d.splice(h, 1), h--) : (d[h].startIndex = g, h > 0 && d[h - 1].startIndex >= g && (d.splice(
-              h - 1, 1), h--));
+            {
+              if (f >= n - 1) {
+                g = n - 1;
+              }
+            }
+
+            if (g >= p.length) {
+              d.splice(h, 1);
+              h--;
+            }
+
+            {
+              d[h].startIndex = g;
+              if (h > 0 && d[h - 1].startIndex >= g) {
+                d.splice(h - 1, 1);
+                h--;
+              }
+            }
           }
         }
         this.text = p;
@@ -117,11 +143,27 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
       var m;
       for (h = 0; h < this.markers.length; h++) {
         m = this.markers[h];
-        m.column > s || m.column === s && (r || !m.stickToPreviousCharacter) ? (t[m.id] = !0, m.oldLineNumber = m.oldLineNumber ||
-          this.lineNumber, m.oldColumn = m.oldColumn || m.column, m.column -= a.length) : (m.column > n || m.column ===
-          n && (r || !m.stickToPreviousCharacter)) && (t[m.id] = !0, m.oldLineNumber = m.oldLineNumber || this.lineNumber,
-          m.oldColumn = m.oldColumn || m.column, o ? (m.line = null, m.column -= n - 1, this.markers.splice(h, 1), h--,
-            u.push(m)) : m.column = n);
+        if (m.column > s || m.column === s && (r || !m.stickToPreviousCharacter)) {
+          t[m.id] = !0;
+          m.oldLineNumber = m.oldLineNumber || this.lineNumber;
+          m.oldColumn = m.oldColumn || m.column;
+          m.column -= a.length;
+        } {
+          if (m.column > n || m.column === n && (r || !m.stickToPreviousCharacter)) {
+            t[m.id] = !0;
+            m.oldLineNumber = m.oldLineNumber || this.lineNumber;
+            m.oldColumn = m.oldColumn || m.column;
+            if (o) {
+              m.line = null;
+              m.column -= n - 1;
+              this.markers.splice(h, 1);
+              h--;
+              u.push(m);
+            } {
+              m.column = n;
+            }
+          }
+        }
       }
       return {
         text: a,

@@ -49,14 +49,21 @@ define("vs/editor/contrib/hover/hoverOperation", ["require", "exports", "vs/base
 
         this._secondWaitScheduler.schedule();
 
-        this._computer.computeAsync ? (this._asyncComputationPromiseDone = !1, this._asyncComputationPromise = this._computer
-          .computeAsync(), this._asyncComputationPromise.then(function(t) {
+        if (this._computer.computeAsync) {
+          this._asyncComputationPromiseDone = !1;
+          this._asyncComputationPromise = this._computer.computeAsync();
+          this._asyncComputationPromise.then(function(t) {
             e._asyncComputationPromiseDone = !0;
 
             e._withAsyncResult(t);
           }).done(null, function() {
             return e._onError;
-          })) : this._asyncComputationPromiseDone = !0;
+          });
+        }
+
+        {
+          this._asyncComputationPromiseDone = !0;
+        }
       };
 
       e.prototype._triggerSyncComputation = function() {
@@ -64,8 +71,15 @@ define("vs/editor/contrib/hover/hoverOperation", ["require", "exports", "vs/base
           this._computer.onResult(this._computer.computeSync(), !0);
         }
 
-        this._asyncComputationPromiseDone ? (this._state = 0, this._onComplete(this._computer.getResult())) : (this._state =
-          3, this._onProgress(this._computer.getResult()));
+        if (this._asyncComputationPromiseDone) {
+          this._state = 0;
+          this._onComplete(this._computer.getResult());
+        }
+
+        {
+          this._state = 3;
+          this._onProgress(this._computer.getResult());
+        }
       };
 
       e.prototype._withAsyncResult = function(e) {
@@ -86,7 +100,13 @@ define("vs/editor/contrib/hover/hoverOperation", ["require", "exports", "vs/base
       };
 
       e.prototype._onError = function(e) {
-        this._errorCallback ? this._errorCallback(e) : i.onUnexpectedError(e);
+        if (this._errorCallback) {
+          this._errorCallback(e);
+        }
+
+        {
+          i.onUnexpectedError(e);
+        }
       };
 
       e.prototype._onProgress = function(e) {

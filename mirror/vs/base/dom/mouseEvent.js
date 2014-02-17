@@ -33,20 +33,40 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
 
       this.metaKey = e.metaKey;
 
-      e.clientX || e.clientY ? (this.posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft,
-        this.posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop) : (e.pageX || e.pageY) &&
-        (this.posx = e.pageX, this.posy = e.pageY);
+      if (e.clientX || e.clientY) {
+        this.posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+        this.posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+      }
+
+      {
+        if (e.pageX || e.pageY) {
+          this.posx = e.pageX;
+          this.posy = e.pageY;
+        }
+      }
       var t = i.getPositionOfChildWindowRelativeToAncestorWindow(self, e.view);
       this.posx -= t.left;
 
       this.posy -= t.top;
     }
     e.prototype.preventDefault = function() {
-      this.browserEvent.preventDefault ? this.browserEvent.preventDefault() : this.browserEvent.returnValue = !1;
+      if (this.browserEvent.preventDefault) {
+        this.browserEvent.preventDefault();
+      }
+
+      {
+        this.browserEvent.returnValue = !1;
+      }
     };
 
     e.prototype.stopPropagation = function() {
-      this.browserEvent.stopPropagation ? this.browserEvent.stopPropagation() : this.browserEvent.cancelBubble = !0;
+      if (this.browserEvent.stopPropagation) {
+        this.browserEvent.stopPropagation();
+      }
+
+      {
+        this.browserEvent.cancelBubble = !0;
+      }
     };
 
     return e;
@@ -79,12 +99,25 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
         var r = e;
 
         var s = e;
-        "undefined" != typeof r.wheelDeltaY ? this.deltaY = o(r.wheelDeltaY) : "undefined" != typeof s.VERTICAL_AXIS &&
-          s.axis === s.VERTICAL_AXIS && (this.deltaY = -s.detail / 3);
+        if ("undefined" != typeof r.wheelDeltaY) {
+          this.deltaY = o(r.wheelDeltaY);
+        }
 
-        "undefined" != typeof r.wheelDeltaX ? this.deltaX = n.browser.isSafari && n.browser.isWindows ? -o(r.wheelDeltaX) :
-          o(r.wheelDeltaX) : "undefined" != typeof s.HORIZONTAL_AXIS && s.axis === s.HORIZONTAL_AXIS && (this.deltaX = -
-            e.detail / 3);
+        {
+          if ("undefined" != typeof s.VERTICAL_AXIS && s.axis === s.VERTICAL_AXIS) {
+            this.deltaY = -s.detail / 3;
+          }
+        }
+
+        if ("undefined" != typeof r.wheelDeltaX) {
+          this.deltaX = n.browser.isSafari && n.browser.isWindows ? -o(r.wheelDeltaX) : o(r.wheelDeltaX);
+        }
+
+        {
+          if ("undefined" != typeof s.HORIZONTAL_AXIS && s.axis === s.HORIZONTAL_AXIS) {
+            this.deltaX = -e.detail / 3;
+          }
+        }
 
         if (0 === this.deltaY && 0 === this.deltaX && e.wheelDelta) {
           this.deltaY = o(e.wheelDelta);
@@ -93,13 +126,21 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
     }
     e.prototype.preventDefault = function() {
       if (this.browserEvent) {
-        this.browserEvent.preventDefault ? this.browserEvent.preventDefault() : this.browserEvent.returnValue = !1;
+        if (this.browserEvent.preventDefault) {
+          this.browserEvent.preventDefault();
+        } {
+          this.browserEvent.returnValue = !1;
+        }
       }
     };
 
     e.prototype.stopPropagation = function() {
       if (this.browserEvent) {
-        this.browserEvent.stopPropagation ? this.browserEvent.stopPropagation() : this.browserEvent.cancelBubble = !0;
+        if (this.browserEvent.stopPropagation) {
+          this.browserEvent.stopPropagation();
+        } {
+          this.browserEvent.cancelBubble = !0;
+        }
       }
     };
 

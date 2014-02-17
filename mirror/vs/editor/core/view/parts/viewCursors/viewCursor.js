@@ -90,7 +90,14 @@ define("vs/editor/core/view/parts/viewCursors/viewCursor", ["require", "exports"
 
     e.prototype.prepareRender = function(e) {
       var t = e.visibleRangeForPosition(this._position);
-      t ? (this._positionTop = t.top, this._positionLeft = t.left) : this._positionTop = -1e3;
+      if (t) {
+        this._positionTop = t.top;
+        this._positionLeft = t.left;
+      }
+
+      {
+        this._positionTop = -1e3;
+      }
     };
 
     e.prototype.render = function() {

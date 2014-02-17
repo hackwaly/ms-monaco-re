@@ -97,9 +97,15 @@ define("vs/editor/contrib/suggest/quickSuggestWidget", ["require", "exports", "v
 
       this.modelListenersToRemove.push(this.model.addListener("suggest", function(e) {
         if (t.editor.getConfiguration().quickSuggestions) {
-          e.auto ? (t.currentWord = e.suggestions.currentWord, t.suggestions = e.suggestions.suggestions.filter(r
-              .bind(null, t.currentWord)), t.currentSuggestionIndex = 0, t.currentSuggestion = t.suggestions[t.currentSuggestionIndex],
-            t.onSuggestions()) : t.cancel();
+          if (e.auto) {
+            t.currentWord = e.suggestions.currentWord;
+            t.suggestions = e.suggestions.suggestions.filter(r.bind(null, t.currentWord));
+            t.currentSuggestionIndex = 0;
+            t.currentSuggestion = t.suggestions[t.currentSuggestionIndex];
+            t.onSuggestions();
+          } {
+            t.cancel();
+          }
         }
       }));
 

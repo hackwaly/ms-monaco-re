@@ -154,13 +154,21 @@ define("vs/languages/less/editor/colorContribution", ["require", "exports", "vs/
         for (e = 0, t = s._currentDecorations.length; t > e; e++) {
           r = s._currentDecorations[e];
           n = a.getDecorationRange(r.trackingDecorationId);
-          n && !n.isEmpty() ? (u[e] = a.getValueInRange(n).replace(/[^%#a-z0-9.,()]/gi, ""), i = a.getDecorationRange(
-            r.renderingDecorationId), o = a.validateRange({
-            startLineNumber: n.startLineNumber,
-            startColumn: n.startColumn,
-            endLineNumber: n.startLineNumber,
-            endColumn: n.startColumn + 1
-          }), i && i.equalsRange(o) || l.changeDecoration(r.renderingDecorationId, o)) : u[e] = "";
+          if (n && !n.isEmpty()) {
+            u[e] = a.getValueInRange(n).replace(/[^%#a-z0-9.,()]/gi, "");
+            i = a.getDecorationRange(r.renderingDecorationId);
+            o = a.validateRange({
+              startLineNumber: n.startLineNumber,
+              startColumn: n.startColumn,
+              endLineNumber: n.startLineNumber,
+              endColumn: n.startColumn + 1
+            });
+            if (!(i && i.equalsRange(o))) {
+              l.changeDecoration(r.renderingDecorationId, o);
+            }
+          } {
+            u[e] = "";
+          }
         }
         s.ensureColors(u);
       });

@@ -32,8 +32,13 @@ define("vs/base/ui/widgets/tree/treeDefaults", ["require", "exports", "vs/base/e
         Enter: this.onEnter.bind(this)
       };
 
-      n.browser.isMacintosh ? this.upKeyBindings["Meta-Enter"] = this.onEnter.bind(this) : this.upKeyBindings[
-        "Ctrl-Enter"] = this.onEnter.bind(this);
+      if (n.browser.isMacintosh) {
+        this.upKeyBindings["Meta-Enter"] = this.onEnter.bind(this);
+      }
+
+      {
+        this.upKeyBindings["Ctrl-Enter"] = this.onEnter.bind(this);
+      }
     }
     e.prototype.onClick = function(e, t, i) {
       var o = n.browser.isMacintosh;

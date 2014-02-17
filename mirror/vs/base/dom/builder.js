@@ -158,7 +158,15 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
     e.prototype.build = function(t, n) {
       r.ok(this.offdom, "This builder was not created off-dom, so build() can not be called.");
 
-      t ? t instanceof e && (t = t.getHTMLElement()) : t = this.container;
+      if (t) {
+        if (t instanceof e) {
+          t = t.getHTMLElement();
+        }
+      }
+
+      {
+        t = this.container;
+      }
 
       r.ok(t, "Builder can only be build() with a container provided.");
 
@@ -181,7 +189,15 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
     };
 
     e.prototype.appendTo = function(t, n) {
-      t ? t instanceof e && (t = t.getHTMLElement()) : t = this.container;
+      if (t) {
+        if (t instanceof e) {
+          t = t.getHTMLElement();
+        }
+      }
+
+      {
+        t = this.container;
+      }
 
       r.ok(t, "Builder can only be build() with a container provided.");
 
@@ -329,8 +345,19 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
         var u = s.addListener(this.currentElement, a, function(e) {
           t(e, r, u);
         }, o || !1);
-        o ? (this.captureToUnbind[a] || (this.captureToUnbind[a] = []), this.captureToUnbind[a].push(u)) : (this.toUnbind[
-          a] || (this.toUnbind[a] = []), this.toUnbind[a].push(u));
+        if (o) {
+          if (!this.captureToUnbind[a]) {
+            this.captureToUnbind[a] = [];
+          }
+          this.captureToUnbind[a].push(u);
+        }
+
+        {
+          if (!this.toUnbind[a]) {
+            this.toUnbind[a] = [];
+          }
+          this.toUnbind[a].push(u);
+        }
         var l = this.getProperty(w, []);
         l.push(u);
 
@@ -385,7 +412,11 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
         e.preventDefault();
 
         if (t) {
-          e.stopPropagation ? e.stopPropagation() : e.cancelBubble = !0;
+          if (e.stopPropagation) {
+            e.stopPropagation();
+          } {
+            e.cancelBubble = !0;
+          }
         }
       };
       return this.on(e, i, n);
@@ -409,7 +440,17 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
         e = "addClass";
       }
 
-      this[e] ? i.isArray(t) ? this[e].apply(this, t) : this[e].call(this, t) : this.currentElement.setAttribute(e, t);
+      if (this[e]) {
+        if (i.isArray(t)) {
+          this[e].apply(this, t);
+        } {
+          this[e].call(this, t);
+        }
+      }
+
+      {
+        this.currentElement.setAttribute(e, t);
+      }
     };
 
     e.prototype.id = function(e) {
@@ -1023,7 +1064,11 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
       if (r.ok(i.isArray(n) || n instanceof t, "Expected Array or MultiBuilder as parameter"), e.call(this), this.length =
         0, this.builders = [], i.isArray(n))
         for (var o = 0; o < n.length; o++) {
-          n[o] instanceof HTMLElement ? this.push(h(n[o])) : this.push(n[o]);
+          if (n[o] instanceof HTMLElement) {
+            this.push(h(n[o]));
+          } {
+            this.push(n[o]);
+          }
         } else
           for (var o = 0; o < n.length; o++) {
             this.push(n.item(o));

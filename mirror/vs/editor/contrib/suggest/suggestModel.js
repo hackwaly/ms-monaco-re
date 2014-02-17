@@ -124,12 +124,21 @@ define("vs/editor/contrib/suggest/suggestModel", ["require", "exports", "vs/edit
       var e = this;
       if (this.editor.getModel().getMode().suggestSupport) {
         var t = new c(this.editor);
-        0 === this.state ? (this.cancel(), t.isValidForAutoSuggest() && (this.triggerAutoSuggestPromise = i.Promise.timeout(
-          this.autoSuggestDelay), this.triggerAutoSuggestPromise.then(function() {
-          e.triggerAutoSuggestPromise = null;
+        if (0 === this.state) {
+          this.cancel();
+          if (t.isValidForAutoSuggest()) {
+            this.triggerAutoSuggestPromise = i.Promise.timeout(this.autoSuggestDelay);
+            this.triggerAutoSuggestPromise.then(function() {
+              e.triggerAutoSuggestPromise = null;
 
-          e.trigger(!0, !1);
-        }))) : this.onNewContext(t);
+              e.trigger(!0, !1);
+            });
+          }
+        }
+
+        {
+          this.onNewContext(t);
+        }
       }
     };
 
@@ -163,8 +172,14 @@ define("vs/editor/contrib/suggest/suggestModel", ["require", "exports", "vs/edit
 
           i.requestPromise = null;
 
-          e.suggestions && e.suggestions.length > 0 ? (i.suggestions = e.suggestions, i.onNewContext(new c(i.editor))) :
+          if (e.suggestions && e.suggestions.length > 0) {
+            i.suggestions = e.suggestions;
+            i.onNewContext(new c(i.editor));
+          }
+
+          {
             i.emit("empty");
+          }
 
           s.stop();
         }, function() {
@@ -194,13 +209,19 @@ define("vs/editor/contrib/suggest/suggestModel", ["require", "exports", "vs/edit
           return s.localeCompare(e.label.toLowerCase(), t.label.toLowerCase());
         });
 
-        n.length > 0 ? this.emit("suggest", {
-          suggestions: {
-            suggestions: n,
-            currentWord: e.wordBefore
-          },
-          auto: this.isAutoSuggest()
-        }) : this.emit("empty");
+        if (n.length > 0) {
+          this.emit("suggest", {
+            suggestions: {
+              suggestions: n,
+              currentWord: e.wordBefore
+            },
+            auto: this.isAutoSuggest()
+          });
+        }
+
+        {
+          this.emit("empty");
+        }
       }
     };
 

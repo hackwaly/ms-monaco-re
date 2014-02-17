@@ -107,11 +107,17 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
         }).on(g.EventType.KEY_DOWN, function(t) {
           var n = new f.KeyboardEvent(t);
           if (e.quickNavigateConfiguration) {
-            e.quickNavigateConfiguration.keybinding.keys.some(function(e) {
+            if (e.quickNavigateConfiguration.keybinding.keys.some(function(e) {
               return e === n.key;
-            }) ? (g.EventHelper.stop(t, !0), e.navigateInTree(n.shiftKey ? "UpArrow" : "DownArrow")) : (
-              "DownArrow" === n.key || "UpArrow" === n.key || "PageDown" === n.key || "PageUp" === n.key) && (g.EventHelper
-              .stop(t, !0), e.navigateInTree(n.key));
+            })) {
+              g.EventHelper.stop(t, !0);
+              e.navigateInTree(n.shiftKey ? "UpArrow" : "DownArrow");
+            } {
+              if ("DownArrow" === n.key || "UpArrow" === n.key || "PageDown" === n.key || "PageUp" === n.key) {
+                g.EventHelper.stop(t, !0);
+                e.navigateInTree(n.key);
+              }
+            }
           }
         }).on(g.EventType.KEY_UP, function(t) {
           var n = new f.KeyboardEvent(t);
@@ -129,7 +135,11 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
     e.prototype.onType = function() {
       var e = this.inputBox.value;
       if (this.helpText) {
-        e ? this.helpText.hide() : this.helpText.show();
+        if (e) {
+          this.helpText.hide();
+        } {
+          this.helpText.show();
+        }
       }
 
       this.callbacks.onType(e);
@@ -165,7 +175,11 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
       i = this.tree.getFocus();
 
       if (i) {
-        r ? this.tree.reveal(this.tree.getFocus(), 0) : this.tree.reveal(this.tree.getFocus());
+        if (r) {
+          this.tree.reveal(this.tree.getFocus(), 0);
+        } {
+          this.tree.reveal(this.tree.getFocus());
+        }
       }
     };
 
@@ -247,15 +261,35 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
 
       this.quickNavigateConfiguration = n;
 
-      this.quickNavigateConfiguration ? (this.inputContainer.hide(), this.treeContainer.removeClass("transition"),
-        this.builder.show(), this.tree.DOMFocus()) : (this.inputContainer.show(), this.treeContainer.addClass(
-        "transition"), this.builder.show(), this.inputBox.$input.domFocus());
-
-      if (this.helpText) {
-        this.quickNavigateConfiguration || r.isString(e) ? this.helpText.hide() : this.helpText.show();
+      if (this.quickNavigateConfiguration) {
+        this.inputContainer.hide();
+        this.treeContainer.removeClass("transition");
+        this.builder.show();
+        this.tree.DOMFocus();
       }
 
-      r.isString(e) ? this.doShowWithPrefix(e) : this.doShowWithInput(e, t);
+      {
+        this.inputContainer.show();
+        this.treeContainer.addClass("transition");
+        this.builder.show();
+        this.inputBox.$input.domFocus();
+      }
+
+      if (this.helpText) {
+        if (this.quickNavigateConfiguration || r.isString(e)) {
+          this.helpText.hide();
+        } {
+          this.helpText.show();
+        }
+      }
+
+      if (r.isString(e)) {
+        this.doShowWithPrefix(e);
+      }
+
+      {
+        this.doShowWithInput(e, t);
+      }
     };
 
     e.prototype.doShowWithPrefix = function(e) {
@@ -373,9 +407,23 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
 
         this.progressBar.stop().getContainer().hide();
 
-        this.tree.isDOMFocused() ? this.tree.DOMBlur() : this.inputBox.$input.hasFocus() && this.inputBox.$input.domBlur();
+        if (this.tree.isDOMFocused()) {
+          this.tree.DOMBlur();
+        }
 
-        e ? this.callbacks.onCancel() : this.callbacks.onOk();
+        {
+          if (this.inputBox.$input.hasFocus()) {
+            this.inputBox.$input.domBlur();
+          }
+        }
+
+        if (e) {
+          this.callbacks.onCancel();
+        }
+
+        {
+          this.callbacks.onOk();
+        }
       }
     };
 
@@ -404,8 +452,16 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
         this.builder.removeClass(t);
       }
 
-      e ? (this.builder.addClass(e), this.builder.setProperty("extra-class", e)) : t && this.builder.removeProperty(
-        "extra-class");
+      if (e) {
+        this.builder.addClass(e);
+        this.builder.setProperty("extra-class", e);
+      }
+
+      {
+        if (t) {
+          this.builder.removeProperty("extra-class");
+        }
+      }
     };
 
     e.prototype.isVisible = function() {

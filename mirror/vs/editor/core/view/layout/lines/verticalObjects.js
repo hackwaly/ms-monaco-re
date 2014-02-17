@@ -89,15 +89,27 @@ define("vs/editor/core/view/layout/lines/verticalObjects", ["require", "exports"
 
       var u = this.whitespaces.getFirstWhitespaceIndexAfterLineNumber(r);
 
-      var l = this.whitespaces.getCount(); - 1 === u ? (u = l, o = s + 1) : (o = this.whitespaces.getAfterLineNumberForWhitespaceIndex(
-        u), i = this.whitespaces.getHeightForWhitespaceIndex(u));
+      var l = this.whitespaces.getCount();
+      if (-1 === u) {
+        u = l;
+        o = s + 1;
+      }
+
+      {
+        o = this.whitespaces.getAfterLineNumberForWhitespaceIndex(u);
+        i = this.whitespaces.getHeightForWhitespaceIndex(u);
+      }
       for (var c = a, d = 0, h = [], p = r; s >= p; p++) {
         for (c += n, h.push(d), d = 0; o === p;) {
           d += i;
           c += i;
           u++;
-          u >= l ? o = s + 1 : (o = this.whitespaces.getAfterLineNumberForWhitespaceIndex(u), i = this.whitespaces.getHeightForWhitespaceIndex(
-            u));
+          if (u >= l) {
+            o = s + 1;
+          } {
+            o = this.whitespaces.getAfterLineNumberForWhitespaceIndex(u);
+            i = this.whitespaces.getHeightForWhitespaceIndex(u);
+          }
         }
         if (c > t) {
           s = p;

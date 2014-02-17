@@ -146,10 +146,16 @@ define("vs/editor/contrib/wordHighlighter/wordHighlighter", ["require", "exports
       var t = (new Date).getTime();
 
       var n = this.lastCursorPositionChangeTime + 250;
-      t >= n ? (this.renderDecorationsTimer = -1, this.renderDecorations()) : this.renderDecorationsTimer = window.setTimeout(
-        function() {
+      if (t >= n) {
+        this.renderDecorationsTimer = -1;
+        this.renderDecorations();
+      }
+
+      {
+        this.renderDecorationsTimer = window.setTimeout(function() {
           e.renderDecorations();
         }, n - t);
+      }
     };
 
     e.prototype.renderDecorations = function() {

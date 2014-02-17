@@ -135,11 +135,33 @@ define("vs/base/ui/widgets/contextview/contextview", ["require", "exports", "vs/
 
       o = b.height;
       var C = this.delegate.anchorPosition || 0;
-      0 === C ? (e = r + l - m, m + e + o > y && r - m > o && (e = r - o - m)) : (e = r - o - m, 0 > e + m && y > r +
-        l + o - m && (e = r + l - m));
+      if (0 === C) {
+        e = r + l - m;
+        if (m + e + o > y && r - m > o) {
+          e = r - o - m;
+        }
+      }
+
+      {
+        e = r - o - m;
+        if (0 > e + m && y > r + l + o - m) {
+          e = r + l - m;
+        }
+      }
       var w = this.delegate.anchorAlignment || 0;
-      0 === w ? (t = a - v, v + t + n > _ && (t -= n - u)) : (t = a + u - n - v, 0 > t + v && _ > a + n && (t = a -
-        v));
+      if (0 === w) {
+        t = a - v;
+        if (v + t + n > _) {
+          t -= n - u;
+        }
+      }
+
+      {
+        t = a + u - n - v;
+        if (0 > t + v && _ > a + n) {
+          t = a - v;
+        }
+      }
 
       this.$view.style({
         top: e + "px",

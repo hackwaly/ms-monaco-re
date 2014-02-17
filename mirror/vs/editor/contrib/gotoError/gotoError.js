@@ -79,8 +79,24 @@ define("vs/editor/contrib/gotoError/gotoError", ["require", "exports", "vs/base/
       if (!this.canNavigate()) {
         this.emit(t.Events.CURRENT, null);
         return void 0;
-      } - 1 === this._nextIdx ? this.initIdx(e) : e ? (this._nextIdx += 1, this._nextIdx >= this._markers.length && (
-        this._nextIdx = 0)) : (this._nextIdx -= 1, this._nextIdx < 0 && (this._nextIdx = this._markers.length - 1));
+      }
+      if (-1 === this._nextIdx) {
+        this.initIdx(e);
+      }
+
+      {
+        if (e) {
+          this._nextIdx += 1;
+          if (this._nextIdx >= this._markers.length) {
+            this._nextIdx = 0;
+          }
+        } {
+          this._nextIdx -= 1;
+          if (this._nextIdx < 0) {
+            this._nextIdx = this._markers.length - 1;
+          }
+        }
+      }
       var n = this._markers[this._nextIdx];
       this.emit(t.Events.CURRENT, n);
     };

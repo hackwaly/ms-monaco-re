@@ -303,8 +303,12 @@ define("vs/editor/core/view/lines/viewLine", ["require", "exports", "vs/base/env
       a.sort(r);
       for (var u, l = [], c = a[0], d = 1, h = a.length; h > d; d++) {
         u = a[d];
-        c.left + c.width + .001 >= u.left ? c.width = Math.max(c.width, u.left + u.width - c.left) : (l.push(c), c =
-          u);
+        if (c.left + c.width + .001 >= u.left) {
+          c.width = Math.max(c.width, u.left + u.width - c.left);
+        } {
+          l.push(c);
+          c = u;
+        }
       }
       l.push(c);
 
@@ -390,8 +394,15 @@ define("vs/editor/core/view/lines/viewLine", ["require", "exports", "vs/base/env
       var s;
 
       var a = o[i].startIndex;
-      i + 1 < o.length ? (r = o[i + 1].startIndex, s = this._charOffsetInPart[r - 1] + this._charOffsetInPart[r]) : (
-        r = this._context.model.getLineMaxColumn(e) - 1, s = this._charOffsetInPart[r]);
+      if (i + 1 < o.length) {
+        r = o[i + 1].startIndex;
+        s = this._charOffsetInPart[r - 1] + this._charOffsetInPart[r];
+      }
+
+      {
+        r = this._context.model.getLineMaxColumn(e) - 1;
+        s = this._charOffsetInPart[r];
+      }
       var u;
 
       var l = a;
@@ -406,7 +417,13 @@ define("vs/editor/core/view/lines/viewLine", ["require", "exports", "vs/base/env
             d) / 2, g = (d + h) / 2, n > f && g >= n) {
           return u + 1;
         }
-        f >= n ? c = u - 1 : l = u + 1;
+        if (f >= n) {
+          c = u - 1;
+        }
+
+        {
+          l = u + 1;
+        }
       }
       return l + 1;
     };
@@ -466,8 +483,15 @@ define("vs/editor/core/view/lines/viewLine", ["require", "exports", "vs/base/env
           h = c.left <= d.left;
         }
         var p = a[a.length - 1];
-        h && p.top === d.top && p.left < d.left ? p.width = d.left - p.left : p.top > d.top && a.splice(a.length - 1,
-          1);
+        if (h && p.top === d.top && p.left < d.left) {
+          p.width = d.left - p.left;
+        }
+
+        {
+          if (p.top > d.top) {
+            a.splice(a.length - 1, 1);
+          }
+        }
       }
       return a;
     };

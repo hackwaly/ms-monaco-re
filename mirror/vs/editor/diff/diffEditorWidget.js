@@ -137,8 +137,13 @@ define("vs/editor/diff/diffEditorWidget", ["require", "exports", "vs/editor/core
         this._enableSplitViewResizing = o.enableSplitViewResizing;
       }
 
-      this._renderSideBySide ? this._setStrategy(new v(this._createDataSource(), this._enableSplitViewResizing)) :
+      if (this._renderSideBySide) {
+        this._setStrategy(new v(this._createDataSource(), this._enableSplitViewResizing));
+      }
+
+      {
         this._setStrategy(new y(this._createDataSource(), this._enableSplitViewResizing));
+      }
     }
     __extends(t, e);
 
@@ -280,8 +285,11 @@ define("vs/editor/diff/diffEditorWidget", ["require", "exports", "vs/editor/core
       this._strategy.setEnableSplitViewResizing(this._enableSplitViewResizing);
 
       if (n) {
-        this._renderSideBySide ? this._setStrategy(new v(this._createDataSource(), this._enableSplitViewResizing)) :
+        if (this._renderSideBySide) {
+          this._setStrategy(new v(this._createDataSource(), this._enableSplitViewResizing));
+        } {
           this._setStrategy(new y(this._createDataSource(), this._enableSplitViewResizing));
+        }
       }
     };
 
@@ -312,7 +320,14 @@ define("vs/editor/diff/diffEditorWidget", ["require", "exports", "vs/editor/core
 
       this._diffComputationToken++;
 
-      e ? (this._recreateOverviewRulers(), this._beginUpdateDecorations()) : this._lineChanges = null;
+      if (e) {
+        this._recreateOverviewRulers();
+        this._beginUpdateDecorations();
+      }
+
+      {
+        this._lineChanges = null;
+      }
     };
 
     t.prototype.getDomNode = function() {
@@ -732,7 +747,11 @@ define("vs/editor/diff/diffEditorWidget", ["require", "exports", "vs/editor/core
       var t = e === !1;
       if (this._disableSash !== t) {
         this._disableSash = t;
-        this._disableSash ? this._sash.disable() : this._sash.enable();
+        if (this._disableSash) {
+          this._sash.disable();
+        } {
+          this._sash.enable();
+        }
       }
     };
 

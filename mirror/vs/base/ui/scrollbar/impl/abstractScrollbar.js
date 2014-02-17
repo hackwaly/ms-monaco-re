@@ -295,11 +295,17 @@ define("vs/base/ui/scrollbar/impl/abstractScrollbar", ["require", "exports", "vs
       if (this.isVisible) {
         this.isVisible = !1;
         this.domNode.className = this.invisibleClassName;
-        e ? -1 === this.fadeAwayTimeout && (this.fadeAwayTimeout = window.setTimeout(function() {
-          t.fadeAwayTimeout = -1;
+        if (e) {
+          if (-1 === this.fadeAwayTimeout) {
+            this.fadeAwayTimeout = window.setTimeout(function() {
+              t.fadeAwayTimeout = -1;
 
-          t.domNode.style.display = "none";
-        }, 800)) : this.domNode.style.display = "none";
+              t.domNode.style.display = "none";
+            }, 800);
+          }
+        } {
+          this.domNode.style.display = "none";
+        }
       }
     };
 

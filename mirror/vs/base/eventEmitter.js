@@ -54,7 +54,13 @@ define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], functio
       if ("*" === e) throw new Error("Use addBulkListener(listener) to register your listener!");
       if (this._allowedEventTypes && !this._allowedEventTypes.hasOwnProperty(e)) throw new Error(
         "This object will never emit this event type!");
-      this._listeners.hasOwnProperty(e) ? this._listeners[e].push(t) : this._listeners[e] = [t];
+      if (this._listeners.hasOwnProperty(e)) {
+        this._listeners[e].push(t);
+      }
+
+      {
+        this._listeners[e] = [t];
+      }
       var n = this;
       return function() {
         if (n) {
@@ -121,7 +127,13 @@ define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], functio
             o.push(new i(e[r].getType(), e[r].getData(), t));
           }
         }
-        0 === n._deferredCnt ? n._emitEvents(o) : n._collectedEvents.push.apply(n._collectedEvents, o);
+        if (0 === n._deferredCnt) {
+          n._emitEvents(o);
+        }
+
+        {
+          n._collectedEvents.push.apply(n._collectedEvents, o);
+        }
       });
     };
 
@@ -193,7 +205,13 @@ define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], functio
         throw new Error("Cannot emit this event type because it wasn't white-listed!");
       if (this._listeners.hasOwnProperty(e) || 0 !== this._bulkListeners.length) {
         var n = new i(e, t);
-        0 === this._deferredCnt ? this._emitEvents([n]) : this._collectedEvents.push(n);
+        if (0 === this._deferredCnt) {
+          this._emitEvents([n]);
+        }
+
+        {
+          this._collectedEvents.push(n);
+        }
       }
     };
 

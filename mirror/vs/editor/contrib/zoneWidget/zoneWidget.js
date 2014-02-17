@@ -121,12 +121,18 @@ define("vs/editor/contrib/zoneWidget/zoneWidget", ["require", "exports", "vs/bas
     };
 
     t.prototype.show = function(e, t) {
-      n.isUndefinedOrNull(e.startLineNumber) ? this.showImpl({
-        startLineNumber: e.lineNumber,
-        startColumn: e.column,
-        endLineNumber: e.lineNumber,
-        endColumn: e.column
-      }, t) : this.showImpl(e, t);
+      if (n.isUndefinedOrNull(e.startLineNumber)) {
+        this.showImpl({
+          startLineNumber: e.lineNumber,
+          startColumn: e.column,
+          endLineNumber: e.lineNumber,
+          endColumn: e.column
+        }, t);
+      }
+
+      {
+        this.showImpl(e, t);
+      }
     };
 
     t.prototype.showImpl = function(e, t) {

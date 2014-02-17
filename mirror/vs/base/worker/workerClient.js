@@ -84,8 +84,13 @@ define("vs/base/worker/workerClient", ["require", "exports", "vs/base/lib/winjs.
     };
 
     t.prototype.postMessage = function(e) {
-      this.loaded === !0 ? window.frames[this.iframeId()].postMessage(JSON.stringify(e), "*") : this.beforeLoadMessages
-        .push(e);
+      if (this.loaded === !0) {
+        window.frames[this.iframeId()].postMessage(JSON.stringify(e), "*");
+      }
+
+      {
+        this.beforeLoadMessages.push(e);
+      }
     };
 
     t.prototype.terminate = function() {
@@ -137,8 +142,15 @@ define("vs/base/worker/workerClient", ["require", "exports", "vs/base/lib/winjs.
       var o = null;
 
       var r = window.require;
-      "function" == typeof r.getConfig ? o = r.getConfig() : "undefined" != typeof window.requirejs && (o = window.requirejs
-        .s.contexts._.config);
+      if ("function" == typeof r.getConfig) {
+        o = r.getConfig();
+      }
+
+      {
+        if ("undefined" != typeof window.requirejs) {
+          o = window.requirejs.s.contexts._.config;
+        }
+      }
       var a = window.MonacoEnvironment || null;
       this.onModuleLoaded = this._sendMessage(s.MessageType.INITIALIZE, {
         id: this._worker.getId(),
@@ -164,7 +176,13 @@ define("vs/base/worker/workerClient", ["require", "exports", "vs/base/lib/winjs.
           }
         }, a, u);
       }, function() {
-        r ? r.cancel() : s = !0;
+        if (r) {
+          r.cancel();
+        }
+
+        {
+          s = !0;
+        }
       });
     };
 
@@ -344,8 +362,13 @@ define("vs/base/worker/workerClient", ["require", "exports", "vs/base/lib/winjs.
               this[e.type](e.payload);
             } else {
               var i = this._messageHandlers[e.type];
-              i && "function" == typeof i ? i(e.payload) : this._onError("Received unexpected message from Worker:",
-                e);
+              if (i && "function" == typeof i) {
+                i(e.payload);
+              }
+
+              {
+                this._onError("Received unexpected message from Worker:", e);
+              }
             }
         }
         this._processMessagesQueue();

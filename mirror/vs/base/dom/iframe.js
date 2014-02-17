@@ -35,13 +35,17 @@ define("vs/base/dom/iframe", ["require", "exports"], function(e, t) {
       var t = window;
       do {
         e = n(t);
-        e ? u.push({
-          window: t,
-          iframeElement: i(e, t)
-        }) : u.push({
-          window: t,
-          iframeElement: null
-        });
+        if (e) {
+          u.push({
+            window: t,
+            iframeElement: i(e, t)
+          });
+        } {
+          u.push({
+            window: t,
+            iframeElement: null
+          });
+        }
         t = e;
       } while (t);
     }

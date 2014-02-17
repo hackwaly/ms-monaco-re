@@ -144,8 +144,14 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
         lineNumber: e.positionLineNumber,
         column: e.positionColumn
       });
-      t.equals(n) ? this._stopSelectionMode() : this._startSelectionModeFromPosition(t, this.viewModelHelper.convertModelPositionToViewPosition(
-        t.lineNumber, t.column));
+      if (t.equals(n)) {
+        this._stopSelectionMode();
+      }
+
+      {
+        this._startSelectionModeFromPosition(t, this.viewModelHelper.convertModelPositionToViewPosition(t.lineNumber,
+          t.column));
+      }
       var i = this.viewModelHelper.convertModelPositionToViewPosition(n.lineNumber, n.column);
       this._setPosition(n.lineNumber, n.column, i.lineNumber, i.column);
     };
@@ -184,8 +190,13 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
 
       this._cachedViewSelection = null;
 
-      this.positionMarkerId ? this.model._changeMarker(this.positionMarkerId, this.position.lineNumber, this.position
-        .column) : this.positionMarkerId = this.model._addMarker(this.position.lineNumber, this.position.column, !0);
+      if (this.positionMarkerId) {
+        this.model._changeMarker(this.positionMarkerId, this.position.lineNumber, this.position.column);
+      }
+
+      {
+        this.positionMarkerId = this.model._addMarker(this.position.lineNumber, this.position.column, !0);
+      }
     };
 
     e.prototype._startSelectionModeFromPosition = function(e, t) {
@@ -231,13 +242,31 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
     };
 
     e.prototype._ensureSelectionMarkers = function() {
-      this.inSelectionMode ? (this.selStartMarkerId ? this.model._changeMarker(this.selStartMarkerId, this.selectionStart
-          .startLineNumber, this.selectionStart.startColumn) : this.selStartMarkerId = this.model._addMarker(this.selectionStart
-          .startLineNumber, this.selectionStart.startColumn, !0), this.selEndMarkerId ? this.model._changeMarker(this
-          .selEndMarkerId, this.selectionStart.endLineNumber, this.selectionStart.endColumn) : this.selEndMarkerId =
-        this.model._addMarker(this.selectionStart.endLineNumber, this.selectionStart.endColumn, !0)) : (this.selStartMarkerId &&
-        (this.model._removeMarker(this.selStartMarkerId), this.selStartMarkerId = null), this.selEndMarkerId && (this
-          .model._removeMarker(this.selEndMarkerId), this.selEndMarkerId = null));
+      if (this.inSelectionMode) {
+        if (this.selStartMarkerId) {
+          this.model._changeMarker(this.selStartMarkerId, this.selectionStart.startLineNumber, this.selectionStart.startColumn);
+        } {
+          this.selStartMarkerId = this.model._addMarker(this.selectionStart.startLineNumber, this.selectionStart.startColumn, !
+            0);
+        }
+        if (this.selEndMarkerId) {
+          this.model._changeMarker(this.selEndMarkerId, this.selectionStart.endLineNumber, this.selectionStart.endColumn);
+        } {
+          this.selEndMarkerId = this.model._addMarker(this.selectionStart.endLineNumber, this.selectionStart.endColumn, !
+            0);
+        }
+      }
+
+      {
+        if (this.selStartMarkerId) {
+          this.model._removeMarker(this.selStartMarkerId);
+          this.selStartMarkerId = null;
+        }
+        if (this.selEndMarkerId) {
+          this.model._removeMarker(this.selEndMarkerId);
+          this.selEndMarkerId = null;
+        }
+      }
     };
 
     e.prototype._moveModelPosition = function(e, t, n, i, o, r, s) {
@@ -254,8 +283,17 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
       if (t && (e.cursorPositionChangeReason = t), n && !this.inSelectionMode ? this._startSelectionModeFromPosition(
         this.position, this.viewPosition) : !n && this.inSelectionMode && this._stopSelectionMode(), u) {
         var l = this.model.getEditableRange();
-        i < l.startLineNumber || i === l.startLineNumber && o < l.startColumn ? (i = l.startLineNumber, o = l.startColumn) :
-          (i > l.endLineNumber || i === l.endLineNumber && o > l.endColumn) && (i = l.endLineNumber, o = l.endColumn);
+        if (i < l.startLineNumber || i === l.startLineNumber && o < l.startColumn) {
+          i = l.startLineNumber;
+          o = l.startColumn;
+        }
+
+        {
+          if (i > l.endLineNumber || i === l.endLineNumber && o > l.endColumn) {
+            i = l.endLineNumber;
+            o = l.endColumn;
+          }
+        }
       }
       this._setPosition(i, o, r, s, a);
     };
@@ -288,7 +326,11 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
         if (i = new s.Range(l.lineNumber, l.column, c.lineNumber, c.column), i.isEmpty()) {
           a = new r.Position(i.startLineNumber, i.startColumn);
           i = null;
-          a.equals(n) ? a = null : u = this.viewModelHelper.convertModelPositionToViewPosition(a.lineNumber, a.column);
+          if (a.equals(n)) {
+            a = null;
+          } {
+            u = this.viewModelHelper.convertModelPositionToViewPosition(a.lineNumber, a.column);
+          }
         } else {
           var d = this.viewModelHelper.convertModelPositionToViewPosition(i.startLineNumber, i.startColumn);
 
@@ -296,7 +338,17 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
           o = new s.Range(d.lineNumber, d.column, h.lineNumber, h.column);
         }
       }
-      i ? this._startSelectionModeFromRange(i, o) : a ? this._startSelectionModeFromPosition(a, u) : this._stopSelectionMode();
+      if (i) {
+        this._startSelectionModeFromRange(i, o);
+      }
+
+      {
+        if (a) {
+          this._startSelectionModeFromPosition(a, u);
+        } {
+          this._stopSelectionMode();
+        }
+      }
       var p = this.viewModelHelper.convertModelPositionToViewPosition(n.lineNumber, n.column);
       this._setPosition(n.lineNumber, n.column, p.lineNumber, p.column);
 
@@ -633,7 +685,15 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
           r = c.end + 1;
         } else {
           var d = this.model.getLineMaxColumn(l.lineNumber);
-          l.column === d || "left" === n ? (o = l.column - 1, r = l.column) : (o = l.column, r = l.column + 1);
+          if (l.column === d || "left" === n) {
+            o = l.column - 1;
+            r = l.column;
+          }
+
+          {
+            o = l.column;
+            r = l.column + 1;
+          }
 
           if (1 >= o) {
             o = 1;

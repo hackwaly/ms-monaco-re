@@ -126,21 +126,49 @@ define("vs/languages/typescript/editor/workerStatusReporter", ["require", "expor
       var t = this.editor.getModel();
       if (t) {
         var n = t.getMode();
-        "vs.languages.typescript" === n.getId() && n instanceof o.AbstractMode ? (this.domNode.show(), this.created ||
-          (this.created = !0, this.factory.getStatus(n).forEach(function(t) {
-            var n = u(".worker").appendTo(e.domNode);
-            e.updateWidget(n, 0);
+        if ("vs.languages.typescript" === n.getId() && n instanceof o.AbstractMode) {
+          this.domNode.show();
+          if (!this.created) {
+            this.created = !0;
+            this.factory.getStatus(n).forEach(function(t) {
+              var n = u(".worker").appendTo(e.domNode);
+              e.updateWidget(n, 0);
 
-            e.callOnDispose.push(t.addListener(l.Events.Updated, function(t) {
-              e.updateWidget(n, t);
-            }));
-          }))) : this.domNode.hide();
+              e.callOnDispose.push(t.addListener(l.Events.Updated, function(t) {
+                e.updateWidget(n, t);
+              }));
+            });
+          }
+        }
+
+        {
+          this.domNode.hide();
+        }
       }
     };
 
     e.prototype.updateWidget = function(e, t) {
-      t && 0 !== t ? 4 === t ? e.attr("status", "ok") : 1 === t ? e.attr("status", "updating") : 2 === t ? e.attr(
-        "status", "fetching") : 3 === t && e.attr("status", "error") : e.attr("status", "unkown");
+      if (t && 0 !== t) {
+        if (4 === t) {
+          e.attr("status", "ok");
+        } {
+          if (1 === t) {
+            e.attr("status", "updating");
+          } {
+            if (2 === t) {
+              e.attr("status", "fetching");
+            } {
+              if (3 === t) {
+                e.attr("status", "error");
+              }
+            }
+          }
+        }
+      }
+
+      {
+        e.attr("status", "unkown");
+      }
     };
 
     e.prototype.getDomNode = function() {

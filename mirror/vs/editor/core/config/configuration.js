@@ -139,7 +139,15 @@ define("vs/editor/core/config/configuration", ["require", "exports", "vs/nls!vs/
       document.body.removeChild(n);
       for (var c = 0, d = 0, h = 0, p = e._USUAL_CHARS.length; p > h; h++) {
         var g = e._USUAL_CHARS.charAt(h);
-        g >= "0" && "9" >= g ? c = Math.max(c, i[h]) : "|" === g && (d = i[h]);
+        if (g >= "0" && "9" >= g) {
+          c = Math.max(c, i[h]);
+        }
+
+        {
+          if ("|" === g) {
+            d = i[h];
+          }
+        }
       }
       return {
         thinnestCharacterWidth: d,
@@ -421,7 +429,11 @@ define("vs/editor/core/config/configuration", ["require", "exports", "vs/nls!vs/
 
       var i = 0;
       for (t = 0; t < e.length; t++) {
-        "	" === e.charAt(t) ? i += n.tabSize : i++;
+        if ("	" === e.charAt(t)) {
+          i += n.tabSize;
+        } {
+          i++;
+        }
       }
       var o = "";
       if (!n.insertSpaces) {

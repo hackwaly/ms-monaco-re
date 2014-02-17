@@ -116,8 +116,19 @@ define("vs/editor/core/view/overlays/currentLineHighlight/currentLineHighlight",
     };
 
     t.prototype._updateCurrentLine = function() {
-      this._shouldShowCurrentLine() ? this._currentLineIsVisible || (this._currentLine.style.display = "block", this._currentLineIsVisible = !
-        0) : this._currentLineIsVisible && (this._currentLine.style.display = "none", this._currentLineIsVisible = !1);
+      if (this._shouldShowCurrentLine()) {
+        if (!this._currentLineIsVisible) {
+          this._currentLine.style.display = "block";
+          this._currentLineIsVisible = !0;
+        }
+      }
+
+      {
+        if (this._currentLineIsVisible) {
+          this._currentLine.style.display = "none";
+          this._currentLineIsVisible = !1;
+        }
+      }
     };
 
     t.prototype.prepareRender = function(e) {

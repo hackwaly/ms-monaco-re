@@ -210,17 +210,40 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
         this.$e.removeClass(this.cssClass);
       }
 
-      this.options.icon ? (this.cssClass = this.getAction().class, this.$e.addClass("icon"), this.cssClass && this.$e
-        .addClass(this.cssClass), this._updateEnabled()) : this.$e.removeClass("icon");
+      if (this.options.icon) {
+        this.cssClass = this.getAction().class;
+        this.$e.addClass("icon");
+        if (this.cssClass) {
+          this.$e.addClass(this.cssClass);
+        }
+        this._updateEnabled();
+      }
+
+      {
+        this.$e.removeClass("icon");
+      }
     };
 
     t.prototype._updateEnabled = function() {
-      this.getAction().enabled ? (this.builder.removeClass("disabled"), this.$e.removeClass("disabled")) : (this.builder
-        .addClass("disabled"), this.$e.addClass("disabled"));
+      if (this.getAction().enabled) {
+        this.builder.removeClass("disabled");
+        this.$e.removeClass("disabled");
+      }
+
+      {
+        this.builder.addClass("disabled");
+        this.$e.addClass("disabled");
+      }
     };
 
     t.prototype._updateChecked = function() {
-      this.getAction().checked ? this.$e.addClass("checked") : this.$e.removeClass("checked");
+      if (this.getAction().checked) {
+        this.$e.addClass("checked");
+      }
+
+      {
+        this.$e.removeClass("checked");
+      }
     };
 
     return t;
@@ -267,8 +290,15 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
       this.callOnDispose.push(this.addListener(a.EventType.RUN, function(e) {
         d(o).removeClass("active");
 
-        e.error ? (d(r).removeClass("active"), d(s).addClass("active")) : (d(s).removeClass("active"), d(r).addClass(
-          "active"));
+        if (e.error) {
+          d(r).removeClass("active");
+          d(s).addClass("active");
+        }
+
+        {
+          d(s).removeClass("active");
+          d(r).addClass("active");
+        }
       }));
 
       n.appendChild(i);
@@ -451,8 +481,13 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
 
         r.render(o);
 
-        null === i || 0 > i || i >= n.actionsList.children.length ? n.actionsList.appendChild(o) : n.actionsList.insertBefore(
-          o, n.actionsList.children[i++]);
+        if (null === i || 0 > i || i >= n.actionsList.children.length) {
+          n.actionsList.appendChild(o);
+        }
+
+        {
+          n.actionsList.insertBefore(o, n.actionsList.children[i++]);
+        }
 
         n.items.push(r);
       });
@@ -533,7 +568,17 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
         var t = this.items[e];
 
         var n = t;
-        e === this.focusedItem ? u.isFunction(n.focus) && n.focus() : u.isFunction(n.blur) && n.blur();
+        if (e === this.focusedItem) {
+          if (u.isFunction(n.focus)) {
+            n.focus();
+          }
+        }
+
+        {
+          if (u.isFunction(n.blur)) {
+            n.blur();
+          }
+        }
       }
     };
 

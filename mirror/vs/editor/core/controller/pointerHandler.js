@@ -66,9 +66,16 @@ define("vs/editor/core/controller/pointerHandler", ["require", "exports", "vs/ba
         this.viewController.moveTo("mouse", s.position.lineNumber, s.position.column);
       }
 
-      o.browserEvent.fromElement ? (o.preventDefault(), this.viewHelper.focusTextArea()) : setTimeout(function() {
-        t.viewHelper.focusTextArea();
-      });
+      if (o.browserEvent.fromElement) {
+        o.preventDefault();
+        this.viewHelper.focusTextArea();
+      }
+
+      {
+        setTimeout(function() {
+          t.viewHelper.focusTextArea();
+        });
+      }
     };
 
     t.prototype._onGestureChange = function(e) {

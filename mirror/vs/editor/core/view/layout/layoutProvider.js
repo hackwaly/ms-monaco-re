@@ -123,8 +123,15 @@ define("vs/editor/core/view/layout/layoutProvider", ["require", "exports", "vs/e
       var n = this.configuration.getWrappingColumn();
 
       var i = -1;
-      0 === n ? i = Math.max(1, Math.floor((e.contentWidth - e.verticalScrollbarWidth) / this.configuration.editor.thinnestCharacterWidth)) :
-        n > 0 && (i = n);
+      if (0 === n) {
+        i = Math.max(1, Math.floor((e.contentWidth - e.verticalScrollbarWidth) / this.configuration.editor.thinnestCharacterWidth));
+      }
+
+      {
+        if (n > 0) {
+          i = n;
+        }
+      }
 
       this.model.setWrappingColumn(i, t);
     };

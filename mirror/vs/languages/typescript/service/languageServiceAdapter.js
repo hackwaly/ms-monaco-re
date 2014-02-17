@@ -541,7 +541,13 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
               }
               break;
             }
-            a ? o += r : s += r;
+            if (a) {
+              o += r;
+            }
+
+            {
+              s += r;
+            }
           } else {
             i.push({
               name: o,
@@ -621,19 +627,31 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
 
       var r = this._host.getScriptSnapshot(e.toExternal()).model;
       f.collect(r.getValue()).forEach(function(o) {
-        o instanceof f.ImportReference ? o.isRelative ? n.push({
-          openInEditor: !0,
-          range: r.getRangeFromOffsetAndLength(o.offset, o.length),
-          url: i.join(i.dirname(e.toExternal()), o.path + ".ts")
-        }) : n.push({
-          openInEditor: !0,
-          range: r.getRangeFromOffsetAndLength(o.offset, o.length),
-          url: i.join(t._compilationSettings.scope, o.path + ".ts")
-        }) : o instanceof f.TripleSlashReference && n.push({
-          openInEditor: !0,
-          range: r.getRangeFromOffsetAndLength(o.offset, o.length),
-          url: i.join(i.dirname(e.toExternal()), o.path)
-        });
+        if (o instanceof f.ImportReference) {
+          if (o.isRelative) {
+            n.push({
+              openInEditor: !0,
+              range: r.getRangeFromOffsetAndLength(o.offset, o.length),
+              url: i.join(i.dirname(e.toExternal()), o.path + ".ts")
+            });
+          } {
+            n.push({
+              openInEditor: !0,
+              range: r.getRangeFromOffsetAndLength(o.offset, o.length),
+              url: i.join(t._compilationSettings.scope, o.path + ".ts")
+            });
+          }
+        }
+
+        {
+          if (o instanceof f.TripleSlashReference) {
+            n.push({
+              openInEditor: !0,
+              range: r.getRangeFromOffsetAndLength(o.offset, o.length),
+              url: i.join(i.dirname(e.toExternal()), o.path)
+            });
+          }
+        }
       });
 
       return n;

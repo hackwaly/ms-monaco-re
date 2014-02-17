@@ -116,13 +116,25 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
       var o = 1;
       for (n = 0; e > n; n++) {
         var r = this.OriginalSequence.getElementHash(n);
-        i.hasOwnProperty(r) ? this.m_originalIds[n] = i[r] : (this.m_originalIds[n] = o++, i[r] = this.m_originalIds[
-          n]);
+        if (i.hasOwnProperty(r)) {
+          this.m_originalIds[n] = i[r];
+        }
+
+        {
+          this.m_originalIds[n] = o++;
+          i[r] = this.m_originalIds[n];
+        }
       }
       for (n = 0; t > n; n++) {
         var s = this.ModifiedSequence.getElementHash(n);
-        i.hasOwnProperty(s) ? this.m_modifiedIds[n] = i[s] : (this.m_modifiedIds[n] = o++, i[s] = this.m_modifiedIds[
-          n]);
+        if (i.hasOwnProperty(s)) {
+          this.m_modifiedIds[n] = i[s];
+        }
+
+        {
+          this.m_modifiedIds[n] = o++;
+          i[s] = this.m_modifiedIds[n];
+        }
       }
     };
 
@@ -202,9 +214,25 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
       var N = this.m_forwardHistory.length - 1;
       do {
         b = T + e;
-        b === S || L > b && c[b - 1] < c[b + 1] ? (h = c[b + 1], g = h - T - o, x > h && E.MarkNextChange(), x = h, E
-          .AddModifiedElement(h + 1, g), T = b + 1 - e) : (h = c[b - 1] + 1, g = h - T - o, x > h && E.MarkNextChange(),
-          x = h - 1, E.AddOriginalElement(h, g + 1), T = b - 1 - e);
+        if (b === S || L > b && c[b - 1] < c[b + 1]) {
+          h = c[b + 1];
+          g = h - T - o;
+          if (x > h) {
+            E.MarkNextChange();
+          }
+          x = h;
+          E.AddModifiedElement(h + 1, g);
+          T = b + 1 - e;
+        } {
+          h = c[b - 1] + 1;
+          g = h - T - o;
+          if (x > h) {
+            E.MarkNextChange();
+          }
+          x = h - 1;
+          E.AddOriginalElement(h, g + 1);
+          T = b - 1 - e;
+        }
         if (N >= 0) {
           c = this.m_forwardHistory[N];
           e = c[0];
@@ -237,9 +265,25 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
         N = y ? this.m_reverseHistory.length - 1 : this.m_reverseHistory.length - 2;
         do {
           b = T + r;
-          b === S || L > b && d[b - 1] >= d[b + 1] ? (h = d[b + 1] - 1, g = h - T - l, h > x && E.MarkNextChange(), x =
-            h + 1, E.AddOriginalElement(h + 1, g + 1), T = b + 1 - r) : (h = d[b - 1], g = h - T - l, h > x && E.MarkNextChange(),
-            x = h, E.AddModifiedElement(h + 1, g + 1), T = b - 1 - r);
+          if (b === S || L > b && d[b - 1] >= d[b + 1]) {
+            h = d[b + 1] - 1;
+            g = h - T - l;
+            if (h > x) {
+              E.MarkNextChange();
+            }
+            x = h + 1;
+            E.AddOriginalElement(h + 1, g + 1);
+            T = b + 1 - r;
+          } {
+            h = d[b - 1];
+            g = h - T - l;
+            if (h > x) {
+              E.MarkNextChange();
+            }
+            x = h;
+            E.AddModifiedElement(h + 1, g + 1);
+            T = b - 1 - r;
+          }
           if (N >= 0) {
             d = this.m_reverseHistory[N];
             r = d[0];

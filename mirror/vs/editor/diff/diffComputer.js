@@ -23,8 +23,13 @@ define("vs/editor/diff/diffComputer", ["require", "exports", "vs/base/diff/diff"
       i = a.originalStart - (l.originalStart + l.originalLength);
       o = a.modifiedStart - (l.modifiedStart + l.modifiedLength);
       s = Math.min(i, o);
-      r > s ? (l.originalLength = a.originalStart + a.originalLength - l.originalStart, l.modifiedLength = a.modifiedStart +
-        a.modifiedLength - l.modifiedStart) : (u.push(a), l = a);
+      if (r > s) {
+        l.originalLength = a.originalStart + a.originalLength - l.originalStart;
+        l.modifiedLength = a.modifiedStart + a.modifiedLength - l.modifiedStart;
+      } {
+        u.push(a);
+        l = a;
+      }
     }
     return u;
   }
@@ -157,15 +162,33 @@ define("vs/editor/diff/diffComputer", ["require", "exports", "vs/base/diff/diff"
 
   var u = function() {
     function e(e, t, n) {
-      0 === e.originalLength ? (this.originalStartLineNumber = 0, this.originalStartColumn = 0, this.originalEndLineNumber =
-        0, this.originalEndColumn = 0) : (this.originalStartLineNumber = t.getStartLineNumber(e.originalStart), this.originalStartColumn =
-        t.getStartColumn(e.originalStart), this.originalEndLineNumber = t.getEndLineNumber(e.originalStart + e.originalLength -
-          1), this.originalEndColumn = t.getEndColumn(e.originalStart + e.originalLength - 1));
+      if (0 === e.originalLength) {
+        this.originalStartLineNumber = 0;
+        this.originalStartColumn = 0;
+        this.originalEndLineNumber = 0;
+        this.originalEndColumn = 0;
+      }
 
-      0 === e.modifiedLength ? (this.modifiedStartLineNumber = 0, this.modifiedStartColumn = 0, this.modifiedEndLineNumber =
-        0, this.modifiedEndColumn = 0) : (this.modifiedStartLineNumber = n.getStartLineNumber(e.modifiedStart), this.modifiedStartColumn =
-        n.getStartColumn(e.modifiedStart), this.modifiedEndLineNumber = n.getEndLineNumber(e.modifiedStart + e.modifiedLength -
-          1), this.modifiedEndColumn = n.getEndColumn(e.modifiedStart + e.modifiedLength - 1));
+      {
+        this.originalStartLineNumber = t.getStartLineNumber(e.originalStart);
+        this.originalStartColumn = t.getStartColumn(e.originalStart);
+        this.originalEndLineNumber = t.getEndLineNumber(e.originalStart + e.originalLength - 1);
+        this.originalEndColumn = t.getEndColumn(e.originalStart + e.originalLength - 1);
+      }
+
+      if (0 === e.modifiedLength) {
+        this.modifiedStartLineNumber = 0;
+        this.modifiedStartColumn = 0;
+        this.modifiedEndLineNumber = 0;
+        this.modifiedEndColumn = 0;
+      }
+
+      {
+        this.modifiedStartLineNumber = n.getStartLineNumber(e.modifiedStart);
+        this.modifiedStartColumn = n.getStartColumn(e.modifiedStart);
+        this.modifiedEndLineNumber = n.getEndLineNumber(e.modifiedStart + e.modifiedLength - 1);
+        this.modifiedEndColumn = n.getEndColumn(e.modifiedStart + e.modifiedLength - 1);
+      }
     }
     return e;
   }();

@@ -95,7 +95,13 @@ define("vs/editor/contrib/hover/modesGlyphHover", ["require", "exports", "vs/edi
     t.prototype._withResult = function(e) {
       this._messages = e;
 
-      this._messages.length > 0 ? this._renderMessages(this._lastLineNumber, this._messages) : this.hide();
+      if (this._messages.length > 0) {
+        this._renderMessages(this._lastLineNumber, this._messages);
+      }
+
+      {
+        this.hide();
+      }
     };
 
     t.prototype._renderMessages = function(e, t) {
@@ -104,8 +110,16 @@ define("vs/editor/contrib/hover/modesGlyphHover", ["require", "exports", "vs/edi
         var t = document.createElement("div");
 
         var i = null;
-        e.className ? (i = document.createElement("span"), i.textContent = e.value, i.className = e.className, t.appendChild(
-          i)) : t.textContent = e.value;
+        if (e.className) {
+          i = document.createElement("span");
+          i.textContent = e.value;
+          i.className = e.className;
+          t.appendChild(i);
+        }
+
+        {
+          t.textContent = e.value;
+        }
 
         n.appendChild(t);
       });

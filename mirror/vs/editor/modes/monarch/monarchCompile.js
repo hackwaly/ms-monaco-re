@@ -87,8 +87,22 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
     var h = "~";
 
     var p = u;
-    u && 0 !== u.length ? /^\w*$/.test(p) ? h = "==" : (l = u.match(/^(@|!@|~|!~|==|!=)(.*)$/), l && (h = l[1], p = l[
-      2])) : (h = "!=", p = "");
+    if (u && 0 !== u.length) {
+      if (/^\w*$/.test(p)) {
+        h = "==";
+      } {
+        l = u.match(/^(@|!@|~|!~|==|!=)(.*)$/);
+        if (l) {
+          h = l[1];
+          p = l[2];
+        }
+      }
+    }
+
+    {
+      h = "!=";
+      p = "";
+    }
     var f;
     if ("~" !== h && "!~" !== h || !/^(\w|\|)*$/.test(p))
       if ("@" === h || "!@" === h) {
@@ -215,17 +229,27 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
         for (u in n.cases)
           if (n.cases.hasOwnProperty(u)) {
             var c = p(e, t, n.cases[u]);
-            "@default" === u || "@" === u || "" === u ? l.push({
-              test: null,
-              value: c,
-              name: u
-            }) : "@eos" === u ? l.push({
-              test: function(e, t, n, i) {
-                return i;
-              },
-              value: c,
-              name: u
-            }) : l.push(h(e, t, u, c));
+            if ("@default" === u || "@" === u || "" === u) {
+              l.push({
+                test: null,
+                value: c,
+                name: u
+              });
+            }
+
+            {
+              if ("@eos" === u) {
+                l.push({
+                  test: function(e, t, n, i) {
+                    return i;
+                  },
+                  value: c,
+                  name: u
+                });
+              } {
+                l.push(h(e, t, u, c));
+              }
+            }
           }
         var d = e.defaultToken;
         return {
@@ -355,8 +379,13 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
     n.wordDefinition = e.wordDefinition || void 0;
 
     if (!n.lineComment && e.lineComments) {
-      "string" == typeof e.lineComments ? n.lineComment = e.lineComments : "string" == typeof e.lineComments[0] && (n
-        .lineComment = e.lineComments[0]);
+      if ("string" == typeof e.lineComments) {
+        n.lineComment = e.lineComments;
+      } {
+        if ("string" == typeof e.lineComments[0]) {
+          n.lineComment = e.lineComments[0];
+        }
+      }
     }
     var i = e;
     i.name = n.name;
@@ -404,24 +433,31 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
         n.nonWordTokens[h] += n.tokenPostfix;
       }
     }
-    e.brackets ? e.brackets instanceof Array || o.throwError(n,
-      "the 'brackets' attribute must be defined as an array") : e.brackets = [{
-      open: "{",
-      close: "}",
-      token: "delimiter.curly"
-    }, {
-      open: "[",
-      close: "]",
-      token: "delimiter.square"
-    }, {
-      open: "(",
-      close: ")",
-      token: "delimiter.parenthesis"
-    }, {
-      open: "<",
-      close: ">",
-      token: "delimiter.angle"
-    }];
+    if (e.brackets) {
+      if (!(e.brackets instanceof Array)) {
+        o.throwError(n, "the 'brackets' attribute must be defined as an array");
+      }
+    }
+
+    {
+      e.brackets = [{
+        open: "{",
+        close: "}",
+        token: "delimiter.curly"
+      }, {
+        open: "[",
+        close: "]",
+        token: "delimiter.square"
+      }, {
+        open: "(",
+        close: ")",
+        token: "delimiter.parenthesis"
+      }, {
+        open: "<",
+        close: ">",
+        token: "delimiter.angle"
+      }];
+    }
     var p = [];
     for (var f in e.brackets)
       if (e.brackets.hasOwnProperty(f)) {
@@ -439,11 +475,17 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
             "\n hint: use the 'bracket' attribute if matching on equal brackets is required.");
         }
 
-        "string" == typeof m.open && "string" == typeof m.token ? p.push({
-          token: a(m.token) + n.tokenPostfix,
-          open: o.fixCase(n, a(m.open)),
-          close: o.fixCase(n, a(m.close))
-        }) : o.throwError(n, "every element in the 'brackets' array must be a '{open,close,token}' object or array");
+        if ("string" == typeof m.open && "string" == typeof m.token) {
+          p.push({
+            token: a(m.token) + n.tokenPostfix,
+            open: o.fixCase(n, a(m.open)),
+            close: o.fixCase(n, a(m.close))
+          });
+        }
+
+        {
+          o.throwError(n, "every element in the 'brackets' array must be a '{open,close,token}' object or array");
+        }
       }
     n.brackets = p;
     var v;
@@ -471,17 +513,26 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
               }
             }
           } else {
-            b instanceof Array && 2 === b.length && "string" == typeof b[0] && 1 === b[0].length && "string" ==
-              typeof b[1] && 1 === b[1].length ? (_ = {
+            if (b instanceof Array && 2 === b.length && "string" == typeof b[0] && 1 === b[0].length && "string" ==
+              typeof b[1] && 1 === b[1].length) {
+              _ = {
                 open: o.fixCase(n, b[0]),
                 close: o.fixCase(n, b[1])
-              }, n.autoClosingPairs.push(_)) : "string" == typeof b.open && 1 === b.open.length && "string" == typeof b
-              .close && 1 === b.close.length ? (_ = {
-                open: o.fixCase(n, b.open[0]),
-                close: o.fixCase(n, b.close[0])
-              }, n.autoClosingPairs.push(_)) : o.throwError(n,
-                "every element in an 'autoClosingPairs' array must be a pair of 1 character strings, or a '@brackets' directive"
-            );
+              };
+              n.autoClosingPairs.push(_);
+            } {
+              if ("string" == typeof b.open && 1 === b.open.length && "string" == typeof b.close && 1 === b.close.length) {
+                _ = {
+                  open: o.fixCase(n, b.open[0]),
+                  close: o.fixCase(n, b.close[0])
+                };
+                n.autoClosingPairs.push(_);
+              } {
+                o.throwError(n,
+                  "every element in an 'autoClosingPairs' array must be a pair of 1 character strings, or a '@brackets' directive"
+                );
+              }
+            }
           }
         }
     if (e.autoIndent) {
@@ -574,8 +625,17 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
     }
     e.prototype.setRegex = function(e, t) {
       var n;
-      "string" == typeof t ? n = t : t instanceof RegExp ? n = t.source : o.throwError(e,
-        "rules must start with a match string or regular expression: " + this.name);
+      if ("string" == typeof t) {
+        n = t;
+      }
+
+      {
+        if (t instanceof RegExp) {
+          n = t.source;
+        } {
+          o.throwError(e, "rules must start with a match string or regular expression: " + this.name);
+        }
+      }
 
       this.matchOnlyAtLineStart = n.length > 0 && "^" === n[0];
 

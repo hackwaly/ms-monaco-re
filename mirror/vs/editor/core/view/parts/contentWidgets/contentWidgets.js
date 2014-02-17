@@ -260,8 +260,18 @@ define("vs/editor/core/view/parts/contentWidgets/contentWidgets", ["require", "e
           if (o._widgets.hasOwnProperty(e)) {
             t = o._widgets[e];
             n = o._widgets[e].widget.getDomNode();
-            r.hasOwnProperty(e) ? (n.style.top = r[e].top + "px", n.style.left = r[e].left + "px", t.isVisible || (
-              t.isVisible = !0)) : t.isVisible && (t.isVisible = !1, n.style.top = "-1000px");
+            if (r.hasOwnProperty(e)) {
+              n.style.top = r[e].top + "px";
+              n.style.left = r[e].left + "px";
+              if (!t.isVisible) {
+                t.isVisible = !0;
+              }
+            } {
+              if (t.isVisible) {
+                t.isVisible = !1;
+                n.style.top = "-1000px";
+              }
+            }
           }
         }
       });

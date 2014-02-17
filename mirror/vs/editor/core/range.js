@@ -110,8 +110,19 @@ define("vs/editor/core/range", ["require", "exports", "vs/editor/core/position"]
   t.hashCode = p;
   var g = function() {
     function e(e, t, n, i) {
-      e > n || e === n && t > i ? (this.startLineNumber = n, this.startColumn = i, this.endLineNumber = e, this.endColumn =
-        t) : (this.startLineNumber = e, this.startColumn = t, this.endLineNumber = n, this.endColumn = i);
+      if (e > n || e === n && t > i) {
+        this.startLineNumber = n;
+        this.startColumn = i;
+        this.endLineNumber = e;
+        this.endColumn = t;
+      }
+
+      {
+        this.startLineNumber = e;
+        this.startColumn = t;
+        this.endLineNumber = n;
+        this.endColumn = i;
+      }
     }
     e.prototype.isEmpty = function() {
       return t.isEmpty(this);

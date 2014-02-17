@@ -85,9 +85,33 @@ define("vs/base/dom/keyboardEvent", ["require", "vs/base/lib/winjs.base", "vs/ba
       "]": 221,
       "'": 222
     };
-    n.browser.isIE11orEarlier ? e.Meta = 91 : n.browser.isFirefox ? (e["-"] = 109, e["="] = 107, e[";"] = 59, n.browser
-      .isMacintosh && (e.Meta = 224)) : n.browser.isOpera ? (e["-"] = 109, e["="] = 61, e[";"] = 59, n.browser.isMacintosh &&
-      (e.Meta = 57392)) : n.browser.isWebKit && n.browser.isMacintosh && (e.Meta = 91);
+    if (n.browser.isIE11orEarlier) {
+      e.Meta = 91;
+    }
+
+    {
+      if (n.browser.isFirefox) {
+        e["-"] = 109;
+        e["="] = 107;
+        e[";"] = 59;
+        if (n.browser.isMacintosh) {
+          e.Meta = 224;
+        }
+      } {
+        if (n.browser.isOpera) {
+          e["-"] = 109;
+          e["="] = 61;
+          e[";"] = 59;
+          if (n.browser.isMacintosh) {
+            e.Meta = 57392;
+          }
+        } {
+          if (n.browser.isWebKit && n.browser.isMacintosh) {
+            e.Meta = 91;
+          }
+        }
+      }
+    }
     var t = {};
     ! function() {
       for (var n in e) {
@@ -97,8 +121,17 @@ define("vs/base/dom/keyboardEvent", ["require", "vs/base/lib/winjs.base", "vs/ba
       }
     }();
 
-    n.browser.isOpera ? (t[189] = "-", t[187] = "=", t[186] = ";") : n.browser.isWebKit && n.browser.isMacintosh && (
-      t[93] = "Meta");
+    if (n.browser.isOpera) {
+      t[189] = "-";
+      t[187] = "=";
+      t[186] = ";";
+    }
+
+    {
+      if (n.browser.isWebKit && n.browser.isMacintosh) {
+        t[93] = "Meta";
+      }
+    }
     var i = function(e, n) {
       return t.hasOwnProperty(e) ? t[e] : n;
     };
@@ -129,14 +162,34 @@ define("vs/base/dom/keyboardEvent", ["require", "vs/base/lib/winjs.base", "vs/ba
 
       this.ctrlKey = t;
 
-      "Ctrl" === this.key ? this.key = "Meta" : "Meta" === this.key && (this.key = "Ctrl");
+      if ("Ctrl" === this.key) {
+        this.key = "Meta";
+      }
+
+      {
+        if ("Meta" === this.key) {
+          this.key = "Ctrl";
+        }
+      }
     }
   }, {
     preventDefault: function() {
-      this.browserEvent.preventDefault ? this.browserEvent.preventDefault() : this.browserEvent.returnValue = !1;
+      if (this.browserEvent.preventDefault) {
+        this.browserEvent.preventDefault();
+      }
+
+      {
+        this.browserEvent.returnValue = !1;
+      }
     },
     stopPropagation: function() {
-      this.browserEvent.stopPropagation ? this.browserEvent.stopPropagation() : this.browserEvent.cancelBubble = !0;
+      if (this.browserEvent.stopPropagation) {
+        this.browserEvent.stopPropagation();
+      }
+
+      {
+        this.browserEvent.cancelBubble = !0;
+      }
     },
     clone: function() {
       var e = this.asString();

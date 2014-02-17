@@ -149,7 +149,14 @@ define("vs/editor/contrib/quickOpen/quickOutline", ["require", "exports", "vs/nl
         var p = null;
         if ("method" === l.type || "function" === l.type) {
           var f = h.indexOf("(");
-          f > 0 ? (p = h.substr(f), h = h.substr(0, f)) : p = "()";
+          if (f > 0) {
+            p = h.substr(f);
+            h = h.substr(0, f);
+          }
+
+          {
+            p = "()";
+          }
         }
         var g = a.CombinedMatcher.matches(r, h);
         if (g) {
@@ -165,8 +172,19 @@ define("vs/editor/contrib/quickOpen/quickOutline", ["require", "exports", "vs/nl
         .bind(this, t.toLowerCase()))), i.length > 0 && 0 === t.indexOf(c)) {
         for (var v = null, y = null, _ = 0, u = 0; u < i.length; u++) {
           var b = i[u];
-          v !== b.getType() ? (y && y.setGroupLabel(this.typeToLabel(v, _)), v = b.getType(), y = b, _ = 1, b.setShowBorder(
-            u > 0)) : _++;
+          if (v !== b.getType()) {
+            if (y) {
+              y.setGroupLabel(this.typeToLabel(v, _));
+            }
+            v = b.getType();
+            y = b;
+            _ = 1;
+            b.setShowBorder(u > 0);
+          }
+
+          {
+            _++;
+          }
         }
         if (y) {
           y.setGroupLabel(this.typeToLabel(v, _));

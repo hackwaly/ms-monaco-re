@@ -93,7 +93,23 @@ define("vs/base/performance/timer", ["require", "exports", "vs/base/env", "vs/ba
       if (this.enabled() === !1) {
         return t.nullEvent;
       }
-      0 === e ? e = "Editor" : 1 === e ? e = "Languages" : 2 === e ? e = "Worker" : 3 === e && (e = "Workbench");
+      if (0 === e) {
+        e = "Editor";
+      }
+
+      {
+        if (1 === e) {
+          e = "Languages";
+        } {
+          if (2 === e) {
+            e = "Worker";
+          } {
+            if (3 === e) {
+              e = "Workbench";
+            }
+          }
+        }
+      }
       var i = new l(this, n, e);
       this.addEvent(i);
 

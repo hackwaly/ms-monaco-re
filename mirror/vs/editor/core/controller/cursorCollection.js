@@ -198,7 +198,14 @@ define("vs/editor/core/controller/cursorCollection", ["require", "exports", "vs/
               var v = p.selectionStartLineNumber === p.startLineNumber && p.selectionStartColumn === p.startColumn;
 
               var y = f.selectionStartLineNumber === f.startLineNumber && f.selectionStartColumn === f.startColumn;
-              d === this.lastAddedCursorIndex ? (g = v, this.lastAddedCursorIndex = h) : g = y;
+              if (d === this.lastAddedCursorIndex) {
+                g = v;
+                this.lastAddedCursorIndex = h;
+              }
+
+              {
+                g = y;
+              }
               var _;
               _ = g ? new i.Selection(m.startLineNumber, m.startColumn, m.endLineNumber, m.endColumn) : new i.Selection(
                 m.endLineNumber, m.endColumn, m.startLineNumber, m.startColumn);

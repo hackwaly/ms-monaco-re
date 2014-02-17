@@ -192,10 +192,26 @@ define("vs/editor/core/view/model/splitLinesCollection", ["require", "exports",
       var h = 0;
 
       var p = -1;
-      o > s ? (u = 1 === e ? 1 : this.prefixSumComputer.getAccumulatedValue(e - 2) + 1, l = u + s - 1, h = l + 1, p =
-        h + (o - s) - 1, a = !0) : s > o ? (u = 1 === e ? 1 : this.prefixSumComputer.getAccumulatedValue(e - 2) + 1,
-        l = u + o - 1, c = l + 1, d = c + (s - o) - 1, a = !0) : (u = 1 === e ? 1 : this.prefixSumComputer.getAccumulatedValue(
-        e - 2) + 1, l = u + s - 1);
+      if (o > s) {
+        u = 1 === e ? 1 : this.prefixSumComputer.getAccumulatedValue(e - 2) + 1;
+        l = u + s - 1;
+        h = l + 1;
+        p = h + (o - s) - 1;
+        a = !0;
+      }
+
+      {
+        if (s > o) {
+          u = 1 === e ? 1 : this.prefixSumComputer.getAccumulatedValue(e - 2) + 1;
+          l = u + o - 1;
+          c = l + 1;
+          d = c + (s - o) - 1;
+          a = !0;
+        } {
+          u = 1 === e ? 1 : this.prefixSumComputer.getAccumulatedValue(e - 2) + 1;
+          l = u + s - 1;
+        }
+      }
 
       this.prefixSumComputer.changeValue(i, s);
       var f;

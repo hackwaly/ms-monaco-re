@@ -169,12 +169,33 @@ define("vs/editor/core/controller/mouseHandler", ["require", "exports", "vs/base
       var d = this.context.configuration.editor.selectOnLineNumbers;
 
       var h = 8 === a.type || 5 === a.type;
-      i.leftButton && (u || c && d) ? (n.browser.isIE11orEarlier ? i.browserEvent.fromElement ? (i.preventDefault(),
-          this.viewHelper.focusTextArea()) : setTimeout(function() {
-          t.viewHelper.focusTextArea();
-        }) : (i.preventDefault(), this.viewHelper.focusTextArea()), this._updateMouse(a.type, i, i.shiftKey, i.detail),
-        this._hook(a.type)) : l ? i.preventDefault() : h && this.viewHelper.shouldSuppressMouseDownOnViewZone(a.detail) &&
-        i.preventDefault();
+      if (i.leftButton && (u || c && d)) {
+        if (n.browser.isIE11orEarlier) {
+          if (i.browserEvent.fromElement) {
+            i.preventDefault();
+            this.viewHelper.focusTextArea();
+          } {
+            setTimeout(function() {
+              t.viewHelper.focusTextArea();
+            });
+          }
+        } {
+          i.preventDefault();
+          this.viewHelper.focusTextArea();
+        }
+        this._updateMouse(a.type, i, i.shiftKey, i.detail);
+        this._hook(a.type);
+      }
+
+      {
+        if (l) {
+          i.preventDefault();
+        } {
+          if (h && this.viewHelper.shouldSuppressMouseDownOnViewZone(a.detail)) {
+            i.preventDefault();
+          }
+        }
+      }
       var p = {
         event: i,
         target: a
@@ -271,8 +292,13 @@ define("vs/editor/core/controller/mouseHandler", ["require", "exports", "vs/base
           s = this.lastMouseDownCount + 1;
         }
         var f = new i.Position(a, u);
-        this.lastMouseDownPosition && this.lastMouseDownPosition.equals(f) ? this.lastMouseDownPositionEqualCount++ :
+        if (this.lastMouseDownPosition && this.lastMouseDownPosition.equals(f)) {
+          this.lastMouseDownPositionEqualCount++;
+        }
+
+        {
           this.lastMouseDownPositionEqualCount = 1;
+        }
 
         this.lastMouseDownPosition = f;
 
@@ -281,27 +307,74 @@ define("vs/editor/core/controller/mouseHandler", ["require", "exports", "vs/base
         n.detail = this.lastMouseDownCount;
       }
       if (3 === e) {
-        n.altKey ? o ? this.viewController.lastCursorLineSelect("mouse", a, u) : this.viewController.createCursor(
-          "mouse", a, u, !0) : o ? this.viewController.lineSelectDrag("mouse", a, u) : this.viewController.lineSelect(
-          "mouse", a, u);
+        if (n.altKey) {
+          if (o) {
+            this.viewController.lastCursorLineSelect("mouse", a, u);
+          } {
+            this.viewController.createCursor("mouse", a, u, !0);
+          }
+        } {
+          if (o) {
+            this.viewController.lineSelectDrag("mouse", a, u);
+          } {
+            this.viewController.lineSelect("mouse", a, u);
+          }
+        }
       } else if (this.lastMouseDownCount >= 4) {
         this.viewController.selectAll("mouse");
       } else if (3 === this.lastMouseDownCount) {
-        n.altKey ? o ? this.viewController.lastCursorLineSelectDrag("mouse", a, u) : this.viewController.lastCursorLineSelect(
-          "mouse", a, u) : o ? this.viewController.lineSelectDrag("mouse", a, u) : this.viewController.lineSelect(
-          "mouse", a, u);
+        if (n.altKey) {
+          if (o) {
+            this.viewController.lastCursorLineSelectDrag("mouse", a, u);
+          } {
+            this.viewController.lastCursorLineSelect("mouse", a, u);
+          }
+        } {
+          if (o) {
+            this.viewController.lineSelectDrag("mouse", a, u);
+          } {
+            this.viewController.lineSelect("mouse", a, u);
+          }
+        }
       } else if (2 === this.lastMouseDownCount) {
         var g = l.left + this.viewHelper.visibleRangeForPosition2(a, u).left;
 
         var m = "none";
-        n.posx > g ? m = "right" : n.posx < g && (m = "left");
+        if (n.posx > g) {
+          m = "right";
+        }
 
-        n.altKey ? this.viewController.lastCursorWordSelect("mouse", a, u, m) : o ? this.viewController.wordSelectDrag(
-          "mouse", a, u, m) : this.viewController.wordSelect("mouse", a, u, m);
+        {
+          if (n.posx < g) {
+            m = "left";
+          }
+        }
+
+        if (n.altKey) {
+          this.viewController.lastCursorWordSelect("mouse", a, u, m);
+        }
+
+        {
+          if (o) {
+            this.viewController.wordSelectDrag("mouse", a, u, m);
+          } {
+            this.viewController.wordSelect("mouse", a, u, m);
+          }
+        }
       } else {
-        n.altKey ? o ? this.viewController.lastCursorMoveToSelect("mouse", a, u) : this.viewController.createCursor(
-          "mouse", a, u, !1) : o ? this.viewController.moveToSelect("mouse", a, u) : this.viewController.moveTo(
-          "mouse", a, u);
+        if (n.altKey) {
+          if (o) {
+            this.viewController.lastCursorMoveToSelect("mouse", a, u);
+          } {
+            this.viewController.createCursor("mouse", a, u, !1);
+          }
+        } {
+          if (o) {
+            this.viewController.moveToSelect("mouse", a, u);
+          } {
+            this.viewController.moveTo("mouse", a, u);
+          }
+        }
       }
     };
 

@@ -134,8 +134,15 @@ define("vs/editor/contrib/rename/rename", ["require", "exports", "vs/base/lib/wi
         var r;
 
         var s;
-        o ? (r = n.positionColumn - e[i].startColumn, s = n.selectionStartColumn - e[i].startColumn) : (r = e[i].endColumn -
-          e[i].startColumn, s = 0);
+        if (o) {
+          r = n.positionColumn - e[i].startColumn;
+          s = n.selectionStartColumn - e[i].startColumn;
+        }
+
+        {
+          r = e[i].endColumn - e[i].startColumn;
+          s = 0;
+        }
         var a = [];
         a.push({
           selectionStartLineNumber: e[i].startLineNumber,
@@ -225,7 +232,13 @@ define("vs/editor/contrib/rename/rename", ["require", "exports", "vs/base/lib/wi
               range: u.range
             });
           }
-          s ? t(i.localize("vs_editor_contrib_rename_rename", 0)) : e(a);
+          if (s) {
+            t(i.localize("vs_editor_contrib_rename_rename", 0));
+          }
+
+          {
+            e(a);
+          }
         }, t, n);
       });
     };

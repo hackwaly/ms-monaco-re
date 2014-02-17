@@ -345,8 +345,21 @@ define("vs/languages/typescript/typescript", ["require", "exports", "vs/editor/m
       e.prototype.getClassificationsForLine = function(e, n) {
         var i = 0;
         if (0 !== n) {
-          4 === n ? e = '"\\\n' + e : 3 === n ? e = "'\\\n" + e : 1 === n ? e = "/*\n" + e : 2 === n && (e = "/**\n" +
-            e);
+          if (4 === n) {
+            e = '"\\\n' + e;
+          } {
+            if (3 === n) {
+              e = "'\\\n" + e;
+            } {
+              if (1 === n) {
+                e = "/*\n" + e;
+              } {
+                if (2 === n) {
+                  e = "/**\n" + e;
+                }
+              }
+            }
+          }
           i = 3;
         }
         var o = new r;
@@ -463,9 +476,20 @@ define("vs/languages/typescript/typescript", ["require", "exports", "vs/editor/m
             this.type = "regexp.ts";
             break;
           default:
-            p.characterIsBracket(n) ? (this.bracket = p.bracketTypeFromChar(n), this.type = p.tokenTypeFromChar(n)) :
-              a.SyntaxFacts.isAnyKeyword(t) ? this.type = "keyword.ts" : a.SyntaxFacts.isAnyPunctuation(t) && (this.type =
-                "delimiter.ts");
+            if (p.characterIsBracket(n)) {
+              this.bracket = p.bracketTypeFromChar(n);
+              this.type = p.tokenTypeFromChar(n);
+            }
+
+            {
+              if (a.SyntaxFacts.isAnyKeyword(t)) {
+                this.type = "keyword.ts";
+              } {
+                if (a.SyntaxFacts.isAnyPunctuation(t)) {
+                  this.type = "delimiter.ts";
+                }
+              }
+            }
         }
       }
       return e;

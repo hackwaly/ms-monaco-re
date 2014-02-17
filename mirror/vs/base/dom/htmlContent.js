@@ -43,7 +43,13 @@ define("vs/base/dom/htmlContent", ["require", "exports", "vs/base/dom/dom"], fun
 
       r = s;
     } else {
-      7 === t.type ? r = document.createElement("br") : 1 === t.type && (r = e);
+      if (7 === t.type) {
+        r = document.createElement("br");
+      } {
+        if (1 === t.type) {
+          r = e;
+        }
+      }
     }
     if (e !== r) {
       e.appendChild(r);

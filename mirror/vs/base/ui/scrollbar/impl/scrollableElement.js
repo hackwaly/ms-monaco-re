@@ -142,10 +142,17 @@ define("vs/base/ui/scrollbar/impl/scrollableElement", ["require", "exports", "vs
         e = !1;
       }
       var t = this;
-      e ? this.actualElementDimensions() : -1 === this.onElementDimensionsTimeout && (this.onElementDimensionsTimeout =
-        window.setTimeout(function() {
-          return t.actualElementDimensions();
-        }, 0));
+      if (e) {
+        this.actualElementDimensions();
+      }
+
+      {
+        if (-1 === this.onElementDimensionsTimeout) {
+          this.onElementDimensionsTimeout = window.setTimeout(function() {
+            return t.actualElementDimensions();
+          }, 0);
+        }
+      }
     };
 
     e.prototype.actualElementDimensions = function() {
@@ -163,10 +170,17 @@ define("vs/base/ui/scrollbar/impl/scrollableElement", ["require", "exports", "vs
         e = !1;
       }
       var t = this;
-      e ? this.actualElementInternalDimensions() : -1 === this.onElementInternalDimensionsTimeout && (this.onElementInternalDimensionsTimeout =
-        window.setTimeout(function() {
-          return t.actualElementInternalDimensions();
-        }, 0));
+      if (e) {
+        this.actualElementInternalDimensions();
+      }
+
+      {
+        if (-1 === this.onElementInternalDimensionsTimeout) {
+          this.onElementInternalDimensionsTimeout = window.setTimeout(function() {
+            return t.actualElementInternalDimensions();
+          }, 0);
+        }
+      }
     };
 
     e.prototype.actualElementInternalDimensions = function() {

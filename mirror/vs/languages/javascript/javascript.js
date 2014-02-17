@@ -445,7 +445,19 @@ define("vs/languages/javascript/javascript", ["require", "exports", "vs/base/lib
                 nextState: this.parent
               };
             }
-            "[" === t ? i = !0 : "]" === t ? i = !1 : "\\" === t && (n = !0);
+            if ("[" === t) {
+              i = !0;
+            }
+
+            {
+              if ("]" === t) {
+                i = !1;
+              } {
+                if ("\\" === t) {
+                  n = !0;
+                }
+              }
+            }
           }
         e.goBack(e.pos() - r);
       }

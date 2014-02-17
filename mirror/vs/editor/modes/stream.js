@@ -178,7 +178,11 @@ define("vs/editor/modes/stream", ["require", "exports"], function(e, t) {
       } : function(e) {
         return 0 === e;
       }; !this.eos() && s(r = i());) {
-        r > 0 ? this.advance(r) : this.next();
+        if (r > 0) {
+          this.advance(r);
+        } {
+          this.next();
+        }
       }
       n && !this.eos() && this.advance(r);
 

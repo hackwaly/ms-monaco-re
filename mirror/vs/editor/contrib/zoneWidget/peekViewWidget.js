@@ -78,7 +78,13 @@ define("vs/editor/contrib/zoneWidget/peekViewWidget", ["require", "exports", "vs
     t.prototype.setTitle = function(e, t) {
       s.$(this._filenameElement).safeInnerHtml(e);
 
-      t ? s.$(this._dirnameElement).safeInnerHtml(r.rtrim(t, "/")) : a.clearNode(this._dirnameElement);
+      if (t) {
+        s.$(this._dirnameElement).safeInnerHtml(r.rtrim(t, "/"));
+      }
+
+      {
+        a.clearNode(this._dirnameElement);
+      }
     };
 
     t.prototype._fillBody = function() {};

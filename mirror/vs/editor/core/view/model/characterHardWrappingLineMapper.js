@@ -127,7 +127,18 @@ define("vs/editor/core/view/model/characterHardWrappingLineMapper", ["require", 
         }
         o = e.nextVisibleColumn(o, g, l);
         if (o > m && 0 !== t) {
-          -1 !== C ? (d = C, h = w) : -1 !== E ? (d = E, h = S) : (d = t, h = 0);
+          if (-1 !== C) {
+            d = C;
+            h = w;
+          } {
+            if (-1 !== E) {
+              d = E;
+              h = S;
+            } {
+              d = t;
+              h = 0;
+            }
+          }
           _[b++] = d - y;
           y = d;
           o = e.nextVisibleColumn(h, g, l);

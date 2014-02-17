@@ -21,7 +21,13 @@ define("vs/base/ui/widgets/sash", ["require", "exports", "vs/base/dom/builder", 
         o.onMouseDown(e);
       });
 
-      0 === i.orientation ? this.$e.addClass("horizontal") : this.$e.addClass("vertical");
+      if (0 === i.orientation) {
+        this.$e.addClass("horizontal");
+      }
+
+      {
+        this.$e.addClass("vertical");
+      }
 
       this.isDisabled = !1;
 

@@ -54,12 +54,20 @@ define("vs/editor/core/codeEditorWidget", ["require", "exports", "vs/base/lib/wi
         i.injectTo(this);
       }
 
-      this.handlerService ? (this.bindings = this.configuration.bindKeys(this.handlerService), this.bindings.deactivate(),
+      if (this.handlerService) {
+        this.bindings = this.configuration.bindKeys(this.handlerService);
+        this.bindings.deactivate();
         this._lifetimeListeners.push(this.addListener("blur", function() {
           return o.bindings.deactivate();
-        })), this._lifetimeListeners.push(this.addListener("focus", function() {
+        }));
+        this._lifetimeListeners.push(this.addListener("focus", function() {
           return o.bindings.activate();
-        }))) : this.bindings = null;
+        }));
+      }
+
+      {
+        this.bindings = null;
+      }
 
       this._attachModel(l);
 
@@ -346,7 +354,13 @@ define("vs/editor/core/codeEditorWidget", ["require", "exports", "vs/base/lib/wi
           var n = t;
 
           var i = n.cursorState;
-          s.isArray(i) ? this.cursor.restoreState(i) : this.cursor.restoreState([i]);
+          if (s.isArray(i)) {
+            this.cursor.restoreState(i);
+          }
+
+          {
+            this.cursor.restoreState([i]);
+          }
 
           this._view.restoreState(n.viewState);
         }
@@ -404,7 +418,15 @@ define("vs/editor/core/codeEditorWidget", ["require", "exports", "vs/base/lib/wi
 
     t.prototype.trigger = function(e, t, i) {
       var o = this.getAction(t);
-      null !== o ? o.enabled && n.Promise.as(o.run()).done() : this.configuration.handlerDispatcher.trigger(e, t, i);
+      if (null !== o) {
+        if (o.enabled) {
+          n.Promise.as(o.run()).done();
+        }
+      }
+
+      {
+        this.configuration.handlerDispatcher.trigger(e, t, i);
+      }
     };
 
     t.prototype.executeCommand = function(e, t) {

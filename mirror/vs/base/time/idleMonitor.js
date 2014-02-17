@@ -148,7 +148,13 @@ define("vs/base/time/idleMonitor", ["require", "exports", "vs/base/dom/dom", "vs
 
     r.prototype.checkIfUserIsIdle = function() {
       var e = (new Date).getTime() - this.lastActiveTime;
-      e >= t.IDLE_TIME ? this.onUserIdle() : this.scheduleIdleCheck();
+      if (e >= t.IDLE_TIME) {
+        this.onUserIdle();
+      }
+
+      {
+        this.scheduleIdleCheck();
+      }
     };
 
     r.INSTANCE = new r;

@@ -55,9 +55,17 @@ define("vs/editor/contrib/hover/hover", ["require", "exports", "vs/editor/core/c
       var n = s.browser.isMacintosh ? "metaKey" : "ctrlKey";
       if ((9 !== t || e.target.detail !== a.ModesContentHoverWidget.ID || e.event[n]) && (12 !== t || e.target.detail !==
         u.ModesGlyphHoverWidget.ID || e.event[n])) {
-        this._editor.getConfiguration().hover && 6 === t ? (this._glyphWidget.hide(), this._contentWidget.startShowingAt(
-          e.target.range)) : this._editor.getConfiguration().hover && 2 === t ? (this._contentWidget.hide(), this._glyphWidget
-          .startShowingAt(e.target.position.lineNumber)) : this._hideWidgets();
+        if (this._editor.getConfiguration().hover && 6 === t) {
+          this._glyphWidget.hide();
+          this._contentWidget.startShowingAt(e.target.range);
+        } {
+          if (this._editor.getConfiguration().hover && 2 === t) {
+            this._contentWidget.hide();
+            this._glyphWidget.startShowingAt(e.target.position.lineNumber);
+          } {
+            this._hideWidgets();
+          }
+        }
       }
     };
 

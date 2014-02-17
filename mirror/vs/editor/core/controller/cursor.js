@@ -152,19 +152,28 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
 
     t.prototype._onModelContentChanged = function(e) {
       var t = this;
-      e.changeType === o.EventType.ModelContentChangedFlush ? (this.cursors.dispose(), this.cursors = new c.CursorCollection(
-          this.editorId, this.model, this.configuration, this.viewModelHelper), this.emitCursorPositionChanged("", ""),
-        this.emitCursorSelectionChanged("", ""), this.emitCursorRevealRange(!1, !0)) : this._isHandling || this._onHandler(
-        "recoverSelectionFromMarkers", function(e) {
-          var n = t._invokeForAll(e, function(e, t, n) {
-            return t.recoverSelectionFromMarkers(n);
-          });
-          e.shouldPushStackElementBefore = !1;
+      if (e.changeType === o.EventType.ModelContentChangedFlush) {
+        this.cursors.dispose();
+        this.cursors = new c.CursorCollection(this.editorId, this.model, this.configuration, this.viewModelHelper);
+        this.emitCursorPositionChanged("", "");
+        this.emitCursorSelectionChanged("", "");
+        this.emitCursorRevealRange(!1, !0);
+      }
 
-          e.shouldPushStackElementAfter = !1;
+      {
+        if (!this._isHandling) {
+          this._onHandler("recoverSelectionFromMarkers", function(e) {
+            var n = t._invokeForAll(e, function(e, t, n) {
+              return t.recoverSelectionFromMarkers(n);
+            });
+            e.shouldPushStackElementBefore = !1;
 
-          return n;
-        }, new u.DispatcherEvent("modelChange", null));
+            e.shouldPushStackElementAfter = !1;
+
+            return n;
+          }, new u.DispatcherEvent("modelChange", null));
+        }
+      }
     };
 
     t.prototype.getSelection = function() {
@@ -348,9 +357,23 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
         var i;
         if (t.isEmpty()) {
           var r = o.model.getLineMaxColumn(t.startLineNumber);
-          t.startColumn === r ? (n = !0, i = !0) : (n = !1, i = !1);
+          if (t.startColumn === r) {
+            n = !0;
+            i = !0;
+          }
+
+          {
+            n = !1;
+            i = !1;
+          }
         } else {
-          0 === t.getDirection() ? (n = !1, i = !0) : (n = !0, i = !1);
+          if (0 === t.getDirection()) {
+            n = !1;
+            i = !0;
+          } {
+            n = !0;
+            i = !1;
+          }
         }
         var s = e.selectionStartMarkers.length;
         e.selectionStartMarkers[s] = o.model._addMarker(t.selectionStartLineNumber, t.selectionStartColumn, n);
@@ -382,8 +405,14 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
 
     t.prototype._getEditOperations = function(e, t) {
       for (var n, i, o = [], r = [], s = 0; s < t.length; s++) {
-        t[s] ? (n = this._getEditOperationsFromCommand(e, s, t[s]), o = o.concat(n.operations), r[s] = n.hadTrackedRange,
-          i = i || r[s]) : r[s] = !1;
+        if (t[s]) {
+          n = this._getEditOperationsFromCommand(e, s, t[s]);
+          o = o.concat(n.operations);
+          r[s] = n.hadTrackedRange;
+          i = i || r[s];
+        } {
+          r[s] = !1;
+        }
       }
       return {
         operations: o,
@@ -485,19 +514,24 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
         for (var c = function(e, t) {
           return e.identifier.minor - t.identifier.minor;
         }, d = [], u = 0; u < o.length; u++) {
-          a[u].length > 0 || r.hadTrackedRanges[u] ? (a[u].sort(c), d[u] = t[u].computeCursorState(i.model, {
-            getInverseEditOperations: function() {
-              return a[u];
-            },
-            getTrackedSelection: function(t) {
-              var n = parseInt(t, 10);
+          if (a[u].length > 0 || r.hadTrackedRanges[u]) {
+            a[u].sort(c);
+            d[u] = t[u].computeCursorState(i.model, {
+              getInverseEditOperations: function() {
+                return a[u];
+              },
+              getTrackedSelection: function(t) {
+                var n = parseInt(t, 10);
 
-              var o = i.model._getMarker(e.selectionStartMarkers[n]);
+                var o = i.model._getMarker(e.selectionStartMarkers[n]);
 
-              var r = i.model._getMarker(e.positionMarkers[n]);
-              return new s.Selection(o.lineNumber, o.column, r.lineNumber, r.column);
-            }
-          })) : d[u] = o[u];
+                var r = i.model._getMarker(e.positionMarkers[n]);
+                return new s.Selection(o.lineNumber, o.column, r.lineNumber, r.column);
+              }
+            });
+          } {
+            d[u] = o[u];
+          }
         }
         return d;
       });

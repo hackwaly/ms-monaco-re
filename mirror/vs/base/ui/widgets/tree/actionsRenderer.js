@@ -21,19 +21,27 @@ define("vs/base/ui/widgets/tree/actionsRenderer", ["require", "exports", "vs/bas
       var c = s(n).addClass("actions");
 
       var d = s(".sub-content").appendTo(c);
-      this.actionProvider.hasActions(e, t) ? (c.addClass("has-actions"), u = new r.ActionBar(s(".primary-action-bar")
-        .appendTo(c), {
+      if (this.actionProvider.hasActions(e, t)) {
+        c.addClass("has-actions");
+        u = new r.ActionBar(s(".primary-action-bar").appendTo(c), {
           context: this.getActionContext(e, t)
-        }), this.actionProvider.getActions(e, t).then(function(e) {
-        u.push(e, {
-          icon: !0,
-          label: !1
         });
-      }), l = u.addListener2(o.EventType.RUN, function(e) {
-        if (e.error) {
-          a.onError(e.error);
-        }
-      })) : c.removeClass("has-actions");
+        this.actionProvider.getActions(e, t).then(function(e) {
+          u.push(e, {
+            icon: !0,
+            label: !1
+          });
+        });
+        l = u.addListener2(o.EventType.RUN, function(e) {
+          if (e.error) {
+            a.onError(e.error);
+          }
+        });
+      }
+
+      {
+        c.removeClass("has-actions");
+      }
       var h = this.renderContents(e, t, d.getHTMLElement(), function() {});
       return function() {
         if (h) {

@@ -14,7 +14,19 @@ define("vs/base/objects", ["require", "exports", "./types"], function(e, t, n) {
     "undefined" == typeof o && (o = !0);
 
     return n.isObject(e) ? (n.isObject(i) && Object.keys(i).forEach(function(r) {
-      r in e ? o && (n.isObject(e[r]) && n.isObject(i[r]) ? t.mixin(e[r], i[r], o) : e[r] = i[r]) : e[r] = i[r];
+      if (r in e) {
+        if (o) {
+          if (n.isObject(e[r]) && n.isObject(i[r])) {
+            t.mixin(e[r], i[r], o);
+          } {
+            e[r] = i[r];
+          }
+        }
+      }
+
+      {
+        e[r] = i[r];
+      }
     }), e) : i;
   }
 

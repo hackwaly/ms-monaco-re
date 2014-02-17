@@ -304,8 +304,17 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
       var t;
 
       var i;
-      s.browser.isIE11orEarlier ? (e = this.selection.startLineNumber, t = this.selection.startColumn, i = this.previousSetTextAreaState
-        .getSelectionStart() + 1) : (e = this.cursorPosition.lineNumber, t = this.cursorPosition.column, i = t);
+      if (s.browser.isIE11orEarlier) {
+        e = this.selection.startLineNumber;
+        t = this.selection.startColumn;
+        i = this.previousSetTextAreaState.getSelectionStart() + 1;
+      }
+
+      {
+        e = this.cursorPosition.lineNumber;
+        t = this.cursorPosition.column;
+        i = t;
+      }
       var o = {
         range: new n.Range(e, t, e, t),
         revealVerticalInCenter: !1,
@@ -315,10 +324,21 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
       var u = this.viewHelper.visibleRangeForPositionRelativeToEditor(e, t);
 
       var l = this.viewHelper.visibleRangeForPositionRelativeToEditor(e, i);
-      s.browser.isIE11orEarlier ? u && l && (this.textArea.style.top = u.top + "px", this.textArea.style.left = this.contentLeft +
-        u.left - l.left - this.scrollLeft + "px", this.textArea.style.width = this.contentWidth + "px") : (u && (this
-        .textArea.style.left = this.contentLeft + u.left - this.scrollLeft + "px", this.textArea.style.top = u.top +
-        "px"), this.setTextAreaState(new h("", 0, 0, 0), !1));
+      if (s.browser.isIE11orEarlier) {
+        if (u && l) {
+          this.textArea.style.top = u.top + "px";
+          this.textArea.style.left = this.contentLeft + u.left - l.left - this.scrollLeft + "px";
+          this.textArea.style.width = this.contentWidth + "px";
+        }
+      }
+
+      {
+        if (u) {
+          this.textArea.style.left = this.contentLeft + u.left - this.scrollLeft + "px";
+          this.textArea.style.top = u.top + "px";
+        }
+        this.setTextAreaState(new h("", 0, 0, 0), !1);
+      }
 
       this.textArea.style.height = this.context.configuration.editor.lineHeight + "px";
 
@@ -436,7 +456,11 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
 
       var i = n.extractNewText(this.previousSetTextAreaState);
       if ("" !== i) {
-        0 === e ? this.executeType(i) : this.executePaste(i);
+        if (0 === e) {
+          this.executeType(i);
+        } {
+          this.executePaste(i);
+        }
       }
 
       this.previousSetTextAreaState = n;
@@ -466,10 +490,22 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
     };
 
     t.prototype._onPaste = function(e) {
-      e && e.clipboardData ? (e.preventDefault(), this.executePaste(e.clipboardData.getData("text/plain"))) : e &&
-        window.clipboardData ? (e.preventDefault(), this.executePaste(window.clipboardData.getData("Text"))) : (this.textArea
-          .selectionStart !== this.textArea.selectionEnd && this.setTextAreaState(new h("", 0, 0, 0), !1), this._scheduleReadFromTextArea(
-            1));
+      if (e && e.clipboardData) {
+        e.preventDefault();
+        this.executePaste(e.clipboardData.getData("text/plain"));
+      }
+
+      {
+        if (e && window.clipboardData) {
+          e.preventDefault();
+          this.executePaste(window.clipboardData.getData("Text"));
+        } {
+          if (this.textArea.selectionStart !== this.textArea.selectionEnd) {
+            this.setTextAreaState(new h("", 0, 0, 0), !1);
+          }
+          this._scheduleReadFromTextArea(1);
+        }
+      }
 
       this.justHadAPaste = !0;
     };
@@ -492,9 +528,19 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
 
     t.prototype._ensureClipboardGetsEditorSelection = function(e) {
       var t = this._getPlainTextToCopy();
-      e && e.clipboardData ? (e.clipboardData.setData("text/plain", t), e.preventDefault()) : e && window.clipboardData ?
-        (window.clipboardData.setData("Text", t), e.preventDefault()) : this.setTextAreaState(new h(t, 0, t.length, 0), !
-        0);
+      if (e && e.clipboardData) {
+        e.clipboardData.setData("text/plain", t);
+        e.preventDefault();
+      }
+
+      {
+        if (e && window.clipboardData) {
+          window.clipboardData.setData("Text", t);
+          e.preventDefault();
+        } {
+          this.setTextAreaState(new h(t, 0, t.length, 0), !0);
+        }
+      }
     };
 
     t.prototype._getPlainTextToCopy = function() {

@@ -115,8 +115,13 @@ define("vs/languages/typescript/lint/rules/javascript", ["require", "exports", "
 
             l = !r.contains(e._AllowedStrings, c);
           } else {
-            a.right.kind() === o.SyntaxKind.NullKeyword ? l = !0 : "undefined" === i.syntaxHelper.text(a.right) && (l = !
-              0);
+            if (a.right.kind() === o.SyntaxKind.NullKeyword) {
+              l = !0;
+            } {
+              if ("undefined" === i.syntaxHelper.text(a.right)) {
+                l = !0;
+              }
+            }
           }
           if (l) {
             s.reportError(a, this.name, this.code);

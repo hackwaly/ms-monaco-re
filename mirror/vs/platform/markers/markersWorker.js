@@ -59,9 +59,23 @@ define("vs/platform/markers/markersWorker", ["require", "exports", "vs/base/asse
       var s;
 
       var a;
-      "undefined" == typeof o ? (s = e.DEFAULT_GROUP, a = n) : (s = n, a = o);
+      if ("undefined" == typeof o) {
+        s = e.DEFAULT_GROUP;
+        a = n;
+      }
+
+      {
+        s = n;
+        a = o;
+      }
       var u = this.markerUpdates[i.computeKey(t, s)];
-      u ? a(new r(u)) : a(null);
+      if (u) {
+        a(new r(u));
+      }
+
+      {
+        a(null);
+      }
     };
 
     e.prototype.batchChanges = function(e) {
@@ -82,7 +96,15 @@ define("vs/platform/markers/markersWorker", ["require", "exports", "vs/base/asse
       var r;
 
       var s;
-      "undefined" == typeof o ? (r = e.DEFAULT_GROUP, s = i) : (r = i, s = o);
+      if ("undefined" == typeof o) {
+        r = e.DEFAULT_GROUP;
+        s = i;
+      }
+
+      {
+        r = i;
+        s = o;
+      }
 
       n.ok("*" !== r, "Parameter ownerId can't be '*'");
       var a = this._getMarkerUpdate(t, r);
@@ -132,8 +154,16 @@ define("vs/platform/markers/markersWorker", ["require", "exports", "vs/base/asse
       var t = e.computeKey();
 
       var n = this.markerUpdateChangeCounts[t];
-      n > 1 ? this.markerUpdateChangeCounts[t] = --n : (delete this.markerUpdateChangeCounts[t], 0 === this.globalChangeCount &&
-        this._publishMarkerUpdate(e));
+      if (n > 1) {
+        this.markerUpdateChangeCounts[t] = --n;
+      }
+
+      {
+        delete this.markerUpdateChangeCounts[t];
+        if (0 === this.globalChangeCount) {
+          this._publishMarkerUpdate(e);
+        }
+      }
     };
 
     e.prototype._getMarkerUpdateChangeCount = function(e) {

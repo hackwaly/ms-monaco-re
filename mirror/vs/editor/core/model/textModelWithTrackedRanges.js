@@ -37,7 +37,15 @@ define("vs/editor/core/model/textModelWithTrackedRanges", ["require", "exports",
 
     t.prototype._setRangeIsMultiLine = function(e, t) {
       var n = this._multiLineTrackedRanges.hasOwnProperty(e);
-      !n && t ? this._multiLineTrackedRanges[e] = !0 : n && !t && delete this._multiLineTrackedRanges[e];
+      if (!n && t) {
+        this._multiLineTrackedRanges[e] = !0;
+      }
+
+      {
+        if (n && !t) {
+          delete this._multiLineTrackedRanges[e];
+        }
+      }
     };
 
     t.prototype._shouldStartMarkerSticksToPreviousCharacter = function(e) {
@@ -209,14 +217,24 @@ define("vs/editor/core/model/textModelWithTrackedRanges", ["require", "exports",
         if (this._markerIdToRangeId.hasOwnProperty(o.id)) {
           i = this._markerIdToRangeId[o.id];
           n = this._ranges[i];
-          a.hasOwnProperty(n.id) ? t = a[n.id] : (t = {
-            startLineNumber: 0,
-            startColumn: 0,
-            endLineNumber: 0,
-            endColumn: 0
-          }, a[n.id] = t);
-          o.id === n.startMarkerId ? (t.startLineNumber = o.oldLineNumber, t.startColumn = o.oldColumn) : (t.endLineNumber =
-            o.oldLineNumber, t.endColumn = o.oldColumn);
+          if (a.hasOwnProperty(n.id)) {
+            t = a[n.id];
+          } {
+            t = {
+              startLineNumber: 0,
+              startColumn: 0,
+              endLineNumber: 0,
+              endColumn: 0
+            };
+            a[n.id] = t;
+          }
+          if (o.id === n.startMarkerId) {
+            t.startLineNumber = o.oldLineNumber;
+            t.startColumn = o.oldColumn;
+          } {
+            t.endLineNumber = o.oldLineNumber;
+            t.endColumn = o.oldColumn;
+          }
           this._setRangeIsMultiLine(n.id, this._getMarker(n.startMarkerId).lineNumber !== this._getMarker(n.endMarkerId)
             .lineNumber);
         }

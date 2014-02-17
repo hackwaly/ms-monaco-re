@@ -411,8 +411,14 @@ define("vs/editor/contrib/goToDeclaration/goToDeclaration", ["require", "exports
               if (d < u.length && h < u.length) {
                 for (var p = null, f = d; l.length < e.MAX_SOURCE_PREVIEW_LINES && h >= f; f++) {
                   var g;
-                  null === p ? (g = s.trim(s.trim(u[f], "	")), p = u[f].substr(0, u[f].length - g.length)) : g = 0 ===
-                    u[f].indexOf(p) ? u[f].substring(p.length).replace("	", "    ") : u[f];
+                  if (null === p) {
+                    g = s.trim(s.trim(u[f], "	"));
+                    p = u[f].substr(0, u[f].length - g.length);
+                  }
+
+                  {
+                    g = 0 === u[f].indexOf(p) ? u[f].substring(p.length).replace("	", "    ") : u[f];
+                  }
 
                   if (g) {
                     l.push(g);

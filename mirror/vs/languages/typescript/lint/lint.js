@@ -55,7 +55,13 @@ define("vs/languages/typescript/lint/lint", ["require", "exports", "vs/nls!vs/la
       var n = function(n) {
         o.lookupOrInsert(t._rules, n, []).push(e);
       };
-      e.rule.filter ? e.rule.filter.forEach(n) : n(-1);
+      if (e.rule.filter) {
+        e.rule.filter.forEach(n);
+      }
+
+      {
+        n(-1);
+      }
     };
 
     e.prototype.check = function(e) {
@@ -120,8 +126,11 @@ define("vs/languages/typescript/lint/lint", ["require", "exports", "vs/nls!vs/la
           for (var r = 0, i = t.count(); i > r; r++) {
             this._currentTrivia = t.syntaxTriviaAt(r);
             this._checkNodeOrToken(this._currentTrivia);
-            r !== n ? this._currentTriviaPosition += this._currentTrivia.fullWidth() : this._currentTriviaPosition =
-              this.end(e) - e.trailingTriviaWidth();
+            if (r !== n) {
+              this._currentTriviaPosition += this._currentTrivia.fullWidth();
+            } {
+              this._currentTriviaPosition = this.end(e) - e.trailingTriviaWidth();
+            }
           }
           this._currentTrivia = null;
 

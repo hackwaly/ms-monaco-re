@@ -75,9 +75,21 @@ define("vs/editor/core/view/parts/overlayWidgets/overlayWidgets", ["require", "e
 
       var n = e.widget.getDomNode();
       if (null !== e.preference) {
-        0 === e.preference ? (n.hasAttribute(t) || n.setAttribute(t, n.style.top), n.style.top = "0px", n.style.right =
-          2 * this._verticalScrollbarWidth + "px") : 1 === e.preference && (n.hasAttribute(t) || n.setAttribute(t, n.style
-          .top), n.style.top = "0px", n.style.right = "50%");
+        if (0 === e.preference) {
+          if (!n.hasAttribute(t)) {
+            n.setAttribute(t, n.style.top);
+          }
+          n.style.top = "0px";
+          n.style.right = 2 * this._verticalScrollbarWidth + "px";
+        } {
+          if (1 === e.preference) {
+            if (!n.hasAttribute(t)) {
+              n.setAttribute(t, n.style.top);
+            }
+            n.style.top = "0px";
+            n.style.right = "50%";
+          }
+        }
       } else if (n.hasAttribute(t)) {
         var i = n.getAttribute(t);
         n.removeAttribute(t);

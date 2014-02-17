@@ -80,7 +80,13 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
     }
     Object.defineProperty(e.prototype, "expanded", {
       set: function(e) {
-        e ? this.addClass("expanded") : this.removeClass("expanded");
+        if (e) {
+          this.addClass("expanded");
+        }
+
+        {
+          this.removeClass("expanded");
+        }
       },
       enumerable: !0,
       configurable: !0
@@ -88,7 +94,13 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
 
     Object.defineProperty(e.prototype, "loading", {
       set: function(e) {
-        e ? this.addClass("loading") : this.removeClass("loading");
+        if (e) {
+          this.addClass("loading");
+        }
+
+        {
+          this.removeClass("loading");
+        }
       },
       enumerable: !0,
       configurable: !0
@@ -109,7 +121,13 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
 
     Object.defineProperty(e.prototype, "dropTarget", {
       set: function(e) {
-        e ? this.addClass("drop-target") : this.removeClass("drop-target");
+        if (e) {
+          this.addClass("drop-target");
+        }
+
+        {
+          this.removeClass("drop-target");
+        }
       },
       enumerable: !0,
       configurable: !0
@@ -154,10 +172,15 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
             this.unbindDragStart();
             delete this.unbindDragStart;
           }
-          i ? (this.uri = i, this.draggable = !0, this.unbindDragStart = r.addListener(this.row, "dragstart",
-            function(e) {
+          if (i) {
+            this.uri = i;
+            this.draggable = !0;
+            this.unbindDragStart = r.addListener(this.row, "dragstart", function(e) {
               t.onDragStart(e);
-            })) : this.uri = null;
+            });
+          } {
+            this.uri = null;
+          }
         }
 
         if (!e) {
@@ -179,7 +202,11 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
         this.row.appendChild(n);
       }
       if (!this.row.parentElement) {
-        null === t ? e.appendChild(this.row) : e.insertBefore(this.row, t);
+        if (null === t) {
+          e.appendChild(this.row);
+        } {
+          e.insertBefore(this.row, t);
+        }
         this.render();
       }
     };
@@ -272,7 +299,15 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
       var u = s.isArray(e) ? new p(e) : e;
 
       var l = 0;
-      null === t ? (o = 0, a = 0) : (o = this.indexes[t] + 1, a = this.heightMap[o - 1].top + this.heightMap[o - 1].height);
+      if (null === t) {
+        o = 0;
+        a = 0;
+      }
+
+      {
+        o = this.indexes[t] + 1;
+        a = this.heightMap[o - 1].top + this.heightMap[o - 1].height;
+      }
       for (var c = this.heightMap.splice.bind(this.heightMap, o, 0), d = []; n = u.next();) {
         i = new m(this.context, n, a + l);
         this.emit("viewItem:create", {
@@ -459,8 +494,14 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
         vertical: t.options.verticalScrollMode || "auto"
       });
 
-      i.browser.isIE11orEarlier ? (this.wrapper.style.msTouchAction = "none", this.wrapper.style.msContentZooming =
-        "none") : this.wrapperGesture = new l.Gesture(this.wrapper);
+      if (i.browser.isIE11orEarlier) {
+        this.wrapper.style.msTouchAction = "none";
+        this.wrapper.style.msContentZooming = "none";
+      }
+
+      {
+        this.wrapperGesture = new l.Gesture(this.wrapper);
+      }
 
       this.rowsContainer = document.createElement("div");
 
@@ -991,7 +1032,15 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
           var r = i.top + i.height;
 
           var s = this.scrollTop + this.viewHeight;
-          i.top < this.scrollTop ? this.scrollTop = i.top : r >= s && (this.scrollTop = r - this.viewHeight);
+          if (i.top < this.scrollTop) {
+            this.scrollTop = i.top;
+          }
+
+          {
+            if (r >= s) {
+              this.scrollTop = r - this.viewHeight;
+            }
+          }
         }
     };
 
@@ -1071,7 +1120,13 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
     t.prototype.refreshViewItem = function(e) {
       e.render();
 
-      this.shouldBeRendered(e) ? this.insertItemInDOM(e) : this.removeItemFromDOM(e);
+      if (this.shouldBeRendered(e)) {
+        this.insertItemInDOM(e);
+      }
+
+      {
+        this.removeItemFromDOM(e);
+      }
     };
 
     t.prototype.onClick = function(e) {
@@ -1180,7 +1235,15 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
             var n = 0;
 
             var i = e.viewHeight - 35;
-            35 > t ? n = Math.max(-14, .2 * (t - 35)) : t > i && (n = Math.min(14, .2 * (t - i)));
+            if (35 > t) {
+              n = Math.max(-14, .2 * (t - 35));
+            }
+
+            {
+              if (t > i) {
+                n = Math.min(14, .2 * (t - i));
+              }
+            }
 
             e.scrollTop += n;
           }
@@ -1249,8 +1312,15 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
         return !1;
       }
       var u = 1 === s || 2 === s;
-      u ? (this.currentDropElement = a.getElement(), n.preventDefault(), n.dataTransfer.dropEffect = n.ctrlKey ?
-        "copy" : "move") : delete this.currentDropElement;
+      if (u) {
+        this.currentDropElement = a.getElement();
+        n.preventDefault();
+        n.dataTransfer.dropEffect = n.ctrlKey ? "copy" : "move";
+      }
+
+      {
+        delete this.currentDropElement;
+      }
       var l = a.id === this.inputItem.id ? this.inputItem : this.items[a.id];
       if ((this.shouldInvalidateDropReaction || this.currentDropTarget !== l || this.currentDropElementReaction !== s) &&
         (this.shouldInvalidateDropReaction = !1, this.currentDropTarget && (this.currentDropTargets.forEach(function(

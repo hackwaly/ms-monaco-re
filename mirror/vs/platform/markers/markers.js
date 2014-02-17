@@ -276,7 +276,13 @@ define("vs/platform/markers/markers", ["require", "exports", "vs/base/assert", "
           var t = s[e];
 
           var n = o[t];
-          n ? s[e] = n : o[t] = t;
+          if (n) {
+            s[e] = n;
+          }
+
+          {
+            o[t] = t;
+          }
         });
       }
       return n;

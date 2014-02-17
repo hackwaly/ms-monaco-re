@@ -107,7 +107,12 @@ define("vs/editor/contrib/linesOperations/linesOperations", ["require", "exports
         return e.startLineNumber - t.startLineNumber;
       });
       for (var t = [], n = e[0], o = 1; o < e.length; o++) {
-        n.endLineNumber + 1 === e[o].startLineNumber ? n.endLineNumber = e[o].endLineNumber : (t.push(n), n = e[o]);
+        if (n.endLineNumber + 1 === e[o].startLineNumber) {
+          n.endLineNumber = e[o].endLineNumber;
+        } {
+          t.push(n);
+          n = e[o];
+        }
       }
       t.push(n);
       var r = t.map(function(e) {

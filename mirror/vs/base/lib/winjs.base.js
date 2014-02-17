@@ -12,7 +12,15 @@ define("vs/base/lib/winjs.base", ["./raw.winjs.base", "vs/base/errors"], functio
 
         Object.keys(e).forEach(function(n) {
           var i = e[n];
-          i.exception ? t.onUnexpectedError(i.exception) : i.error && t.onUnexpectedError(i.error);
+          if (i.exception) {
+            t.onUnexpectedError(i.exception);
+          }
+
+          {
+            if (i.error) {
+              t.onUnexpectedError(i.error);
+            }
+          }
 
           console.log("WARNING: Promise with no error callback:" + i.id);
 

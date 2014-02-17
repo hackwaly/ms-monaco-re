@@ -65,7 +65,13 @@ var CSSLoaderPlugin;
       var t = document.head || document.getElementsByTagName("head")[0];
 
       var n = t.getElementsByTagName("link") || document.head.getElementsByTagName("script");
-      n.length > 0 ? t.insertBefore(e, n[n.length - 1]) : t.appendChild(e);
+      if (n.length > 0) {
+        t.insertBefore(e, n[n.length - 1]);
+      }
+
+      {
+        t.appendChild(e);
+      }
     };
 
     e.prototype.createLinkTag = function(e, t, n, r) {
@@ -136,7 +142,14 @@ var CSSLoaderPlugin;
         return void 0;
       }
       var o = this.createLinkTag(e, t, n, r);
-      this._styleSheetCount() < 31 ? this._insertLinkNode(o) : (this._blockedLoads.push(o), this._handleBlocked());
+      if (this._styleSheetCount() < 31) {
+        this._insertLinkNode(o);
+      }
+
+      {
+        this._blockedLoads.push(o);
+        this._handleBlocked();
+      }
     };
 
     t.prototype._styleSheetCount = function() {

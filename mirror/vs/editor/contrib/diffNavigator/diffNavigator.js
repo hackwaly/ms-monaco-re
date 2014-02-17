@@ -79,15 +79,22 @@ define("vs/editor/contrib/diffNavigator/diffNavigator", ["require", "exports", "
 
       if (e) {
         e.forEach(function(e) {
-          !n.options.ignoreCharChanges && e.charChanges ? e.charChanges.forEach(function(e) {
+          if (!n.options.ignoreCharChanges && e.charChanges) {
+            e.charChanges.forEach(function(e) {
+              n.ranges.push({
+                rhs: !0,
+                range: new r.Range(e.modifiedStartLineNumber, e.modifiedStartColumn, e.modifiedEndLineNumber, e
+                  .modifiedEndColumn)
+              });
+            });
+          }
+
+          {
             n.ranges.push({
               rhs: !0,
-              range: new r.Range(e.modifiedStartLineNumber, e.modifiedStartColumn, e.modifiedEndLineNumber, e.modifiedEndColumn)
+              range: new r.Range(e.modifiedStartLineNumber, 1, e.modifiedStartLineNumber, 1)
             });
-          }) : n.ranges.push({
-            rhs: !0,
-            range: new r.Range(e.modifiedStartLineNumber, 1, e.modifiedStartLineNumber, 1)
-          });
+          }
         });
       }
 
@@ -118,8 +125,23 @@ define("vs/editor/contrib/diffNavigator/diffNavigator", ["require", "exports", "
 
     t.prototype.move = function(e) {
       if (i.ok(!this.disposed, "Illegal State - diff navigator has been disposed"), this.canNavigate()) {
-        -1 === this.nextIdx ? this.initIdx(e) : e ? (this.nextIdx += 1, this.nextIdx >= this.ranges.length && (this.nextIdx =
-          0)) : (this.nextIdx -= 1, this.nextIdx < 0 && (this.nextIdx = this.ranges.length - 1));
+        if (-1 === this.nextIdx) {
+          this.initIdx(e);
+        }
+
+        {
+          if (e) {
+            this.nextIdx += 1;
+            if (this.nextIdx >= this.ranges.length) {
+              this.nextIdx = 0;
+            }
+          } {
+            this.nextIdx -= 1;
+            if (this.nextIdx < 0) {
+              this.nextIdx = this.ranges.length - 1;
+            }
+          }
+        }
         var t = this.ranges[this.nextIdx];
         this.ignoreSelectionChange = !0;
         try {

@@ -140,7 +140,13 @@ define("vs/editor/contrib/inEditorActions/inEditorActions", ["require", "exports
           }));
 
           e.toUnhook.push(e.actionBar.addListener(m.EventType.RUN, function(t) {
-            t.result && l.isFunction(t.result.focus) ? t.result.focus() : e.editor.focus();
+            if (t.result && l.isFunction(t.result.focus)) {
+              t.result.focus();
+            }
+
+            {
+              e.editor.focus();
+            }
           }));
 
           e.details.hide();
@@ -202,14 +208,26 @@ define("vs/editor/contrib/inEditorActions/inEditorActions", ["require", "exports
           }
         });
 
-        h.length > 0 ? this.show() : this.hide();
+        if (h.length > 0) {
+          this.show();
+        }
+
+        {
+          this.hide();
+        }
       };
 
       e.prototype.setExpanded = function(e) {
         if (this.isVisible) {
           this.expanded = e;
-          this.expanded ? (this.details.show(), this.trigger.addClass("active"), this.actionBar.focus(!0)) : (this.details
-            .hide(), this.trigger.removeClass("active"));
+          if (this.expanded) {
+            this.details.show();
+            this.trigger.addClass("active");
+            this.actionBar.focus(!0);
+          } {
+            this.details.hide();
+            this.trigger.removeClass("active");
+          }
         }
       };
 

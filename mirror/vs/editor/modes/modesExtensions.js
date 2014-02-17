@@ -443,8 +443,15 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
       var c = -1;
 
       var d = -1;
-      s + 1 < o.length ? (d = h.findIndexInSegmentsArray(r, o[s + 1].startIndex), c = r[d].startIndex) : (d = r.length,
-        c = e.length);
+      if (s + 1 < o.length) {
+        d = h.findIndexInSegmentsArray(r, o[s + 1].startIndex);
+        c = r[d].startIndex;
+      }
+
+      {
+        d = r.length;
+        c = e.length;
+      }
       for (var f, g = [], m = r[l].startIndex, v = l; d > v; v++) {
         f = r[v];
         g.push(new p(f.startIndex - m, f.type, f.bracket));
@@ -615,7 +622,14 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
           var d = l[c];
           e = "";
 
-          c < l.length - 1 ? (e = s.substring(a, l[c + 1].startIndex), a = l[c + 1].startIndex) : e = s.substr(a);
+          if (c < l.length - 1) {
+            e = s.substring(a, l[c + 1].startIndex);
+            a = l[c + 1].startIndex;
+          }
+
+          {
+            e = s.substr(a);
+          }
           var h = "token";
           if (d.type) {
             h += " " + d.type.split(".").join(" ");

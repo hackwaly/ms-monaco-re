@@ -19,8 +19,13 @@ define("vs/editor/contrib/find/replaceAllCommand", ["require", "exports", "vs/ed
           return n.compareRangesUsingStarts(e.range, t.range);
         });
         for (var r = [], s = i[0], o = 1; o < i.length; o++) {
-          s.range.endLineNumber === i[o].range.startLineNumber && s.range.endColumn === i[o].range.startColumn ? (s.range =
-            s.range.plusRange(i[o].range), s.text = s.text + i[o].text) : (r.push(s), s = i[o]);
+          if (s.range.endLineNumber === i[o].range.startLineNumber && s.range.endColumn === i[o].range.startColumn) {
+            s.range = s.range.plusRange(i[o].range);
+            s.text = s.text + i[o].text;
+          } {
+            r.push(s);
+            s = i[o];
+          }
         }
         r.push(s);
         for (var o = 0; o < r.length; o++) {

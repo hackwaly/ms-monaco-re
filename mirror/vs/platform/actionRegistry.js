@@ -132,7 +132,13 @@ define("vs/platform/actionRegistry", ["require", "exports", "vs/platform/platfor
         return this._cachedAction instanceof o.Action ? this._cachedAction.label : this._label;
       },
       set: function(e) {
-        this._cachedAction instanceof o.Action ? this._cachedAction.label = e : this._setLabel(e);
+        if (this._cachedAction instanceof o.Action) {
+          this._cachedAction.label = e;
+        }
+
+        {
+          this._setLabel(e);
+        }
       },
       enumerable: !0,
       configurable: !0
@@ -143,7 +149,13 @@ define("vs/platform/actionRegistry", ["require", "exports", "vs/platform/platfor
         return this._cachedAction instanceof o.Action ? this._cachedAction.class : this._cssClass;
       },
       set: function(e) {
-        this._cachedAction instanceof o.Action ? this._cachedAction.class = e : this._setClass(e);
+        if (this._cachedAction instanceof o.Action) {
+          this._cachedAction.class = e;
+        }
+
+        {
+          this._setClass(e);
+        }
       },
       enumerable: !0,
       configurable: !0
@@ -154,7 +166,13 @@ define("vs/platform/actionRegistry", ["require", "exports", "vs/platform/platfor
         return this._cachedAction instanceof o.Action ? this._cachedAction.enabled : this._enabled;
       },
       set: function(e) {
-        this._cachedAction instanceof o.Action ? this._cachedAction.enabled = e : this._setEnabled(e);
+        if (this._cachedAction instanceof o.Action) {
+          this._cachedAction.enabled = e;
+        }
+
+        {
+          this._setEnabled(e);
+        }
       },
       enumerable: !0,
       configurable: !0
@@ -165,7 +183,13 @@ define("vs/platform/actionRegistry", ["require", "exports", "vs/platform/platfor
         return this._cachedAction instanceof o.Action ? this._cachedAction.order : this._order;
       },
       set: function(e) {
-        this._cachedAction instanceof o.Action ? this._cachedAction.order = e : this._order = e;
+        if (this._cachedAction instanceof o.Action) {
+          this._cachedAction.order = e;
+        }
+
+        {
+          this._order = e;
+        }
       },
       enumerable: !0,
       configurable: !0

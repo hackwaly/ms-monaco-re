@@ -96,25 +96,43 @@ define("vs/editor/core/model/modelEditOperation", ["require", "exports", "vs/edi
         h = n[i].identifier;
         s = n[i].range;
         r = n[i].text;
-        s.isEmpty() && !r ? (d = {
-          startLineNumber: 1,
-          startColumn: 1,
-          endLineNumber: 1,
-          endColumn: 1
-        }, c = "") : (s.isEmpty() ? (c = "", a = {
-          lineNumber: s.startLineNumber,
-          column: s.startColumn
-        }) : (l = t.deleteText(s), c = l.deletedText, a = l.position), r ? (u = t.insertText(a, r), d = {
-          startLineNumber: a.lineNumber,
-          startColumn: a.column,
-          endLineNumber: u.lineNumber,
-          endColumn: u.column
-        }) : d = {
-          startLineNumber: a.lineNumber,
-          startColumn: a.column,
-          endLineNumber: a.lineNumber,
-          endColumn: a.column
-        });
+        if (s.isEmpty() && !r) {
+          d = {
+            startLineNumber: 1,
+            startColumn: 1,
+            endLineNumber: 1,
+            endColumn: 1
+          };
+          c = "";
+        } {
+          if (s.isEmpty()) {
+            c = "";
+            a = {
+              lineNumber: s.startLineNumber,
+              column: s.startColumn
+            };
+          } {
+            l = t.deleteText(s);
+            c = l.deletedText;
+            a = l.position;
+          }
+          if (r) {
+            u = t.insertText(a, r);
+            d = {
+              startLineNumber: a.lineNumber,
+              startColumn: a.column,
+              endLineNumber: u.lineNumber,
+              endColumn: u.column
+            };
+          } {
+            d = {
+              startLineNumber: a.lineNumber,
+              startColumn: a.column,
+              endLineNumber: a.lineNumber,
+              endColumn: a.column
+            };
+          }
+        }
         p.push({
           identifier: h,
           text: c,

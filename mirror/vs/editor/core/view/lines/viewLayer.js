@@ -319,9 +319,24 @@ define("vs/editor/core/view/lines/viewLayer", ["require", "exports", "vs/base/do
       var p = 0;
       for (n = 0; n < e.linesLength; n++) {
         i = e.lines[n];
-        i.shouldUpdateHTML(n + e.rendLineNumberStart) ? (a = a.concat(i.getLineOuterHTML(n + e.rendLineNumberStart, t[
-          n])), s[n] = !0, r = !0, e.frameData && (o = i.getLineStatistics(), l++, d += o.partsCount, p += o.charactersCount)) :
-          e.frameData && (o = i.getLineStatistics(), u++, c += o.partsCount, h += o.charactersCount);
+        if (i.shouldUpdateHTML(n + e.rendLineNumberStart)) {
+          a = a.concat(i.getLineOuterHTML(n + e.rendLineNumberStart, t[n]));
+          s[n] = !0;
+          r = !0;
+          if (e.frameData) {
+            o = i.getLineStatistics();
+            l++;
+            d += o.partsCount;
+            p += o.charactersCount;
+          }
+        } {
+          if (e.frameData) {
+            o = i.getLineStatistics();
+            u++;
+            c += o.partsCount;
+            h += o.charactersCount;
+          }
+        }
       }
       if (e.frameData && (e.frameData.renderedVisibleLinesCount += l, e.frameData.totalVisibleLinesCount += l + u, e.frameData
         .renderedVisiblePartsCount += d, e.frameData.totalVisiblePartsCount += d + c, e.frameData.renderedVisibleCharactersCount +=

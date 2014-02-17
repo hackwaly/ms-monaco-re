@@ -388,8 +388,26 @@ define("vs/editor/worker/modesWorker", ["require", "exports", "vs/base/lib/winjs
         for (p = o.getLineContent(t), f = 0, g = p.length, m = null, v = 0, y = a; g > f;) {
           _ = p.charAt(f);
           C = !1;
-          y === l ? (" " === _ || "	" === _ || _ === m) && (r.push(this.createLink(p, t, v, f)), C = !0) : y === u ?
-            " " === _ || "	" === _ || _ === m ? C = !0 : y = l : s[y].hasOwnProperty(_) ? y = s[y][_] : C = !0;
+          if (y === l) {
+            if (" " === _ || "	" === _ || _ === m) {
+              r.push(this.createLink(p, t, v, f));
+              C = !0;
+            }
+          } {
+            if (y === u) {
+              if (" " === _ || "	" === _ || _ === m) {
+                C = !0;
+              } {
+                y = l;
+              }
+            } {
+              if (s[y].hasOwnProperty(_)) {
+                y = s[y][_];
+              } {
+                C = !0;
+              }
+            }
+          }
           if (C) {
             y = a;
             v = f + 1;

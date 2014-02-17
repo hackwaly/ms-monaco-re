@@ -34,11 +34,21 @@ define("vs/editor/contrib/snippet/snippet", ["require", "exports", "vs/base/coll
           var d = l.placeHolders[r];
 
           var h = new o.Range(t + 1, d.startColumn, t + 1, d.endColumn);
-          n.contains(a, d.value) ? c = a[d.value] : (c = {
-            value: d.value,
-            occurences: []
-          }, this.placeHolders.push(c), "" === d.value && (this.finishPlaceHolderIndex = this.placeHolders.length -
-            1), a[d.value] = c);
+          if (n.contains(a, d.value)) {
+            c = a[d.value];
+          }
+
+          {
+            c = {
+              value: d.value,
+              occurences: []
+            };
+            this.placeHolders.push(c);
+            if ("" === d.value) {
+              this.finishPlaceHolderIndex = this.placeHolders.length - 1;
+            }
+            a[d.value] = c;
+          }
 
           c.occurences.push(h);
         }
@@ -116,8 +126,16 @@ define("vs/editor/contrib/snippet/snippet", ["require", "exports", "vs/base/coll
       var g = [];
       for (u = 0, l = this.lines.length; l > u; u++) {
         o = this.lines[u];
-        0 === u ? (g[u + 1] = n, h[u] = o) : (r = this.extractLineIndentation(o), s = o.substr(r.length), a = i.normalizeIndentation(
-          f + r), g[u + 1] = a.length - r.length, h[u] = a + s);
+        if (0 === u) {
+          g[u + 1] = n;
+          h[u] = o;
+        } {
+          r = this.extractLineIndentation(o);
+          s = o.substr(r.length);
+          a = i.normalizeIndentation(f + r);
+          g[u + 1] = a.length - r.length;
+          h[u] = a + s;
+        }
       }
       var m;
 
@@ -408,7 +426,13 @@ define("vs/editor/contrib/snippet/snippet", ["require", "exports", "vs/base/coll
   var c = function() {
     function e() {}
     e.run = function(e, t, n, i) {
-      0 === n.placeHolders.length ? this._runForAllSelections(e, t, n, i) : this._runForPrimarySelection(e, t, n, i);
+      if (0 === n.placeHolders.length) {
+        this._runForAllSelections(e, t, n, i);
+      }
+
+      {
+        this._runForPrimarySelection(e, t, n, i);
+      }
     };
 
     e._getTypeRangeForSelection = function(e, t, n) {
@@ -438,8 +462,15 @@ define("vs/editor/contrib/snippet/snippet", ["require", "exports", "vs/base/coll
       var u = e._getAdaptedSnippet(t, r, i, s);
       t.executeCommand("editor.contrib.insertSnippetHelper", this._getCommandForSnippet(u, s));
       var c = e._getSnippetCursorOnly(u);
-      c ? t.setSelection(new a.Selection(c.lineNumber, c.column, c.lineNumber, c.column)) : u.placeHolders.length > 0 &&
-        new l(t, n, u, s.startLineNumber);
+      if (c) {
+        t.setSelection(new a.Selection(c.lineNumber, c.column, c.lineNumber, c.column));
+      }
+
+      {
+        if (u.placeHolders.length > 0) {
+          new l(t, n, u, s.startLineNumber);
+        }
+      }
     };
 
     e._runForAllSelections = function(t, n, i, o) {

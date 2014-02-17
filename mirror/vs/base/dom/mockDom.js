@@ -11,7 +11,13 @@ define("vs/base/dom/mockDom", ["require", "exports"], function(e, t) {
     };
 
     e.prototype.addEventListener = function(e, t) {
-      e in this.eventMap ? this.eventMap[e].push(t) : this.eventMap[e] = [t];
+      if (e in this.eventMap) {
+        this.eventMap[e].push(t);
+      }
+
+      {
+        this.eventMap[e] = [t];
+      }
     };
 
     e.prototype.dispatchEvent = function(e) {
@@ -602,7 +608,13 @@ define("vs/base/dom/mockDom", ["require", "exports"], function(e, t) {
     e.prototype.onTransition = function(e) {
       if (this.textContent) {
         var t = e.document.createTextNode(this.textContent);
-        e.currentNode ? e.currentNode.appendChild(t) : e.root.push(t);
+        if (e.currentNode) {
+          e.currentNode.appendChild(t);
+        }
+
+        {
+          e.root.push(t);
+        }
       }
     };
 
@@ -653,7 +665,13 @@ define("vs/base/dom/mockDom", ["require", "exports"], function(e, t) {
             i.setAttribute(e, n.attributes[e]);
           });
 
-          e.currentNode ? e.currentNode.appendChild(i) : e.root.push(i);
+          if (e.currentNode) {
+            e.currentNode.appendChild(i);
+          }
+
+          {
+            e.root.push(i);
+          }
 
           e.openElements.push(i);
 

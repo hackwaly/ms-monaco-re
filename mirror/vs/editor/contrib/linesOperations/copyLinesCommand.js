@@ -26,9 +26,14 @@ define("vs/editor/contrib/linesOperations/copyLinesCommand", ["require", "export
         this._endLineNumberDelta++;
       }
 
-      this._isCopyingDown ? t.addEditOperation(new n.Range(i.startLineNumber, 1, i.startLineNumber, 1), s + "\n") : t
-        .addEditOperation(new n.Range(i.endLineNumber, e.getLineMaxColumn(i.endLineNumber), i.endLineNumber, e.getLineMaxColumn(
+      if (this._isCopyingDown) {
+        t.addEditOperation(new n.Range(i.startLineNumber, 1, i.startLineNumber, 1), s + "\n");
+      }
+
+      {
+        t.addEditOperation(new n.Range(i.endLineNumber, e.getLineMaxColumn(i.endLineNumber), i.endLineNumber, e.getLineMaxColumn(
           i.endLineNumber)), "\n" + s);
+      }
 
       this._selectionId = t.trackSelection(i);
 

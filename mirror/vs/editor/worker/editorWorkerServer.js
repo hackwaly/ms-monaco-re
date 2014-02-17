@@ -23,13 +23,27 @@ if ("undefined" == typeof WinJS) {
         var u = 95 !== a.charCodeAt(0);
 
         var l = n[a];
-        !l || "object" != typeof l || l.value === t && "function" != typeof l.get && "function" != typeof l.set ? u ?
-          e[a] = l : (i = i || {}, i[a] = {
-            value: l,
-            enumerable: u,
-            configurable: !0,
-            writable: !0
-          }) : (l.enumerable === t && (l.enumerable = u), i = i || {}, i[a] = l);
+        if (!l || "object" != typeof l || l.value === t && "function" != typeof l.get && "function" != typeof l.set) {
+          if (u) {
+            e[a] = l;
+          } {
+            i = i || {};
+            i[a] = {
+              value: l,
+              enumerable: u,
+              configurable: !0,
+              writable: !0
+            };
+          }
+        }
+
+        {
+          if (l.enumerable === t) {
+            l.enumerable = u;
+          }
+          i = i || {};
+          i[a] = l;
+        }
       }
       if (i) {
         Object.defineProperties(e, i);
@@ -190,8 +204,17 @@ if ("undefined" == typeof WinJS) {
             a = e.document ? document.readyState : "complete";
           }
 
-          "complete" === a || e.document && null !== document.body ? i ? e.setImmediate(s) : s() : e.addEventListener(
-            "DOMContentLoaded", s, !1);
+          if ("complete" === a || e.document && null !== document.body) {
+            if (i) {
+              e.setImmediate(s);
+            } {
+              s();
+            }
+          }
+
+          {
+            e.addEventListener("DOMContentLoaded", s, !1);
+          }
         });
       },
       strictProcessing: {
@@ -321,18 +344,31 @@ if ("undefined" == typeof WinJS) {
         },
         set: function(n) {
           var i = this[t];
-          n ? (i || (i = {
-            wrapper: function(e) {
-              return i.userHandler(e);
-            },
-            userHandler: n
-          }, Object.defineProperty(this, t, {
-            value: i,
-            enumerable: !1,
-            writable: !0,
-            configurable: !0
-          }), this.addEventListener(e, i.wrapper, !1)), i.userHandler = n) : i && (this.removeEventListener(e, i.wrapper, !
-            1), this[t] = null);
+          if (n) {
+            if (!i) {
+              i = {
+                wrapper: function(e) {
+                  return i.userHandler(e);
+                },
+                userHandler: n
+              };
+              Object.defineProperty(this, t, {
+                value: i,
+                enumerable: !1,
+                writable: !0,
+                configurable: !0
+              });
+              this.addEventListener(e, i.wrapper, !1);
+            }
+            i.userHandler = n;
+          }
+
+          {
+            if (i) {
+              this.removeEventListener(e, i.wrapper, !1);
+              this[t] = null;
+            }
+          }
         },
         enumerable: !0
       };
@@ -670,7 +706,16 @@ if ("undefined" == typeof WinJS) {
           var l = a.promise;
           if (l) {
             try {
-              u ? (u.handlesOnError || p(l, n, r, e, u), l._setCompleteValue(u(n))) : l._setChainedErrorValue(n, e);
+              if (u) {
+                if (!u.handlesOnError) {
+                  p(l, n, r, e, u);
+                }
+                l._setCompleteValue(u(n));
+              }
+
+              {
+                l._setChainedErrorValue(n, e);
+              }
             } catch (c) {
               l._setExceptionValue(c);
             }
@@ -713,7 +758,14 @@ if ("undefined" == typeof WinJS) {
 
     function g(e, t) {
       var n = e._listeners;
-      n ? (n = Array.isArray(n) ? n : [n], n.push(t)) : n = t;
+      if (n) {
+        n = Array.isArray(n) ? n : [n];
+        n.push(t);
+      }
+
+      {
+        n = t;
+      }
 
       e._listeners = n;
     }
@@ -756,7 +808,13 @@ if ("undefined" == typeof WinJS) {
     function b(e) {
       var t;
       return new WinJS.Promise(function(n) {
-        e ? t = setTimeout(n, e) : setImmediate(n);
+        if (e) {
+          t = setTimeout(n, e);
+        }
+
+        {
+          setImmediate(n);
+        }
       }, function() {
         if (t) {
           clearTimeout(t);
@@ -860,7 +918,14 @@ if ("undefined" == typeof WinJS) {
         var t = e._value;
 
         var n = function(i) {
-          t._errorId ? e._chainedError(i, t) : (p(e, i, r, t, n), e._error(i));
+          if (t._errorId) {
+            e._chainedError(i, t);
+          }
+
+          {
+            p(e, i, r, t, n);
+            e._error(i);
+          }
         };
         n.handlesOnError = !0;
 
@@ -1257,7 +1322,13 @@ if ("undefined" == typeof WinJS) {
         return new j(function(t, n) {
           {
             var i = Object.keys(e);
-            Array.isArray(e) ? [] : {};
+            if (Array.isArray(e)) {
+              [];
+            }
+
+            {
+              ({});
+            }
           }
           if (0 === i.length) {
             t();
@@ -1327,7 +1398,13 @@ if ("undefined" == typeof WinJS) {
                   }
                 });
 
-                u === t ? n(WinJS.Promise.cancel) : i(s);
+                if (u === t) {
+                  n(WinJS.Promise.cancel);
+                }
+
+                {
+                  i(s);
+                }
               }
             } else {
               o({
@@ -1338,15 +1415,21 @@ if ("undefined" == typeof WinJS) {
           };
           r.forEach(function(n) {
             var i = e[n];
-            i === t ? u++ : j.then(i, function(e) {
-              a[n] = e;
+            if (i === t) {
+              u++;
+            }
 
-              c(n);
-            }, function(e) {
-              s[n] = e;
+            {
+              j.then(i, function(e) {
+                a[n] = e;
 
-              c(n);
-            });
+                c(n);
+              }, function(e) {
+                s[n] = e;
+
+                c(n);
+              });
+            }
           });
 
           l -= u;
@@ -1473,8 +1556,16 @@ if ("undefined" == typeof WinJS) {
 
           t.onreadystatechange = function() {
             if (!t._canceled) {
-              4 === t.readyState ? (t.status >= 200 && t.status < 300 || 1223 === t.status ? n(t) : i(t), t.onreadystatechange =
-                function() {}) : o(t);
+              if (4 === t.readyState) {
+                if (t.status >= 200 && t.status < 300 || 1223 === t.status) {
+                  n(t);
+                } {
+                  i(t);
+                }
+                t.onreadystatechange = function() {};
+              } {
+                o(t);
+              }
             }
           };
 
@@ -1719,7 +1810,19 @@ define("vs/base/objects", ["require", "exports", "./types"], function(e, t, n) {
     "undefined" == typeof o && (o = !0);
 
     return n.isObject(e) ? (n.isObject(i) && Object.keys(i).forEach(function(r) {
-      r in e ? o && (n.isObject(e[r]) && n.isObject(i[r]) ? t.mixin(e[r], i[r], o) : e[r] = i[r]) : e[r] = i[r];
+      if (r in e) {
+        if (o) {
+          if (n.isObject(e[r]) && n.isObject(i[r])) {
+            t.mixin(e[r], i[r], o);
+          } {
+            e[r] = i[r];
+          }
+        }
+      }
+
+      {
+        e[r] = i[r];
+      }
     }), e) : i;
   }
 
@@ -2647,7 +2750,13 @@ define("vs/base/dom/mockDom", ["require", "exports"], function(e, t) {
     };
 
     e.prototype.addEventListener = function(e, t) {
-      e in this.eventMap ? this.eventMap[e].push(t) : this.eventMap[e] = [t];
+      if (e in this.eventMap) {
+        this.eventMap[e].push(t);
+      }
+
+      {
+        this.eventMap[e] = [t];
+      }
     };
 
     e.prototype.dispatchEvent = function(e) {
@@ -3238,7 +3347,13 @@ define("vs/base/dom/mockDom", ["require", "exports"], function(e, t) {
     e.prototype.onTransition = function(e) {
       if (this.textContent) {
         var t = e.document.createTextNode(this.textContent);
-        e.currentNode ? e.currentNode.appendChild(t) : e.root.push(t);
+        if (e.currentNode) {
+          e.currentNode.appendChild(t);
+        }
+
+        {
+          e.root.push(t);
+        }
       }
     };
 
@@ -3289,7 +3404,13 @@ define("vs/base/dom/mockDom", ["require", "exports"], function(e, t) {
             i.setAttribute(e, n.attributes[e]);
           });
 
-          e.currentNode ? e.currentNode.appendChild(i) : e.root.push(i);
+          if (e.currentNode) {
+            e.currentNode.appendChild(i);
+          }
+
+          {
+            e.root.push(i);
+          }
 
           e.openElements.push(i);
 
@@ -3516,13 +3637,17 @@ define("vs/base/dom/iframe", ["require", "exports"], function(e, t) {
       var t = window;
       do {
         e = n(t);
-        e ? u.push({
-          window: t,
-          iframeElement: i(e, t)
-        }) : u.push({
-          window: t,
-          iframeElement: null
-        });
+        if (e) {
+          u.push({
+            window: t,
+            iframeElement: i(e, t)
+          });
+        } {
+          u.push({
+            window: t,
+            iframeElement: null
+          });
+        }
         t = e;
       } while (t);
     }
@@ -3892,7 +4017,13 @@ define("vs/platform/markers/markers", ["require", "exports", "vs/base/assert", "
           var t = s[e];
 
           var n = o[t];
-          n ? s[e] = n : o[t] = t;
+          if (n) {
+            s[e] = n;
+          }
+
+          {
+            o[t] = t;
+          }
         });
       }
       return n;
@@ -3970,9 +4101,23 @@ define("vs/platform/markers/markersWorker", ["require", "exports", "vs/base/asse
       var s;
 
       var a;
-      "undefined" == typeof o ? (s = e.DEFAULT_GROUP, a = n) : (s = n, a = o);
+      if ("undefined" == typeof o) {
+        s = e.DEFAULT_GROUP;
+        a = n;
+      }
+
+      {
+        s = n;
+        a = o;
+      }
       var u = this.markerUpdates[i.computeKey(t, s)];
-      u ? a(new r(u)) : a(null);
+      if (u) {
+        a(new r(u));
+      }
+
+      {
+        a(null);
+      }
     };
 
     e.prototype.batchChanges = function(e) {
@@ -3993,7 +4138,15 @@ define("vs/platform/markers/markersWorker", ["require", "exports", "vs/base/asse
       var r;
 
       var s;
-      "undefined" == typeof o ? (r = e.DEFAULT_GROUP, s = i) : (r = i, s = o);
+      if ("undefined" == typeof o) {
+        r = e.DEFAULT_GROUP;
+        s = i;
+      }
+
+      {
+        r = i;
+        s = o;
+      }
 
       n.ok("*" !== r, "Parameter ownerId can't be '*'");
       var a = this._getMarkerUpdate(t, r);
@@ -4043,8 +4196,16 @@ define("vs/platform/markers/markersWorker", ["require", "exports", "vs/base/asse
       var t = e.computeKey();
 
       var n = this.markerUpdateChangeCounts[t];
-      n > 1 ? this.markerUpdateChangeCounts[t] = --n : (delete this.markerUpdateChangeCounts[t], 0 === this.globalChangeCount &&
-        this._publishMarkerUpdate(e));
+      if (n > 1) {
+        this.markerUpdateChangeCounts[t] = --n;
+      }
+
+      {
+        delete this.markerUpdateChangeCounts[t];
+        if (0 === this.globalChangeCount) {
+          this._publishMarkerUpdate(e);
+        }
+      }
     };
 
     e.prototype._getMarkerUpdateChangeCount = function(e) {
@@ -4573,8 +4734,19 @@ define("vs/editor/core/range", ["require", "exports", "vs/editor/core/position"]
   t.hashCode = p;
   var g = function() {
     function e(e, t, n, i) {
-      e > n || e === n && t > i ? (this.startLineNumber = n, this.startColumn = i, this.endLineNumber = e, this.endColumn =
-        t) : (this.startLineNumber = e, this.startColumn = t, this.endLineNumber = n, this.endColumn = i);
+      if (e > n || e === n && t > i) {
+        this.startLineNumber = n;
+        this.startColumn = i;
+        this.endLineNumber = e;
+        this.endColumn = t;
+      }
+
+      {
+        this.startLineNumber = e;
+        this.startColumn = t;
+        this.endLineNumber = n;
+        this.endColumn = i;
+      }
     }
     e.prototype.isEmpty = function() {
       return t.isEmpty(this);
@@ -4714,7 +4886,11 @@ define("vs/base/arrays", ["require", "exports"], function(e, t) {
   function a(e, t) {
     for (var n, i = 0, o = e.length - 1; o > i;) {
       n = i + Math.ceil((o - i) / 2);
-      e[n].startIndex > t ? o = n - 1 : i = n;
+      if (e[n].startIndex > t) {
+        o = n - 1;
+      } {
+        i = n;
+      }
     }
     return i;
   }
@@ -4785,7 +4961,15 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
       this._recreateLineTokens(null);
     }
     e.prototype._recreateLineTokens = function(t) {
-      0 === this.text.length ? t = e.DEFAULT_TOKENS_EMPTY_TEXT : t && 0 !== t.length || (t = e.DEFAULT_TOKENS_NON_EMPTY_TEXT);
+      if (0 === this.text.length) {
+        t = e.DEFAULT_TOKENS_EMPTY_TEXT;
+      }
+
+      {
+        if (!(t && 0 !== t.length)) {
+          t = e.DEFAULT_TOKENS_NON_EMPTY_TEXT;
+        }
+      }
 
       this.lineTokens = new r(t, this.text.length);
     };
@@ -4872,10 +5056,28 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
             var f = d[h].startIndex;
 
             var g = f;
-            f >= i - 1 ? g = f - a.length : f >= n - 1 && (g = n - 1);
+            if (f >= i - 1) {
+              g = f - a.length;
+            }
 
-            g >= p.length ? (d.splice(h, 1), h--) : (d[h].startIndex = g, h > 0 && d[h - 1].startIndex >= g && (d.splice(
-              h - 1, 1), h--));
+            {
+              if (f >= n - 1) {
+                g = n - 1;
+              }
+            }
+
+            if (g >= p.length) {
+              d.splice(h, 1);
+              h--;
+            }
+
+            {
+              d[h].startIndex = g;
+              if (h > 0 && d[h - 1].startIndex >= g) {
+                d.splice(h - 1, 1);
+                h--;
+              }
+            }
           }
         }
         this.text = p;
@@ -4885,11 +5087,27 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
       var m;
       for (h = 0; h < this.markers.length; h++) {
         m = this.markers[h];
-        m.column > s || m.column === s && (r || !m.stickToPreviousCharacter) ? (t[m.id] = !0, m.oldLineNumber = m.oldLineNumber ||
-          this.lineNumber, m.oldColumn = m.oldColumn || m.column, m.column -= a.length) : (m.column > n || m.column ===
-          n && (r || !m.stickToPreviousCharacter)) && (t[m.id] = !0, m.oldLineNumber = m.oldLineNumber || this.lineNumber,
-          m.oldColumn = m.oldColumn || m.column, o ? (m.line = null, m.column -= n - 1, this.markers.splice(h, 1), h--,
-            u.push(m)) : m.column = n);
+        if (m.column > s || m.column === s && (r || !m.stickToPreviousCharacter)) {
+          t[m.id] = !0;
+          m.oldLineNumber = m.oldLineNumber || this.lineNumber;
+          m.oldColumn = m.oldColumn || m.column;
+          m.column -= a.length;
+        } {
+          if (m.column > n || m.column === n && (r || !m.stickToPreviousCharacter)) {
+            t[m.id] = !0;
+            m.oldLineNumber = m.oldLineNumber || this.lineNumber;
+            m.oldColumn = m.oldColumn || m.column;
+            if (o) {
+              m.line = null;
+              m.column -= n - 1;
+              this.markers.splice(h, 1);
+              h--;
+              u.push(m);
+            } {
+              m.column = n;
+            }
+          }
+        }
       }
       return {
         text: a,
@@ -5373,7 +5591,15 @@ define("vs/base/lib/winjs.base", ["./raw.winjs.base", "vs/base/errors"], functio
 
         Object.keys(e).forEach(function(n) {
           var i = e[n];
-          i.exception ? t.onUnexpectedError(i.exception) : i.error && t.onUnexpectedError(i.error);
+          if (i.exception) {
+            t.onUnexpectedError(i.exception);
+          }
+
+          {
+            if (i.error) {
+              t.onUnexpectedError(i.error);
+            }
+          }
 
           console.log("WARNING: Promise with no error callback:" + i.id);
 
@@ -5738,7 +5964,13 @@ define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], functio
       if ("*" === e) throw new Error("Use addBulkListener(listener) to register your listener!");
       if (this._allowedEventTypes && !this._allowedEventTypes.hasOwnProperty(e)) throw new Error(
         "This object will never emit this event type!");
-      this._listeners.hasOwnProperty(e) ? this._listeners[e].push(t) : this._listeners[e] = [t];
+      if (this._listeners.hasOwnProperty(e)) {
+        this._listeners[e].push(t);
+      }
+
+      {
+        this._listeners[e] = [t];
+      }
       var n = this;
       return function() {
         if (n) {
@@ -5805,7 +6037,13 @@ define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], functio
             o.push(new i(e[r].getType(), e[r].getData(), t));
           }
         }
-        0 === n._deferredCnt ? n._emitEvents(o) : n._collectedEvents.push.apply(n._collectedEvents, o);
+        if (0 === n._deferredCnt) {
+          n._emitEvents(o);
+        }
+
+        {
+          n._collectedEvents.push.apply(n._collectedEvents, o);
+        }
       });
     };
 
@@ -5877,7 +6115,13 @@ define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], functio
         throw new Error("Cannot emit this event type because it wasn't white-listed!");
       if (this._listeners.hasOwnProperty(e) || 0 !== this._bulkListeners.length) {
         var n = new i(e, t);
-        0 === this._deferredCnt ? this._emitEvents([n]) : this._collectedEvents.push(n);
+        if (0 === this._deferredCnt) {
+          this._emitEvents([n]);
+        }
+
+        {
+          this._collectedEvents.push(n);
+        }
       }
     };
 
@@ -6032,7 +6276,11 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
       var s = this._lines;
       for (t = 0, n = this._lines.length; n > t; t++) {
         i = s[t].text.length;
-        i >= e ? r += i : o += i;
+        if (i >= e) {
+          r += i;
+        } {
+          o += i;
+        }
       }
       return r > o;
     };
@@ -6180,7 +6428,11 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
       for (l = 2, n = s.length; n > l; l++)
         if (s[l]) {
           for (c = 0, d = 0, h = l; n > h; h += l) {
-            s[h] ? c += s[h] : d += l / h;
+            if (s[h]) {
+              c += s[h];
+            } {
+              d += l / h;
+            }
           }
           p[l] = c / (1 + d);
         }
@@ -7299,7 +7551,23 @@ define("vs/base/performance/timer", ["require", "exports", "vs/base/env", "vs/ba
       if (this.enabled() === !1) {
         return t.nullEvent;
       }
-      0 === e ? e = "Editor" : 1 === e ? e = "Languages" : 2 === e ? e = "Worker" : 3 === e && (e = "Workbench");
+      if (0 === e) {
+        e = "Editor";
+      }
+
+      {
+        if (1 === e) {
+          e = "Languages";
+        } {
+          if (2 === e) {
+            e = "Worker";
+          } {
+            if (3 === e) {
+              e = "Workbench";
+            }
+          }
+        }
+      }
       var i = new l(this, n, e);
       this.addEvent(i);
 
@@ -8250,20 +8518,40 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
 
       this.metaKey = e.metaKey;
 
-      e.clientX || e.clientY ? (this.posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft,
-        this.posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop) : (e.pageX || e.pageY) &&
-        (this.posx = e.pageX, this.posy = e.pageY);
+      if (e.clientX || e.clientY) {
+        this.posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+        this.posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+      }
+
+      {
+        if (e.pageX || e.pageY) {
+          this.posx = e.pageX;
+          this.posy = e.pageY;
+        }
+      }
       var t = i.getPositionOfChildWindowRelativeToAncestorWindow(self, e.view);
       this.posx -= t.left;
 
       this.posy -= t.top;
     }
     e.prototype.preventDefault = function() {
-      this.browserEvent.preventDefault ? this.browserEvent.preventDefault() : this.browserEvent.returnValue = !1;
+      if (this.browserEvent.preventDefault) {
+        this.browserEvent.preventDefault();
+      }
+
+      {
+        this.browserEvent.returnValue = !1;
+      }
     };
 
     e.prototype.stopPropagation = function() {
-      this.browserEvent.stopPropagation ? this.browserEvent.stopPropagation() : this.browserEvent.cancelBubble = !0;
+      if (this.browserEvent.stopPropagation) {
+        this.browserEvent.stopPropagation();
+      }
+
+      {
+        this.browserEvent.cancelBubble = !0;
+      }
     };
 
     return e;
@@ -8296,12 +8584,25 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
         var r = e;
 
         var s = e;
-        "undefined" != typeof r.wheelDeltaY ? this.deltaY = o(r.wheelDeltaY) : "undefined" != typeof s.VERTICAL_AXIS &&
-          s.axis === s.VERTICAL_AXIS && (this.deltaY = -s.detail / 3);
+        if ("undefined" != typeof r.wheelDeltaY) {
+          this.deltaY = o(r.wheelDeltaY);
+        }
 
-        "undefined" != typeof r.wheelDeltaX ? this.deltaX = n.browser.isSafari && n.browser.isWindows ? -o(r.wheelDeltaX) :
-          o(r.wheelDeltaX) : "undefined" != typeof s.HORIZONTAL_AXIS && s.axis === s.HORIZONTAL_AXIS && (this.deltaX = -
-            e.detail / 3);
+        {
+          if ("undefined" != typeof s.VERTICAL_AXIS && s.axis === s.VERTICAL_AXIS) {
+            this.deltaY = -s.detail / 3;
+          }
+        }
+
+        if ("undefined" != typeof r.wheelDeltaX) {
+          this.deltaX = n.browser.isSafari && n.browser.isWindows ? -o(r.wheelDeltaX) : o(r.wheelDeltaX);
+        }
+
+        {
+          if ("undefined" != typeof s.HORIZONTAL_AXIS && s.axis === s.HORIZONTAL_AXIS) {
+            this.deltaX = -e.detail / 3;
+          }
+        }
 
         if (0 === this.deltaY && 0 === this.deltaX && e.wheelDelta) {
           this.deltaY = o(e.wheelDelta);
@@ -8310,13 +8611,21 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
     }
     e.prototype.preventDefault = function() {
       if (this.browserEvent) {
-        this.browserEvent.preventDefault ? this.browserEvent.preventDefault() : this.browserEvent.returnValue = !1;
+        if (this.browserEvent.preventDefault) {
+          this.browserEvent.preventDefault();
+        } {
+          this.browserEvent.returnValue = !1;
+        }
       }
     };
 
     e.prototype.stopPropagation = function() {
       if (this.browserEvent) {
-        this.browserEvent.stopPropagation ? this.browserEvent.stopPropagation() : this.browserEvent.cancelBubble = !0;
+        if (this.browserEvent.stopPropagation) {
+          this.browserEvent.stopPropagation();
+        } {
+          this.browserEvent.cancelBubble = !0;
+        }
       }
     };
 
@@ -8412,9 +8721,33 @@ define("vs/base/dom/keyboardEvent", ["require", "vs/base/lib/winjs.base", "vs/ba
       "]": 221,
       "'": 222
     };
-    n.browser.isIE11orEarlier ? e.Meta = 91 : n.browser.isFirefox ? (e["-"] = 109, e["="] = 107, e[";"] = 59, n.browser
-      .isMacintosh && (e.Meta = 224)) : n.browser.isOpera ? (e["-"] = 109, e["="] = 61, e[";"] = 59, n.browser.isMacintosh &&
-      (e.Meta = 57392)) : n.browser.isWebKit && n.browser.isMacintosh && (e.Meta = 91);
+    if (n.browser.isIE11orEarlier) {
+      e.Meta = 91;
+    }
+
+    {
+      if (n.browser.isFirefox) {
+        e["-"] = 109;
+        e["="] = 107;
+        e[";"] = 59;
+        if (n.browser.isMacintosh) {
+          e.Meta = 224;
+        }
+      } {
+        if (n.browser.isOpera) {
+          e["-"] = 109;
+          e["="] = 61;
+          e[";"] = 59;
+          if (n.browser.isMacintosh) {
+            e.Meta = 57392;
+          }
+        } {
+          if (n.browser.isWebKit && n.browser.isMacintosh) {
+            e.Meta = 91;
+          }
+        }
+      }
+    }
     var t = {};
     ! function() {
       for (var n in e) {
@@ -8424,8 +8757,17 @@ define("vs/base/dom/keyboardEvent", ["require", "vs/base/lib/winjs.base", "vs/ba
       }
     }();
 
-    n.browser.isOpera ? (t[189] = "-", t[187] = "=", t[186] = ";") : n.browser.isWebKit && n.browser.isMacintosh && (
-      t[93] = "Meta");
+    if (n.browser.isOpera) {
+      t[189] = "-";
+      t[187] = "=";
+      t[186] = ";";
+    }
+
+    {
+      if (n.browser.isWebKit && n.browser.isMacintosh) {
+        t[93] = "Meta";
+      }
+    }
     var i = function(e, n) {
       return t.hasOwnProperty(e) ? t[e] : n;
     };
@@ -8456,14 +8798,34 @@ define("vs/base/dom/keyboardEvent", ["require", "vs/base/lib/winjs.base", "vs/ba
 
       this.ctrlKey = t;
 
-      "Ctrl" === this.key ? this.key = "Meta" : "Meta" === this.key && (this.key = "Ctrl");
+      if ("Ctrl" === this.key) {
+        this.key = "Meta";
+      }
+
+      {
+        if ("Meta" === this.key) {
+          this.key = "Ctrl";
+        }
+      }
     }
   }, {
     preventDefault: function() {
-      this.browserEvent.preventDefault ? this.browserEvent.preventDefault() : this.browserEvent.returnValue = !1;
+      if (this.browserEvent.preventDefault) {
+        this.browserEvent.preventDefault();
+      }
+
+      {
+        this.browserEvent.returnValue = !1;
+      }
     },
     stopPropagation: function() {
-      this.browserEvent.stopPropagation ? this.browserEvent.stopPropagation() : this.browserEvent.cancelBubble = !0;
+      if (this.browserEvent.stopPropagation) {
+        this.browserEvent.stopPropagation();
+      }
+
+      {
+        this.browserEvent.cancelBubble = !0;
+      }
     },
     clone: function() {
       var e = this.asString();
@@ -8604,7 +8966,16 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
     var d = function() {
       if (l = !1, !u) {
         var e = (new Date).getTime() - a;
-        e >= r ? c() : l || (l = !0, t.scheduleAtNextAnimationFrame(d, Number.MAX_VALUE));
+        if (e >= r) {
+          c();
+        }
+
+        {
+          if (!l) {
+            l = !0;
+            t.scheduleAtNextAnimationFrame(d, Number.MAX_VALUE);
+          }
+        }
       }
     };
 
@@ -8650,7 +9021,18 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
     var c = t.addListener(e, n, function(e) {
       s = o(s, e);
       var t = (new Date).getTime() - a;
-      t >= r ? (-1 !== u && window.clearTimeout(u), l()) : -1 === u && (u = window.setTimeout(l, r - t));
+      if (t >= r) {
+        if (-1 !== u) {
+          window.clearTimeout(u);
+        }
+        l();
+      }
+
+      {
+        if (-1 === u) {
+          u = window.setTimeout(l, r - t);
+        }
+      }
     });
     return function() {
       if (-1 !== u) {
@@ -8883,13 +9265,21 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
     var c = function() {
       if (i) {
         r = !0;
-        n.isTesting() ? r && (r = !1, i = !1, s.emit("blur", {})) : window.setTimeout(function() {
+        if (n.isTesting()) {
           if (r) {
             r = !1;
             i = !1;
             s.emit("blur", {});
           }
-        }, 0);
+        } {
+          window.setTimeout(function() {
+            if (r) {
+              r = !1;
+              i = !1;
+              s.emit("blur", {});
+            }
+          }, 0);
+        }
       }
     };
     a.push(t.addListener(e, t.EventType.FOCUS, l, !0));
@@ -8966,7 +9356,16 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
     };
 
     t.addClass = function(t, i) {
-      t.className ? (e(t, i), -1 === n && (t.className = t.className + " " + i)) : t.className = i;
+      if (t.className) {
+        e(t, i);
+        if (-1 === n) {
+          t.className = t.className + " " + i;
+        }
+      }
+
+      {
+        t.className = i;
+      }
     };
 
     t.removeClass = function(t, o) {
@@ -9241,10 +9640,20 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
 
   t.EventHelper = {
     stop: function(e, t) {
-      e.preventDefault ? e.preventDefault() : e.returnValue = !1;
+      if (e.preventDefault) {
+        e.preventDefault();
+      }
+
+      {
+        e.returnValue = !1;
+      }
 
       if (t) {
-        e.stopPropagation ? e.stopPropagation() : e.cancelBubble = !0;
+        if (e.stopPropagation) {
+          e.stopPropagation();
+        } {
+          e.cancelBubble = !0;
+        }
       }
     }
   };
@@ -9446,7 +9855,13 @@ define("vs/base/time/idleMonitor", ["require", "exports", "vs/base/dom/dom", "vs
 
     r.prototype.checkIfUserIsIdle = function() {
       var e = (new Date).getTime() - this.lastActiveTime;
-      e >= t.IDLE_TIME ? this.onUserIdle() : this.scheduleIdleCheck();
+      if (e >= t.IDLE_TIME) {
+        this.onUserIdle();
+      }
+
+      {
+        this.scheduleIdleCheck();
+      }
     };
 
     r.INSTANCE = new r;
@@ -9521,7 +9936,13 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
       var t = e.data || {};
       t.duration = e.timeTaken();
 
-      "public" === e.topic ? this.publicLog(e.name, t) : this.log(e.name, t);
+      if ("public" === e.topic) {
+        this.publicLog(e.name, t);
+      }
+
+      {
+        this.log(e.name, t);
+      }
     };
 
     e.prototype.onErrorEvent = function(e, t, n) {
@@ -9618,8 +10039,13 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
           sessionID: this.sessionID
         });
         if (!(this.sendingEvents || this.failureCount > 0)) {
-          this.eventQueue.length > this.eventBatchSize ? (clearTimeout(this.waitIntervalId), this.waitIntervalId =
-            null, this.sendEvents()) : this.sendSoon();
+          if (this.eventQueue.length > this.eventBatchSize) {
+            clearTimeout(this.waitIntervalId);
+            this.waitIntervalId = null;
+            this.sendEvents();
+          } {
+            this.sendSoon();
+          }
         }
       }
     };
@@ -9858,13 +10284,25 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
       var o = 1;
       for (n = 0; e > n; n++) {
         var r = this.OriginalSequence.getElementHash(n);
-        i.hasOwnProperty(r) ? this.m_originalIds[n] = i[r] : (this.m_originalIds[n] = o++, i[r] = this.m_originalIds[
-          n]);
+        if (i.hasOwnProperty(r)) {
+          this.m_originalIds[n] = i[r];
+        }
+
+        {
+          this.m_originalIds[n] = o++;
+          i[r] = this.m_originalIds[n];
+        }
       }
       for (n = 0; t > n; n++) {
         var s = this.ModifiedSequence.getElementHash(n);
-        i.hasOwnProperty(s) ? this.m_modifiedIds[n] = i[s] : (this.m_modifiedIds[n] = o++, i[s] = this.m_modifiedIds[
-          n]);
+        if (i.hasOwnProperty(s)) {
+          this.m_modifiedIds[n] = i[s];
+        }
+
+        {
+          this.m_modifiedIds[n] = o++;
+          i[s] = this.m_modifiedIds[n];
+        }
       }
     };
 
@@ -9944,9 +10382,25 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
       var N = this.m_forwardHistory.length - 1;
       do {
         b = T + e;
-        b === S || L > b && c[b - 1] < c[b + 1] ? (h = c[b + 1], g = h - T - o, x > h && E.MarkNextChange(), x = h, E
-          .AddModifiedElement(h + 1, g), T = b + 1 - e) : (h = c[b - 1] + 1, g = h - T - o, x > h && E.MarkNextChange(),
-          x = h - 1, E.AddOriginalElement(h, g + 1), T = b - 1 - e);
+        if (b === S || L > b && c[b - 1] < c[b + 1]) {
+          h = c[b + 1];
+          g = h - T - o;
+          if (x > h) {
+            E.MarkNextChange();
+          }
+          x = h;
+          E.AddModifiedElement(h + 1, g);
+          T = b + 1 - e;
+        } {
+          h = c[b - 1] + 1;
+          g = h - T - o;
+          if (x > h) {
+            E.MarkNextChange();
+          }
+          x = h - 1;
+          E.AddOriginalElement(h, g + 1);
+          T = b - 1 - e;
+        }
         if (N >= 0) {
           c = this.m_forwardHistory[N];
           e = c[0];
@@ -9979,9 +10433,25 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
         N = y ? this.m_reverseHistory.length - 1 : this.m_reverseHistory.length - 2;
         do {
           b = T + r;
-          b === S || L > b && d[b - 1] >= d[b + 1] ? (h = d[b + 1] - 1, g = h - T - l, h > x && E.MarkNextChange(), x =
-            h + 1, E.AddOriginalElement(h + 1, g + 1), T = b + 1 - r) : (h = d[b - 1], g = h - T - l, h > x && E.MarkNextChange(),
-            x = h, E.AddModifiedElement(h + 1, g + 1), T = b - 1 - r);
+          if (b === S || L > b && d[b - 1] >= d[b + 1]) {
+            h = d[b + 1] - 1;
+            g = h - T - l;
+            if (h > x) {
+              E.MarkNextChange();
+            }
+            x = h + 1;
+            E.AddOriginalElement(h + 1, g + 1);
+            T = b + 1 - r;
+          } {
+            h = d[b - 1];
+            g = h - T - l;
+            if (h > x) {
+              E.MarkNextChange();
+            }
+            x = h;
+            E.AddModifiedElement(h + 1, g + 1);
+            T = b - 1 - r;
+          }
           if (N >= 0) {
             d = this.m_reverseHistory[N];
             r = d[0];
@@ -10202,8 +10672,13 @@ define("vs/editor/diff/diffComputer", ["require", "exports", "vs/base/diff/diff"
       i = a.originalStart - (l.originalStart + l.originalLength);
       o = a.modifiedStart - (l.modifiedStart + l.modifiedLength);
       s = Math.min(i, o);
-      r > s ? (l.originalLength = a.originalStart + a.originalLength - l.originalStart, l.modifiedLength = a.modifiedStart +
-        a.modifiedLength - l.modifiedStart) : (u.push(a), l = a);
+      if (r > s) {
+        l.originalLength = a.originalStart + a.originalLength - l.originalStart;
+        l.modifiedLength = a.modifiedStart + a.modifiedLength - l.modifiedStart;
+      } {
+        u.push(a);
+        l = a;
+      }
     }
     return u;
   }
@@ -10336,15 +10811,33 @@ define("vs/editor/diff/diffComputer", ["require", "exports", "vs/base/diff/diff"
 
   var u = function() {
     function e(e, t, n) {
-      0 === e.originalLength ? (this.originalStartLineNumber = 0, this.originalStartColumn = 0, this.originalEndLineNumber =
-        0, this.originalEndColumn = 0) : (this.originalStartLineNumber = t.getStartLineNumber(e.originalStart), this.originalStartColumn =
-        t.getStartColumn(e.originalStart), this.originalEndLineNumber = t.getEndLineNumber(e.originalStart + e.originalLength -
-          1), this.originalEndColumn = t.getEndColumn(e.originalStart + e.originalLength - 1));
+      if (0 === e.originalLength) {
+        this.originalStartLineNumber = 0;
+        this.originalStartColumn = 0;
+        this.originalEndLineNumber = 0;
+        this.originalEndColumn = 0;
+      }
 
-      0 === e.modifiedLength ? (this.modifiedStartLineNumber = 0, this.modifiedStartColumn = 0, this.modifiedEndLineNumber =
-        0, this.modifiedEndColumn = 0) : (this.modifiedStartLineNumber = n.getStartLineNumber(e.modifiedStart), this.modifiedStartColumn =
-        n.getStartColumn(e.modifiedStart), this.modifiedEndLineNumber = n.getEndLineNumber(e.modifiedStart + e.modifiedLength -
-          1), this.modifiedEndColumn = n.getEndColumn(e.modifiedStart + e.modifiedLength - 1));
+      {
+        this.originalStartLineNumber = t.getStartLineNumber(e.originalStart);
+        this.originalStartColumn = t.getStartColumn(e.originalStart);
+        this.originalEndLineNumber = t.getEndLineNumber(e.originalStart + e.originalLength - 1);
+        this.originalEndColumn = t.getEndColumn(e.originalStart + e.originalLength - 1);
+      }
+
+      if (0 === e.modifiedLength) {
+        this.modifiedStartLineNumber = 0;
+        this.modifiedStartColumn = 0;
+        this.modifiedEndLineNumber = 0;
+        this.modifiedEndColumn = 0;
+      }
+
+      {
+        this.modifiedStartLineNumber = n.getStartLineNumber(e.modifiedStart);
+        this.modifiedStartColumn = n.getStartColumn(e.modifiedStart);
+        this.modifiedEndLineNumber = n.getEndLineNumber(e.modifiedStart + e.modifiedLength - 1);
+        this.modifiedEndColumn = n.getEndColumn(e.modifiedStart + e.modifiedLength - 1);
+      }
     }
     return e;
   }();
@@ -11027,8 +11520,26 @@ define("vs/editor/worker/modesWorker", ["require", "exports", "vs/base/lib/winjs
         for (p = o.getLineContent(t), f = 0, g = p.length, m = null, v = 0, y = a; g > f;) {
           _ = p.charAt(f);
           C = !1;
-          y === l ? (" " === _ || "	" === _ || _ === m) && (r.push(this.createLink(p, t, v, f)), C = !0) : y === u ?
-            " " === _ || "	" === _ || _ === m ? C = !0 : y = l : s[y].hasOwnProperty(_) ? y = s[y][_] : C = !0;
+          if (y === l) {
+            if (" " === _ || "	" === _ || _ === m) {
+              r.push(this.createLink(p, t, v, f));
+              C = !0;
+            }
+          } {
+            if (y === u) {
+              if (" " === _ || "	" === _ || _ === m) {
+                C = !0;
+              } {
+                y = l;
+              }
+            } {
+              if (s[y].hasOwnProperty(_)) {
+                y = s[y][_];
+              } {
+                C = !0;
+              }
+            }
+          }
           if (C) {
             y = a;
             v = f + 1;

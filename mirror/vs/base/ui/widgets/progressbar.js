@@ -107,8 +107,18 @@ define("vs/base/ui/widgets/progressbar", ["require", "exports", "vs/base/lib/win
       var o = function() {
         n.Promise.timeout(50).then(function() {
           if (e === t.currentProgressToken) {
-            t.element.hasClass(u) ? (t.bit.style.display = "none", t.bit.style.left = "0") : t.element.isHidden() ?
-              o() : (i = (i + 1) % 95, t.bit.style.left = i + "%", o());
+            if (t.element.hasClass(u)) {
+              t.bit.style.display = "none";
+              t.bit.style.left = "0";
+            } {
+              if (t.element.isHidden()) {
+                o();
+              } {
+                i = (i + 1) % 95;
+                t.bit.style.left = i + "%";
+                o();
+              }
+            }
           }
         });
       };

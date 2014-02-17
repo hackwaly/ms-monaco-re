@@ -291,8 +291,15 @@ define("vs/editor/core/controller/mouseTarget", ["require", "exports", "vs/edito
         var r = t.verticalOffset + t.height / 2;
 
         var s = this.context.model.getLineCount();
-        t.afterLineNumber === s || r > e && t.afterLineNumber > 0 ? (i = t.afterLineNumber, o = this.context.model.getLineMaxColumn(
-          i)) : (i = t.afterLineNumber + 1, o = 1);
+        if (t.afterLineNumber === s || r > e && t.afterLineNumber > 0) {
+          i = t.afterLineNumber;
+          o = this.context.model.getLineMaxColumn(i);
+        }
+
+        {
+          i = t.afterLineNumber + 1;
+          o = 1;
+        }
         var a = new n.Position(i, o);
         return {
           viewZoneId: t.id,

@@ -54,7 +54,11 @@ define("vs/base/arrays", ["require", "exports"], function(e, t) {
   function a(e, t) {
     for (var n, i = 0, o = e.length - 1; o > i;) {
       n = i + Math.ceil((o - i) / 2);
-      e[n].startIndex > t ? o = n - 1 : i = n;
+      if (e[n].startIndex > t) {
+        o = n - 1;
+      } {
+        i = n;
+      }
     }
     return i;
   }

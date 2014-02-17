@@ -146,7 +146,13 @@ define("vs/editor/core/view/parts/viewCursors/viewCursors", ["require", "exports
         this._blinkTimer = -1;
       }
       var n = this._getRenderType();
-      1 === n || 2 === n ? this._show() : this._hide();
+      if (1 === n || 2 === n) {
+        this._show();
+      }
+
+      {
+        this._hide();
+      }
 
       if (2 === n) {
         this._blinkTimer = window.setInterval(function() {
@@ -156,7 +162,13 @@ define("vs/editor/core/view/parts/viewCursors/viewCursors", ["require", "exports
     };
 
     t.prototype._blink = function() {
-      this._isVisible ? this._hide() : this._show();
+      if (this._isVisible) {
+        this._hide();
+      }
+
+      {
+        this._show();
+      }
     };
 
     t.prototype._show = function() {

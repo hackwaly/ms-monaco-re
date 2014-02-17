@@ -111,7 +111,11 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
       var s = this._lines;
       for (t = 0, n = this._lines.length; n > t; t++) {
         i = s[t].text.length;
-        i >= e ? r += i : o += i;
+        if (i >= e) {
+          r += i;
+        } {
+          o += i;
+        }
       }
       return r > o;
     };
@@ -259,7 +263,11 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
       for (l = 2, n = s.length; n > l; l++)
         if (s[l]) {
           for (c = 0, d = 0, h = l; n > h; h += l) {
-            s[h] ? c += s[h] : d += l / h;
+            if (s[h]) {
+              c += s[h];
+            } {
+              d += l / h;
+            }
           }
           p[l] = c / (1 + d);
         }
