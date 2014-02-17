@@ -1,6 +1,11 @@
-define(["require", "vs/base/lib/winjs.base", "vs/base/env", "vs/base/dom/dom"], function(a, b, c, d) {
-  var e = function() {
-    var a = {
+define('vs/base/dom/keyboardEvent', [
+  'require',
+  'vs/base/lib/winjs.base',
+  'vs/base/env'
+], function(e, t, n) {
+  'use strict';
+  var i = function() {
+    var e = {
       Backspace: 8,
       Tab: 9,
       Enter: 13,
@@ -57,6 +62,7 @@ define(["require", "vs/base/lib/winjs.base", "vs/base/env", "vs/base/dom/dom"], 
       X: 88,
       Y: 89,
       Z: 90,
+      ContextMenu: 93,
       F1: 112,
       F2: 113,
       F3: 114,
@@ -71,60 +77,61 @@ define(["require", "vs/base/lib/winjs.base", "vs/base/env", "vs/base/dom/dom"], 
       F12: 123,
       NumLock: 144,
       ScrollLock: 145,
-      ";": 186,
-      "=": 187,
-      ",": 188,
-      "-": 189,
-      ".": 190,
-      "/": 191,
-      "`": 192,
-      "[": 219,
-      "\\": 220,
-      "]": 221,
-      "'": 222
+      ';': 186,
+      '=': 187,
+      ',': 188,
+      '-': 189,
+      '.': 190,
+      '/': 191,
+      '`': 192,
+      '[': 219,
+      '\\': 220,
+      ']': 221,
+      '\'': 222
     };
-    c.browser.isIE10 ? a.Meta = 91 : c.browser.isFirefox ? (a["-"] = 109, a["="] = 107, a[";"] = 59, c.browser.isMacintosh &&
-      (a.Meta = 224)) : c.browser.isOpera ? (a["-"] = 109, a["="] = 61, a[";"] = 59, c.browser.isMacintosh && (a.Meta =
-      57392)) : c.browser.isWebKit && c.browser.isMacintosh && (a.Meta = 91);
-    var b = {};
-    (function() {
-      for (var c in a) a.hasOwnProperty(c) && (b[a[c]] = c)
-    })(), c.browser.isOpera ? (b[189] = "-", b[187] = "=", b[186] = ";") : c.browser.isWebKit && c.browser.isMacintosh &&
-      (b[93] = "Meta");
-    var d = function(a, c) {
-      return b.hasOwnProperty(a) ? b[a] : c
-    }, e = null;
-    return c.browser.isOpera ? e = function(a) {
-      return a.type === "keypress" ? a.which <= 32 ? d(a.keyCode, String.fromCharCode(a.keyCode).toUpperCase()) :
-        String.fromCharCode(a.which).toUpperCase() : d(a.keyCode, "unknown")
-    } : e = function(a) {
-      return a.charCode ? String.fromCharCode(a.charCode).toUpperCase() : d(a.keyCode, "unknown")
+    n.browser.isIE11orEarlier ? e.Meta = 91 : n.browser.isFirefox ? (e['-'] = 109, e['='] = 107, e[';'] = 59, n.browser
+      .isMacintosh && (e.Meta = 224)) : n.browser.isOpera ? (e['-'] = 109, e['='] = 61, e[';'] = 59, n.browser.isMacintosh &&
+      (e.Meta = 57392)) : n.browser.isWebKit && n.browser.isMacintosh && (e.Meta = 91);
+    var t = {};
+    ! function() {
+      for (var n in e)
+        e.hasOwnProperty(n) && (t[e[n]] = n);
+    }(), n.browser.isOpera ? (t[189] = '-', t[187] = '=', t[186] = ';') : n.browser.isWebKit && n.browser.isMacintosh &&
+      (t[93] = 'Meta');
+    var i = function(e, n) {
+      return t.hasOwnProperty(e) ? t[e] : n;
+    }, o = null;
+    return o = n.browser.isOpera ? function(e) {
+      return 'keypress' === e.type ? e.which <= 32 ? i(e.keyCode, String.fromCharCode(e.keyCode).toUpperCase()) :
+        String.fromCharCode(e.which).toUpperCase() : i(e.keyCode, 'unknown');
+    } : function(e) {
+      return e.charCode ? String.fromCharCode(e.charCode).toUpperCase() : i(e.keyCode, 'unknown');
     }, {
-      CHAR_TO_CODE: a,
-      CODE_TO_CHAR: b,
-      extractKey: e
-    }
+      CHAR_TO_CODE: e,
+      CODE_TO_CHAR: t,
+      extractKey: o
+    };
   }(),
-    f = b.Class.define(function(b) {
-      this.browserEvent = b, this.ctrlKey = b.ctrlKey, this.shiftKey = b.shiftKey, this.altKey = b.altKey, this.metaKey =
-        b.metaKey, this.target = b.target || b.targetNode, this.key = e.extractKey(b), this.ctrlKey = this.ctrlKey ||
-        this.key === "Ctrl", this.altKey = this.altKey || this.key === "Alt", this.shiftKey = this.shiftKey || this
-        .key === "Shift", this.metaKey = this.metaKey || this.key === "Meta";
-      if (c.browser.isOpera && c.browser.isMacintosh) {
-        var d = this.metaKey;
-        this.metaKey = this.ctrlKey, this.ctrlKey = d, this.key === "Ctrl" ? this.key = "Meta" : this.key ===
-          "Meta" && (this.key = "Ctrl")
+    o = t.Class.define(function(e) {
+      if (this.browserEvent = e, this.ctrlKey = e.ctrlKey, this.shiftKey = e.shiftKey, this.altKey = e.altKey, this
+        .metaKey = e.metaKey, this.target = e.target || e.targetNode, this.key = i.extractKey(e), this.ctrlKey =
+        this.ctrlKey || 'Ctrl' === this.key, this.altKey = this.altKey || 'Alt' === this.key, this.shiftKey = this.shiftKey ||
+        'Shift' === this.key, this.metaKey = this.metaKey || 'Meta' === this.key, n.browser.isOpera && n.browser.isMacintosh
+      ) {
+        var t = this.metaKey;
+        this.metaKey = this.ctrlKey, this.ctrlKey = t, 'Ctrl' === this.key ? this.key = 'Meta' : 'Meta' === this.key &&
+          (this.key = 'Ctrl');
       }
     }, {
       preventDefault: function() {
-        this.browserEvent.preventDefault ? this.browserEvent.preventDefault() : this.browserEvent.returnValue = !1
+        this.browserEvent.preventDefault ? this.browserEvent.preventDefault() : this.browserEvent.returnValue = !1;
       },
       stopPropagation: function() {
         this.browserEvent.stopPropagation ? this.browserEvent.stopPropagation() : this.browserEvent.cancelBubble = !
-          0
+          0;
       },
       clone: function() {
-        var a = this.asString();
+        var e = this.asString();
         return {
           ctrlKey: this.ctrlKey,
           shiftKey: this.shiftKey,
@@ -135,55 +142,20 @@ define(["require", "vs/base/lib/winjs.base", "vs/base/env", "vs/base/dom/dom"], 
           preventDefault: function() {},
           stopPropagation: function() {},
           asString: function() {
-            return a
+            return e;
           }
-        }
+        };
       },
       asString: function() {
-        var a = "";
-        return this.ctrlKey && (a += "Ctrl"), this.shiftKey && (a += (a === "" ? "" : "-") + "Shift"), this.altKey &&
-          (a += (a === "" ? "" : "-") + "Alt"), this.metaKey && (a += (a === "" ? "" : "-") + "Meta"), this.key &&
-          this.key !== "Ctrl" && this.key !== "Shift" && this.key !== "Alt" && this.key !== "Meta" && (a += (a ===
-            "" ? "" : "-") + this.key), a
-      }
-    }),
-    g = b.Class.define(function(b) {
-      this._listeners = {}, this._previousKeyDown = null, this._previousEventType = null, this.listenersToRemove = [],
-        this.listenersToRemove.push(d.addListener(b, "keydown", this._onKeyDown.bind(this))), this.listenersToRemove
-        .push(d.addListener(b, "keypress", this._onKeyPress.bind(this))), this.listenersToRemove.push(d.addListener(
-          b, "keyup", this._onKeyUp.bind(this)))
-    }, {
-      destroy: function() {
-        this.listenersToRemove.forEach(function(a) {
-          a()
-        }), this.listenersToRemove = []
-      },
-      addListener: function(a, b) {
-        return this._listeners[a] = b,
-        function() {
-          this._listeners[a] = null
-        }.bind(this)
-      },
-      _fire: function(a, b) {
-        this._listeners.hasOwnProperty(a) && this._listeners[a](b)
-      },
-      _onKeyDown: function(a) {
-        var b = new f(a);
-        this._previousKeyDown = b.clone(), this._previousEventType = "keydown", this._fire("keydown", b)
-      },
-      _onKeyPress: function(a) {
-        var b = new f(a);
-        this._previousKeyDown && (b.shiftKey && this._previousKeyDown.asString() !== b.asString() && (b.shiftKey = !
-          1), this._previousEventType === "keypress" && this._fire("keydown", this._previousKeyDown)), this._previousEventType =
-          "keypress", this._fire("keypress", b)
-      },
-      _onKeyUp: function(a) {
-        this._fire("keyup", new f(a))
+        var e = '';
+        return this.ctrlKey && (e += 'Ctrl'), this.shiftKey && (e += ('' === e ? '' : '-') + 'Shift'), this.altKey &&
+          (e += ('' === e ? '' : '-') + 'Alt'), this.metaKey && (e += ('' === e ? '' : '-') + 'Meta'), this.key &&
+          'Ctrl' !== this.key && 'Shift' !== this.key && 'Alt' !== this.key && 'Meta' !== this.key && (e += ('' ===
+            e ? '' : '-') + this.key), e;
       }
     });
   return {
-    KEYS: e.CHAR_TO_CODE,
-    KeyboardEvent: f,
-    KeyboardController: g
-  }
+    KEYS: i.CHAR_TO_CODE,
+    KeyboardEvent: o
+  };
 })

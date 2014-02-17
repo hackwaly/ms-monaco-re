@@ -1,128 +1,148 @@
-define(["require", "exports", "vs/nls", "./objects", "./types"], function(a, b, c, d, e) {
-  function j(a) {
-    b.errorHandler.setUnexpectedErrorHandler(a)
+define('vs/base/errors', [
+  'require',
+  'exports',
+  'vs/nls!vs/editor/worker/editorWorkerServer',
+  './objects',
+  './env',
+  './types'
+], function(e, t, n, i, o, r) {
+  function s(e) {
+    t.errorHandler.setUnexpectedErrorHandler(e);
   }
 
-  function k(a, c) {
-    typeof c == "undefined" && (c = null), b.errorHandler.onUnexpectedError(a, c)
+  function a(e, n) {
+    'undefined' == typeof n && (n = null), t.errorHandler.onUnexpectedError(e, n);
   }
 
-  function m(a, b) {
-    var c = a.errorCode,
-      d = a.errorMessage;
-    return c !== null && d !== null ? f.localize("message", "{0}: {1}", c, d) : d !== null ? d : b && a.responseText !==
-      null ? a.responseText : null
+  function u(e, t) {
+    var i = e.errorCode,
+      o = e.errorMessage;
+    return null !== i && null !== o ? n.localize('vs_base_errors', 0, i, o) : null !== o ? o : t && null !== e.responseText ?
+      e.responseText : null;
   }
 
-  function n(a, b) {
-    var c = m(a, b);
-    return a.status === 401 ? c !== null ? f.localize("error.permission.verbose", "Permission Denied (HTTP {0})", c) :
-      f.localize("error.permission", "Permission Denied") : c ? c : a.status > 0 && a.statusText !== null ? b && a.responseText !==
-      null && a.responseText.length > 0 ? f.localize("error.http.verbose", "{0} (HTTP {1}: {2})", a.statusText, a.status,
-        a.responseText) : f.localize("error.http", "{0} (HTTP {1})", a.statusText, a.status) : b && a.responseText !==
-      null && a.responseText.length > 0 ? f.localize("error.connection.unknown.verbose",
-        "Unknown Connection Error ({0})", a.responseText) : f.localize("error.connection.unknown",
-        "An unknown connection error occurred. Either you are no longer connected to the internet or the server you are connected to is offline."
-    )
+  function l(e, t) {
+    var i = u(e, t);
+    return 401 === e.status ? null !== i ? n.localize('vs_base_errors', 1, i) : n.localize('vs_base_errors', 2) : i ?
+      i : e.status > 0 && null !== e.statusText ? t && null !== e.responseText && e.responseText.length > 0 ? n.localize(
+        'vs_base_errors', 3, e.statusText, e.status, e.responseText) : n.localize('vs_base_errors', 4, e.statusText,
+        e.status) : t && null !== e.responseText && e.responseText.length > 0 ? n.localize('vs_base_errors', 5, e.responseText) :
+      n.localize('vs_base_errors', 6);
   }
 
-  function o(a, b) {
-    return n(new l(a), b)
+  function c(e, t) {
+    return l(new C(e), t);
   }
 
-  function p(a, b) {
-    return b && a.message && (a.stack || a.stacktrace) ? f.localize("stackTrace.format", "{0}: {1}", a.message, a.stack ||
-      a.stacktrace) : a.message ? a.message : f.localize("error.defaultMessage1",
-      "An unknown error occurred. Please consult the log for more details.")
+  function d(e, t) {
+    return t && e.message && (e.stack || e.stacktrace) ? n.localize('vs_base_errors', 7, e.message, e.stack || e.stacktrace) :
+      e.message ? e.message : n.localize('vs_base_errors', 8);
   }
 
-  function q(a, b) {
-    typeof b == "undefined" && (b = !1);
-    if (!a) return f.localize("error.defaultMessage2",
-      "An unknown error occurred. Please consult the log for more details.");
-    if (h.isString(a)) return a;
-    if (a instanceof l) return n(a, b);
-    if (!h.isUndefinedOrNull(a.status)) return o(a, b);
-    if (a.detail) {
-      var c = a.detail;
-      if (c.error) {
-        if (c.error && !h.isUndefinedOrNull(c.error.status)) return o(c.error, b);
-        if (!h.isArray(c.error)) return p(c.error, b);
-        for (var d = 0; d < c.error.length; d++)
-          if (c.error[d] && !h.isUndefinedOrNull(c.error[d].status)) return o(c.error[d], b)
+  function h(e, t) {
+    if ('undefined' == typeof t && (t = !1), !e)
+      return n.localize('vs_base_errors', 9);
+    if (r.isString(e))
+      return e;
+    if (e instanceof C)
+      return l(e, t);
+    if (!r.isUndefinedOrNull(e.status))
+      return c(e, t);
+    if (e.detail) {
+      var i = e.detail;
+      if (i.error) {
+        if (i.error && !r.isUndefinedOrNull(i.error.status))
+          return c(i.error, t);
+        if (!r.isArray(i.error))
+          return d(i.error, t);
+        for (var o = 0; o < i.error.length; o++)
+          if (i.error[o] && !r.isUndefinedOrNull(i.error[o].status))
+            return c(i.error[o], t);
       }
-      if (c.exception) return h.isUndefinedOrNull(c.exception.status) ? p(c.exception, b) : o(c.exception, b)
+      if (i.exception)
+        return r.isUndefinedOrNull(i.exception.status) ? d(i.exception, t) : c(i.exception, t);
     }
-    return a.stack ? p(a, b) : a.message ? a.message : f.localize("error.defaultMessage3",
-      "An unknown error occurred. Please consult the log for more details.")
+    return e.stack ? d(e, t) : e.message ? e.message : n.localize('vs_base_errors', 10);
   }
 
-  function r(a) {
-    if (a)
-      if (h.isArray(a)) {
-        for (var b = 0; b < a.length; b++)
-          if (a[b] && a[b].status) return a[b].status
-      } else if (a.status) return a.status;
-    return -1
+  function p(e) {
+    if (e)
+      if (r.isArray(e)) {
+        for (var t = 0; t < e.length; t++)
+          if (e[t] && e[t].status)
+            return e[t].status;
+      } else if (e.status)
+      return e.status;
+    return -1;
   }
 
-  function s(a) {
-    return a instanceof Error && a.name === "Canceled" && a.message === "Canceled"
+  function f(e) {
+    return e instanceof Error && 'Canceled' === e.name && 'Canceled' === e.message;
   }
 
-  function t() {
-    return new Error("not implemented")
+  function g() {
+    return new Error('Canceled');
   }
 
-  function u(a) {
-    return new Error("illegeal argument: ")
+  function m() {
+    return new Error('not implemented');
   }
-  var f = c,
-    g = d,
-    h = e,
-    i = function() {
-      function a() {
-        this.listeners = [], this.unexpectedErrorHandler = function(a, b) {
-          setTimeout(function() {
-            throw a
-          }, 0)
-        }
-      }
-      return a.prototype.addListener = function(a) {
-        var b = this;
-        return this.listeners.push(a),
-        function() {
-          b._removeListener(a)
-        }
-      }, a.prototype.emit = function(a, b, c) {
-        typeof b == "undefined" && (b = null), typeof c == "undefined" && (c = null), this.listeners.forEach(function(
-          d) {
-          d(a, b, c)
-        })
-      }, a.prototype._removeListener = function(a) {
-        this.listeners.splice(this.listeners.indexOf(a), 1)
-      }, a.prototype.setUnexpectedErrorHandler = function(a) {
-        this.unexpectedErrorHandler = a
-      }, a.prototype.getUnexpectedErrorHandler = function() {
-        return this.unexpectedErrorHandler
-      }, a.prototype.onUnexpectedError = function(a, c) {
-        typeof c == "undefined" && (c = null), this.unexpectedErrorHandler(a, c), this.emit(a, c, b.toErrorMessage(a, !
-          0))
-      }, a
-    }();
-  b.ErrorHandler = i, b.errorHandler = new i, b.setUnexpectedErrorHandler = j, b.onUnexpectedError = k;
-  var l = function() {
-    function a(a) {
-      this.status = a.status, this.statusText = a.statusText, this.responseText = a.responseText, this.errorMessage =
-        null, this.errorCode = null, this.errorObject = null;
-      if (this.responseText) try {
-        var c = JSON.parse(this.responseText);
-        this.errorMessage = c.message, this.errorCode = c.code, this.errorObject = c
-      } catch (d) {}
-      this.message = b.toErrorMessage(this, !1)
+
+  function v(e) {
+    return e ? new Error('illegeal argument: ' + e) : new Error('illegeal argument');
+  }
+
+  function y(e) {
+    return e ? new Error('illegeal state: ' + e) : new Error('illegeal state');
+  }
+
+  function _() {
+    return new Error(n.localize('vs_base_errors', 11));
+  }
+  var b = function() {
+    function e() {
+      this.listeners = [], this.unexpectedErrorHandler = function(e) {
+        setTimeout(function() {
+          if (o.isTesting() && e.stack)
+            throw new Error(e.stack);
+          throw e;
+        }, 0);
+      };
     }
-    return a
+    return e.prototype.addListener = function(e) {
+      var t = this;
+      return this.listeners.push(e),
+      function() {
+        t._removeListener(e);
+      };
+    }, e.prototype.emit = function(e, t, n) {
+      'undefined' == typeof t && (t = null), 'undefined' == typeof n && (n = null), this.listeners.forEach(function(i) {
+        i(e, t, n);
+      });
+    }, e.prototype._removeListener = function(e) {
+      this.listeners.splice(this.listeners.indexOf(e), 1);
+    }, e.prototype.setUnexpectedErrorHandler = function(e) {
+      this.unexpectedErrorHandler = e;
+    }, e.prototype.getUnexpectedErrorHandler = function() {
+      return this.unexpectedErrorHandler;
+    }, e.prototype.onUnexpectedError = function(e, n) {
+      'undefined' == typeof n && (n = null), this.unexpectedErrorHandler(e, n), this.emit(e, n, t.toErrorMessage(e, !
+        0));
+    }, e;
   }();
-  b.ConnectionError = l, g.derive(Error, l), b.toErrorMessage = q, b.getHttpStatus = r, b.isPromiseCanceledError = s,
-    b.notImplemented = t, b.illegalArgument = u
+  t.ErrorHandler = b, t.errorHandler = new b(), t.setUnexpectedErrorHandler = s, t.onUnexpectedError = a;
+  var C = function() {
+    function e(e) {
+      if (this.status = e.status, this.statusText = e.statusText, this.responseText = e.responseText, this.errorMessage =
+        null, this.errorCode = null, this.errorObject = null, this.responseText)
+        try {
+          var n = JSON.parse(this.responseText);
+          this.errorMessage = n.message, this.errorCode = n.code, this.errorObject = n;
+        } catch (i) {}
+      this.message = t.toErrorMessage(this, !1);
+    }
+    return e;
+  }();
+  t.ConnectionError = C, i.derive(Error, C), t.toErrorMessage = h, t.getHttpStatus = p, t.isPromiseCanceledError = f,
+    t.canceled = g, t.notImplemented = m, t.illegalArgument = v, t.illegalState = y, t.loaderError = _;
 })

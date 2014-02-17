@@ -1,221 +1,310 @@
-define(["require", "exports", "vs/nls", "vs/base/types"], function(a, b, c, d) {
-  function g(a, b) {
-    var c = "" + a;
-    while (c.length < b) c = "0" + c;
-    return c
+define('vs/base/strings', [
+  'require',
+  'exports',
+  'vs/nls!vs/editor/worker/editorWorkerServer',
+  'vs/base/uuid',
+  'vs/base/types'
+], function(e, t, n, i, o) {
+  function r(e, t) {
+    for (var n = '' + e; n.length < t;)
+      n = '0' + n;
+    return n;
   }
 
-  function h(a) {
-    var b = [];
-    for (var c = 0; c < arguments.length - 1; c++) b[c] = arguments[c + 1];
-    if (b.length === 0) return a;
-    var d = a,
-      e = b.length;
-    for (var f = 0; f < e; f++) d = d.replace(new RegExp("\\{" + f + "\\}", "g"), b[f]);
-    return d
+  function s(e) {
+    for (var t = [], n = 0; n < arguments.length - 1; n++)
+      t[n] = arguments[n + 1];
+    if (0 === t.length)
+      return e;
+    for (var i = e, o = t.length, r = 0; o > r; r++)
+      i = i.replace(new RegExp('\\{' + r + '\\}', 'g'), t[r]);
+    return i;
   }
 
-  function i(a) {
-    return a || (a = new Date), e.localize("format.date", "{0}-{1}-{2} {3}:{4}:{5}", b.pad(a.getMonth() + 1, 2), b.pad(
-      a.getDate(), 2), b.pad(a.getFullYear(), 4), b.pad(a.getHours(), 2), b.pad(a.getMinutes(), 2), b.pad(a.getSeconds(),
-      2))
+  function a(e) {
+    return e || (e = new Date()), n.localize('vs_base_strings', 0, t.pad(e.getMonth() + 1, 2), t.pad(e.getDate(), 2),
+      t.pad(e.getFullYear(), 4), t.pad(e.getHours(), 2), t.pad(e.getMinutes(), 2), t.pad(e.getSeconds(), 2));
   }
 
-  function j(a) {
-    return a || (a = new Date), e.localize("format.time", "{0}:{1}:{2}", b.pad(a.getHours(), 2), b.pad(a.getMinutes(),
-      2), b.pad(a.getSeconds(), 2))
+  function u(e) {
+    return e || (e = new Date()), n.localize('vs_base_strings', 1, t.pad(e.getHours(), 2), t.pad(e.getMinutes(), 2),
+      t.pad(e.getSeconds(), 2));
   }
 
-  function k(a) {
-    return a.replace(/[<|>|&]/g, function(a) {
-      switch (a) {
-        case "<":
-          return "&lt;";
-        case ">":
-          return "&gt;";
-        case "&":
-          return "&amp;";
+  function l(e) {
+    return e.replace(/[<|>|&]/g, function(e) {
+      switch (e) {
+        case '<':
+          return '&lt;';
+        case '>':
+          return '&gt;';
+        case '&':
+          return '&amp;';
         default:
-          return a
+          return e;
       }
-    })
+    });
   }
 
-  function l(a) {
-    var b = document.createElement("div");
-    return b.innerHTML = a, b.textContent || b.innerText || ""
+  function c(e) {
+    return e.replace(/[\-\\\{\}\*\+\?\|\^\$\.\,\[\]\(\)\#\s]/g, '\\$&');
   }
 
-  function m(a, c) {
-    typeof c == "undefined" && (c = " ");
-    var d = b.ltrim(a, c);
-    return b.rtrim(d, c)
+  function d(e, n, i) {
+    return e.replace(new RegExp(t.escapeRegExpCharacters(n.toString()), 'g'), i);
   }
 
-  function n(a, b) {
-    var c = b.length;
-    if (c === 0 || a.length === 0) return a;
-    var d = 0,
-      e = -1;
-    while ((e = a.indexOf(b, d)) === d) d += c;
-    return a.substring(d)
+  function h(e) {
+    var t = document.createElement('div');
+    return t.innerHTML = e, t.textContent || t.innerText || '';
   }
 
-  function o(a, b) {
-    var c = b.length,
-      d = a.length;
-    if (c === 0 || d === 0) return a;
-    var e = d,
-      f = -1;
-    for (;;) {
-      f = a.lastIndexOf(b, e - 1);
-      if (f === -1 || f + c !== e) break;
-      if (f === 0) return "";
-      e = f
+  function p(e, n) {
+    'undefined' == typeof n && (n = ' ');
+    var i = t.ltrim(e, n);
+    return t.rtrim(i, n);
+  }
+
+  function f(e, t) {
+    var n = t.length;
+    if (0 === n || 0 === e.length)
+      return e;
+    for (var i = 0, o = -1;
+      (o = e.indexOf(t, i)) === i;)
+      i += n;
+    return e.substring(i);
+  }
+
+  function g(e, t) {
+    var n = t.length,
+      i = e.length;
+    if (0 === n || 0 === i)
+      return e;
+    for (var o = i, r = -1;;) {
+      if (r = e.lastIndexOf(t, o - 1), -1 === r || r + n !== o)
+        break;
+      if (0 === r)
+        return '';
+      o = r;
     }
-    return a.substring(0, e)
+    return e.substring(0, o);
   }
 
-  function p(a) {
-    return a.replace(/(^\s+|\s+$)/g, "")
+  function m(e) {
+    return e.replace(/(^\s+|\s+$)/g, '');
   }
 
-  function q(a) {
-    return a.replace(/\s+/g, " ")
+  function v(e) {
+    return e.replace(/\s+/g, ' ');
   }
 
-  function s(a) {
-    var b = (new Date).getTime(),
-      c = (b - a) / 1e3;
-    if (c < 60) return e.localize("diff.seconds", "{0}s", Math.floor(c));
-    var d = c / 60;
-    if (d < 60) return e.localize("diff.minutes", "{0}m", Math.floor(d));
-    var f = d / 60;
-    if (f < 24) return e.localize("diff.hours", "{0}h", Math.floor(f));
-    var g = f / 24;
-    return e.localize("diff.days", "{0}d", Math.floor(g))
+  function y(e) {
+    var t = new Date().getTime(),
+      i = (t - e) / 1000;
+    if (60 > i)
+      return n.localize('vs_base_strings', 2, Math.floor(i));
+    var o = i / 60;
+    if (60 > o)
+      return n.localize('vs_base_strings', 3, Math.floor(o));
+    var r = o / 60;
+    if (24 > r)
+      return n.localize('vs_base_strings', 4, Math.floor(r));
+    var s = r / 24;
+    return n.localize('vs_base_strings', 5, Math.floor(s));
   }
 
-  function t(a) {
-    return a.replace(/[\-\\\{\}\+\?\|\^\$\.\,\[\]\(\)\#\s]/g, "\\$&").replace(/[\*]/g, ".*")
+  function _(e) {
+    return e.replace(/[\-\\\{\}\+\?\|\^\$\.\,\[\]\(\)\#\s]/g, '\\$&').replace(/[\*]/g, '.*');
   }
 
-  function u(a, b) {
-    for (var c = 0, d = b.length; c < d; c++)
-      if (a.charCodeAt(c) !== b.charCodeAt(c)) return !1;
-    return !0
+  function b(e, t) {
+    for (var n = 0, i = t.length; i > n; n++)
+      if (e.charCodeAt(n) !== t.charCodeAt(n))
+        return !1;
+    return !0;
   }
 
-  function v(a, b) {
-    if (b.length > a.length) return !1;
-    for (var c = 0, d = a.length - b.length; c < b.length; c++, d++)
-      if (a.charCodeAt(d) !== b.charCodeAt(c)) return !1;
-    return !0
+  function C(e, t) {
+    if (t.length > e.length)
+      return !1;
+    for (var n = 0, i = e.length - t.length; n < t.length; n++, i++)
+      if (e.charCodeAt(i) !== t.charCodeAt(n))
+        return !1;
+    return !0;
   }
 
-  function w(a, b, c, d) {
-    return typeof d == "undefined" && (d = ""), a.substring(0, b) + d + a.substring(b + c)
+  function w(e, t, n, i) {
+    return 'undefined' == typeof i && (i = ''), e.substring(0, t) + i + e.substring(t + n);
   }
 
-  function x(a, b, c, d) {
-    if (a === "") throw new Error("Cannot create regex from empty string");
-    b || (a = a.replace(/[\-\\\{\}\*\+\?\|\^\$\.\,\[\]\(\)\#\s]/g, "\\$&")), d && (a = "\\b" + a + "\\b");
-    var e = "g";
-    return c || (e += "i"), new RegExp(a, e)
+  function E(e, t, n, i) {
+    if ('' === e)
+      throw new Error('Cannot create regex from empty string');
+    t || (e = e.replace(/[\-\\\{\}\*\+\?\|\^\$\.\,\[\]\(\)\#\s]/g, '\\$&')), i && (/\B/.test(e.charAt(0)) || (e =
+      '\\b' + e), /\B/.test(e.charAt(e.length - 1)) || (e += '\\b'));
+    var o = 'g';
+    return n || (o += 'i'), new RegExp(e, o);
   }
 
-  function y(a) {
-    var b = a.exec("");
-    return b && a.lastIndex === 0
+  function S(e) {
+    var t = e.exec('');
+    return t && 0 === e.lastIndex;
   }
 
-  function z(a, b) {
-    if (!a) return a;
-    if (!b) return encodeURIComponent(a);
-    var c = a.split("/");
-    for (var d = 0, e = c.length; d < e; d++) c[d] = encodeURIComponent(c[d]);
-    return c.join("/")
-  }
-
-  function A(a) {
-    return /^\w[\w.]*$/.test(a)
-  }
-
-  function B(a) {
-    return a.replace(/[\-\\\{\}\*\+\?\|\^\$\.\,\[\]\(\)\#\s]/g, "\\$&")
-  }
-
-  function C(a, b, c) {
-    return b && (a = "^" + a), c && (a += "$"), a
-  }
-
-  function D(a, c) {
-    if (b.regExpLeadsToEndlessLoop(new RegExp(a, c))) throw new Error("Regular expression /" + a +
-      "/g results in infinitive matches")
-  }
-
-  function E(a) {
-    return a ? (a.indexOf("/") === 0 && (a = a.substring(1)), b.encodeURIPart(a, !0)) : ""
-  }
-
-  function F(a) {
-    return typeof a == "undefined" && (a = 8), I(a)
-  }
-
-  function I(a) {
-    var b = "";
-    for (var c = 0; c < a; c++) b += G[Math.floor(Math.random() * H)];
-    return b
-  }
-
-  function J(a, b) {
-    return "[" + a + "m" + b + "[0m"
-  }
-
-  function K(a) {
-    for (var b = 0, c = a.length; b < c; b++)
-      if (a.charAt(b) !== " " && a.charAt(b) !== "	") return b;
-    return -1
-  }
-
-  function L(a) {
-    for (var b = 0, c = a.length; b < c; b++)
-      if (a.charAt(b) !== " " && a.charAt(b) !== "	") return a.substring(0, b);
-    return a
-  }
-
-  function M(a) {
-    for (var b = a.length - 1; b >= 0; b--)
-      if (a.charAt(b) !== " " && a.charAt(b) !== "	") return b;
-    return -1
-  }
-
-  function P(a, b) {
-    if (!O) {
-      O = !0;
-      if (window.Intl && f.isFunction(window.Intl.Collator)) {
-        var c = new window.Intl.Collator;
-        f.isFunction(c.compare) && (N = c.compare)
-      }
+  function L(e, t) {
+    if (!e)
+      return e;
+    if (t) {
+      for (var n = e.split('/'), i = 0, o = n.length; o > i; i++)
+        n[i] = encodeURIComponent(n[i]);
+      return n.join('/');
     }
-    return N ? N.call(this, a, b) : a.localeCompare(b)
+    return encodeURIComponent(e);
   }
-  var e = c,
-    f = d;
-  b.pad = g, b.format = h, b.formatDate = i, b.formatTime = j, b.escape = k, b.stripHtml = l, b.trim = m, b.ltrim = n,
-    b.rtrim = o, b.trimWhitespace = p, b.normalize = q;
-  var r = {
-    SECOND: 1e3,
-    MINUTE: 6e4,
-    HOUR: 36e5,
-    DAY: 864e5
-  };
-  b.conciseformatDiff = s, b.convertSimple2RegExpPattern = t, b.startsWith = u, b.endsWith = v, b.splice = w, b.createRegExp =
-    x, b.regExpLeadsToEndlessLoop = y, b.encodeURIPart = z, b.isCamelCasePattern = A, b.toRegExpPattern = B, b.anchorPattern =
-    C, b.assertRegExp = D, b.normalizePath = E, b.generateUuid = F;
-  var G = "0123456789abcdefghiklmnopkqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
-    H = G.length;
-  b.colorize = J, b.firstNonWhitespaceIndex = K, b.getLeadingWhitespace = L, b.lastNonWhitespaceIndex = M;
-  var N, O = !1;
-  b.localeCompare = P
+
+  function T(e) {
+    return /^\w[\w.]*$/.test(e);
+  }
+
+  function x(e) {
+    return e.replace(/[\-\\\{\}\*\+\?\|\^\$\.\,\[\]\(\)\#\s]/g, '\\$&');
+  }
+
+  function N(e, t, n) {
+    return t && (e = '^' + e), n && (e += '$'), e;
+  }
+
+  function M(e, n) {
+    if (t.regExpLeadsToEndlessLoop(new RegExp(e, n)))
+      throw new Error('Regular expression /' + e + '/g results in infinitive matches');
+  }
+
+  function k(e) {
+    return e ? (0 === e.indexOf('/') && (e = e.substring(1)), t.encodeURIPart(e, !0)) : '';
+  }
+
+  function I() {
+    return i.v4().asHex();
+  }
+
+  function D(e, t) {
+    return '\x1B[' + e + 'm' + t + '\x1B[0m';
+  }
+
+  function O(e) {
+    for (var t = 0, n = e.length; n > t; t++)
+      if (' ' !== e.charAt(t) && '\t' !== e.charAt(t))
+        return t;
+    return -1;
+  }
+
+  function R(e) {
+    for (var t = 0, n = e.length; n > t; t++)
+      if (' ' !== e.charAt(t) && '\t' !== e.charAt(t))
+        return e.substring(0, t);
+    return e;
+  }
+
+  function P(e) {
+    for (var t = e.length - 1; t >= 0; t--)
+      if (' ' !== e.charAt(t) && '\t' !== e.charAt(t))
+        return t;
+    return -1;
+  }
+
+  function A(e, t) {
+    if (!z && (z = !0, window.Intl && o.isFunction(window.Intl.Collator))) {
+      var n = new window.Intl.Collator();
+      o.isFunction(n.compare) && (q = n.compare);
+    }
+    return q ? q.call(this, e, t) : e.localeCompare(t);
+  }
+
+  function W(e) {
+    return e >= 97 && 122 >= e || e >= 65 && 90 >= e;
+  }
+
+  function H(e, t) {
+    var n = e.length,
+      i = t.length;
+    if (n !== i)
+      return !1;
+    for (var o = 0; n > o; o++) {
+      var r = e.charCodeAt(o),
+        s = t.charCodeAt(o);
+      if (r !== s)
+        if (W(r) && W(s)) {
+          var a = Math.abs(r - s);
+          if (0 !== a && 32 !== a)
+            return !1;
+        } else if (String.fromCharCode(r).toLocaleLowerCase() !== String.fromCharCode(s).toLocaleLowerCase())
+        return !1;
+    }
+    return !0;
+  }
+
+  function V(e, t, n) {
+    'undefined' == typeof n && (n = 4);
+    var i = Math.abs(e.length - t.length);
+    if (i > n)
+      return 0;
+    var o, r, s = [],
+      a = [];
+    for (o = 0; o < t.length + 1; ++o)
+      a.push(0);
+    for (o = 0; o < e.length + 1; ++o)
+      s.push(a);
+    for (o = 1; o < e.length + 1; ++o)
+      for (r = 1; r < t.length + 1; ++r)
+        s[o][r] = e[o - 1] === t[r - 1] ? s[o - 1][r - 1] + 1 : Math.max(s[o - 1][r], s[o][r - 1]);
+    return s[e.length][t.length] - Math.sqrt(i);
+  }
+
+  function F(e) {
+    for (var t = {
+      ch: 0,
+      children: []
+    }, n = 0, i = e.length; i > n; n++)
+      for (var o = t, r = e[n], s = 0, a = r.length; a > s; s++)
+        o = B(o, r.charCodeAt(s));
+    return function(e) {
+      for (var n = t, i = 0, o = e.length; n.children && o > i; i++)
+        if (n = U(n, e.charCodeAt(i)), !n)
+          return !1;
+      return !n.children;
+    };
+  }
+
+  function U(e, t) {
+    if (!e.children)
+      return null;
+    for (var n = 0, i = e.children.length; i > n; n++)
+      if (e.children[n].ch === t)
+        return e.children[n];
+    return null;
+  }
+
+  function B(e, t) {
+    if (e.children) {
+      for (var n = e.children.length, i = 0; n > i; i++)
+        if (e.children[i].ch === t)
+          return e.children[i];
+      return e.children.push({
+        ch: t,
+        children: null
+      }), e.children[n];
+    }
+    return e.children = [{
+      ch: t,
+      children: null
+    }], e.children[0];
+  }
+  t.empty = '', t.pad = r, t.format = s, t.formatDate = a, t.formatTime = u, t.escape = l, t.escapeRegExpCharacters =
+    c, t.replaceAll = d, t.stripHtml = h, t.trim = p, t.ltrim = f, t.rtrim = g, t.trimWhitespace = m, t.normalize = v;
+  t.conciseformatDiff = y, t.convertSimple2RegExpPattern = _, t.startsWith = b, t.endsWith = C, t.splice = w, t.createRegExp =
+    E, t.regExpLeadsToEndlessLoop = S, t.encodeURIPart = L, t.isCamelCasePattern = T, t.toRegExpPattern = x, t.anchorPattern =
+    N, t.assertRegExp = M, t.normalizePath = k, t.generateUuid = I, t.colorize = D, t.firstNonWhitespaceIndex = O, t.getLeadingWhitespace =
+    R, t.lastNonWhitespaceIndex = P;
+  var q, z = !1;
+  t.localeCompare = A, t.equalsIgnoreCase = H, t.difference = V, t.prefixMatcher = F;
 })

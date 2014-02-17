@@ -1,21 +1,27 @@
-define(["require", "exports"], function(a, b) {
-  function c(a) {
-    for (var b = 0, c = a.length; b < c; b++) a[b].dispose();
-    return []
+define('vs/base/lifecycle', [
+  'require',
+  'exports'
+], function(e, t) {
+  function n(e) {
+    for (var t = 0, n = e.length; n > t; t++)
+      e[t] && e[t].dispose();
+    return [];
   }
 
-  function d() {
-    var a = [];
-    for (var c = 0; c < arguments.length - 0; c++) a[c] = arguments[c + 0];
+  function i() {
+    for (var e = [], n = 0; n < arguments.length - 0; n++)
+      e[n] = arguments[n + 0];
     return {
       dispose: function() {
-        return b.disposeAll(a)
+        return t.disposeAll(e);
       }
-    }
+    };
   }
 
-  function e(a) {
-    while (a.length > 0) a.pop()()
+  function o(e) {
+    for (; e.length > 0;)
+      e.pop()();
+    return e;
   }
-  b.disposeAll = c, b.combinedDispose = d, b.cAll = e
+  t.disposeAll = n, t.combinedDispose = i, t.cAll = o;
 })

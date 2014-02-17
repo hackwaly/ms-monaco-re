@@ -1,183 +1,197 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a
+define('vs/editor/core/model/mirrorModel', [
+  'require',
+  'exports',
+  'vs/editor/core/constants',
+  'vs/editor/core/view/model/prefixSumComputer',
+  'vs/editor/core/model/textModel',
+  'vs/editor/core/model/modelLine'
+], function(e, t, n, i, o, r) {
+  var s = function(e) {
+    function t(t, n, i, o, r) {
+      e.call(this, t, i), this.wordsRegexp = null, r || (r = {}), this._setVersionId(n), this._associatedResource = o,
+        this._extraProperties = r;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
-    d.prototype = b.prototype, a.prototype = new d
-  };
-define(["require", "exports", "vs/base/network", "vs/base/eventEmitter", "vs/editor/core/constants",
-  "vs/editor/core/view/model/prefixSumComputer"
-], function(a, b, c, d, e, f) {
-  var g = c,
-    h = d,
-    i = e,
-    j = f,
-    k = function(a) {
-      function b(b, c, d, e, f) {
-        a.call(this), this.wordsRegexp = null, e || (e = new g.URL(g.schemas.inMemory +
-          "://localhost/vs/editor/core/model/mirrorModel/" + b)), f || (f = {}), this._id = b, this._versionId = c,
-          this.associatedResource = e, this.extraProperties = f, this.lines = d.split("\n")
+    return __extends(t, e), t.prototype._constructLines = function(t) {
+      e.prototype._constructLines.call(this, t), this._EOL = '\n';
+    }, t.prototype.destroy = function() {
+      this.dispose();
+    }, t.prototype.dispose = function() {
+      e.prototype.dispose.call(this);
+    }, t.prototype.getAssociatedResource = function() {
+      return this._associatedResource;
+    }, t.prototype.getProperty = function(e) {
+      return this._extraProperties.hasOwnProperty(e) ? this._extraProperties[e] : null;
+    }, t.prototype._ensurePrefixSum = function() {
+      if (!this._lineStarts) {
+        for (var e = [], t = this.getEOL().length, n = 0, o = this._lines.length; o > n; n++)
+          e.push(this._lines[n].text.length + t);
+        this._lineStarts = new i.PrefixSumComputer(e);
       }
-      return __extends(b, a), b.prototype.destroy = function() {}, Object.defineProperty(b.prototype, "id", {
-        get: function() {
-          return this._id
-        },
-        enumerable: !0,
-        configurable: !0
-      }), Object.defineProperty(b.prototype, "versionId", {
-        get: function() {
-          return this._versionId
-        },
-        enumerable: !0,
-        configurable: !0
-      }), b.prototype.getAssociatedResource = function() {
-        return this.associatedResource
-      }, b.prototype.getProperty = function(a) {
-        return this.extraProperties.hasOwnProperty(a) ? this.extraProperties[a] : null
-      }, b.prototype.onEvents = function(a) {
-        var b = !1;
-        for (var c = 0, d = a.length; c < d; c++) {
-          var e = a[c];
-          switch (e.type) {
-            case i.EventType.ModelContentChanged:
-              this._versionId = e.versionId, this.lineStarts = null;
-              switch (e.changeType) {
-                case i.EventType.ModelContentChangedFlush:
-                  this.emit(i.EventType.OnBeforeModelContentChangedFlush, e), this.lines = e.detail.split("\n"), b = !
-                    0;
-                  break;
-                case i.EventType.ModelContentChangedLinesDeleted:
-                  this.emit(i.EventType.OnBeforeModelContentChangedLinesDeleted, e), this._onLinesDeleted(e), b = !0;
-                  break;
-                case i.EventType.ModelContentChangedLinesInserted:
-                  this.emit(i.EventType.OnBeforeModelContentChangedLinesInserted, e), this._onLinesInserted(e), b = !
-                    0;
-                  break;
-                case i.EventType.ModelContentChangedLineChanged:
-                  this.emit(i.EventType.OnBeforeModelContentChangedLineChanged, e), this._onLineChanged(e), b = !0
-              }
-              break;
-            case i.EventType.ModelPropertiesChanged:
-              this.extraProperties = e.properties;
-              break;
-            default:
-              console.warn("Unknown model event: " + e.type)
-          }
-        }
-        b && this.emit("changed", {})
-      }, b.prototype._onLineChanged = function(a) {
-        this.lines[a.lineNumber - 1] = a.detail
-      }, b.prototype._onLinesDeleted = function(a) {
-        var b = a.fromLineNumber - 1,
-          c = a.toLineNumber - 1;
-        this.lines.splice(b, c - b + 1)
-      }, b.prototype._onLinesInserted = function(a) {
-        var b, c, d = a.detail.split("\n");
-        for (b = a.fromLineNumber - 1, c = 0; b < a.toLineNumber; b++, c++) this.lines.splice(b, 0, d[c])
-      }, b.prototype.getValue = function() {
-        return this.lines.join("\n")
-      }, b.prototype.getValueInRange = function(a, b) {
-        var c = b || "\n";
-        if (a.startLineNumber === a.endLineNumber && a.startColumn === a.endColumn) return "";
-        if (a.startLineNumber === a.endLineNumber) return this.lines[a.startLineNumber - 1].substring(a.startColumn -
-          1, a.endColumn - 1);
-        var d = a.startLineNumber - 1,
-          e = a.endLineNumber - 1,
-          f = this.lines[d],
-          g = this.lines[e],
-          h = [];
-        for (var i = d + 1; i < e; i++) h.push(this.lines[i]);
-        var j = f.substring(a.startColumn - 1, f.length);
-        return h.length > 0 && (j += c + h.join(c)), j += c + g.substring(0, a.endColumn - 1), j
-      }, b.prototype.getLineNumberFromOffset = function(a) {
-        var b = 0;
-        for (var c = 0, d = this.lines.length; c < d; c++) {
-          b += this.lines[c].length + 1;
-          if (b > a) return c + 1
-        }
-        return this.lines.length
-      }, b.prototype.getOffsetFromPosition = function(a) {
-        return this.getLineStart(a.lineNumber) + a.column - 1
-      }, b.prototype.getLineStart = function(a) {
-        if (!this.lineStarts) {
-          var b = [0];
-          for (var c = 1, d = this.lines.length; c < d; c++) b.push(this.lines[c - 1].length + 1);
-          this.lineStarts = new j.PrefixSumComputer(b)
-        }
-        var e = Math.min(a, this.lines.length) - 1;
-        return this.lineStarts.getAccumulatedValue(e)
-      }, b.prototype.getLineContent = function(a) {
-        return this.lines[a - 1]
-      }, b.prototype.getRawLines = function() {
-        return this.lines.slice(0)
-      }, b.prototype.getLineCount = function() {
-        return this.lines.length
-      }, b.prototype.getLineMaxColumn = function(a) {
-        return this.lines[a - 1].length + 1
-      }, b.prototype.getAllWordsWithRange = function() {
-        var a = [],
-          b;
-        for (b = 0; b < this.lines.length; b++) {
-          var c = this.lines[b];
-          this.wordenize(c).forEach(function(d) {
-            var e = c.substring(d.start, d.end),
-              f = {
-                startLineNumber: b + 1,
-                startColumn: d.start + 1,
-                endLineNumber: b + 1,
-                endColumn: d.end + 1
-              };
-            a.push({
-              text: e,
-              range: f
-            })
-          })
-        }
-        return a
-      }, b.prototype.getAllWords = function() {
-        var a = this,
-          b = [];
-        return this.lines.forEach(function(c) {
-          a.wordenize(c).forEach(function(a) {
-            b.push(c.substring(a.start, a.end))
-          })
-        }), b
-      }, b.prototype.getAllUniqueWords = function(a) {
-        var b = !1,
-          c = {};
-        return this.getAllWords().filter(function(d) {
-          return a && !b && a === d ? (b = !0, !1) : c[d] ? !1 : (c[d] = !0, !0)
-        })
-      }, b.prototype.getWordAtPosition = function(a) {
-        var b = Math.min(a.lineNumber, this.lines.length) - 1,
-          c = this.lines[b];
-        return this.getWord(c, a.column - 1, function(a, b, c) {
-          return a.substring(b, c)
-        })
-      }, b.prototype.getWordUntilPosition = function(a) {
-        var b = Math.min(a.lineNumber, this.lines.length) - 1,
-          c = this.lines[b];
-        return this.getWord(c, a.column - 1, function(b, c, d) {
-          return c === -1 ? "" : b.substring(c, a.column - 1)
-        })
-      }, b.prototype.wordenize = function(a) {
-        var b = [],
-          c;
-        if (this.wordsRegexp === null) {
-          var d = this.getProperty("$WordDefinitionForMirrorModel");
-          d ? this.wordsRegexp = new RegExp(d.source, d.flags) : this.wordsRegexp = /(-?\d*\.\d\w*)|(\w+)/g
-        }
-        while (c = this.wordsRegexp.exec(a)) b.push({
-          start: c.index,
-          end: c.index + c[0].length
+    }, t.prototype.getRangeFromOffsetAndLength = function(e, t) {
+      var n = this.getPositionFromOffset(e),
+        i = this.getPositionFromOffset(e + t);
+      return {
+        startLineNumber: n.lineNumber,
+        startColumn: n.column,
+        endLineNumber: i.lineNumber,
+        endColumn: i.column
+      };
+    }, t.prototype.getOffsetAndLengthFromRange = function(e) {
+      var t = this.getOffsetFromPosition({
+        lineNumber: e.startLineNumber,
+        column: e.startColumn
+      }),
+        n = this.getOffsetFromPosition({
+          lineNumber: e.endLineNumber,
+          column: e.endColumn
         });
-        return b
-      }, b.prototype.getWord = function(a, b, c) {
-        var d = this.wordenize(a);
-        for (var e = 0; e < d.length && b >= d[e].start; e++)
-          if (b <= d[e].end) return c(a, d[e].start, d[e].end);
-        return c(a, -1, -1)
-      }, b
-    }(h.EventEmitter);
-  b.MirrorModel = k
+      return {
+        offset: t,
+        length: n - t
+      };
+    }, t.prototype.getPositionFromOffset = function(e) {
+      this._ensurePrefixSum();
+      var t = {
+        index: 0,
+        remainder: 0
+      };
+      return this._lineStarts.getIndexOf(e, t), {
+        lineNumber: t.index + 1,
+        column: this.getEOL().length + t.remainder
+      };
+    }, t.prototype.getOffsetFromPosition = function(e) {
+      return this.getLineStart(e.lineNumber) + e.column - 1;
+    }, t.prototype.getLineStart = function(e) {
+      this._ensurePrefixSum();
+      var t = Math.min(e, this._lines.length) - 1;
+      return this._lineStarts.getAccumulatedValue(t - 1);
+    }, t.prototype.getRawLines = function() {
+      return this._lines.map(function(e) {
+        return e.text;
+      });
+    }, t.prototype.getAllWordsWithRange = function() {
+      var e, t = [];
+      for (e = 0; e < this._lines.length; e++) {
+        var n = this._lines[e];
+        this.wordenize(n.text).forEach(function(i) {
+          var o = n.text.substring(i.start, i.end),
+            r = {
+              startLineNumber: e + 1,
+              startColumn: i.start + 1,
+              endLineNumber: e + 1,
+              endColumn: i.end + 1
+            };
+          t.push({
+            text: o,
+            range: r
+          });
+        });
+      }
+      return t;
+    }, t.prototype.getAllWords = function() {
+      var e = this,
+        t = [];
+      return this._lines.forEach(function(n) {
+        e.wordenize(n.text).forEach(function(e) {
+          t.push(n.text.substring(e.start, e.end));
+        });
+      }), t;
+    }, t.prototype.getAllUniqueWords = function(e) {
+      var t = !1,
+        n = {};
+      return this.getAllWords().filter(function(i) {
+        return e && !t && e === i ? (t = !0, !1) : n[i] ? !1 : (n[i] = !0, !0);
+      });
+    }, t.prototype.getWordAtPosition = function(e) {
+      var t = Math.min(e.lineNumber, this._lines.length) - 1,
+        n = this._lines[t];
+      return this.getWord(n.text, e.column - 1, function(e, t, n) {
+        return e.substring(t, n);
+      });
+    }, t.prototype.getWordUntilPosition = function(e) {
+      var t = Math.min(e.lineNumber, this._lines.length) - 1,
+        n = this._lines[t];
+      return this.getWord(n.text, e.column - 1, function(t, n) {
+        return -1 === n ? '' : t.substring(n, e.column - 1);
+      });
+    }, t.prototype.wordenize = function(e) {
+      var t, n = [];
+      if (null === this.wordsRegexp) {
+        var i = this.getProperty('$WordDefinitionForMirrorModel');
+        this.wordsRegexp = i ? new RegExp(i.source, i.flags) : /(-?\d*\.\d\w*)|(\w+)/g;
+      }
+      for (; t = this.wordsRegexp.exec(e);)
+        n.push({
+          start: t.index,
+          end: t.index + t[0].length
+        });
+      return n;
+    }, t.prototype.getWord = function(e, t, n) {
+      for (var i = this.wordenize(e), o = 0; o < i.length && t >= i[o].start; o++)
+        if (t <= i[o].end)
+          return n(e, i[o].start, i[o].end);
+      return n(e, -1, -1);
+    }, t;
+  }(o.TextModel);
+  t.AbstractMirrorModel = s;
+  var a = function(e) {
+    function t(t, i, o, r) {
+      e.call(this, [
+        n.EventType.OnBeforeModelContentChangedFlush,
+        n.EventType.OnBeforeModelContentChangedLinesDeleted,
+        n.EventType.OnBeforeModelContentChangedLinesInserted,
+        n.EventType.OnBeforeModelContentChangedLineChanged,
+        'changed'
+      ], t, i, o, r);
+    }
+    return __extends(t, e), t.prototype.onEvents = function(e) {
+      for (var t = !1, i = 0, o = e.length; o > i; i++) {
+        var r = e[i];
+        switch (r.type) {
+          case n.EventType.ModelContentChanged:
+            var s = r;
+            switch (this._lineStarts = null, this._setVersionId(s.versionId), s.changeType) {
+              case n.EventType.ModelContentChangedFlush:
+                this.emit(n.EventType.OnBeforeModelContentChangedFlush, r), this._onLinesFlushed(s), t = !0;
+                break;
+              case n.EventType.ModelContentChangedLinesDeleted:
+                this.emit(n.EventType.OnBeforeModelContentChangedLinesDeleted, r), this._onLinesDeleted(s), t = !0;
+                break;
+              case n.EventType.ModelContentChangedLinesInserted:
+                this.emit(n.EventType.OnBeforeModelContentChangedLinesInserted, r), this._onLinesInserted(s), t = !0;
+                break;
+              case n.EventType.ModelContentChangedLineChanged:
+                this.emit(n.EventType.OnBeforeModelContentChangedLineChanged, r), this._onLineChanged(s), t = !0;
+            }
+            break;
+          case n.EventType.ModelPropertiesChanged:
+            this._extraProperties = r.properties;
+            break;
+          default:
+            console.warn('Unknown model event: ' + r.type);
+        }
+      }
+      t && this.emit('changed', {});
+    }, t.prototype._onLinesFlushed = function(e) {
+      this._lineStarts = null, this._constructLines(e.detail);
+    }, t.prototype._onLineChanged = function(e) {
+      if (this._lineStarts) {
+        var t = this.getEOL().length,
+          n = e.detail.length + t;
+        this._lineStarts.changeValue(e.lineNumber - 1, n);
+      }
+      this._lines[e.lineNumber - 1].text = e.detail;
+    }, t.prototype._onLinesDeleted = function(e) {
+      var t = e.fromLineNumber - 1,
+        n = e.toLineNumber - 1;
+      this._lineStarts && this._lineStarts.removeValues(t, n - t + 1), this._lines.splice(t, n - t + 1);
+    }, t.prototype._onLinesInserted = function(e) {
+      var t, n, i = this.getEOL().length,
+        o = e.detail.split('\n');
+      for (t = e.fromLineNumber - 1, n = 0; t < e.toLineNumber; t++, n++)
+        this._lineStarts && this._lineStarts.insertValue(t, o[n].length + i), this._lines.splice(t, 0, new r.ModelLine(
+          0, o[n]));
+    }, t;
+  }(s);
+  t.MirrorModel = a;
 })

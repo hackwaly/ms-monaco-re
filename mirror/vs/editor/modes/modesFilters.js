@@ -1,32 +1,35 @@
-define(["require", "exports", "vs/base/filters"], function(a, b, c) {
-  function e(a) {
-    return function(b, c) {
-      var d = a(b, c.label);
-      return c.highlights = d || [], !! d
-    }
+define('vs/editor/modes/modesFilters', [
+  'require',
+  'exports',
+  'vs/base/filters'
+], function(e, t, n) {
+  function i(e) {
+    return function(t, n) {
+      var i = e(t, n.label);
+      return n.highlights = i || [], !! i;
+    };
   }
 
-  function f(a, b) {
-    return function(c, d) {
-      return a(c, d) || b(c, d)
-    }
+  function o(e, t) {
+    return function(n, i) {
+      return e(n, i) || t(n, i);
+    };
   }
 
-  function g(a, b) {
-    return function(c, d) {
-      return a(c, d) && b(c, d)
-    }
+  function r(e, t) {
+    return function(n, i) {
+      return e(n, i) && t(n, i);
+    };
   }
 
-  function h(a) {
-    var b = {};
-    return function(c, d) {
-      var e = a(d);
-      return b[e] ? !1 : (b[e] = !0, !0)
-    }
+  function s(e) {
+    var t = {};
+    return function(n, i) {
+      var o = e(i);
+      return t[o] ? !1 : (t[o] = !0, !0);
+    };
   }
-  var d = c;
-  b.StrictPrefix = e(d.matchesStrictPrefix), b.Prefix = e(d.matchesPrefix), b.CamelCase = e(d.matchesCamelCase), b.ContiguousSubString =
-    e(d.matchesContiguousSubString), b.or = f, b.and = g, b.newDuplicateFilter = h, b.DefaultFilter = b.or(b.or(b.Prefix,
-      b.CamelCase), b.ContiguousSubString)
+  t.StrictPrefix = i(n.matchesStrictPrefix), t.Prefix = i(n.matchesPrefix), t.CamelCase = i(n.matchesCamelCase), t.ContiguousSubString =
+    i(n.matchesContiguousSubString), t.or = o, t.and = r, t.newDuplicateFilter = s, t.DefaultFilter = t.or(t.or(t.Prefix,
+      t.CamelCase), t.ContiguousSubString);
 })

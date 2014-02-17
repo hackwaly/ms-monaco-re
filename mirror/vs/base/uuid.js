@@ -1,49 +1,70 @@
-define(["require", "exports", "vs/base/assert"], function(a, b, c) {
-  function f(a) {
-    return Math.floor(a * Math.random())
+define('vs/base/uuid', [
+  'require',
+  'exports',
+  'vs/base/assert'
+], function(e, t, n) {
+  function i(e) {
+    return Math.floor(e * Math.random());
   }
 
-  function h() {
-    var a = f(3);
-    return g[a]
+  function o() {
+    var e = i(3);
+    return u[e];
   }
 
-  function j() {
-    var a = [f(4294967295), f(65535), i + f(4095), h() + f(4095), f(0xffffffffffff)];
-    return new e(a)
+  function r() {
+    var e = [
+      i(4294967295),
+      i(65535),
+      l + i(4095),
+      o() + i(4095),
+      i(281474976710655)
+    ];
+    return new a(e);
   }
 
-  function k(a) {
-    var b = a.split("-"),
-      c = [];
-    if (b.length !== 5 || b[0].length !== 8 || b[1].length !== 4 || b[2].length !== 4 || b[3].length !== 4 || b[4].length !==
-      12) throw new Error("invalid uuid");
-    return c = b.map(function(a) {
-      var b = parseInt(a, 16);
-      if (isNaN(b)) throw new Error("invalid uuid");
-      return b
-    }), new e(c)
+  function s(e) {
+    var t = e.split('-'),
+      n = [];
+    if (5 !== t.length || 8 !== t[0].length || 4 !== t[1].length || 4 !== t[2].length || 4 !== t[3].length || 12 !==
+      t[4].length)
+      throw new Error('invalid uuid');
+    return n = t.map(function(e) {
+      var t = parseInt(e, 16);
+      if (isNaN(t))
+        throw new Error('invalid uuid');
+      return t;
+    }), new a(n);
   }
-  var d = c,
-    e = function() {
-      function a(a) {
-        this.numbers = a, d.ok(a[2] >= 16384 && a[2] < 20480, "illegal version bit"), d.ok(a[3] >= 32768 && a[3] <
-          49152, "illegal timehigh bit")
-      }
-      return a.prototype.equals = function(a) {
-        return this.asHex() === a.asHex()
-      }, a.toHexString = function(a, b) {
-        var c = a.toString(16),
-          d = b - c.length;
-        while (d-- > 0) c = "0" + c;
-        return c
-      }, a.prototype.asHex = function() {
-        return this.asHexCached || (this.asHexCached = [a.toHexString(this.numbers[0], 8), a.toHexString(this.numbers[
-          1], 4), a.toHexString(this.numbers[2], 4), a.toHexString(this.numbers[3], 4), a.toHexString(this.numbers[
-          4], 12)].join("-")), this.asHexCached
-      }, a
-    }(),
-    g = [36863, 40959, 45055, 49151],
-    i = 16384;
-  b.v4 = j, b.parse = k
+  var a = function() {
+    function e(e) {
+      this.numbers = e, n.ok(e[2] >= 16384 && e[2] < 20480, 'illegal version bit'), n.ok(e[3] >= 32768 && e[3] <
+        49152, 'illegal timehigh bit');
+    }
+    return e.prototype.equals = function(e) {
+      return this.asHex() === e.asHex();
+    }, e.toHexString = function(e, t) {
+      for (var n = e.toString(16), i = t - n.length; i-- > 0;)
+        n = '0' + n;
+      return n;
+    }, e.prototype.asHex = function() {
+      return this.asHexCached || (this.asHexCached = [
+        e.toHexString(this.numbers[0], 8),
+        e.toHexString(this.numbers[1], 4),
+        e.toHexString(this.numbers[2], 4),
+        e.toHexString(this.numbers[3], 4),
+        e.toHexString(this.numbers[4], 12)
+      ].join('-')), this.asHexCached;
+    }, e.prototype.toString = function() {
+      return this.asHex();
+    }, e;
+  }(),
+    u = [
+      36863,
+      40959,
+      45055,
+      49151
+    ],
+    l = 16384;
+  t.v4 = r, t.parse = s;
 })

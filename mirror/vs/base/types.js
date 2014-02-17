@@ -1,56 +1,84 @@
-define(["require", "exports"], function(a, b) {
-  function c(a) {
-    return Array.isArray ? Array.isArray(a) : a && typeof a.length == "number" && a.constructor === Array ? !0 : !1
+define('vs/base/types', [
+  'require',
+  'exports'
+], function(e, t) {
+  function n(e) {
+    return Array.isArray ? Array.isArray(e) : e && 'number' == typeof e.length && e.constructor === Array ? !0 : !1;
   }
 
-  function d(a) {
-    return typeof a == "string" || a instanceof String ? !0 : !1
+  function i(e) {
+    return 'string' == typeof e || e instanceof String ? !0 : !1;
   }
 
-  function e(a) {
-    return typeof a == "undefined" || a === null ? !1 : Object.prototype.toString.call(a) === "[object Object]"
+  function o(e) {
+    return 'undefined' == typeof e || null === e ? !1 : '[object Object]' === Object.prototype.toString.call(e);
   }
 
-  function f(a) {
-    return (typeof a == "number" || a instanceof Number) && !isNaN(a) ? !0 : !1
+  function r(e) {
+    return ('number' == typeof e || e instanceof Number) && !isNaN(e) ? !0 : !1;
   }
 
-  function g(a) {
-    return typeof a == "undefined"
+  function s(e) {
+    return e === !0 || e === !1;
   }
 
-  function h(a) {
-    return b.isUndefined(a) || a === null
+  function a(e) {
+    return 'undefined' == typeof e;
   }
 
-  function i(a) {
-    if (!b.isObject(a)) return !1;
-    for (var c in a)
-      if (a.hasOwnProperty(c)) return !1;
-    return !0
+  function u(e) {
+    return t.isUndefined(e) || null === e;
   }
 
-  function j(a) {
-    return Object.prototype.toString.call(a) === "[object Function]"
+  function l(e) {
+    if (!t.isObject(e))
+      return !1;
+    for (var n in e)
+      if (e.hasOwnProperty(n))
+        return !1;
+    return !0;
   }
 
-  function k(a) {
-    var b = [];
-    for (var c = 0; c < arguments.length - 1; c++) b[c] = arguments[c + 1];
-    var d = Object.create(a.prototype);
-    return a.apply(d, b), d
+  function c(e) {
+    return '[object Function]' === Object.prototype.toString.call(e);
   }
 
-  function l(a, c, d) {
-    typeof d == "undefined" && (d = !0);
-    var e, f = {};
-    for (e in a)(d || a.hasOwnProperty(e)) && b.isFunction(a[e]) && (f[e] = function(b) {
-      return function() {
-        return c(a, b, arguments)
-      }
-    }(e));
-    return f
+  function d() {
+    for (var e = [], n = 0; n < arguments.length - 0; n++)
+      e[n] = arguments[n + 0];
+    return e && e.length > 0 && e.every(function(e) {
+      return t.isFunction(e);
+    });
   }
-  b.isArray = c, b.isString = d, b.isObject = e, b.isNumber = f, b.isUndefined = g, b.isUndefinedOrNull = h, b.isEmptyObject =
-    i, b.isFunction = j, b.create = k, b.proxy = l
+
+  function h(e) {
+    for (var t = [], n = 0; n < arguments.length - 1; n++)
+      t[n] = arguments[n + 1];
+    var i = Object.create(e.prototype);
+    return e.apply(i, t), i;
+  }
+
+  function p(e, n, i) {
+    'undefined' == typeof i && (i = !0);
+    var o, r = {};
+    for (o in e)
+      (i || e.hasOwnProperty(o)) && t.isFunction(e[o]) && (r[o] = function(t) {
+        return function() {
+          return n(e, t, arguments);
+        };
+      }(o));
+    return r;
+  }
+
+  function f(e) {
+    var t = !1,
+      n = null;
+    return function() {
+      for (var i = [], o = 0; o < arguments.length - 0; o++)
+        i[o] = arguments[o + 0];
+      return t || (t = !0, n = e.apply(self, i)), n;
+    };
+  }
+  t.isArray = n, t.isString = i, t.isObject = o, t.isNumber = r, t.isBoolean = s, t.isUndefined = a, t.isUndefinedOrNull =
+    u, t.isEmptyObject = l, t.isFunction = c, t.areFunctions = d, t.create = h, t.proxy = p, t.runOnce = f;
 })

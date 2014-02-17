@@ -11,6 +11,7 @@
     "esprima": "*",
     "mkdirp": "*",
     "promise": "*",
-    "request": "*"
+    "request": "*",
+    "escodegen": "~1.2.0"
   }
 }

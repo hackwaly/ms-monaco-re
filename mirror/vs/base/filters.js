@@ -1,112 +1,140 @@
-define(["require", "exports"], function(a, b) {
-  function c() {
-    var a = [];
-    for (var b = 0; b < arguments.length - 0; b++) a[b] = arguments[b + 0];
-    return function(b, c) {
-      for (var d = 0, e = a.length; d < e; d++) {
-        var f = a[d](b, c);
-        if (f) return f
+define('vs/base/filters', [
+  'require',
+  'exports',
+  'vs/base/strings'
+], function(e, t, n) {
+  function i() {
+    for (var e = [], t = 0; t < arguments.length - 0; t++)
+      e[t] = arguments[t + 0];
+    return function(t, n) {
+      for (var i = 0, o = e.length; o > i; i++) {
+        var r = e[i](t, n);
+        if (r)
+          return r;
       }
-      return null
-    }
+      return null;
+    };
   }
 
-  function d() {
-    var a = [];
-    for (var b = 0; b < arguments.length - 0; b++) a[b] = arguments[b + 0];
-    return function(b, c) {
-      var d = [];
-      for (var e = 0, f = a.length; e < f; e++) {
-        var g = a[e](b, c);
-        if (!g) return null;
-        d = d.concat(g)
+  function o() {
+    for (var e = [], t = 0; t < arguments.length - 0; t++)
+      e[t] = arguments[t + 0];
+    return function(t, n) {
+      for (var i = [], o = 0, r = e.length; r > o; o++) {
+        var s = e[o](t, n);
+        if (!s)
+          return null;
+        i = i.concat(s);
       }
-      return d
-    }
+      return i;
+    };
   }
 
-  function e(a, b, c) {
-    if (c.length === 0 || c.length < b.length) return null;
-    a && (b = b.toLowerCase(), c = c.toLowerCase());
-    for (var d = 0; d < b.length; d++)
-      if (b[d] !== c[d]) return null;
-    return b.length > 0 ? [{
+  function r(e, t, n) {
+    if (0 === n.length || n.length < t.length)
+      return null;
+    e && (t = t.toLowerCase(), n = n.toLowerCase());
+    for (var i = 0; i < t.length; i++)
+      if (t[i] !== n[i])
+        return null;
+    return t.length > 0 ? [{
       start: 0,
-      end: b.length
-    }] : []
+      end: t.length
+    }] : [];
   }
 
-  function f(a, b) {
-    var c = b.toLowerCase().indexOf(a.toLowerCase());
-    return c === -1 ? null : [{
-      start: c,
-      end: c + a.length
-    }]
+  function s(e, t) {
+    var n = t.toLowerCase().indexOf(e.toLowerCase());
+    return -1 === n ? null : [{
+      start: n,
+      end: n + e.length
+    }];
   }
 
-  function g(a, b) {
-    return h(a.toLowerCase(), b.toLowerCase(), 0, 0)
+  function a(e, t) {
+    return u(e.toLowerCase(), t.toLowerCase(), 0, 0);
   }
 
-  function h(a, b, c, d) {
-    if (c === a.length) return [];
-    if (d === b.length) return null;
-    if (a[c] === b[d]) {
-      var e = null;
-      if (e = h(a, b, c + 1, d + 1)) return l({
-        start: d,
-        end: d + 1
-      }, e)
+  function u(e, t, n, i) {
+    if (n === e.length)
+      return [];
+    if (i === t.length)
+      return null;
+    if (e[n] === t[i]) {
+      var o = null;
+      if (o = u(e, t, n + 1, i + 1))
+        return h({
+          start: i,
+          end: i + 1
+        }, o);
     }
-    return h(a, b, c, d + 1)
+    return u(e, t, n, i + 1);
   }
 
-  function i(a, b) {
-    if (b.length === 0) return null;
-    var c = null,
-      d = 0;
-    while (d < b.length && (c = n(a.toLowerCase(), b, 0, d)) === null) d = m(b, d + 1);
-    return c
+  function l(e, t) {
+    if (0 === t.length)
+      return null;
+    for (var n = null, i = 0; i < t.length && null === (n = f(e.toLowerCase(), t, 0, i));)
+      i = p(t, i + 1);
+    return n;
   }
 
-  function j(a) {
-    var b = a.charCodeAt(0);
-    return 65 <= b && b <= 90
+  function c(e) {
+    var t = e.charCodeAt(0);
+    return t >= 65 && 90 >= t;
   }
 
-  function k(a) {
-    var b = a.charCodeAt(0);
-    return 48 <= b && b <= 57
+  function d(e) {
+    var t = e.charCodeAt(0);
+    return t >= 48 && 57 >= t;
   }
 
-  function l(a, b) {
-    return b.length === 0 ? b = [a] : a.end === b[0].start ? b[0].start = a.start : b.unshift(a), b
+  function h(e, t) {
+    return 0 === t.length ? t = [e] : e.end === t[0].start ? t[0].start = e.start : t.unshift(e), t;
   }
 
-  function m(a, b) {
-    for (var c = b; c < a.length; c++) {
-      var d = a[c];
-      if (j(d) || k(d)) return c
+  function p(e, t) {
+    for (var n = t; n < e.length; n++) {
+      var i = e[n];
+      if (c(i) || d(i))
+        return n;
     }
-    return a.length
+    return e.length;
   }
 
-  function n(a, b, c, d) {
-    if (c === a.length) return [];
-    if (d === b.length) return null;
-    if (a[c] !== b[d].toLowerCase()) return null;
-    var e = null,
-      f = d + 1;
-    e = n(a, b, c + 1, d + 1);
-    while (!e && (f = m(b, f)) < b.length) e = n(a, b, c + 1, f), f++;
-    return e === null ? null : l({
-      start: d,
-      end: d + 1
-    }, e)
+  function f(e, t, n, i) {
+    if (n === e.length)
+      return [];
+    if (i === t.length)
+      return null;
+    if (e[n] !== t[i].toLowerCase())
+      return null;
+    var o = null,
+      r = i + 1;
+    for (o = f(e, t, n + 1, i + 1); !o && (r = p(t, r)) < t.length;)
+      o = f(e, t, n + 1, r), r++;
+    return null === o ? null : h({
+      start: i,
+      end: i + 1
+    }, o);
   }
-  b.or = c, b.and = d, b.matchesStrictPrefix = function(a, b) {
-    return e(!1, a, b)
-  }, b.matchesPrefix = function(a, b) {
-    return e(!0, a, b)
-  }, b.matchesContiguousSubString = f, b.matchesSubString = g, b.matchesCamelCase = i
+  t.or = i, t.and = o, t.matchesStrictPrefix = function(e, t) {
+    return r(!1, e, t);
+  }, t.matchesPrefix = function(e, t) {
+    return r(!0, e, t);
+  }, t.matchesContiguousSubString = s, t.matchesSubString = a, t.matchesCamelCase = l;
+  var g = function() {
+    function e() {}
+    return e.matches = function(t, i) {
+      var o = e.RegExpCache[t];
+      o || (o = new RegExp(n.convertSimple2RegExpPattern(t), 'i'), e.RegExpCache[t] = o);
+      var r = o.exec(i);
+      return r ? [{
+        start: r.index,
+        end: r.index + r[0].length
+      }] : e.DefaultFilter(t, i);
+    }, e.DefaultFilter = t.or(t.matchesPrefix, t.matchesCamelCase, t.matchesContiguousSubString), e.RegExpCache = {},
+      e;
+  }();
+  t.CombinedMatcher = g;
 })
