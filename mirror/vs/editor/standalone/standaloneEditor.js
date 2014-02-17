@@ -1,227 +1,263 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a;
-    }
-    for (var c in b) {
-      if (b.hasOwnProperty(c)) {
-        a[c] = b[c];
-      }
-    }
-    d.prototype = b.prototype;
-
-    a.prototype = new d;
-  };
-
-define(["require", "exports", "vs/editor/core/codeEditorWidget", "vs/editor/diff/diffEditorWidget",
-  "vs/editor/terminal/terminal", "vs/editor/standalone/simpleServices", "vs/platform/handlerService",
-  "vs/platform/services", "vs/platform/telemetry/telemetryService", "vs/editor/core/model/model",
-  "vs/editor/core/model/terminalModel", "vs/platform/injectorService", "vs/platform/markers/markerService",
-  "vs/editor/modes/modesExtensions", "vs/platform/platform"
-], function(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o) {
-  function G(a, b) {
-    return new F(a, b);
+define("vs/editor/standalone/standaloneEditor", ["require", "exports", "vs/editor/core/codeEditorWidget",
+  "vs/editor/diff/diffEditorWidget", "vs/editor/terminal/terminal", "vs/editor/standalone/simpleServices",
+  "vs/platform/handlerService", "vs/platform/services", "vs/platform/telemetry/telemetryService",
+  "vs/platform/contextview/contextviewService", "vs/editor/core/model/model", "vs/editor/core/model/consoleModel",
+  "vs/platform/injectorService", "vs/platform/markers/markerService", "vs/editor/modes/modesExtensions",
+  "vs/platform/platform", "vs/editor/modes/monarch/monarchCompile", "vs/editor/modes/monarch/monarch", "vs/base/env"
+], function(e, t, n, i, o, r, s, a, u, l, c, d, h, p, f, g, m, v, y) {
+  function _(e, t) {
+    return new M(e, t);
   }
 
-  function H(a, b, c) {
-    var d = B.Registry.as(A.Extensions.EditorModes);
+  function b(e, n, i) {
+    var o;
+    o = "string" == typeof n ? N.getMode(n) : t.createCustomMode(n);
 
-    var e = d.getMode(b);
-    return new w.Model(a, e, c, D.markerService);
+    return new c.Model(e, o, i, T.markerService);
   }
 
-  function I(a, b, c) {
-    var d = B.Registry.as(A.Extensions.EditorModes);
+  function C(e) {
+    var t = new v.MonarchMode(m.compile(e));
+    T.create().injectTo(t);
 
-    var e = d.getMode(b);
-    return new x.TerminalModel(a, e, c);
+    return t;
   }
 
-  function J(a, b) {
-    var c = D.create({
-      handlerService: new t.HandlerService(a)
+  function w(e, t, n) {
+    var i = N.getMode(t);
+    return new d.ConsoleModel(e, i, n);
+  }
+
+  function E(e, t) {
+    return new D(e, t);
+  }
+
+  function S(e, t) {
+    var n = T.create({
+      handlerService: new s.HandlerService(e)
     });
-    return new q.DiffEditorWidget(a, b, c);
+    return new o.Terminal(e, t, n);
   }
 
-  function K(a, b) {
-    var c = D.create({
-      handlerService: new t.HandlerService(a)
-    });
-    return new r.Terminal(a, b, c);
+  function x(e) {
+    return N.getOrCreateMode(e);
   }
-
-  function L(a) {
-    var b = B.Registry.as(A.Extensions.EditorModes);
-    return b.getOrCreateMode(a);
-  }
-  var p = c;
-
-  var q = d;
-
-  var r = e;
-
-  var s = f;
-
-  var t = g;
-
-  var u = h;
-
-  var v = i;
-
-  var w = j;
-
-  var x = k;
-
-  var y = l;
-
-  var z = m;
-
-  var A = n;
-
-  var B = o;
-
-  var C = function(a) {
-    function b() {
-      a.apply(this, arguments);
+  var L = function(e) {
+    function t() {
+      e.apply(this, arguments);
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.getPath = function(a, b) {
-      return b.toExternal();
+    t.prototype.getPath = function(e, t) {
+      return t.toExternal();
     };
 
-    return b;
-  }(u.BaseRequestService);
+    return t;
+  }(a.BaseRequestService);
 
-  var D = function() {
-    function a() {}
-    a.create = function(b) {
-      var c = {
-        markerService: a.markerService,
-        messageService: a.messageService,
-        contextService: a.contextService,
-        requestService: a.requestService
+  var T = function() {
+    function e() {}
+    e.create = function(t) {
+      var n = {
+        markerService: e.markerService,
+        messageService: e.messageService,
+        contextService: e.contextService,
+        requestService: e.requestService,
+        telemetryService: e.telemetryService
       };
-      if (b) {
-        var d;
-        for (d in b) {
-          if (b.hasOwnProperty(d)) {
-            c[d] = b[d];
+      if (t) {
+        var i;
+        for (i in t) {
+          if (t.hasOwnProperty(i)) {
+            n[i] = t[i];
           }
         }
       }
-      return y.create(c);
+      return h.create(n);
     };
 
-    a.markerService = new z.MarkerService;
+    e.markerService = new p.MarkerService;
 
-    a.messageService = new s.SimpleMessageService;
+    e.messageService = new r.SimpleMessageService;
 
-    a.contextService = new u.BaseContextService({
+    e.contextService = new a.BaseContextService({
       uri: null,
       name: null,
-      telemetry: "/api/telemetry"
+      path: null,
+      alternatePath: null,
+      telemetry: y.standaloneEditorTelemetryEndpoint,
+      publicUrl: null,
+      ctime: null,
+      mtime: null
     }, {
       paths: {
         PUBLIC_WORKSPACE_URL: "inMemory://"
       }
     });
 
-    a.requestService = new C;
+    e.requestService = new L;
 
-    return a;
+    e.telemetryService = y.standaloneEditorTelemetryEndpoint ? new u.TelemetryService(!0) : u.nullService;
+
+    return e;
   }();
 
-  var E = B.Registry.as(A.Extensions.EditorModes);
-  D.create().injectTo(E);
-  var F = function(a) {
-    function c(c, d) {
-      this._editorService = new s.SimpleEditorService(this);
+  var N = g.Registry.as(f.Extensions.EditorModes);
+  T.create().injectTo(N);
+  var M = function(e) {
+    function n(n, i) {
+      this._editorService = new r.SimpleEditorService(this);
 
-      this._handlerService = new t.HandlerService(c);
+      this._handlerService = new s.HandlerService(n);
 
-      this._telemetryService = v.nullService;
-
-      d = d || {};
-
-      if (d.enableTelemetry) {
-        this._telemetryService = new v.TelemetryService;
-      }
-      var e = {
+      this._contextViewService = new l.ContextViewService(n);
+      var o = {
         editorService: this._editorService,
         handlerService: this._handlerService,
-        telemetryService: this._telemetryService
+        contextViewService: this._contextViewService,
+        contextMenuService: this._contextViewService
       };
 
-      var f = D.create(e);
-      d.model ? this._ownsModel = !1 : (d.model = b.createModel(d.value || "", d.mode || "text/plain"), this._ownsModel = !
-        0);
+      var a = T.create(o);
+      i = i || {};
 
-      a.call(this, c, d, f);
+      "undefined" == typeof i.model ? (i.model = t.createModel(i.value || "", i.mode || "text/plain"), this._ownsModel = !
+        0) : this._ownsModel = !1;
+
+      e.call(this, n, i, a);
     }
-    __extends(c, a);
+    __extends(n, e);
 
-    c.prototype.destroy = function() {
-      a.prototype.destroy.call(this);
+    n.prototype.dispose = function() {
+      e.prototype.dispose.call(this);
 
       this._handlerService.dispose();
+
+      this._contextViewService.dispose();
     };
 
-    c.prototype.getMarkerService = function() {
-      return D.markerService;
+    n.prototype.destroy = function() {
+      this.dispose();
     };
 
-    c.prototype.getHandlerService = function() {
+    n.prototype.getMarkerService = function() {
+      return T.markerService;
+    };
+
+    n.prototype.getHandlerService = function() {
       return this._handlerService;
     };
 
-    c.prototype.getTelemetryService = function() {
-      return this._telemetryService;
+    n.prototype.getTelemetryService = function() {
+      return T.telemetryService;
     };
 
-    c.prototype._detachModel = function() {
-      var b = this.getModel();
-      a.prototype._detachModel.call(this);
+    n.prototype._attachModel = function(t) {
+      e.prototype._attachModel.call(this, t);
 
-      if (b && this._ownsModel) {
-        b.destroy();
+      if (this._view) {
+        this._contextViewService.setContainer(this._view.domNode);
+      }
+    };
+
+    n.prototype._postDetachModelCleanup = function(t) {
+      e.prototype._postDetachModelCleanup.call(this, t);
+
+      if (t && this._ownsModel) {
+        t.destroy();
         this._ownsModel = !1;
       }
     };
 
-    return c;
-  }(p.CodeEditorWidget);
-  b.create = G;
+    return n;
+  }(n.CodeEditorWidget);
+  t.StandaloneEditor = M;
+  var D = function(e) {
+    function t(t, n) {
+      this._editorService = new r.SimpleEditorService(this);
 
-  b.createModel = H;
+      this._handlerService = new s.HandlerService(t);
 
-  b.createTerminalModel = I;
+      this._contextViewService = new l.ContextViewService(t);
+      var i = {
+        editorService: this._editorService,
+        handlerService: this._handlerService,
+        contextViewService: this._contextViewService,
+        contextMenuService: this._contextViewService
+      };
 
-  b.createDiffEditor = J;
+      var o = T.create(i);
+      e.call(this, t, n, o);
 
-  b.createTerminal = K;
+      this._contextViewService.setContainer(this._containerDomElement);
+    }
+    __extends(t, e);
 
-  b.getOrCreateMode = L;
-  var M = self;
-  if (!M.Monaco) {
-    M.Monaco = {};
+    t.prototype.dispose = function() {
+      e.prototype.dispose.call(this);
+
+      this._handlerService.dispose();
+
+      this._contextViewService.dispose();
+    };
+
+    t.prototype.destroy = function() {
+      this.dispose();
+    };
+
+    t.prototype.getMarkerService = function() {
+      return T.markerService;
+    };
+
+    t.prototype.getHandlerService = function() {
+      return this._handlerService;
+    };
+
+    t.prototype.getTelemetryService = function() {
+      return T.telemetryService;
+    };
+
+    return t;
+  }(i.DiffEditorWidget);
+  t.StandaloneDiffEditor = D;
+
+  t.create = _;
+
+  t.createModel = b;
+
+  t.createCustomMode = C;
+
+  t.createTerminalModel = w;
+
+  t.createDiffEditor = E;
+
+  t.createTerminal = S;
+
+  t.getOrCreateMode = x;
+  var I = self;
+  if (!I.Monaco) {
+    I.Monaco = {};
   }
-  var N = M.Monaco;
-  if (!N.Editor) {
-    N.Editor = {};
+  var R = I.Monaco;
+  if (!R.Editor) {
+    R.Editor = {};
   }
 
-  N.Editor.create = b.create;
+  R.Editor.create = t.create;
 
-  N.Editor.createModel = b.createModel;
+  R.Editor.CodeEditor = M;
 
-  N.Editor.createTerminalModel = b.createTerminalModel;
+  R.Editor.createModel = t.createModel;
 
-  N.Editor.CodeEditor = F;
+  R.Editor.createTerminalModel = t.createTerminalModel;
 
-  N.Editor.createDiffEditor = b.createDiffEditor;
+  R.Editor.createDiffEditor = t.createDiffEditor;
 
-  N.Editor.createTerminal = b.createTerminal;
+  R.Editor.DiffEditor = D;
 
-  N.Editor.getOrCreateMode = b.getOrCreateMode;
+  R.Editor.createTerminal = t.createTerminal;
+
+  R.Editor.getOrCreateMode = t.getOrCreateMode;
+
+  R.Editor.createCustomMode = t.createCustomMode;
 });

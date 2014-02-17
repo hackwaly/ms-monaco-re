@@ -1,122 +1,139 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a;
-    }
-    for (var c in b) {
-      if (b.hasOwnProperty(c)) {
-        a[c] = b[c];
-      }
-    }
-    d.prototype = b.prototype;
+define("vs/editor/contrib/parameterHints/parameterHintsModel", ["require", "exports", "vs/base/lib/winjs.base",
+  "vs/base/lifecycle", "vs/base/async", "vs/editor/core/constants", "vs/base/eventEmitter"
+], function(e, t, n, i, o, r, s) {
+  var a = function(e) {
+    function t(n) {
+      var i = this;
+      e.call(this, ["cancel", "hint", "destroy"]);
 
-    a.prototype = new d;
-  };
-
-define(["require", "exports", "vs/base/lib/winjs.base", "vs/base/async", "vs/editor/core/constants",
-  "vs/base/eventEmitter"
-], function(a, b, c, d, e, f) {
-  var g = c;
-
-  var h = d;
-
-  var i = e;
-
-  var j = f;
-
-  var k = function(a) {
-    function b(c) {
-      var d = this;
-      a.call(this);
-
-      this.editor = c;
+      this.editor = n;
 
       this.listenersToRemove = [];
 
-      this.throttledDelayer = new h.ThrottledDelayer(b.DELAY);
+      this.triggerCharactersListeners = [];
+
+      this.throttledDelayer = new o.ThrottledDelayer(t.DELAY);
 
       this.active = !1;
 
-      this.listenersToRemove.push(this.editor.addListener(i.EventType.CursorSelectionChanged, function(a) {
-        if (d.isTriggered()) {
-          d.trigger();
+      this.listenersToRemove.push(this.editor.addListener(r.EventType.ModelChanged, function() {
+        return i.onModelChanged();
+      }));
+
+      this.listenersToRemove.push(this.editor.addListener(r.EventType.ModelModeChanged, function() {
+        return i.onModelChanged();
+      }));
+
+      this.listenersToRemove.push(this.editor.addListener(r.EventType.CursorSelectionChanged, function() {
+        if (i.isTriggered()) {
+          i.trigger();
         }
       }));
-    }
-    __extends(b, a);
 
-    b.prototype.cancel = function(a) {
-      if (typeof a == "undefined") {
-        a = !1;
+      this.onModelChanged();
+    }
+    __extends(t, e);
+
+    t.prototype.cancel = function(e) {
+      if ("undefined" == typeof e) {
+        e = !1;
       }
 
       this.active = !1;
 
       this.throttledDelayer.cancel();
 
-      if (!a) {
+      if (!e) {
         this.emit("cancel");
       }
     };
 
-    b.prototype.trigger = function(a) {
-      if (typeof a == "undefined") {
-        a = b.DELAY;
+    t.prototype.trigger = function(e) {
+      if ("undefined" == typeof e) {
+        e = t.DELAY;
       }
-      var c = this;
-      if (!this.editor.getModel().getMode().parameterHintsSupport) return;
-      this.cancel(!0);
-
-      return this.throttledDelayer.trigger(function() {
-        return c.doTrigger();
-      }, a);
+      var n = this;
+      if (this.editor.getModel().getMode().parameterHintsSupport) {
+        this.cancel(!0);
+        return this.throttledDelayer.trigger(function() {
+          return n.doTrigger();
+        }, e);
+      }
     };
 
-    b.prototype.doTrigger = function() {
-      var a = this;
+    t.prototype.doTrigger = function() {
+      var e = this;
 
-      var b = this.editor.getModel();
-      if (!b || !b.getMode().parameterHintsSupport) {
-        return g.Promise.as(!1);
+      var t = this.editor.getModel();
+      if (!t || !t.getMode().parameterHintsSupport) {
+        return n.Promise.as(!1);
       }
-      var c = b.getMode().parameterHintsSupport;
-      return c.getParameterHints(b.getAssociatedResource(), this.editor.getPosition()).then(function(b) {
-        if (!b) {
-          a.cancel();
-          a.emit("cancel");
+      var i = t.getMode().parameterHintsSupport;
+      return i.getParameterHints(t.getAssociatedResource(), this.editor.getPosition()).then(function(t) {
+        if (!t || 0 === t.signatures.length) {
+          e.cancel();
+          e.emit("cancel");
           return !1;
         }
-        a.active = !0;
-        var c = {
-          hints: b
+        e.active = !0;
+        var n = {
+          hints: t
         };
-        a.emit("hint", c);
+        e.emit("hint", n);
 
         return !0;
       });
     };
 
-    b.prototype.isTriggered = function() {
+    t.prototype.isTriggered = function() {
       return this.active || this.throttledDelayer.isTriggered();
     };
 
-    b.prototype.dispose = function() {
+    t.prototype.onModelChanged = function() {
+      var e = this;
+      if (this.triggerCharactersListeners = i.disposeAll(this.triggerCharactersListeners), this.editor.getModel()) {
+        var t = this.editor.getModel().getMode();
+        if (t.parameterHintsSupport) {
+          this.triggerCharactersListeners = t.parameterHintsSupport.getParameterHintsTriggerCharacters().map(function(
+            n) {
+            var i = e.editor.addTypingListener(n, function() {
+              var n = e.editor.getPosition();
+
+              var i = e.editor.getModel().getLineContent(n.lineNumber);
+
+              var o = e.editor.getModel().getRawLineTokens(n.lineNumber);
+              if (t.parameterHintsSupport.shouldTriggerParameterHints(i, o, n.column - 1)) {
+                e.trigger();
+              }
+            });
+            return {
+              dispose: i
+            };
+          });
+        }
+      }
+    };
+
+    t.prototype.dispose = function() {
       this.cancel(!0);
 
+      this.triggerCharactersListeners = i.disposeAll(this.triggerCharactersListeners);
+
       if (this.listenersToRemove) {
-        this.listenersToRemove.forEach(function(a) {
-          a();
+        this.listenersToRemove.forEach(function(e) {
+          e();
         });
         this.listenersToRemove = null;
       }
 
       this.emit("destroy", null);
 
-      a.prototype.dispose.call(this);
+      e.prototype.dispose.call(this);
     };
 
-    b.DELAY = 120;
+    t.DELAY = 120;
 
-    return b;
-  }(j.EventEmitter);
-  b.ParameterHintsModel = k;
+    return t;
+  }(s.EventEmitter);
+  t.ParameterHintsModel = a;
 });

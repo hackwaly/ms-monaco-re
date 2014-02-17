@@ -1,48 +1,66 @@
-define(["require", "exports", "vs/editor/core/range"], function(a, b, c) {
-  var d = c;
+define("vs/editor/contrib/linesOperations/copyLinesCommand", ["require", "exports", "vs/editor/core/range",
+  "vs/editor/core/selection"
+], function(e, t, n, i) {
+  var o = function() {
+    function e(e, t) {
+      this._selection = e;
 
-  var e = function() {
-    function a(a, b) {
-      this._selection = a;
-
-      this._isCopyingDown = b;
+      this._isCopyingDown = t;
     }
-    a.prototype.getEditOperations = function(a, b) {
-      var c = this._selection;
-      this._moveEndPositionDown = !1;
+    e.prototype.getEditOperations = function(e, t) {
+      var i = this._selection;
+      this._startLineNumberDelta = 0;
 
-      this._moveStartPositionUp = !1;
+      this._endLineNumberDelta = 0;
 
-      if (c.startLineNumber < c.endLineNumber && c.endColumn === 1) {
-        this._moveEndPositionDown = !0;
-        c = c.setEndPosition(c.endLineNumber - 1, a.getLineMaxColumn(c.endLineNumber - 1));
-        if (!this._isCopyingDown && c.isEmpty()) {
-          this._moveEndPositionDown = !1;
-          this._moveStartPositionUp = !0;
+      if (i.startLineNumber < i.endLineNumber && 1 === i.endColumn) {
+        this._endLineNumberDelta = 1;
+        i = i.setEndPosition(i.endLineNumber - 1, e.getLineMaxColumn(i.endLineNumber - 1));
+      }
+      for (var o = [], r = i.startLineNumber; r <= i.endLineNumber; r++) {
+        o.push(e.getLineContent(r));
+      }
+      var s = o.join("\n");
+      if ("" === s && this._isCopyingDown) {
+        this._startLineNumberDelta++;
+        this._endLineNumberDelta++;
+      }
+
+      this._isCopyingDown ? t.addEditOperation(new n.Range(i.startLineNumber, 1, i.startLineNumber, 1), s + "\n") : t
+        .addEditOperation(new n.Range(i.endLineNumber, e.getLineMaxColumn(i.endLineNumber), i.endLineNumber, e.getLineMaxColumn(
+          i.endLineNumber)), "\n" + s);
+
+      this._selectionId = t.trackSelection(i);
+
+      this._selectionDirection = this._selection.getDirection();
+    };
+
+    e.prototype.computeCursorState = function(e, t) {
+      var n = t.getTrackedSelection(this._selectionId);
+      if (0 !== this._startLineNumberDelta || 0 !== this._endLineNumberDelta) {
+        var o = n.startLineNumber;
+
+        var r = n.startColumn;
+
+        var s = n.endLineNumber;
+
+        var a = n.endColumn;
+        if (0 !== this._startLineNumberDelta) {
+          o += this._startLineNumberDelta;
+          r = 1;
         }
-      }
-      var e = [];
-      for (var f = c.startLineNumber; f <= c.endLineNumber; f++) {
-        e.push(a.getLineContent(f));
-      }
-      var g = e.join("\n");
-      this._isCopyingDown ? b.addEditOperation(new d.Range(c.startLineNumber, 1, c.startLineNumber, 1), g + "\n") : b
-        .addEditOperation(new d.Range(c.endLineNumber, a.getLineMaxColumn(c.endLineNumber), c.endLineNumber, a.getLineMaxColumn(
-          c.endLineNumber)), "\n" + g);
 
-      this._selectionId = b.trackSelection(c);
+        if (0 !== this._endLineNumberDelta) {
+          s += this._endLineNumberDelta;
+          a = 1;
+        }
+
+        n = i.createWithDirection(o, r, s, a, this._selectionDirection);
+      }
+      return n;
     };
 
-    a.prototype.computeCursorState = function(a, b) {
-      var c = b.getTrackedSelection(this._selectionId);
-      this._moveStartPositionUp && (c = c.setEndPosition(c.startLineNumber - 1, 1));
-
-      this._moveEndPositionDown && (c = c.setEndPosition(c.endLineNumber + 1, 1));
-
-      return c;
-    };
-
-    return a;
+    return e;
   }();
-  b.CopyLinesCommand = e;
+  t.CopyLinesCommand = o;
 });

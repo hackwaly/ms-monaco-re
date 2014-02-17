@@ -1,37 +1,21 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a;
+define("vs/editor/contrib/color/colorPicker", ["require", "exports", "vs/nls!vs/editor/editor.main",
+  "vs/base/ui/actions"
+], function(e, t, n, i) {
+  var o = function(e) {
+    function t() {
+      e.call(this, t.ID);
+
+      this.label = n.localize("vs_editor_contrib_color_colorPicker", 0);
     }
-    for (var c in b) {
-      if (b.hasOwnProperty(c)) {
-        a[c] = b[c];
-      }
-    }
-    d.prototype = b.prototype;
+    __extends(t, e);
 
-    a.prototype = new d;
-  };
-
-define(["require", "exports", "vs/nls", "vs/base/ui/actions"], function(a, b, c, d) {
-  var e = c;
-
-  var f = d;
-
-  var g = function(a) {
-    function b() {
-      a.call(this, b.ID);
-
-      this.label = e.localize("color.action.label", "Color Picker Action");
-    }
-    __extends(b, a);
-
-    b.prototype.run = function() {
+    t.prototype.run = function() {
       return null;
     };
 
-    b.ID = "editor.actions.colorPicker.trigger";
+    t.ID = "editor.actions.colorPicker.trigger";
 
-    return b;
-  }(f.Action);
-  b.ColorPickerAction = g;
+    return t;
+  }(i.Action);
+  t.ColorPickerAction = o;
 });

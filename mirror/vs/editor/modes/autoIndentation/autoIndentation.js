@@ -1,104 +1,89 @@
-define(["require", "exports", "vs/editor/modes/modes"], function(a, b, c) {
-  var d = c;
-
-  var e = function() {
-    function a(a) {
-      this.brackets = a;
+define("vs/editor/modes/autoIndentation/autoIndentation", ["require", "exports", "vs/editor/modes/modes"], function(e,
+  t) {
+  var n = function() {
+    function e(e) {
+      this.brackets = e;
     }
-    a.prototype.getElectricBrackets = function() {
-      var a = [];
-
-      var b;
-      for (var c = 0; c < this.brackets.length; c++) {
-        b = this.brackets[c];
-        if (b.isElectric) {
-          a.push(b.close);
+    e.prototype.getElectricBrackets = function() {
+      for (var e, t = [], n = 0; n < this.brackets.length; n++) {
+        e = this.brackets[n];
+        if (e.isElectric) {
+          t.push(e.close);
         }
       }
-      return a;
+      return t;
     };
 
-    a.prototype.onEnter = function(a, b, c) {
-      var e = 0;
-      while (e < b.length && b[e].startIndex < c) {
-        e++;
+    e.prototype.onEnter = function(e, t, n) {
+      for (var i = 0; i < t.length && t[i].startIndex < n;) {
+        i++;
       }
-      var f = b[e - 1];
-      while (e > 0 && f.type === "") {
-        e--;
-        f = b[e - 1];
+      for (var o = t[i - 1]; i > 0 && "" === o.type;) {
+        i--;
+        o = t[i - 1];
       }
-      if (e > 0 && this.tokenTypeIsBracket(f.type) && f.bracket === d.Bracket.Open) {
-        var g = b[e];
-        while (e < b.length && g.type === "") {
-          e++;
-          g = b[e];
+      if (i > 0 && this.tokenTypeIsBracket(o.type) && 1 === o.bracket) {
+        for (var r = t[i]; i < t.length && "" === r.type;) {
+          i++;
+          r = t[i];
         }
-        return g !== undefined && g.type === f.type && g.bracket === d.Bracket.Close ? {
-          indentAction: d.IndentAction.IndentOutdent
+        return void 0 !== r && r.type === o.type && -1 === r.bracket ? {
+          indentAction: 2
         } : {
-          indentAction: d.IndentAction.Indent
+          indentAction: 1
         };
       }
       return null;
     };
 
-    a.prototype.onElectricCharacter = function(a, b, c) {
-      var d;
-      for (d = 0; d < c; d++)
-        if (a[d] !== " " && a[d] !== "	") {
+    e.prototype.onElectricCharacter = function(e, t, n) {
+      var i;
+      for (i = 0; n > i; i++)
+        if (" " !== e[i] && "	" !== e[i]) {
           return null;
         }
       return {
-        matchBracketType: this.tokenTypeFromChar(a[c])
+        matchBracketType: this.tokenTypeFromChar(e[n])
       };
     };
 
-    a.prototype.tokenTypeFromChar = function(a) {
-      var b;
-      for (var c = 0; c < this.brackets.length; c++) {
-        b = this.brackets[c];
-        if (a === b.open || a === b.close) {
-          return b.tokenType;
+    e.prototype.tokenTypeFromChar = function(e) {
+      for (var t, n = 0; n < this.brackets.length; n++)
+        if (t = this.brackets[n], e === t.open || e === t.close) {
+          return t.tokenType;
+        }
+      return null;
+    };
+
+    e.prototype.bracketTypeFromChar = function(e) {
+      for (var t, n = 0; n < this.brackets.length; n++) {
+        if (t = this.brackets[n], e === t.open) {
+          return 1;
+        }
+        if (e === t.close) {
+          return -1;
         }
       }
       return null;
     };
 
-    a.prototype.bracketTypeFromChar = function(a) {
-      var b;
-      for (var c = 0; c < this.brackets.length; c++) {
-        b = this.brackets[c];
-        if (a === b.open) {
-          return d.Bracket.Open;
-        }
-        if (a === b.close) {
-          return d.Bracket.Close;
-        }
-      }
-      return null;
-    };
-
-    a.prototype.tokenTypeIsBracket = function(a) {
-      for (var b = 0; b < this.brackets.length; b++)
-        if (a === this.brackets[b].tokenType) {
+    e.prototype.tokenTypeIsBracket = function(e) {
+      for (var t = 0; t < this.brackets.length; t++)
+        if (e === this.brackets[t].tokenType) {
           return !0;
         }
       return !1;
     };
 
-    a.prototype.characterIsBracket = function(a) {
-      var b;
-      for (var c = 0; c < this.brackets.length; c++) {
-        b = this.brackets[c];
-        if (a === b.open || a === b.close) {
+    e.prototype.characterIsBracket = function(e) {
+      for (var t, n = 0; n < this.brackets.length; n++)
+        if (t = this.brackets[n], e === t.open || e === t.close) {
           return !0;
         }
-      }
       return !1;
     };
 
-    return a;
+    return e;
   }();
-  b.Brackets = e;
+  t.Brackets = n;
 });

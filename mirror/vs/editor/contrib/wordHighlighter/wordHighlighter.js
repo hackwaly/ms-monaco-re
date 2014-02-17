@@ -1,17 +1,9 @@
-define(["require", "exports", "vs/platform/platform", "vs/editor/core/constants", "vs/editor/core/range",
-  "vs/editor/editorExtensions"
-], function(a, b, c, d, e, f) {
-  var g = c;
-
-  var h = d;
-
-  var i = e;
-
-  var j = f;
-
-  var k = function() {
-    function a(a) {
-      var b = this;
+define("vs/editor/contrib/wordHighlighter/wordHighlighter", ["require", "exports", "vs/platform/platform",
+  "vs/editor/core/constants", "vs/editor/core/range", "vs/editor/editorExtensions", "vs/editor/editor"
+], function(e, t, n, i, o, r) {
+  var s = function() {
+    function e(e) {
+      var t = this;
       this.workerRequestTokenId = 0;
 
       this.workerRequest = null;
@@ -24,24 +16,24 @@ define(["require", "exports", "vs/platform/platform", "vs/editor/core/constants"
 
       this.renderDecorationsTimer = -1;
 
-      this.editor = a;
+      this.editor = e;
 
       this.model = this.editor.getModel();
 
       this.toUnhook = [];
 
-      this.toUnhook.push(a.addListener(h.EventType.CursorPositionChanged, function(a) {
-        b._onPositionChanged(a);
+      this.toUnhook.push(e.addListener(i.EventType.CursorPositionChanged, function(e) {
+        t._onPositionChanged(e);
       }));
 
-      this.toUnhook.push(a.addListener(h.EventType.ModelChanged, function(a) {
-        b._stopAll();
+      this.toUnhook.push(e.addListener(i.EventType.ModelChanged, function() {
+        t._stopAll();
 
-        b.model = b.editor.getModel();
+        t.model = t.editor.getModel();
       }));
 
-      this.toUnhook.push(a.addListener("change", function(a) {
-        b._stopAll();
+      this.toUnhook.push(e.addListener("change", function() {
+        t._stopAll();
       }));
 
       this._lastWordRange = null;
@@ -60,29 +52,23 @@ define(["require", "exports", "vs/platform/platform", "vs/editor/core/constants"
 
       this.renderDecorationsTimer = -1;
     }
-    a.prototype._removeDecorations = function() {
-      var a = this;
+    e.prototype._removeDecorations = function() {
       if (this._decorationIds.length > 0) {
-        this.editor.changeDecorations(function(b) {
-          for (var c = 0, d = a._decorationIds.length; c < d; c++) {
-            b.removeDecoration(a._decorationIds[c]);
-          }
-        });
-        this._decorationIds = [];
+        this._decorationIds = this.editor.deltaDecorations(this._decorationIds, []);
       }
     };
 
-    a.prototype._stopAll = function() {
+    e.prototype._stopAll = function() {
       this._lastWordRange = null;
 
       this._removeDecorations();
 
-      if (this.renderDecorationsTimer !== -1) {
+      if (-1 !== this.renderDecorationsTimer) {
         window.clearTimeout(this.renderDecorationsTimer);
         this.renderDecorationsTimer = -1;
       }
 
-      if (this.workerRequest !== null) {
+      if (null !== this.workerRequest) {
         this.workerRequest.cancel();
         this.workerRequest = null;
       }
@@ -93,139 +79,134 @@ define(["require", "exports", "vs/platform/platform", "vs/editor/core/constants"
       }
     };
 
-    a.prototype._onPositionChanged = function(a) {
-      var b = this;
-      if (a.reason !== "explicit") {
+    e.prototype._onPositionChanged = function(e) {
+      var t = this;
+      if ("explicit" !== e.reason) {
         this._stopAll();
-        return;
-      }
-      if (this.editor.getConfiguration().readOnly) {
-        this._stopAll();
-        return;
+        return void 0;
       }
       if (!this.model.getMode().occurrencesSupport) {
         this._stopAll();
-        return;
+        return void 0;
       }
-      var c = this.editor.getSelection();
-      if (c.startLineNumber !== c.endLineNumber) {
+      var n = this.editor.getSelection();
+      if (n.startLineNumber !== n.endLineNumber) {
         this._stopAll();
-        return;
+        return void 0;
       }
-      var d = c.startLineNumber;
+      var i = n.startLineNumber;
 
-      var e = c.startColumn;
+      var r = n.startColumn;
 
-      var f = c.endColumn;
+      var s = n.endColumn;
 
-      var g = this.model.getWordAtPosition({
-        lineNumber: d,
-        column: e
-      }, !0);
-      if (!g || g.startColumn > e || g.endColumn < f) {
+      var a = this.model.getWordAtPosition({
+        lineNumber: i,
+        column: r
+      }, !0, !0);
+      if (!a || a.startColumn > r || a.endColumn < s) {
         this._stopAll();
-        return;
+        return void 0;
       }
-      var h = new i.Range(d, g.startColumn, d, g.endColumn);
-
-      var j = this._lastWordRange && this._lastWordRange.equalsRange(h);
-      for (var k = 0, l = this._decorationIds.length; !j && k < l; k++) {
-        var m = this.model.getDecorationRange(this._decorationIds[k]);
-        if (m && m.startLineNumber === d && m.startColumn <= e && m.endColumn >= f) {
-          j = !0;
+      for (var u = new o.Range(i, a.startColumn, i, a.endColumn), l = this._lastWordRange && this._lastWordRange.equalsRange(
+          u), c = 0, d = this._decorationIds.length; !l && d > c; c++) {
+        var h = this.model.getDecorationRange(this._decorationIds[c]);
+        if (h && h.startLineNumber === i && h.startColumn <= r && h.endColumn >= s) {
+          l = !0;
         }
       }
-      this.lastCursorPositionChangeTime = (new Date).getTime();
-      if (j) {
-        if (this.workerRequestCompleted && this.renderDecorationsTimer !== -1) {
+      if (this.lastCursorPositionChangeTime = (new Date).getTime(), l) {
+        if (this.workerRequestCompleted && -1 !== this.renderDecorationsTimer) {
           window.clearTimeout(this.renderDecorationsTimer);
           this.renderDecorationsTimer = -1;
           this._beginRenderDecorations();
         }
       } else {
         this._stopAll();
-        var n = ++this.workerRequestTokenId;
+        var p = ++this.workerRequestTokenId;
         this.workerRequestCompleted = !1;
 
         this.workerRequest = this.model.getMode().occurrencesSupport.findOccurrences(this.model.getAssociatedResource(),
           this.editor.getPosition());
 
-        this.workerRequest.then(function(a) {
-          if (n === b.workerRequestTokenId) {
-            b.workerRequestCompleted = !0;
-            b.workerRequestValue = a;
-            b._beginRenderDecorations();
+        this.workerRequest.then(function(e) {
+          if (p === t.workerRequestTokenId) {
+            t.workerRequestCompleted = !0;
+            t.workerRequestValue = e;
+            t._beginRenderDecorations();
           }
         }).done();
       }
-      this._lastWordRange = h;
+      this._lastWordRange = u;
     };
 
-    a.prototype._beginRenderDecorations = function() {
-      var a = this;
+    e.prototype._beginRenderDecorations = function() {
+      var e = this;
 
-      var b = (new Date).getTime();
+      var t = (new Date).getTime();
 
-      var c = this.lastCursorPositionChangeTime + 250;
-      b >= c ? (this.renderDecorationsTimer = -1, this.renderDecorations()) : this.renderDecorationsTimer = window.setTimeout(
+      var n = this.lastCursorPositionChangeTime + 250;
+      t >= n ? (this.renderDecorationsTimer = -1, this.renderDecorations()) : this.renderDecorationsTimer = window.setTimeout(
         function() {
-          a.renderDecorations();
-        }, c - b);
+          e.renderDecorations();
+        }, n - t);
     };
 
-    a.prototype.renderDecorations = function() {
+    e.prototype.renderDecorations = function() {
       this.renderDecorationsTimer = -1;
-      var a = [];
-      for (var b = 0, c = this.workerRequestValue.length; b < c; b++) {
-        var d = this.workerRequestValue[b];
+      for (var e = [], t = 0, n = this.workerRequestValue.length; n > t; t++) {
+        var i = this.workerRequestValue[t];
 
-        var e = "wordHighlight";
+        var o = "wordHighlight";
 
-        var f = "rgba(246, 185, 77, 0.7)";
-        if (d.kind && d.kind === "write") {
-          e += "Strong";
-          f = "rgba(249, 206, 130, 0.7)";
+        var r = "rgba(246, 185, 77, 0.7)";
+        if (i.kind && "write" === i.kind) {
+          o += "Strong";
+          r = "rgba(249, 206, 130, 0.7)";
         }
 
-        a.push({
-          range: d.range,
+        e.push({
+          range: i.range,
           options: {
+            stickiness: 1,
             isOverlay: !1,
-            className: e,
-            showInOverviewRuler: f
+            className: o,
+            overviewRuler: {
+              color: r,
+              position: 2
+            }
           }
         });
       }
-      this._decorationIds = this.editor.deltaDecorations(this._decorationIds, a);
+      this._decorationIds = this.editor.deltaDecorations(this._decorationIds, e);
     };
 
-    a.prototype.destroy = function() {
-      this._stopAll();
-      while (this.toUnhook.length > 0) {
+    e.prototype.destroy = function() {
+      for (this._stopAll(); this.toUnhook.length > 0;) {
         this.toUnhook.pop()();
       }
     };
 
-    return a;
+    return e;
   }();
 
-  var l = function() {
-    function a(a) {
-      this.wordHighligher = new k(a);
+  var a = function() {
+    function e(e) {
+      this.wordHighligher = new s(e);
     }
-    a.prototype.getId = function() {
-      return a.ID;
+    e.prototype.getId = function() {
+      return e.ID;
     };
 
-    a.prototype.dispose = function() {
+    e.prototype.dispose = function() {
       this.wordHighligher.destroy();
     };
 
-    a.ID = "editor.contrib.wordHighlighter";
+    e.ID = "editor.contrib.wordHighlighter";
 
-    return a;
+    return e;
   }();
 
-  var m = g.Registry.as(j.Extensions.EditorContributions);
-  m.registerEditorContribution(new g.BaseDescriptor(l));
+  var u = n.Registry.as(r.Extensions.EditorContributions);
+  u.registerEditorContribution(new n.BaseDescriptor(a));
 });

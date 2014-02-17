@@ -1,151 +1,131 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a;
+define("vs/editor/contrib/linesOperations/linesOperations", ["require", "exports", "vs/nls!vs/editor/editor.main",
+  "vs/base/lib/winjs.base", "vs/platform/platform", "vs/platform/actionRegistry", "vs/editor/editorExtensions",
+  "./copyLinesCommand", "./deleteLinesCommand", "./moveLinesCommand"
+], function(e, t, n, i, o, r, s, a, u, l) {
+  var c = function(e) {
+    function t(t, n, i) {
+      e.call(this, t, n);
+
+      this.down = i;
     }
-    for (var c in b) {
-      if (b.hasOwnProperty(c)) {
-        a[c] = b[c];
+    __extends(t, e);
+
+    t.prototype.run = function() {
+      for (var e = [], t = this.editor.getSelections(), n = 0; n < t.length; n++) {
+        e.push(new a.CopyLinesCommand(t[n], this.down));
       }
-    }
-    d.prototype = b.prototype;
+      this.editor.executeCommands(this.id, e);
 
-    a.prototype = new d;
-  };
-
-define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/platform", "vs/platform/actionRegistry",
-  "vs/editor/editorExtensions", "./copyLinesCommand", "./deleteLinesCommand", "./moveLinesCommand"
-], function(a, b, c, d, e, f, g, h, i, j) {
-  var k = c;
-
-  var l = d;
-
-  var m = e;
-
-  var n = f;
-
-  var o = g;
-
-  var p = h;
-
-  var q = i;
-
-  var r = j;
-
-  var s = function(a) {
-    function b(b, c, d) {
-      a.call(this, b, c);
-
-      this.down = d;
-    }
-    __extends(b, a);
-
-    b.prototype.run = function() {
-      var a = [];
-
-      var b = this.editor.getSelections();
-      for (var c = 0; c < b.length; c++) {
-        a.push(new p.CopyLinesCommand(b[c], this.down));
-      }
-      this.editor.executeCommands(this.id, a);
-
-      return l.Promise.as(null);
+      return i.TPromise.as(!0);
     };
 
-    return b;
-  }(o.EditorAction);
+    return t;
+  }(s.EditorAction);
 
-  var t = function(a) {
-    function b(b, c) {
-      a.call(this, b, c, !1);
+  var d = function(e) {
+    function t(t, n) {
+      e.call(this, t, n, !1);
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.ID = "editor.actions.copyLinesUpAction";
+    t.ID = "editor.actions.copyLinesUpAction";
 
-    return b;
-  }(s);
+    return t;
+  }(c);
 
-  var u = function(a) {
-    function b(b, c) {
-      a.call(this, b, c, !0);
+  var h = function(e) {
+    function t(t, n) {
+      e.call(this, t, n, !0);
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.ID = "editor.actions.copyLinesDownAction";
+    t.ID = "editor.actions.copyLinesDownAction";
 
-    return b;
-  }(s);
+    return t;
+  }(c);
 
-  var v = function(a) {
-    function b(b, c, d) {
-      a.call(this, b, c);
+  var p = function(e) {
+    function t(t, n, i) {
+      e.call(this, t, n);
 
-      this.down = d;
+      this.down = i;
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.run = function() {
-      var a = [];
-
-      var b = this.editor.getSelections();
-      for (var c = 0; c < b.length; c++) {
-        a.push(new r.MoveLinesCommand(b[c], this.down));
+    t.prototype.run = function() {
+      for (var e = [], t = this.editor.getSelections(), n = 0; n < t.length; n++) {
+        e.push(new l.MoveLinesCommand(t[n], this.down));
       }
-      this.editor.executeCommands(this.id, a);
+      this.editor.executeCommands(this.id, e);
 
-      return l.Promise.as(null);
+      return i.TPromise.as(!0);
     };
 
-    return b;
-  }(o.EditorAction);
+    return t;
+  }(s.EditorAction);
 
-  var w = function(a) {
-    function b(b, c) {
-      a.call(this, b, c, !1);
+  var f = function(e) {
+    function t(t, n) {
+      e.call(this, t, n, !1);
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.ID = "editor.actions.moveLinesUpAction";
+    t.ID = "editor.actions.moveLinesUpAction";
 
-    return b;
-  }(v);
+    return t;
+  }(p);
 
-  var x = function(a) {
-    function b(b, c) {
-      a.call(this, b, c, !0);
+  var g = function(e) {
+    function t(t, n) {
+      e.call(this, t, n, !0);
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.ID = "editor.actions.moveLinesDownAction";
+    t.ID = "editor.actions.moveLinesDownAction";
 
-    return b;
-  }(v);
+    return t;
+  }(p);
 
-  var y = function(a) {
-    function b(b, c) {
-      a.call(this, b, c);
+  var m = function(e) {
+    function t(t, n) {
+      e.call(this, t, n);
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.run = function() {
-      var a = [];
+    t.prototype.run = function() {
+      var e = this.editor.getSelections().map(function(e) {
+        var t = e.endLineNumber;
+        e.startLineNumber < e.endLineNumber && 1 === e.endColumn && (t -= 1);
 
-      var b = this.editor.getSelections();
-      for (var c = 0; c < b.length; c++) {
-        a.push(new q.DeleteLinesCommand(b[c]));
+        return {
+          startLineNumber: e.startLineNumber,
+          endLineNumber: t,
+          positionColumn: e.positionColumn
+        };
+      });
+      e.sort(function(e, t) {
+        return e.startLineNumber - t.startLineNumber;
+      });
+      for (var t = [], n = e[0], o = 1; o < e.length; o++) {
+        n.endLineNumber + 1 === e[o].startLineNumber ? n.endLineNumber = e[o].endLineNumber : (t.push(n), n = e[o]);
       }
-      this.editor.executeCommands(this.id, a);
+      t.push(n);
+      var r = t.map(function(e) {
+        return new u.DeleteLinesCommand(e.startLineNumber, e.endLineNumber, e.positionColumn);
+      });
+      this.editor.executeCommands(this.id, r);
 
-      return l.Promise.as(null);
+      return i.TPromise.as(!0);
     };
 
-    b.ID = "editor.action.deleteLines";
+    t.ID = "editor.action.deleteLines";
 
-    return b;
-  }(o.EditorAction);
+    return t;
+  }(s.EditorAction);
 
-  var z = m.Registry.as(o.Extensions.EditorContributions);
-  z.registerEditorContribution(new n.ActionDescriptor(y, y.ID, k.localize("lines.delete", "Delete line"), {
+  var v = o.Registry.as(s.Extensions.EditorContributions);
+  v.registerEditorContribution(new r.ActionDescriptor(m, m.ID, n.localize(
+    "vs_editor_contrib_linesOperations_linesOperations", 0), {
     ctrlCmd: !0,
     key: "D"
   }, {
@@ -153,23 +133,27 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
     key: "Delete"
   }));
 
-  z.registerEditorContribution(new n.ActionDescriptor(x, x.ID, k.localize("lines.moveDown", "Move line down"), {
+  v.registerEditorContribution(new r.ActionDescriptor(g, g.ID, n.localize(
+    "vs_editor_contrib_linesOperations_linesOperations", 1), {
     alt: !0,
     key: "DownArrow"
   }));
 
-  z.registerEditorContribution(new n.ActionDescriptor(w, w.ID, k.localize("lines.moveUp", "Move line up"), {
+  v.registerEditorContribution(new r.ActionDescriptor(f, f.ID, n.localize(
+    "vs_editor_contrib_linesOperations_linesOperations", 2), {
     alt: !0,
     key: "UpArrow"
   }));
 
-  z.registerEditorContribution(new n.ActionDescriptor(u, u.ID, k.localize("lines.copyDown", "Copy line down"), {
+  v.registerEditorContribution(new r.ActionDescriptor(h, h.ID, n.localize(
+    "vs_editor_contrib_linesOperations_linesOperations", 3), {
     alt: !0,
     shift: !0,
     key: "DownArrow"
   }));
 
-  z.registerEditorContribution(new n.ActionDescriptor(t, t.ID, k.localize("lines.copyUp", "Copy line up"), {
+  v.registerEditorContribution(new r.ActionDescriptor(d, d.ID, n.localize(
+    "vs_editor_contrib_linesOperations_linesOperations", 4), {
     alt: !0,
     shift: !0,
     key: "UpArrow"

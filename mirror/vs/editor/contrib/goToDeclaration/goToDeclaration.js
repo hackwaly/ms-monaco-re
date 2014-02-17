@@ -1,309 +1,289 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a;
+define("vs/editor/contrib/goToDeclaration/goToDeclaration", ["require", "exports", "vs/nls!vs/editor/editor.main",
+  "vs/base/env", "vs/base/network", "vs/base/async", "vs/base/strings", "vs/base/errors", "vs/base/lib/winjs.base",
+  "vs/platform/platform", "vs/platform/services", "vs/platform/actionRegistry", "vs/base/dom/builder",
+  "vs/editor/core/embeddedCodeEditorWidget", "vs/editor/editorExtensions",
+  "vs/editor/contrib/zoneWidget/peekViewWidget", "vs/editor/core/constants", "vs/editor/editor",
+  "vs/editor/core/range", "vs/editor/modes/modesExtensions", "vs/editor/core/editorState",
+  "vs/editor/core/config/config", "vs/css!./goToDeclaration"
+], function(e, t, n, i, o, r, s, a, u, l, c, d, h, p, f, g, m, v, y, _, b, C) {
+  var w = function(e) {
+    function t(t, n) {
+      e.call(this, t, n, f.Precondition.WidgetFocus | f.Precondition.ShowInContextMenu);
     }
-    for (var c in b) {
-      if (b.hasOwnProperty(c)) {
-        a[c] = b[c];
-      }
-    }
-    d.prototype = b.prototype;
+    __extends(t, e);
 
-    a.prototype = new d;
-  };
-
-define(["require", "exports", "vs/nls", "vs/base/env", "vs/base/network", "vs/base/async", "vs/base/strings",
-  "vs/base/errors", "vs/base/lib/winjs.base", "vs/platform/platform", "vs/platform/services",
-  "vs/platform/actionRegistry", "vs/base/dom/builder", "vs/editor/core/codeEditorWidget",
-  "vs/editor/editorExtensions", "vs/editor/contrib/zoneWidget/zoneWidget", "vs/editor/core/constants",
-  "vs/editor/editor", "vs/editor/modes/modesExtensions", "vs/css!./goToDeclaration"
-], function(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s) {
-  var t = c;
-
-  var u = d;
-
-  var v = e;
-
-  var w = f;
-
-  var x = g;
-
-  var y = h;
-
-  var z = i;
-
-  var A = j;
-
-  var B = k;
-
-  var C = l;
-
-  var D = m;
-
-  var E = n;
-
-  var F = o;
-
-  var G = p;
-
-  var H = q;
-
-  var I = r;
-
-  var J = s;
-
-  var K = function(a) {
-    function b(b, c) {
-      a.call(this, b, c, F.Precondition.TextFocus);
-
-      this.editorService = null;
-
-      this.messageService = null;
-    }
-    __extends(b, a);
-
-    b.prototype.injectEditorService = function(a) {
-      this.editorService = a;
+    t.prototype.injectEditorService = function(e) {
+      this.editorService = e;
 
       this.updateEnablementState();
     };
 
-    b.prototype.injectMessageService = function(a) {
-      this.messageService = a;
+    t.prototype.injectMessageService = function(e) {
+      this.messageService = e;
 
       this.updateEnablementState();
     };
 
-    b.prototype.injectRequestService = function(a) {
-      this.requestService = a;
+    t.prototype.injectRequestService = function(e) {
+      this.requestService = e;
     };
 
-    b.prototype.getEnablementState = function() {
-      return a.prototype.getEnablementState.call(this) && !! this.editorService && !! this.messageService && !! this.editor
+    t.prototype.getEnablementState = function() {
+      return e.prototype.getEnablementState.call(this) && !! this.editorService && !! this.messageService && !! this.editor
         .getModel().getMode().declarationSupport;
     };
 
-    b.prototype.run = function() {
-      var a = this;
+    t.prototype.run = function() {
+      var e = this;
 
-      var b = this.editor.getModel();
+      var t = this.editor.getModel();
 
-      var c = this.editor.getModel().getMode().declarationSupport;
+      var n = this.editor.getPosition();
 
-      var d = this.editor.getPosition();
-
-      var e = this.resolve(b.getAssociatedResource(), {
-        lineNumber: d.lineNumber,
-        column: d.column
+      var i = this.resolve(t.getAssociatedResource(), {
+        lineNumber: n.lineNumber,
+        column: n.column
       });
-      return e.then(function(b) {
-        if (!b) return;
-        a.editorService.openEditor({
-          path: a.requestService.getPath("root", new v.URL(b.resourceUrl)),
+      return i.then(function(t) {
+        return t ? (e.editorService.openEditor({
+          resource: new o.URL(t.resourceUrl),
           options: {
-            selection: b.range
+            selection: t.range
           }
-        });
-      }, function(b) {
-        a.messageService.show(B.Severity.Error, b);
+        }), !0) : !1;
+      }, function(t) {
+        e.messageService.show(2, t);
+
+        return !1;
       });
     };
 
-    b.prototype.resolve = function(a, b) {
-      return z.Promise.as(null);
+    t.prototype.resolve = function() {
+      return u.TPromise.as(null);
     };
 
-    return b;
-  }(F.EditorAction);
-  b.GoToTypeAction = K;
-  var L = function(a) {
-    function b(b, c) {
-      a.call(this, b, c);
+    return t;
+  }(f.EditorAction);
+  t.GoToTypeAction = w;
+  var E = function(e) {
+    function t(t, n) {
+      e.call(this, t, n);
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.getEnablementState = function() {
-      return a.prototype.getEnablementState.call(this) && !! this.editor.getModel().getMode().declarationSupport.findTypeDeclaration;
+    t.prototype.getEnablementState = function() {
+      return !1;
     };
 
-    b.prototype.resolve = function(a, b) {
-      return this.editor.getModel().getMode().declarationSupport.findTypeDeclaration(a, b);
+    t.prototype.resolve = function(e, t) {
+      return this.editor.getModel().getMode().declarationSupport.findTypeDeclaration(e, t);
     };
 
-    b.ID = "editor.actions.goToTypeDeclaration";
+    t.ID = "editor.actions.goToTypeDeclaration";
 
-    return b;
-  }(K);
-  b.GoToTypeDeclarationActions = L;
-  var M = function(a) {
-    function b(b, c) {
-      a.call(this, b, c);
+    return t;
+  }(w);
+  t.GoToTypeDeclarationActions = E;
+  var S = function(e) {
+    function t(t, n) {
+      e.call(this, t, n);
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.getEnablementState = function() {
-      return a.prototype.getEnablementState.call(this) && !! this.editor.getModel().getMode().declarationSupport.findDeclaration;
+    t.prototype.getEnablementState = function() {
+      return e.prototype.getEnablementState.call(this) && !! this.editor.getModel().getMode().declarationSupport.findDeclaration;
     };
 
-    b.prototype.resolve = function(a, b) {
-      return this.editor.getModel().getMode().declarationSupport.findDeclaration(a, b);
+    t.prototype.resolve = function(e, t) {
+      return this.editor.getModel().getMode().declarationSupport.findDeclaration(e, t);
     };
 
-    b.ID = "editor.actions.goToDeclaration";
+    t.ID = "editor.actions.goToDeclaration";
 
-    return b;
-  }(K);
-  b.GoToDeclarationAction = M;
-  var N = function(a) {
-    function b(b, c, d) {
-      a.call(this, b, {
-        showFrame: !0,
-        showAbove: !0,
-        frameColor: "#EFEFF2"
+    return t;
+  }(w);
+  t.GoToDeclarationAction = S;
+  var x = function(e) {
+    function t(t, n, i) {
+      e.call(this, t, {
+        frameColor: "#007ACC",
+        showFrame: !1,
+        showArrow: !0
       });
 
-      this.model = c;
+      this.requestService = n;
 
-      this.range = d;
-
-      this.widget = null;
-
-      this.widgetContainer = null;
+      this.injectorService = i.createChild({
+        peekViewService: this
+      });
 
       this.create();
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.fillContainer = function(a) {
-      var b = this;
-      D.withElement(a).addClass("preview-zone-widget").div(function(a) {
-        b.widgetContainer = a.asContainer().addClass("preview");
-        var c = b.editor.getConfiguration();
-        c.readOnly = !0;
+    t.prototype._onTitleClick = function(e) {
+      if (this.widget && this.widget.getModel()) {
+        var n = this.widget.getModel();
 
-        c.scrollBeyondLastLine = !1;
+        var i = this.widget.getPosition().lineNumber;
 
-        c.scrollbar = {
-          useShadows: !1
-        };
-
-        b.widget = new E.CodeEditorWidget(a.getHTMLElement(), c, null);
-
-        b.widget.setModel(b.model);
-
-        b.reveal();
-      });
+        var o = new y.Range(i, 1, i, n.getLineMaxColumn(i));
+        this.emit(t.Events.HeaderTabClick, {
+          reference: n.getAssociatedResource(),
+          range: o,
+          originalEvent: e
+        });
+      }
     };
 
-    b.prototype.reveal = function() {
+    t.prototype._fillBody = function(e) {
+      var t = h.$(e).addClass("preview-zone-widget preview");
+
+      var n = {
+        scrollBeyondLastLine: !1,
+        scrollbar: C.Config.editor.scrollbar,
+        overviewRulerLanes: 2
+      };
+      this.widget = new p.EmbeddedCodeEditorWidget(this.editor, t.getHTMLElement(), n, this.injectorService);
+    };
+
+    t.prototype.showPreview = function(e, t) {
+      this.widget.setModel(t.model);
+
       this.widget.setPosition({
-        lineNumber: this.range.startLineNumber,
-        column: this.range.startColumn
+        lineNumber: t.range.startLineNumber,
+        column: t.range.startColumn
       }, !0, !0, !0);
+
+      this.setTitle(t.title, t.subtitle);
+
+      this.show(e, 18);
     };
 
-    b.prototype.doLayout = function(a) {
-      this.widgetContainer.style({
-        height: a + "px"
-      });
+    t.prototype.doLayout = function(t) {
+      e.prototype.doLayout.call(this, t);
 
       this.widget.layout();
     };
 
-    b.prototype.onWidth = function(a) {
+    t.prototype.onWidth = function() {
       this.widget.layout();
     };
 
-    b.prototype.dispose = function() {
-      this.widget.destroy();
+    t.prototype.dispose = function() {
+      this.widget.dispose();
 
-      a.prototype.dispose.call(this);
+      e.prototype.dispose.call(this);
     };
 
-    return b;
-  }(G.ZoneWidget);
+    t.Events = {
+      HeaderTabClick: "headerTabClick"
+    };
 
-  var O = function(a) {
-    function b(b, c) {
-      var d = this;
-      a.call(this, b, c, F.Precondition.TextFocus);
+    return t;
+  }(g.PeekViewWidget);
 
-      this.handlerService = null;
+  var L = function(e) {
+    function t(t, n) {
+      var i = this;
+      e.call(this, t, n, f.Precondition.WidgetFocus | f.Precondition.ShowInContextMenu);
 
-      this.editorService = null;
-
-      this.toUnhook.push(b.addListener(H.EventType.ModelChanged, function() {
-        d.clear();
+      this.toUnhook.push(t.addListener(m.EventType.ModelChanged, function() {
+        return i.clear();
       }));
-
-      this.widget = null;
-
-      this.closeBinding = null;
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.injectEditorService = function(a) {
-      this.editorService = a;
+    t.prototype.injectEditorService = function(e) {
+      this.editorService = e;
     };
 
-    b.prototype.injectRequestService = function(a) {
-      this.requestService = a;
+    t.prototype.injectInjectorService = function(e) {
+      this.injectorService = e;
     };
 
-    b.prototype.injectionDone = function() {
+    t.prototype.injectRequestService = function(e) {
+      this.requestService = e;
+    };
+
+    t.prototype.injectPeekViewService = function(e) {
+      this.peekViewService = e;
+    };
+
+    t.prototype.injectionDone = function() {
       this.updateEnablementState();
     };
 
-    b.prototype.getEnablementState = function() {
-      return a.prototype.getEnablementState.call(this) && !! this.editorService && !! this.handlerService && !! this.editor
-        .getModel().getMode().declarationSupport && !! this.editor.getModel().getMode().declarationSupport.findDeclaration;
+    t.prototype.getEnablementState = function() {
+      return !(this.peekViewService && this.peekViewService.isActive || !e.prototype.getEnablementState.call(this) || !
+        this.editorService || !this.handlerService || !this.editor.getModel().getMode().declarationSupport || !this.editor
+        .getModel().getMode().declarationSupport.findDeclaration);
     };
 
-    b.prototype.run = function() {
-      var a = this;
+    t.prototype.run = function() {
+      var e = this;
       this.clear();
-      var b = this.editor.getModel();
+      var t = this.editor.getModel();
 
-      var c = this.editor.getModel().getMode().declarationSupport;
+      var i = this.editor.getModel().getMode().declarationSupport;
 
-      var d = this.editor.getPosition();
+      var r = this.editor.getPosition();
 
-      var e = {
-        lineNumber: d.lineNumber,
-        column: d.column
+      var s = {
+        lineNumber: r.lineNumber,
+        column: r.column
       };
-      return c.findDeclaration(b.getAssociatedResource(), e).then(function(b) {
-        if (!b || !b.preview) {
-          return z.Promise.as(null);
-        }
-        var c = {
-          path: a.requestService.getPath("root", new v.URL(b.resourceUrl))
-        };
-        return a.editorService.resolveEditorModel(c).then(function(c) {
-          a.widget = new N(a.editor, c.getTextEditorModel(), b.range);
+      return i.findDeclaration(t.getAssociatedResource(), s).then(function(t) {
+        return t && t.preview ? e.editorService.resolveEditorModel({
+          resource: new o.URL(t.resourceUrl)
+        }).then(function(i) {
+          var s = {
+            model: i.textEditorModel,
+            range: t.range,
+            title: n.localize("vs_editor_contrib_goToDeclaration_goToDeclaration", 0),
+            subtitle: ""
+          };
+          if (s.model.getAssociatedResource().getScheme() !== o.schemas.inMemory) {
+            var u = e.requestService.getPath("root", s.model.getAssociatedResource());
 
-          a.widget.show(d, 18);
+            var l = u.lastIndexOf("/");
+            s.title = u.substring(l + 1);
 
-          a.widget.reveal();
-          var e = (new Date).getTime();
-          a.closeBinding = a.handlerService.bind({
+            s.subtitle = u.substring(0, l + 1);
+          }
+          e.widget = new x(e.editor, e.requestService, e.injectorService);
+
+          e.widget.showPreview(r, s);
+          var c = (new Date).getTime();
+          e.toUnhook.push(e.widget.addListener(x.Events.HeaderTabClick, function(t) {
+            e.editorService.openEditor({
+              resource: t.reference,
+              options: {
+                selection: t.range
+              }
+            }, t.originalEvent.ctrlKey || t.originalEvent.metaKey).done(null, a.onUnexpectedError);
+
+            e.clear();
+          }));
+
+          e.closeBinding = e.handlerService.bind({
             key: "Escape"
           }, function() {
-            a.telemetryService.log("zoneWidgetShown", {
+            e.telemetryService.log("zoneWidgetShown", {
               mode: "go to declaration",
-              elapsedTime: (new Date).getTime() - e
+              elapsedTime: (new Date).getTime() - c
             });
 
-            return !!a.clear();
+            return !!e.clear();
           }, {
-            id: a.id
+            id: e.id
           });
-        });
+        }) : u.Promise.as(null);
       });
     };
 
-    b.prototype.clear = function() {
-      if (this.closeBinding !== null) {
+    t.prototype.clear = function() {
+      if (this.closeBinding) {
         this.closeBinding.dispose();
         this.closeBinding = null;
       }
@@ -314,187 +294,179 @@ define(["require", "exports", "vs/nls", "vs/base/env", "vs/base/network", "vs/ba
       }
     };
 
-    b.prototype.dispose = function() {
+    t.prototype.dispose = function() {
       this.clear();
 
-      a.prototype.dispose.call(this);
+      e.prototype.dispose.call(this);
     };
 
-    b.ID = "editor.actions.previewDeclaration";
+    t.ID = "editor.actions.previewDeclaration";
 
-    return b;
-  }(F.EditorAction);
-  b.PreviewDeclarationAction = O;
-  var P = new C.ActionDescriptor(O, O.ID, t.localize("actions.previewDecl.label", "View declaration"));
-
-  var Q = new C.ActionDescriptor(M, M.ID, t.localize("actions.goToDecl.label", "Go to definition"), {
-    ctrlCmd: !u.browser.isMacintosh,
+    return t;
+  }(f.EditorAction);
+  t.PreviewDeclarationAction = L;
+  var T = new d.ActionDescriptor(L, L.ID, n.localize("vs_editor_contrib_goToDeclaration_goToDeclaration", 1), {
+    alt: !0,
     key: "F12"
   });
 
-  var R = new C.ActionDescriptor(L, L.ID, t.localize("actions.gotoTypeDecl.label", "Go to type"), {
+  var N = new d.ActionDescriptor(S, S.ID, n.localize("vs_editor_contrib_goToDeclaration_goToDeclaration", 2), {
+    ctrlCmd: !i.browser.isMacintosh,
+    key: "F12"
+  });
+
+  var M = new d.ActionDescriptor(E, E.ID, n.localize("vs_editor_contrib_goToDeclaration_goToDeclaration", 3), {
     ctrlCmd: !0,
-    shift: !u.browser.isMacintosh,
+    shift: !i.browser.isMacintosh,
     key: "F12"
   });
 
-  var S = A.Registry.as(F.Extensions.EditorContributions);
-  S.registerEditorContribution(Q);
+  var D = l.Registry.as(f.Extensions.EditorContributions);
+  D.registerEditorContribution(T);
 
-  S.registerEditorContribution(P);
+  D.registerEditorContribution(N);
 
-  S.registerEditorContribution(R);
-  var T = function() {
-    function a(a) {
-      var b = this;
+  D.registerEditorContribution(M);
+  var I = function() {
+    function e(e) {
+      var t = this;
       this.toUnhook = [];
 
       this.decorations = [];
 
-      this.editor = a;
+      this.editor = e;
 
-      this.throttler = new w.Throttler;
+      this.throttler = new r.Throttler;
 
-      this.toUnhook.push(this.editor.addListener(H.EventType.MouseUp, function(a) {
-        return b.onEditorMouseUp(a);
+      this.toUnhook.push(this.editor.addListener(m.EventType.MouseUp, function(e) {
+        return t.onEditorMouseUp(e);
       }));
 
-      this.toUnhook.push(this.editor.addListener(H.EventType.MouseMove, function(a) {
-        return b.onEditorMouseMove(a);
+      this.toUnhook.push(this.editor.addListener(m.EventType.MouseMove, function(e) {
+        return t.onEditorMouseMove(e);
       }));
 
-      this.toUnhook.push(this.editor.addListener(H.EventType.KeyDown, function(a) {
-        return b.onEditorKeyDown(a);
+      this.toUnhook.push(this.editor.addListener(m.EventType.KeyDown, function(e) {
+        return t.onEditorKeyDown(e);
       }));
 
-      this.toUnhook.push(this.editor.addListener(H.EventType.KeyUp, function(a) {
-        return b.onEditorKeyUp(a);
+      this.toUnhook.push(this.editor.addListener(m.EventType.KeyUp, function(e) {
+        return t.onEditorKeyUp(e);
       }));
 
-      this.toUnhook.push(this.editor.addListener(H.EventType.ModelChanged, function(a) {
-        return b.removeDecorations();
+      this.toUnhook.push(this.editor.addListener(m.EventType.ModelChanged, function() {
+        return t.removeDecorations();
       }));
 
-      this.toUnhook.push(this.editor.addListener("change", function(a) {
-        return b.removeDecorations();
+      this.toUnhook.push(this.editor.addListener("change", function() {
+        return t.removeDecorations();
       }));
     }
-    a.prototype.injectEditorService = function(a) {
-      this.editorService = a;
+    e.prototype.injectEditorService = function(e) {
+      this.editorService = e;
     };
 
-    a.prototype.injectRequestService = function(a) {
-      this.requestService = a;
+    e.prototype.injectRequestService = function(e) {
+      this.requestService = e;
     };
 
-    a.prototype.injectMessageService = function(a) {
-      this.messageService = a;
+    e.prototype.injectMessageService = function(e) {
+      this.messageService = e;
     };
 
-    a.prototype.injectionDone = function() {
+    e.prototype.injectionDone = function() {
       this.hasRequiredServices = !! this.messageService && !! this.requestService && !! this.editorService;
     };
 
-    a.prototype.onEditorMouseMove = function(b, c) {
-      var d = this;
-      this.lastMouseEvent = b;
-      if (this.isEnabled(b, c)) {
-        var e = b.target.position;
+    e.prototype.onEditorMouseMove = function(t, n) {
+      var i = this;
+      if (this.lastMouseEvent = t, this.isEnabled(t, n)) {
+        var o = t.target.position;
 
-        var f = e ? this.editor.getModel().getWordAtPosition(e, !1) : null;
-        if (!f) {
+        var r = o ? this.editor.getModel().getWordAtPosition(o, !1) : null;
+        if (!r) {
           this.removeDecorations();
-          return;
+          return void 0;
         }
-        if (this.currentWordUnderMouse && this.currentPositionUnderMouse) {
-          if (!(this.currentPositionUnderMouse.lineNumber !== e.lineNumber)) {
-            this.currentWordUnderMouse.startColumn !== f.startColumn;
-          }
-        }
+        this.currentPositionUnderMouse = o;
 
-        this.currentPositionUnderMouse = e;
-
-        this.currentWordUnderMouse = f;
-
+        this.currentWordUnderMouse = r;
+        var l = b.capture(this.editor, 2, 0, 1, 3);
         this.throttler.queue(function() {
-          return d.findDefinition(b.target);
-        }).done(function(c) {
-          if (c && c.range && (c.range.startColumn !== f.startColumn || c.range.startLineNumber !== b.target.position
+          return l.validate() ? i.findDefinition(t.target) : u.Promise.as(null);
+        }).done(function(n) {
+          if (n && n.range && (n.range.startColumn !== r.startColumn || n.range.startLineNumber !== t.target.position
             .lineNumber)) {
-            var g = "";
-            if (c.preview && c.preview.text && c.preview.range) {
-              var h = c.preview.text.split("\n");
+            var a = "";
+            if (n.preview && n.preview.text && n.preview.range) {
+              var u = n.preview.text.split("\n");
 
-              var i = [];
+              var l = [];
 
-              var j = c.preview.range;
+              var c = n.preview.range;
 
-              var k = j.startLineNumber - 1;
+              var d = c.startLineNumber - 1;
 
-              var l = j.endLineNumber - 1;
-              if (k < h.length && l < h.length) {
-                var m = null;
-                for (var n = k; i.length < a.MAX_SOURCE_PREVIEW_LINES && n <= l; n++) {
-                  var o;
-                  m === null ? (o = x.trim(x.trim(h[n], "	")), m = h[n].substr(0, h[n].length - o.length)) : h[n].indexOf(
-                    m) === 0 ? o = h[n].substring(m.length).replace("	", "    ") : o = h[n];
+              var h = c.endLineNumber - 1;
+              if (d < u.length && h < u.length) {
+                for (var p = null, f = d; l.length < e.MAX_SOURCE_PREVIEW_LINES && h >= f; f++) {
+                  var g;
+                  null === p ? (g = s.trim(s.trim(u[f], "	")), p = u[f].substr(0, u[f].length - g.length)) : g = 0 ===
+                    u[f].indexOf(p) ? u[f].substring(p.length).replace("	", "    ") : u[f];
 
-                  if (o) {
-                    i.push(o);
+                  if (g) {
+                    l.push(g);
                   }
                 }
-                g = i.join("\n");
+                a = l.join("\n");
 
-                if (l - k >= a.MAX_SOURCE_PREVIEW_LINES) {
-                  g += "\n…";
+                if (h - d >= e.MAX_SOURCE_PREVIEW_LINES) {
+                  a += "\n…";
                 }
               }
             }
-            d.addDecoration({
-              startLineNumber: e.lineNumber,
-              startColumn: f.startColumn,
-              endLineNumber: e.lineNumber,
-              endColumn: f.endColumn
-            }, g);
+            i.addDecoration({
+              startLineNumber: o.lineNumber,
+              startColumn: r.startColumn,
+              endLineNumber: o.lineNumber,
+              endColumn: r.endColumn
+            }, a);
           } else {
-            d.removeDecorations();
+            i.removeDecorations();
           }
-        }, y.onUnexpectedError);
+        }, a.onUnexpectedError);
       } else {
         this.removeDecorations();
       }
     };
 
-    a.prototype.addDecoration = function(a, b) {
-      var c = null;
-      if (b) {
-        c = [{
-          tagName: "div",
-          className: "goto-definition-link-hover",
-          children: [J.TextToHtmlTokenizer.tokenize(b, this.editor.getModel().getMode())]
-        }];
-      }
-      var d = [];
-      d.push({
-        range: a,
-        options: {
-          inlineClassName: "goto-definition-link",
-          htmlMessage: c
+    e.prototype.addDecoration = function(e, t) {
+      var n = this.editor.getModel();
+      if (n) {
+        var i = null;
+        if (t) {
+          i = [{
+            tagName: "div",
+            className: "goto-definition-link-hover",
+            children: [_.TextToHtmlTokenizer.tokenize(t, n.getMode())]
+          }];
         }
-      });
-
-      this.decorations = this.editor.deltaDecorations(this.decorations, d);
-    };
-
-    a.prototype.removeDecorations = function() {
-      var a = this;
-      if (this.decorations.length > 0) {
-        this.editor.changeDecorations(function(b) {
-          for (var c = 0, d = a.decorations.length; c < d; c++) {
-            b.removeDecoration(a.decorations[c]);
+        var o = [];
+        o.push({
+          range: e,
+          options: {
+            inlineClassName: "goto-definition-link",
+            htmlMessage: i
           }
         });
-        this.decorations = [];
+
+        this.decorations = this.editor.deltaDecorations(this.decorations, o);
+      }
+    };
+
+    e.prototype.removeDecorations = function() {
+      if (this.decorations.length > 0) {
+        this.decorations = this.editor.deltaDecorations(this.decorations, []);
       }
 
       this.currentWordUnderMouse = null;
@@ -502,90 +474,93 @@ define(["require", "exports", "vs/nls", "vs/base/env", "vs/base/network", "vs/ba
       this.currentPositionUnderMouse = null;
     };
 
-    a.prototype.onEditorKeyDown = function(b) {
-      if (b.key === a.TRIGGER_KEY_VALUE && this.lastMouseEvent) {
-        this.onEditorMouseMove(this.lastMouseEvent, b);
+    e.prototype.onEditorKeyDown = function(t) {
+      if (t.key === e.TRIGGER_KEY_VALUE && this.lastMouseEvent) {
+        this.onEditorMouseMove(this.lastMouseEvent, t);
       }
     };
 
-    a.prototype.onEditorKeyUp = function(b) {
-      if (b.key === a.TRIGGER_KEY_VALUE) {
+    e.prototype.onEditorKeyUp = function(t) {
+      if (t.key === e.TRIGGER_KEY_VALUE) {
         this.removeDecorations();
       }
     };
 
-    a.prototype.onEditorMouseUp = function(a) {
-      var b = this;
-      if (this.isEnabled(a)) {
-        this.gotoDefinition(a.target).done(function() {
-          b.removeDecorations();
-        }, function(a) {
-          b.removeDecorations();
+    e.prototype.onEditorMouseUp = function(e) {
+      var t = this;
+      if (this.isEnabled(e)) {
+        this.gotoDefinition(e.target, e.event.altKey).done(function() {
+          t.removeDecorations();
+        }, function(e) {
+          t.removeDecorations();
 
-          y.onUnexpectedError(a);
+          a.onUnexpectedError(e);
         });
       }
     };
 
-    a.prototype.isEnabled = function(b, c) {
-      return this.hasRequiredServices && this.editor.getConfiguration().gotoDefinitionWithMouse && this.editor.getModel() &&
-        b.target.type === I.MouseTargetType.CONTENT_TEXT && (b.event[a.TRIGGER_MODIFIER] || c && c.key === a.TRIGGER_KEY_VALUE) && !!
-        this.editor.getModel().getMode().declarationSupport;
+    e.prototype.isEnabled = function(t, n) {
+      return this.hasRequiredServices && this.editor.getModel() && (i.browser.isIE11orEarlier || t.event.detail <= 1) &&
+        6 === t.target.type && (t.event[e.TRIGGER_MODIFIER] || n && n.key === e.TRIGGER_KEY_VALUE) && !! this.editor.getModel()
+        .getMode().declarationSupport;
     };
 
-    a.prototype.findDefinition = function(a) {
-      var b = this.editor.getModel();
-
-      var c = this.editor.getModel().getMode().declarationSupport;
-
-      var d = a.position;
-      return this.editor.getModel().getMode().declarationSupport.findDeclaration(b.getAssociatedResource(), {
-        lineNumber: d.lineNumber,
-        column: d.column
+    e.prototype.findDefinition = function(e) {
+      var t = this.editor.getModel();
+      if (!t) {
+        return u.Promise.as(null);
+      }
+      var n = e.position;
+      return t.getMode().declarationSupport.findDeclaration(t.getAssociatedResource(), {
+        lineNumber: n.lineNumber,
+        column: n.column
       });
     };
 
-    a.prototype.gotoDefinition = function(a) {
-      var b = this;
-      return this.findDefinition(a).then(function(c) {
-        var d = a.position;
+    e.prototype.gotoDefinition = function(e, t) {
+      var n = this;
 
-        var e = b.editor.getModel().getWordAtPosition(d, !1);
-        if (c && c.range && (c.range.startColumn !== e.startColumn || c.range.startLineNumber !== a.position.lineNumber)) {
-          return b.editorService.openEditor({
-            path: b.requestService.getPath("root", new v.URL(c.resourceUrl)),
-            options: {
-              selection: {
-                startLineNumber: c.range.startLineNumber,
-                startColumn: c.range.startColumn,
-                endLineNumber: c.range.startLineNumber,
-                endColumn: c.range.endColumn
+      var i = b.capture(this.editor, 2, 0, 1, 3);
+      return this.findDefinition(e).then(function(r) {
+        if (i.validate()) {
+          var s = e.position;
+
+          var a = n.editor.getModel().getWordAtPosition(s, !1);
+          return r && r.range && (r.range.startColumn !== a.startColumn || r.range.startLineNumber !== e.position.lineNumber) ?
+            n.editorService.openEditor({
+              resource: new o.URL(r.resourceUrl),
+              options: {
+                selection: {
+                  startLineNumber: r.range.startLineNumber,
+                  startColumn: r.range.startColumn,
+                  endLineNumber: r.range.startLineNumber,
+                  endColumn: r.range.endColumn
+                }
               }
-            }
-          });
+            }, t) : void 0;
         }
       });
     };
 
-    a.prototype.getId = function() {
-      return a.ID;
+    e.prototype.getId = function() {
+      return e.ID;
     };
 
-    a.prototype.dispose = function() {
-      while (this.toUnhook.length > 0) {
+    e.prototype.dispose = function() {
+      for (; this.toUnhook.length > 0;) {
         this.toUnhook.pop()();
       }
     };
 
-    a.ID = "editor.contrib.gotodefinitionwithmouse";
+    e.ID = "editor.contrib.gotodefinitionwithmouse";
 
-    a.TRIGGER_MODIFIER = u.browser.isMacintosh ? "metaKey" : "ctrlKey";
+    e.TRIGGER_MODIFIER = i.browser.isMacintosh ? "metaKey" : "ctrlKey";
 
-    a.TRIGGER_KEY_VALUE = u.browser.isMacintosh ? "Meta" : "Ctrl";
+    e.TRIGGER_KEY_VALUE = i.browser.isMacintosh ? "Meta" : "Ctrl";
 
-    a.MAX_SOURCE_PREVIEW_LINES = 7;
+    e.MAX_SOURCE_PREVIEW_LINES = 7;
 
-    return a;
+    return e;
   }();
-  S.registerEditorContribution(new A.BaseDescriptor(T));
+  D.registerEditorContribution(new l.BaseDescriptor(I));
 });

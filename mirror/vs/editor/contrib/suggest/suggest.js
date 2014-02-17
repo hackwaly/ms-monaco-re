@@ -1,52 +1,15 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a;
-    }
-    for (var c in b) {
-      if (b.hasOwnProperty(c)) {
-        a[c] = b[c];
-      }
-    }
-    d.prototype = b.prototype;
+define("vs/editor/contrib/suggest/suggest", ["require", "exports", "vs/nls!vs/editor/editor.main",
+  "vs/editor/contrib/snippet/snippet", "vs/editor/core/constants", "./suggestWidget", "./suggestModel",
+  "./quickSuggestWidget", "vs/base/env", "vs/base/errors", "vs/base/lib/winjs.base", "vs/editor/editorExtensions",
+  "vs/platform/platform", "vs/platform/actionRegistry"
+], function(e, t, n, i, o, r, s, a, u, l, c, d, h, p) {
+  var f = function(e) {
+    function t(t, n) {
+      var r = this;
+      e.call(this, t, n);
 
-    a.prototype = new d;
-  };
-
-define(["require", "exports", "vs/nls", "vs/editor/contrib/snippet/snippet", "vs/editor/core/constants",
-  "./suggestWidget", "./suggestModel", "./quickSuggestWidget", "vs/base/env", "vs/base/errors",
-  "vs/base/lib/winjs.base", "vs/editor/editorExtensions", "vs/platform/platform", "vs/platform/actionRegistry"
-], function(a, b, c, d, e, f, g, h, i, j, k, l, m, n) {
-  var o = c;
-
-  var p = d;
-
-  var q = e;
-
-  var r = f;
-
-  var s = g;
-
-  var t = h;
-
-  var u = i;
-
-  var v = j;
-
-  var w = k;
-
-  var x = l;
-
-  var y = m;
-
-  var z = n;
-
-  var A = function(a) {
-    function b(b, c) {
-      var d = this;
-      a.call(this, b, c);
-
-      this.model = new s.SuggestModel(this.editor, function(a, b) {
-        p.InsertSnippetHelper.run(d.editor, d.handlerService, a, b);
+      this.model = new s.SuggestModel(this.editor, function(e, t) {
+        i.InsertSnippetHelper.run(r.editor, r.handlerService, e, t);
       });
 
       this.quickSuggestWidget = null;
@@ -57,31 +20,31 @@ define(["require", "exports", "vs/nls", "vs/editor/contrib/snippet/snippet", "vs
 
       this.triggerCharacterListeners = [];
 
-      this.toUnhook.push(b.addListener(q.EventType.ConfigurationChanged, function() {
-        return d.update();
+      this.toUnhook.push(t.addListener(o.EventType.ConfigurationChanged, function() {
+        return r.update();
       }));
 
-      this.toUnhook.push(b.addListener(q.EventType.ModelChanged, function() {
-        return d.update();
+      this.toUnhook.push(t.addListener(o.EventType.ModelChanged, function() {
+        return r.update();
       }));
 
-      this.toUnhook.push(b.addListener(q.EventType.ModelModeChanged, function() {
-        return d.update();
+      this.toUnhook.push(t.addListener(o.EventType.ModelModeChanged, function() {
+        return r.update();
       }));
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.injectHandlerService = function(b) {
-      a.prototype.injectHandlerService.call(this, b);
+    t.prototype.injectHandlerService = function(t) {
+      e.prototype.injectHandlerService.call(this, t);
 
       if (!this.quickSuggestWidget) {
-        this.quickSuggestWidget = new t.QuickSuggestWidget(this.editor, this.handlerService);
+        this.quickSuggestWidget = new a.QuickSuggestWidget(this.editor, this.handlerService);
         this.quickSuggestWidget.setModel(this.model);
       }
     };
 
-    b.prototype.injectTelemetryService = function(b) {
-      a.prototype.injectTelemetryService.call(this, b);
+    t.prototype.injectTelemetryService = function(t) {
+      e.prototype.injectTelemetryService.call(this, t);
 
       if (!this.suggestWidget) {
         this.suggestWidget = new r.SuggestWidget(this.editor, this.telemetryService);
@@ -89,115 +52,103 @@ define(["require", "exports", "vs/nls", "vs/editor/contrib/snippet/snippet", "vs
       }
     };
 
-    b.prototype.injectionDone = function() {
+    t.prototype.injectionDone = function() {
       this.update();
     };
 
-    b.prototype.getEnablementState = function() {
-      return a.prototype.getEnablementState.call(this) && !! this.editor.getModel().getMode().suggestSupport;
+    t.prototype.getEnablementState = function() {
+      return e.prototype.getEnablementState.call(this) && !! this.editor.getModel().getMode().suggestSupport;
     };
 
-    b.prototype.update = function() {
-      var a = this;
-      this.triggerCharacterListeners.forEach(function(a) {
-        a();
-      });
-
-      this.triggerCharacterListeners = [];
-      if (this.editor.getModel() && this.editor.getConfiguration().suggestOnTriggerCharacters) {
-        var b = this.editor.getModel().getMode();
-        if (b.suggestSupport) {
-          var c = b.suggestSupport.getTriggerCharacters();
-
-          var d = function() {
-            var c = a.editor.getPosition();
-
-            var d = a.editor.getModel().getLineContent(c.lineNumber);
-
-            var e = a.editor.getModel().getRawLineTokens(c.lineNumber);
-            if (b.suggestSupport.shouldAutotriggerSuggest(d, e, c.column - 1)) {
-              a.triggerSuggest(!0).done(null, v.onUnexpectedError);
-            }
-          };
-          for (var e = 0; e < c.length; e++) {
-            this.triggerCharacterListeners.push(this.editor.addTypingListener(c[e], function() {
-              return d();
+    t.prototype.update = function() {
+      var e = this;
+      if (this.triggerCharacterListeners.forEach(function(e) {
+        e();
+      }), this.triggerCharacterListeners = [], this.editor.getModel() && this.editor.getConfiguration().suggestOnTriggerCharacters) {
+        var t = this.editor.getModel().getMode();
+        if (t.suggestSupport)
+          for (var n = t.suggestSupport.getTriggerCharacters(), i = function() {
+              var n = e.editor.getPosition(),
+                i = e.editor.getModel().getLineContent(n.lineNumber),
+                o = e.editor.getModel().getRawLineTokens(n.lineNumber);
+              t.suggestSupport.shouldAutotriggerSuggest(i, o, n.column - 1) && e.triggerSuggest(!0).done(null, l.onUnexpectedError);
+            }, o = 0; o < n.length; o++) {
+            this.triggerCharacterListeners.push(this.editor.addTypingListener(n[o], function() {
+              return i();
             }));
           }
-        }
       }
     };
 
-    b.prototype.run = function() {
+    t.prototype.run = function() {
       return this.triggerSuggest(!1);
     };
 
-    b.prototype.triggerSuggest = function(a) {
-      var b = this;
-      this.binding !== null && (this.binding.dispose(), this.binding = null);
+    t.prototype.triggerSuggest = function(e) {
+      var t = this;
+      null !== this.binding && (this.binding.dispose(), this.binding = null);
 
       this.suggestWidget.setModel(this.model);
 
-      this.binding = this.handlerService.bindGroup(function(a) {
-        a({
+      this.binding = this.handlerService.bindGroup(function(e) {
+        e({
           key: "Enter"
         }, function() {
-          return b.accept();
+          return t.accept();
         }, {
           once: !0
         });
 
-        a({
+        e({
           key: "Tab"
         }, function() {
-          return b.accept();
+          return t.accept();
         }, {
           once: !0
         });
 
-        a({
+        e({
           key: "Escape"
         }, function() {
-          return b.cancel();
+          return t.cancel();
         }, {
           once: !0
         });
 
-        a({
+        e({
           key: "DownArrow"
         }, function() {
-          return b.next();
+          return t.next();
         });
 
-        a({
+        e({
           key: "PageDown"
         }, function() {
-          return b.nextPage();
+          return t.nextPage();
         });
 
-        a({
+        e({
           key: "UpArrow"
         }, function() {
-          return b.prev();
+          return t.prev();
         });
 
-        a({
+        e({
           key: "PageUp"
         }, function() {
-          return b.prevPage();
+          return t.prevPage();
         });
       });
 
-      this.model.trigger(!1, a);
+      this.model.trigger(!1, e);
 
       this.editor.focus();
 
-      return w.Promise.as(!1);
+      return c.TPromise.as(!1);
     };
 
-    b.prototype.dispose = function() {
-      a.prototype.dispose.call(this);
-      while (this.triggerCharacterListeners.length > 0) {
+    t.prototype.dispose = function() {
+      for (e.prototype.dispose.call(this); this.triggerCharacterListeners.length > 0;) {
         this.triggerCharacterListeners.pop()();
       }
       if (this.quickSuggestWidget) {
@@ -215,47 +166,47 @@ define(["require", "exports", "vs/nls", "vs/editor/contrib/snippet/snippet", "vs
         this.model = null;
       }
 
-      if (this.binding !== null) {
+      if (null !== this.binding) {
         this.binding.dispose();
         this.binding = null;
       }
     };
 
-    b.prototype.accept = function() {
+    t.prototype.accept = function() {
       return this.suggestWidget.acceptSelectedSuggestion();
     };
 
-    b.prototype.cancel = function() {
+    t.prototype.cancel = function() {
       return this.model.cancel();
     };
 
-    b.prototype.prevPage = function() {
+    t.prototype.prevPage = function() {
       return this.suggestWidget.selectPreviousPage();
     };
 
-    b.prototype.prev = function() {
+    t.prototype.prev = function() {
       return this.suggestWidget.selectPrevious();
     };
 
-    b.prototype.nextPage = function() {
+    t.prototype.nextPage = function() {
       return this.suggestWidget.selectNextPage();
     };
 
-    b.prototype.next = function() {
+    t.prototype.next = function() {
       return this.suggestWidget.selectNext();
     };
 
-    b.ID = "editor.actions.triggerSuggest";
+    t.ID = "editor.actions.triggerSuggest";
 
-    return b;
-  }(x.EditorAction);
-  b.TriggerSuggestAction = A;
-  var B = new z.ActionDescriptor(A, A.ID, o.localize("suggest.trigger.label", "Trigger suggest"), {
+    return t;
+  }(d.EditorAction);
+  t.TriggerSuggestAction = f;
+  var g = new p.ActionDescriptor(f, f.ID, n.localize("vs_editor_contrib_suggest_suggest", 0), {
     ctrlCmd: !u.browser.isMacintosh,
     winCtrl: u.browser.isMacintosh,
     key: "Space"
   });
 
-  var C = y.Registry.as(x.Extensions.EditorContributions);
-  C.registerEditorContribution(B);
+  var m = h.Registry.as(d.Extensions.EditorContributions);
+  m.registerEditorContribution(g);
 });

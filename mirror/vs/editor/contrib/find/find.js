@@ -1,40 +1,11 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a;
-    }
-    for (var c in b) {
-      if (b.hasOwnProperty(c)) {
-        a[c] = b[c];
-      }
-    }
-    d.prototype = b.prototype;
-
-    a.prototype = new d;
-  };
-
-define(["require", "exports", "vs/base/lib/winjs.base", "vs/platform/platform", "vs/platform/actionRegistry",
-  "vs/editor/editorExtensions", "./findWidget", "./findModel", "vs/nls", "vs/editor/core/constants"
-], function(a, b, c, d, e, f, g, h, i, j) {
-  var k = c;
-
-  var l = d;
-
-  var m = e;
-
-  var n = f;
-
-  var o = g;
-
-  var p = h;
-
-  var q = i;
-
-  var r = j;
-
-  var s = function() {
-    function a(a) {
-      var b = this;
-      this.editor = a;
+define("vs/editor/contrib/find/find", ["require", "exports", "vs/base/lib/winjs.base", "vs/platform/platform",
+  "vs/platform/actionRegistry", "vs/editor/editorExtensions", "./findWidget", "./findModel",
+  "vs/nls!vs/editor/editor.main", "vs/editor/core/constants", "vs/base/lifecycle"
+], function(e, t, n, i, o, r, s, a, u, l, c) {
+  var d = function() {
+    function e(e) {
+      var t = this;
+      this.editor = e;
 
       this.handlerService = null;
 
@@ -42,60 +13,72 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/platform/platform", 
 
       this.model = null;
 
-      this.widget = null;
-
       this.widgetIsVisible = !1;
 
       this.lastState = null;
 
+      this.widget = new s.FindWidget(this.editor, this.contextViewService);
+
       this.widgetListeners = [];
+
+      this.widgetListeners.push(this.widget.addClickEventListener(function() {
+        return t.onWidgetClick();
+      }));
+
+      this.widgetListeners.push(this.widget.addUserInputEventListener(function(e) {
+        return t.onWidgetUserInput(e);
+      }));
+
+      this.widgetListeners.push(this.widget.addClosedEventListener(function() {
+        return t.onWidgetClosed();
+      }));
 
       this.editorListeners = [];
 
-      this.editorListeners.push(this.editor.addListener(r.EventType.ModelChanged, function() {
-        b.disposeBindingAndModel();
+      this.editorListeners.push(this.editor.addListener(l.EventType.ModelChanged, function() {
+        t.disposeBindingAndModel();
 
-        if (b.editor.getModel() && b.lastState && b.widgetIsVisible) {
-          b._start(b.lastState.isReplaceEnabled, !1, !1);
+        if (t.editor.getModel() && t.lastState && t.widgetIsVisible) {
+          t._start(!1, !1, !1, !1);
         }
       }));
 
-      this.editorListeners.push(this.editor.addListener(r.EventType.Disposed, function() {
-        b.editorListeners.forEach(function(a) {
-          a();
+      this.editorListeners.push(this.editor.addListener(l.EventType.Disposed, function() {
+        t.editorListeners.forEach(function(e) {
+          e();
         });
 
-        b.editorListeners = [];
+        t.editorListeners = [];
       }));
     }
-    a.getFindController = function(b) {
-      return b.getContribution(a.ID);
+    e.getFindController = function(t) {
+      return t.getContribution(e.ID);
     };
 
-    a.prototype.injectHandlerService = function(a) {
-      this.handlerService = a;
+    e.prototype.injectHandlerService = function(e) {
+      this.handlerService = e;
     };
 
-    a.prototype.getId = function() {
-      return a.ID;
+    e.prototype.injectContextViewService = function(e) {
+      this.contextViewService = e;
     };
 
-    a.prototype.dispose = function() {
-      this.widgetListeners.forEach(function(a) {
-        a();
-      });
+    e.prototype.getId = function() {
+      return e.ID;
+    };
 
-      this.widgetListeners = [];
+    e.prototype.dispose = function() {
+      this.widgetListeners = c.disposeAll(this.widgetListeners);
 
       if (this.widget) {
-        this.widget.destroy();
+        this.widget.dispose();
         this.widget = null;
       }
 
       this.disposeBindingAndModel();
     };
 
-    a.prototype.disposeBindingAndModel = function() {
+    e.prototype.disposeBindingAndModel = function() {
       if (this.binding) {
         this.binding.dispose();
         this.binding = null;
@@ -106,203 +89,225 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/platform/platform", 
       }
 
       if (this.model) {
-        this.model.destroy();
+        this.model.dispose();
         this.model = null;
       }
     };
 
-    a.prototype.onEscape = function() {
+    e.prototype.onEscape = function() {
       this.widgetIsVisible = !1;
 
       this.disposeBindingAndModel();
+
+      this.editor.focus();
 
       return !0;
     };
 
-    a.prototype.onWidgetClosed = function() {
+    e.prototype.onWidgetClosed = function() {
       this.widgetIsVisible = !1;
 
       this.disposeBindingAndModel();
     };
 
-    a.prototype.onWidgetUserInput = function() {
+    e.prototype.onWidgetClick = function() {
+      this._start(!1, !1, !0, !1);
+    };
+
+    e.prototype.onWidgetUserInput = function(e) {
       this.lastState = this.widget.getState();
 
       if (this.model) {
-        this.model.update(this.lastState, !0);
+        this.model.recomputeMatches(this.lastState, e.jumpToNextMatch);
       }
     };
 
-    a.prototype._start = function(a, b, c) {
-      var d = this;
-      if (!this.widget) {
-        this.widget = new o.FindWidget(this.editor);
-        this.widgetListeners.push(this.widget.addListener(o.FindWidget.USER_INPUT_EVENT, function() {
-          return d.onWidgetUserInput();
-        }));
-        this.widgetListeners.push(this.widget.addListener(o.FindWidget.USER_CLOSED_EVENT, function() {
-          return d.onWidgetClosed();
-        }));
-      }
-
+    e.prototype._start = function(e, t, n, i) {
+      var o = this;
       if (!this.model) {
-        this.model = new p.FindModelBoundToEditorModel(this.editor);
+        this.model = new a.FindModelBoundToEditorModel(this.editor);
         this.widget.setModel(this.model);
       }
 
-      if (this.binding === null) {
+      if (null === this.binding) {
         this.binding = this.handlerService.bind({
           key: "Escape"
         }, function() {
-          return d.onEscape();
+          return o.onEscape();
         });
       }
 
       this.lastState = this.lastState || this.widget.getState();
-      var e = this.editor.getSelection();
-      if (b && !e.isEmpty() && e.startLineNumber === e.endLineNumber) {
-        this.lastState.searchString = this.editor.getModel().getValueInRange(e);
+      var r = this.editor.getSelection();
+      if (t && !r.isEmpty() && r.startLineNumber === r.endLineNumber) {
+        this.lastState.searchString = this.editor.getModel().getValueInRange(r);
+      }
+      var s = null;
+      if (n && r.startLineNumber < r.endLineNumber) {
+        s = r;
       }
 
-      if (a) {
-        this.lastState.isReplaceEnabled = a;
+      if (e) {
+        this.lastState.isReplaceRevealed = e;
       }
 
-      this.model.start(this.lastState, c);
+      this.model.start(this.lastState, s, i);
 
       this.widgetIsVisible = !0;
     };
 
-    a.prototype.start = function(a) {
-      this._start(a, !0, !0);
+    e.prototype.startFromAction = function(e) {
+      this._start(e, !0, !0, !0);
     };
 
-    a.prototype.next = function() {
+    e.prototype.next = function() {
       return this.model ? (this.model.next(), !0) : !1;
     };
 
-    a.prototype.prev = function() {
+    e.prototype.prev = function() {
       return this.model ? (this.model.prev(), !0) : !1;
     };
 
-    a.prototype.replace = function() {
+    e.prototype.cancelSelectionFind = function() {
+      if (this.model) {
+        this.model.setFindScope(null);
+      }
+    };
+
+    e.prototype.replace = function() {
       return this.model ? (this.model.replace(), !0) : !1;
     };
 
-    a.prototype.replaceAll = function() {
+    e.prototype.replaceAll = function() {
       return this.model ? (this.model.replaceAll(), !0) : !1;
     };
 
-    a.ID = "editor.contrib.findController";
+    e.ID = "editor.contrib.findController";
 
-    return a;
+    return e;
   }();
-  b.FindController = s;
-  var t = function(a) {
-    function b(b, c) {
-      a.call(this, b, c, n.Precondition.WidgetFocus);
+  t.FindController = d;
+  var h = function(e) {
+    function t(t, n) {
+      e.call(this, t, n, r.Precondition.WidgetFocus);
 
       this.handlerService = null;
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.getEnablementState = function() {
-      return a.prototype.getEnablementState.call(this) && !! this.handlerService;
+    t.prototype.getEnablementState = function() {
+      return e.prototype.getEnablementState.call(this) && !! this.handlerService;
     };
 
-    b.prototype._startController = function(a) {
-      a.start(!1);
+    t.prototype._startController = function(e) {
+      e.startFromAction(!1);
     };
 
-    b.prototype.run = function() {
-      var a = s.getFindController(this.editor);
-      this._startController(a);
+    t.prototype.run = function() {
+      var e = d.getFindController(this.editor);
+      this._startController(e);
 
-      return k.Promise.as(!0);
+      return n.TPromise.as(!0);
     };
 
-    return b;
-  }(n.EditorAction);
-  b.StartFindAction = t;
-  var u = function(a) {
-    function b(b, c) {
-      a.call(this, b, c, n.Precondition.WidgetFocus);
+    return t;
+  }(r.EditorAction);
+  t.StartFindAction = h;
+  var p = function(e) {
+    function t(t, n) {
+      e.call(this, t, n, r.Precondition.WidgetFocus);
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.run = function() {
-      var a = s.getFindController(this.editor);
-      return a.next() ? k.Promise.as(!0) : this.editor.getAction(p.START_FIND_ID).run();
+    t.prototype.run = function() {
+      var e = d.getFindController(this.editor);
+      return e.next() ? n.TPromise.as(!0) : this.editor.getAction(a.START_FIND_ID).run();
     };
 
-    return b;
-  }(n.EditorAction);
-  b.NextMatchFindAction = u;
-  var v = function(a) {
-    function b(b, c) {
-      a.call(this, b, c, n.Precondition.WidgetFocus);
+    return t;
+  }(r.EditorAction);
+  t.NextMatchFindAction = p;
+  var f = function(e) {
+    function t(t, n) {
+      e.call(this, t, n, r.Precondition.WidgetFocus);
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.run = function() {
-      var a = s.getFindController(this.editor);
-      return a.prev() ? k.Promise.as(!0) : this.editor.getAction(p.START_FIND_ID).run();
+    t.prototype.run = function() {
+      var e = d.getFindController(this.editor);
+      return e.prev() ? n.TPromise.as(!0) : this.editor.getAction(a.START_FIND_ID).run();
     };
 
-    return b;
-  }(n.EditorAction);
-  b.PreviousMatchFindAction = v;
-  var w = function(a) {
-    function b(b, c) {
-      a.call(this, b, c);
+    return t;
+  }(r.EditorAction);
+  t.PreviousMatchFindAction = f;
+  var g = function(e) {
+    function t(t, n) {
+      e.call(this, t, n, r.Precondition.WidgetFocus);
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.getId = function() {
-      return p.START_FIND_REPLACE_ID;
+    t.prototype.run = function() {
+      var e = d.getFindController(this.editor);
+      e.cancelSelectionFind();
+
+      return n.TPromise.as(!0);
     };
 
-    b.prototype._startController = function(a) {
-      a.start(!0);
-    };
-
-    return b;
-  }(t);
-  b.StartFindReplaceAction = w;
-  var x = function(a) {
-    function b(b, c) {
-      a.call(this, b, c, n.Precondition.WidgetFocus);
-
-      this.label = q.localize("replaceAction", "Replace this instance");
+    return t;
+  }(r.EditorAction);
+  t.CancelSelectionFindAction = g;
+  var m = function(e) {
+    function t(t, n) {
+      e.call(this, t, n);
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.run = function() {
-      var a = s.getFindController(this.editor);
-      return a.replace() ? k.Promise.as(!0) : k.Promise.as(!1);
+    t.prototype.getId = function() {
+      return a.START_FIND_REPLACE_ID;
     };
 
-    return b;
-  }(n.EditorAction);
-  b.ReplaceAction = x;
-  var y = function(a) {
-    function b(b, c) {
-      a.call(this, b, c, n.Precondition.WidgetFocus);
+    t.prototype._startController = function(e) {
+      e.startFromAction(!0);
+    };
 
-      this.label = q.localize("replaceAllAction", "Replace all instances");
+    return t;
+  }(h);
+  t.StartFindReplaceAction = m;
+  var v = function(e) {
+    function t(t, n) {
+      e.call(this, t, n, r.Precondition.WidgetFocus);
+
+      this.label = u.localize("vs_editor_contrib_find_find", 0);
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.run = function() {
-      var a = s.getFindController(this.editor);
-      return a.replaceAll() ? k.Promise.as(!0) : k.Promise.as(!1);
+    t.prototype.run = function() {
+      var e = d.getFindController(this.editor);
+      return e.replace() ? n.TPromise.as(!0) : n.TPromise.as(!1);
     };
 
-    return b;
-  }(n.EditorAction);
-  b.ReplaceAllAction = y;
-  var z = l.Registry.as(n.Extensions.EditorContributions);
-  z.registerEditorContribution(new m.ActionDescriptor(t, p.START_FIND_ID, q.localize("startFindAction", "Find"), {
+    return t;
+  }(r.EditorAction);
+  t.ReplaceAction = v;
+  var y = function(e) {
+    function t(t, n) {
+      e.call(this, t, n, r.Precondition.WidgetFocus);
+
+      this.label = u.localize("vs_editor_contrib_find_find", 1);
+    }
+    __extends(t, e);
+
+    t.prototype.run = function() {
+      var e = d.getFindController(this.editor);
+      return e.replaceAll() ? n.TPromise.as(!0) : n.TPromise.as(!1);
+    };
+
+    return t;
+  }(r.EditorAction);
+  t.ReplaceAllAction = y;
+  var _ = i.Registry.as(r.Extensions.EditorContributions);
+  _.registerEditorContribution(new o.ActionDescriptor(h, a.START_FIND_ID, u.localize("vs_editor_contrib_find_find", 2), {
     ctrlCmd: !0,
     key: "F"
   }, {
@@ -310,28 +315,30 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/platform/platform", 
     key: "F3"
   }));
 
-  z.registerEditorContribution(new m.ActionDescriptor(u, p.NEXT_MATCH_FIND_ID, q.localize("findNextMatchAction",
-    "Find next"), {
+  _.registerEditorContribution(new o.ActionDescriptor(p, a.NEXT_MATCH_FIND_ID, u.localize(
+    "vs_editor_contrib_find_find", 3), {
     key: "F3"
   }));
 
-  z.registerEditorContribution(new m.ActionDescriptor(v, p.PREVIOUS_MATCH_FIND_ID, q.localize(
-    "findPreviousMatchAction", "Find previous"), {
+  _.registerEditorContribution(new o.ActionDescriptor(f, a.PREVIOUS_MATCH_FIND_ID, u.localize(
+    "vs_editor_contrib_find_find", 4), {
     shift: !0,
     key: "F3"
   }));
 
-  z.registerEditorContribution(new m.ActionDescriptor(w, p.START_FIND_REPLACE_ID, q.localize("startReplace",
-    "Replace"), {
+  _.registerEditorContribution(new o.ActionDescriptor(g, a.CANCEL_SELECTION_FIND_ID, u.localize(
+    "vs_editor_contrib_find_find", 5)));
+
+  _.registerEditorContribution(new o.ActionDescriptor(m, a.START_FIND_REPLACE_ID, u.localize(
+    "vs_editor_contrib_find_find", 6), {
     ctrlCmd: !0,
     key: "H"
   }));
 
-  z.registerEditorContribution(new m.ActionDescriptor(x, p.REPLACE_ID, q.localize("replace.replaceThis",
-    "Replace this instance")));
+  _.registerEditorContribution(new o.ActionDescriptor(v, a.REPLACE_ID, u.localize("vs_editor_contrib_find_find", 7)));
 
-  z.registerEditorContribution(new m.ActionDescriptor(y, p.REPLACE_ALL_ID, q.localize("replace.replaceAll",
-    "Replace all instances")));
+  _.registerEditorContribution(new o.ActionDescriptor(y, a.REPLACE_ALL_ID, u.localize("vs_editor_contrib_find_find",
+    8)));
 
-  z.registerEditorContribution(new l.BaseDescriptor(s));
+  _.registerEditorContribution(new i.BaseDescriptor(d));
 });

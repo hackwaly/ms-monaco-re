@@ -1,188 +1,257 @@
-define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/platform", "vs/base/env",
-  "vs/editor/core/constants", "vs/editor/core/range", "vs/editor/editorExtensions", "vs/editor/editor",
-  "vs/css!./links"
-], function(a, b, c, d, e, f, g, h, i, j) {
-  var k = c;
+define("vs/editor/contrib/links/links", ["require", "exports", "vs/nls!vs/editor/editor.main", "vs/base/paths",
+  "vs/base/lib/winjs.base", "vs/platform/platform", "vs/platform/services", "vs/base/env", "vs/base/errors",
+  "vs/editor/core/constants", "vs/base/network", "vs/editor/editorExtensions", "vs/editor/editor", "vs/css!./links"
+], function(e, t, n, i, o, r, s, a, u, l, c, d) {
+  var h = function() {
+    function e(e, t) {
+      this.link = e;
 
-  var l = d;
+      this.decorationId = t.addDecoration({
+        startLineNumber: this.link.range.startLineNumber,
+        startColumn: this.link.range.startColumn,
+        endLineNumber: this.link.range.startLineNumber,
+        endColumn: this.link.range.endColumn
+      }, this.getOptions(!1));
+    }
+    e.prototype.dispose = function(e) {
+      e.removeDecoration(this.decorationId);
+    };
 
-  var m = e;
+    e.prototype.getOptions = function(e) {
+      var t = "";
+      this.link.extraInlineClassName && (t = this.link.extraInlineClassName + " ");
 
-  var n = f;
+      t += e ? p.CLASS_NAME_ACTIVE : p.CLASS_NAME;
 
-  var o = g;
+      return {
+        stickiness: 1,
+        inlineClassName: t,
+        hoverMessage: p.HOVER_MESSAGE
+      };
+    };
 
-  var p = h;
+    e.prototype.activate = function(e) {
+      e.changeDecorationOptions(this.decorationId, this.getOptions(!0));
+    };
 
-  var q = i;
+    e.prototype.deactivate = function(e) {
+      e.changeDecorationOptions(this.decorationId, this.getOptions(!1));
+    };
 
-  var r = j;
+    return e;
+  }();
 
-  var s = function() {
-    function a(a) {
-      var b = this;
-      this.editor = a;
+  var p = function() {
+    function e(e, t, n) {
+      var i = this;
+      this.editor = e;
+
+      this.editorService = t;
+
+      this.requestService = n;
 
       this.listenersToRemove = [];
 
-      this.listenersToRemove.push(a.addListener("change", function(a) {
-        return b.onChange();
+      this.listenersToRemove.push(e.addListener("change", function() {
+        return i.onChange();
       }));
 
-      this.listenersToRemove.push(a.addListener(o.EventType.ModelChanged, function(a) {
-        b.decorations = [];
+      this.listenersToRemove.push(e.addListener(l.EventType.ModelChanged, function() {
+        i.lastMouseEvent = null;
 
-        b.stop();
+        i.currentOccurences = {};
 
-        b.beginCompute();
+        i.activeLinkDecorationId = null;
+
+        i.stop();
+
+        i.beginCompute();
       }));
 
-      this.listenersToRemove.push(this.editor.addListener(o.EventType.MouseUp, function(a) {
-        return b.onEditorMouseUp(a);
+      this.listenersToRemove.push(this.editor.addListener(l.EventType.MouseUp, function(e) {
+        return i.onEditorMouseUp(e);
       }));
 
-      this.listenersToRemove.push(this.editor.addListener(o.EventType.MouseMove, function(a) {
-        return b.onEditorMouseMove(a);
+      this.listenersToRemove.push(this.editor.addListener(l.EventType.MouseMove, function(e) {
+        return i.onEditorMouseMove(e);
       }));
 
-      this.listenersToRemove.push(this.editor.addListener(o.EventType.KeyDown, function(a) {
-        return b.onEditorKeyDown(a);
+      this.listenersToRemove.push(this.editor.addListener(l.EventType.KeyDown, function(e) {
+        return i.onEditorKeyDown(e);
       }));
 
-      this.listenersToRemove.push(this.editor.addListener(o.EventType.KeyUp, function(a) {
-        return b.onEditorKeyUp(a);
+      this.listenersToRemove.push(this.editor.addListener(l.EventType.KeyUp, function(e) {
+        return i.onEditorKeyUp(e);
       }));
 
       this.timeoutPromise = null;
 
       this.computePromise = null;
 
-      this.decorations = [];
+      this.currentOccurences = {};
+
+      this.activeLinkDecorationId = null;
 
       this.beginCompute();
     }
-    a.prototype.onChange = function() {
-      var b = this;
-      this.stop();
+    e.prototype.onChange = function() {
+      var t = this;
+      if (!this.timeoutPromise) {
+        this.timeoutPromise = o.TPromise.timeout(e.RECOMPUTE_TIME);
+        this.timeoutPromise.then(function() {
+          t.timeoutPromise = null;
 
-      this.timeoutPromise = l.Promise.timeout(a.RECOMPUTE_TIME);
-
-      this.timeoutPromise.then(function() {
-        b.timeoutPromise = null;
-
-        b.beginCompute();
-      });
-    };
-
-    a.prototype.beginCompute = function() {
-      var a = this;
-      if (!this.editor.getModel()) return;
-      var b = this.editor.getModel().getMode();
-      if (b.linkSupport) {
-        this.computePromise = b.linkSupport.computeLinks(this.editor.getModel().getAssociatedResource());
-        this.computePromise.then(function(b) {
-          return a.updateDecorations(b);
+          t.beginCompute();
         });
       }
     };
 
-    a.prototype.updateDecorations = function(b) {
-      var c = [];
-      if (b)
-        for (var d = 0; d < b.length; d++) {
-          c.push({
-            range: b[d].range,
-            options: {
-              inlineClassName: a.CLASS_NAME,
-              hoverMessage: a.HOVER_MESSAGE
-            }
+    e.prototype.beginCompute = function() {
+      var e = this;
+      if (this.editor.getModel()) {
+        var t = this.editor.getModel().getMode();
+        if (t.linkSupport) {
+          this.computePromise = t.linkSupport.computeLinks(this.editor.getModel().getAssociatedResource());
+          this.computePromise.then(function(t) {
+            return e.updateDecorations(t);
           });
         }
-      this.decorations = this.editor.deltaDecorations(this.decorations, c);
-    };
-
-    a.prototype.onEditorKeyDown = function(b) {
-      if (b.key === a.TRIGGER_KEY_VALUE && this.lastMouseEvent) {
-        this.onEditorMouseMove(this.lastMouseEvent, b);
       }
     };
 
-    a.prototype.onEditorKeyUp = function(b) {
-      if (b.key === a.TRIGGER_KEY_VALUE) {
+    e.prototype.updateDecorations = function(e) {
+      var t = this;
+      this.editor.changeDecorations(function(n) {
+        for (var i in t.currentOccurences)
+          if (t.currentOccurences.hasOwnProperty(i)) {
+            var o = t.currentOccurences[i];
+            o.dispose(n);
+          }
+        if (t.currentOccurences = {}, t.activeLinkDecorationId = null, e)
+          for (var r = 0; r < e.length; r++) {
+            var o = new h(e[r], n);
+            t.currentOccurences[o.decorationId] = o;
+          }
+      });
+    };
+
+    e.prototype.onEditorKeyDown = function(t) {
+      if (t.key === e.TRIGGER_KEY_VALUE && this.lastMouseEvent) {
+        this.onEditorMouseMove(this.lastMouseEvent, t);
+      }
+    };
+
+    e.prototype.onEditorKeyUp = function(t) {
+      if (t.key === e.TRIGGER_KEY_VALUE) {
         this.cleanUpActiveLinkDecoration();
       }
     };
 
-    a.prototype.onEditorMouseMove = function(b, c) {
-      var d = this;
-      this.lastMouseEvent = b;
-      if (this.isEnabled(b, c)) {
-        var e = this.getLinkDecoration(b);
-        e ? e.options && e.options.inlineClassName !== a.CLASS_NAME_ACTIVE && this.editor.changeDecorations(function(
-          b) {
-          b.changeDecorationOptions(e.id, {
-            inlineClassName: a.CLASS_NAME_ACTIVE,
-            hoverMessage: a.HOVER_MESSAGE
-          });
+    e.prototype.onEditorMouseMove = function(e, t) {
+      var n = this;
+      if (this.lastMouseEvent = e, this.isEnabled(e, t)) {
+        this.cleanUpActiveLinkDecoration();
+        var i = this.getLinkOccurence(e);
+        if (i) {
+          this.editor.changeDecorations(function(e) {
+            i.activate(e);
 
-          d.activeLinkDecoration = e;
-        }) : this.cleanUpActiveLinkDecoration();
+            n.activeLinkDecorationId = i.decorationId;
+          });
+        }
       } else {
         this.cleanUpActiveLinkDecoration();
       }
     };
 
-    a.prototype.cleanUpActiveLinkDecoration = function() {
-      if (this.activeLinkDecoration) {
-        var b = this.activeLinkDecoration.id;
-        this.activeLinkDecoration = null;
-
-        this.editor.changeDecorations(function(c) {
-          c.changeDecorationOptions(b, {
-            inlineClassName: a.CLASS_NAME,
-            hoverMessage: a.HOVER_MESSAGE
+    e.prototype.cleanUpActiveLinkDecoration = function() {
+      if (this.activeLinkDecorationId) {
+        var e = this.currentOccurences[this.activeLinkDecorationId];
+        if (e) {
+          this.editor.changeDecorations(function(t) {
+            e.deactivate(t);
           });
-        });
+        }
+
+        this.activeLinkDecorationId = null;
       }
     };
 
-    a.prototype.onEditorMouseUp = function(a) {
-      if (this.isEnabled(a)) {
-        var b = this.getLinkDecoration(a);
-        if (b) {
-          var c = this.editor.getModel().getValueInRange(b.range);
-          window.open(c);
+    e.prototype.onEditorMouseUp = function(e) {
+      if (this.isEnabled(e)) {
+        var t = this.getLinkOccurence(e);
+        if (t) {
+          var n = t.link;
+          if (n.openInEditor && this.editorService) {
+            var o = i.isAbsolute(n.url) ? i.join(this.requestService.getRequestUrl("root", "", !0), n.url) : n.url;
+
+            var r = o.indexOf("#");
+
+            var s = -1;
+
+            var a = -1;
+            if (r >= 0) {
+              var l = o.substr(r + 1);
+
+              var d = l.split(",");
+              if (d.length > 0) {
+                s = Number(d[0]);
+              }
+
+              if (d.length > 1) {
+                a = Number(d[1]);
+              }
+
+              o = o.substr(0, r);
+            }
+            var h = {
+              resource: new c.URL(o)
+            };
+            if (s >= 0) {
+              h.options = {
+                selection: {
+                  startLineNumber: s,
+                  startColumn: a
+                }
+              };
+            }
+            var p = 0;
+            if (e.event.altKey) {
+              p = !0;
+            }
+
+            this.editorService.openEditor(h, p).done(null, u.onUnexpectedError);
+          } else {
+            var f = this.editor.getModel().getValueInRange(n.range);
+            window.open(f);
+          }
         }
       }
     };
 
-    a.prototype.getLinkDecoration = function(b) {
-      var c = b.target.position;
+    e.prototype.getLinkOccurence = function(e) {
+      for (var t = e.target.position, n = this.editor.getModel().getDecorationsInRange({
+          startLineNumber: t.lineNumber,
+          startColumn: t.column,
+          endLineNumber: t.lineNumber,
+          endColumn: t.column
+        }, null, !0), i = 0; i < n.length; i++) {
+        var o = n[i];
 
-      var d = this.editor.getModel().getDecorationsInRange({
-        startLineNumber: c.lineNumber,
-        startColumn: c.column,
-        endLineNumber: c.lineNumber,
-        endColumn: c.column
-      }, null, !0);
-      for (var e = 0; e < d.length; e++) {
-        var f = d[e];
-        if (f.options && (f.options.inlineClassName === a.CLASS_NAME || f.options.inlineClassName === a.CLASS_NAME_ACTIVE)) {
-          var g = new p.Range(f.range.startLineNumber, f.range.startColumn, f.range.endLineNumber, f.range.endColumn);
-          if (g.containsPosition(c)) {
-            return f;
-          }
+        var r = this.currentOccurences[o.id];
+        if (r) {
+          return r;
         }
       }
       return null;
     };
 
-    a.prototype.isEnabled = function(b, c) {
-      return b.target.type === r.MouseTargetType.CONTENT_TEXT && (b.event[a.TRIGGER_MODIFIER] || c && c.key === a.TRIGGER_KEY_VALUE) && !!
-        this.editor.getModel().getMode().linkSupport;
+    e.prototype.isEnabled = function(t, n) {
+      return 6 === t.target.type && (t.event[e.TRIGGER_MODIFIER] || n && n.key === e.TRIGGER_KEY_VALUE) && !! this.editor
+        .getModel().getMode().linkSupport;
     };
 
-    a.prototype.stop = function() {
+    e.prototype.stop = function() {
       if (this.timeoutPromise) {
         this.timeoutPromise.cancel();
         this.timeoutPromise = null;
@@ -194,9 +263,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
       }
     };
 
-    a.prototype.destroy = function() {
-      this.listenersToRemove.forEach(function(a) {
-        a();
+    e.prototype.destroy = function() {
+      this.listenersToRemove.forEach(function(e) {
+        e();
       });
 
       this.listenersToRemove = [];
@@ -204,39 +273,51 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
       this.stop();
     };
 
-    a.RECOMPUTE_TIME = 1e3;
+    e.RECOMPUTE_TIME = 1e3;
 
-    a.TRIGGER_KEY_VALUE = n.browser.isMacintosh ? "Meta" : "Ctrl";
+    e.TRIGGER_KEY_VALUE = a.browser.isMacintosh ? "Meta" : "Ctrl";
 
-    a.TRIGGER_MODIFIER = n.browser.isMacintosh ? "metaKey" : "ctrlKey";
+    e.TRIGGER_MODIFIER = a.browser.isMacintosh ? "metaKey" : "ctrlKey";
 
-    a.HOVER_MESSAGE = n.browser.isMacintosh ? k.localize("links.navigate.mac", "Cmd + click to follow link") : k.localize(
-      "links.navigate", "Ctrl + click to follow link");
+    e.HOVER_MESSAGE = a.browser.isMacintosh ? n.localize("vs_editor_contrib_links_links", 0) : n.localize(
+      "vs_editor_contrib_links_links", 1);
 
-    a.CLASS_NAME = "detected-link";
+    e.CLASS_NAME = "detected-link";
 
-    a.CLASS_NAME_ACTIVE = "detected-link-active";
+    e.CLASS_NAME_ACTIVE = "detected-link-active";
 
-    return a;
+    return e;
   }();
 
-  var t = function() {
-    function a(a) {
-      this.linkDetector = new s(a);
+  var f = function() {
+    function e(e) {
+      this.editor = e;
     }
-    a.prototype.getId = function() {
-      return a.ID;
+    e.prototype.injectEditorService = function(e) {
+      this.editorService = e;
     };
 
-    a.prototype.dispose = function() {
+    e.prototype.injectRequestService = function(e) {
+      this.requestService = e;
+    };
+
+    e.prototype.injectionDone = function() {
+      this.linkDetector = new p(this.editor, this.editorService, this.requestService);
+    };
+
+    e.prototype.getId = function() {
+      return e.ID;
+    };
+
+    e.prototype.dispose = function() {
       this.linkDetector.destroy();
     };
 
-    a.ID = "editor.contrib.LinkDetector";
+    e.ID = "editor.contrib.LinkDetector";
 
-    return a;
+    return e;
   }();
 
-  var u = m.Registry.as(q.Extensions.EditorContributions);
-  u.registerEditorContribution(new m.BaseDescriptor(t));
+  var g = r.Registry.as(d.Extensions.EditorContributions);
+  g.registerEditorContribution(new r.BaseDescriptor(f));
 });

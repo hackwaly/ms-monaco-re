@@ -33,7 +33,9 @@ function _parseModuleId(moduleId) {
         foundModule(pluginModuleId);
         ret.pluginModuleId = pluginModuleId;
         moduleId = moduleId.slice(k + 1);
-        if (pluginModuleId.indexOf('css') >= 0) {
+        if (pluginModuleId.indexOf('nls') >= 0) {
+            moduleId += '.nls';
+        } else if (pluginModuleId.indexOf('css') >= 0) {
             return null;
         }
     }
@@ -312,6 +314,7 @@ function processModule(moduleId, callback) {
                 console.log('found new module: ' + moduleId);
                 // big js cause memery out problem, skip it.
                 if (body.length > 1000000) {
+                    console.log('undeobsecured module: ' + moduleId);
                     fs.writeFile(result.path, body, 'utf-8', callback);
                 } else {
                     fs.writeFile(result.path, deobsecure(body), 'utf-8', callback);

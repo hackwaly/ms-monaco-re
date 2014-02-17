@@ -1,31 +1,25 @@
-define(["require", "exports", "vs/base/dom/builder", "vs/base/dom/dom", "vs/base/dom/mouseEvent", "vs/editor/editor",
-  "vs/css!./quickSuggest"
-], function(a, b, c, d, e, f) {
-  function k(a, b) {
-    if ("snippet" === b.type) {
+define("vs/editor/contrib/suggest/quickSuggestWidget", ["require", "exports", "vs/base/dom/builder", "vs/base/dom/dom",
+  "vs/base/dom/mouseEvent", "vs/editor/editor", "vs/css!./quickSuggest"
+], function(e, t, n, i, o) {
+  function r(e, t) {
+    if ("snippet" === t.type || "text" === t.type) {
       return !1;
     }
-    var c = b.highlights;
-    if (c.length !== 1 || c[0].start > 0) {
+    var n = t.highlights;
+    if (1 !== n.length || n[0].start > 0) {
       return !1;
     }
-    var d = b.label;
-    return d.length === a.length ? !1 : !0;
+    var i = t.label;
+    return i.length === e.length ? !1 : !0;
   }
-  var g = c;
+  var s = n.$;
+  t.QUICK_SUGGEST_WIDGET_ID = "editor.widget.quickSuggestWidget";
+  var a = function() {
+    function e(e, n) {
+      var r = this;
+      this.editor = e;
 
-  var h = d;
-
-  var i = e;
-
-  var j = f;
-  b.QUICK_SUGGEST_WIDGET_ID = "editor.widget.quickSuggestWidget";
-  var l = function() {
-    function a(a, c) {
-      var d = this;
-      this.editor = a;
-
-      this.handlerService = c;
+      this.handlerService = n;
 
       this.modelListenersToRemove = [];
 
@@ -41,113 +35,110 @@ define(["require", "exports", "vs/base/dom/builder", "vs/base/dom/dom", "vs/base
 
       this.currentWord = null;
 
-      this.builder = g.Build.offDOM().div({
+      this.builder = s().div({
         "class": "editor-widget quick-suggest-widget"
       });
 
-      this.bindings = this.handlerService.bindGroup(function(a) {
-        var b = function() {
-          if (d.currentSuggestion) {
-            return d.model.accept(d.currentSuggestion);
-          }
+      this.bindings = this.handlerService.bindGroup(function(e) {
+        var t = function() {
+          return r.currentSuggestion ? r.model.accept(r.currentSuggestion) : void 0;
         };
 
-        var c = function() {
-          return d.suggestions.length === 1 ? b() : d.currentSuggestion ? (d.next(), !0) : !1;
+        var n = function() {
+          return 1 === r.suggestions.length ? t() : r.currentSuggestion ? (r.next(), !0) : !1;
         };
 
-        var e = function() {
-          return d.currentSuggestion ? (d.previous(), !0) : !1;
+        var i = function() {
+          return r.currentSuggestion ? (r.previous(), !0) : !1;
         };
 
-        var f = function() {
-          return d.model.cancel();
+        var o = function() {
+          return r.model.cancel();
         };
-        a({
+        e({
           key: "Tab"
-        }, c);
+        }, n);
 
-        a({
+        e({
           shift: !0,
           key: "Tab"
-        }, e);
+        }, i);
 
-        a({
+        e({
           key: "RightArrow"
-        }, b);
+        }, t);
 
-        a({
+        e({
           key: "Escape"
-        }, f);
+        }, o);
       }, {
-        id: b.QUICK_SUGGEST_WIDGET_ID
+        id: t.QUICK_SUGGEST_WIDGET_ID
       });
 
       this.bindings.deactivate();
 
       this.listenersToRemove = [];
 
-      this.listenersToRemove.push(h.addListener(this.getDomNode(), "mousedown", function(a) {
-        (new i.MouseEvent(a)).preventDefault();
+      this.listenersToRemove.push(i.addListener(this.getDomNode(), "mousedown", function(e) {
+        (new o.StandardMouseEvent(e)).preventDefault();
       }));
 
-      this.listenersToRemove.push(a.addListener("blur", function() {
-        d.cancel();
+      this.listenersToRemove.push(e.addListener("blur", function() {
+        r.cancel();
       }));
 
       this.editor.addContentWidget(this);
     }
-    a.prototype.setModel = function(a) {
-      var b = this;
+    e.prototype.setModel = function(e) {
+      var t = this;
       this.releaseModel();
 
-      this.model = a;
+      this.model = e;
 
-      this.modelListenersToRemove.push(this.model.addListener("suggest", function(a) {
-        a.auto ? (b.currentWord = a.suggestions.currentWord, b.suggestions = a.suggestions.suggestions.filter(k.bind(
-            null, b.currentWord)), b.currentSuggestionIndex = 0, b.currentSuggestion = b.suggestions[b.currentSuggestionIndex],
-          b.onSuggestions()) : b.cancel();
-      }));
-
-      this.modelListenersToRemove.push(this.model.addListener("refilter", function(a) {
-        if (a.auto) {
-          var c = b.suggestions[b.currentSuggestionIndex];
-          b.suggestions = b.suggestions.filter(a.filter);
-
-          b.currentSuggestionIndex = 0;
-          for (var d = 0; d < b.suggestions.length; d++)
-            if (b.suggestions[d] === c) {
-              b.currentSuggestionIndex = d;
-              break;
-            }
-          b.currentSuggestion = b.suggestions[b.currentSuggestionIndex];
-
-          b.currentWord = a.currentWord;
-
-          b.onSuggestions();
-        } else {
-          b.cancel();
+      this.modelListenersToRemove.push(this.model.addListener("suggest", function(e) {
+        if (t.editor.getConfiguration().quickSuggestions) {
+          e.auto ? (t.currentWord = e.suggestions.currentWord, t.suggestions = e.suggestions.suggestions.filter(r
+              .bind(null, t.currentWord)), t.currentSuggestionIndex = 0, t.currentSuggestion = t.suggestions[t.currentSuggestionIndex],
+            t.onSuggestions()) : t.cancel();
         }
       }));
 
-      this.modelListenersToRemove.push(this.model.addListener("empty", function(a) {
-        return b.cancel();
+      this.modelListenersToRemove.push(this.model.addListener("refilter", function(e) {
+        if (t.editor.getConfiguration().quickSuggestions)
+          if (e.auto) {
+            var n = t.suggestions[t.currentSuggestionIndex];
+            t.suggestions = t.suggestions.filter(e.filter);
+
+            t.currentSuggestionIndex = 0;
+            for (var i = 0; i < t.suggestions.length; i++)
+              if (t.suggestions[i] === n) {
+                t.currentSuggestionIndex = i;
+                break;
+              }
+            t.currentSuggestion = t.suggestions[t.currentSuggestionIndex];
+
+            t.currentWord = e.currentWord;
+
+            t.onSuggestions();
+          } else {
+            t.cancel();
+          }
       }));
 
-      this.modelListenersToRemove.push(this.model.addListener("cancel", function(a) {
-        return b.cancel();
+      this.modelListenersToRemove.push(this.model.addListener("empty", function() {
+        return t.cancel();
+      }));
+
+      this.modelListenersToRemove.push(this.model.addListener("cancel", function() {
+        return t.cancel();
       }));
     };
 
-    a.prototype.onSuggestions = function() {
-      if (!this.suggestions.length) {
-        this.hide();
-        return;
-      }
-      this.render();
+    e.prototype.onSuggestions = function() {
+      return this.suggestions.length ? (this.render(), void 0) : (this.hide(), void 0);
     };
 
-    a.prototype.next = function() {
+    e.prototype.next = function() {
       this.currentSuggestionIndex = (this.currentSuggestionIndex + 1) % this.suggestions.length;
 
       this.currentSuggestion = this.suggestions[this.currentSuggestionIndex];
@@ -155,7 +146,7 @@ define(["require", "exports", "vs/base/dom/builder", "vs/base/dom/dom", "vs/base
       this.render();
     };
 
-    a.prototype.previous = function() {
+    e.prototype.previous = function() {
       this.currentSuggestionIndex = --this.currentSuggestionIndex < 0 ? this.suggestions.length - 1 : this.currentSuggestionIndex;
 
       this.currentSuggestion = this.suggestions[this.currentSuggestionIndex];
@@ -163,27 +154,26 @@ define(["require", "exports", "vs/base/dom/builder", "vs/base/dom/dom", "vs/base
       this.render();
     };
 
-    a.prototype.render = function() {
+    e.prototype.render = function() {
       this.builder.text(this.currentSuggestion.label.substring(this.currentWord.length));
 
       this.show();
     };
 
-    a.prototype.cancel = function() {
+    e.prototype.cancel = function() {
       this.currentSuggestion = null;
 
       this.hide();
     };
 
-    a.prototype.releaseModel = function() {
-      var a;
-      while (a = this.modelListenersToRemove.pop()) {
-        a();
+    e.prototype.releaseModel = function() {
+      for (var e; e = this.modelListenersToRemove.pop();) {
+        e();
       }
       this.model = null;
     };
 
-    a.prototype.show = function() {
+    e.prototype.show = function() {
       this.isVisible = !0;
 
       this.builder.display("block");
@@ -193,7 +183,7 @@ define(["require", "exports", "vs/base/dom/builder", "vs/base/dom/dom", "vs/base
       this.editor.layoutContentWidget(this);
     };
 
-    a.prototype.hide = function() {
+    e.prototype.hide = function() {
       this.isVisible = !1;
 
       this.bindings.deactivate();
@@ -203,23 +193,23 @@ define(["require", "exports", "vs/base/dom/builder", "vs/base/dom/dom", "vs/base
       this.editor.layoutContentWidget(this);
     };
 
-    a.prototype.getPosition = function() {
+    e.prototype.getPosition = function() {
       return this.isVisible ? {
         position: this.editor.getPosition(),
-        preference: [j.ContentWidgetPositionPreference.EXACT]
+        preference: [0]
       } : null;
     };
 
-    a.prototype.getId = function() {
-      return a.ID;
+    e.prototype.getId = function() {
+      return e.ID;
     };
 
-    a.prototype.getDomNode = function() {
+    e.prototype.getDomNode = function() {
       return this.builder.getHTMLElement();
     };
 
-    a.prototype.destroy = function() {
-      while (this.listenersToRemove.length > 0) {
+    e.prototype.destroy = function() {
+      for (; this.listenersToRemove.length > 0;) {
         this.listenersToRemove.pop()();
       }
       this.bindings.dispose();
@@ -229,9 +219,9 @@ define(["require", "exports", "vs/base/dom/builder", "vs/base/dom/dom", "vs/base
       this.builder.destroy();
     };
 
-    a.ID = "editor.contrib.quickSuggestWidget";
+    e.ID = "editor.contrib.quickSuggestWidget";
 
-    return a;
+    return e;
   }();
-  b.QuickSuggestWidget = l;
+  t.QuickSuggestWidget = a;
 });

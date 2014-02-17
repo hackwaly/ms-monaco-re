@@ -1,49 +1,27 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a;
+define("vs/editor/contrib/smartSelect/jumpToBracket", ["require", "exports", "vs/nls!vs/editor/editor.main",
+  "vs/base/lib/winjs.base", "vs/editor/core/internalConstants", "vs/editor/editorExtensions", "vs/platform/platform",
+  "vs/platform/actionRegistry"
+], function(e, t, n, i, o, r, s, a) {
+  var u = function(e) {
+    function t(t, n) {
+      e.call(this, t, n);
     }
-    for (var c in b) {
-      if (b.hasOwnProperty(c)) {
-        a[c] = b[c];
-      }
-    }
-    d.prototype = b.prototype;
+    __extends(t, e);
 
-    a.prototype = new d;
-  };
+    t.prototype.run = function() {
+      this.editor.trigger(this.id, o.Handler.JumpToBracket, {});
 
-define(["require", "exports", "vs/nls", "vs/editor/core/constants", "vs/editor/editorExtensions",
-  "vs/platform/platform", "vs/platform/actionRegistry"
-], function(a, b, c, d, e, f, g) {
-  var h = c;
-
-  var i = d;
-
-  var j = e;
-
-  var k = f;
-
-  var l = g;
-
-  var m = function(a) {
-    function b(b, c) {
-      a.call(this, b, c);
-    }
-    __extends(b, a);
-
-    b.prototype.run = function() {
-      this.editor.trigger(this.id, i.Handler.JumpToBracket, {});
-
-      return null;
+      return i.TPromise.as(!0);
     };
 
-    b.ID = "editor.action.jumpToBracket";
+    t.ID = "editor.action.jumpToBracket";
 
-    return b;
-  }(j.EditorAction);
+    return t;
+  }(r.EditorAction);
 
-  var n = k.Registry.as(j.Extensions.EditorContributions);
-  n.registerEditorContribution(new l.ActionDescriptor(m, m.ID, h.localize("smartSelect.jumpBracket", "Go to bracket"), {
+  var l = s.Registry.as(r.Extensions.EditorContributions);
+  l.registerEditorContribution(new a.ActionDescriptor(u, u.ID, n.localize(
+    "vs_editor_contrib_smartSelect_jumpToBracket", 0), {
     ctrlCmd: !0,
     alt: !0,
     key: "]"

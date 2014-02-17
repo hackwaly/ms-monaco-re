@@ -1,429 +1,377 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a;
-    }
-    for (var c in b) {
-      if (b.hasOwnProperty(c)) {
-        a[c] = b[c];
-      }
-    }
-    d.prototype = b.prototype;
-
-    a.prototype = new d;
-  };
-
-define(["require", "exports", "vs/base/dom/dom", "vs/base/lib/winjs.base", "vs/editor/contrib/zoneWidget/zoneWidget",
+define("vs/editor/contrib/gotoError/gotoError", ["require", "exports", "vs/base/lifecycle", "vs/base/strings",
+  "vs/base/severity", "vs/base/dom/dom", "vs/base/lib/winjs.base", "vs/editor/contrib/zoneWidget/zoneWidget",
   "vs/base/dom/builder", "vs/base/eventEmitter", "vs/editor/editorExtensions", "vs/editor/core/constants",
-  "vs/editor/core/position", "vs/editor/core/range", "vs/platform/services", "vs/platform/markers/markers",
-  "vs/platform/platform", "vs/platform/actionRegistry", "vs/nls", "vs/css!./gotoError"
-], function(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p) {
-  var q = c;
+  "vs/editor/core/position", "vs/editor/core/range", "vs/platform/services", "vs/platform/platform",
+  "vs/platform/actionRegistry", "vs/nls!vs/editor/editor.main", "vs/css!./gotoError"
+], function(e, t, n, i, o, r, s, a, u, l, c, d, h, p, f, g, m, v) {
+  var y = u.$;
 
-  var r = d;
+  var _ = function(e) {
+    function t(n, i) {
+      var o = this;
+      e.call(this, [t.Events.CURRENT, t.Events.MARKER_SET]);
 
-  var s = e;
+      this._editor = n;
 
-  var t = f;
+      this._markers = null;
 
-  var u = g;
+      this._nextIdx = -1;
 
-  var v = h;
+      this._toUnbind = [];
 
-  var w = i;
+      this._ignoreSelectionChange = !1;
 
-  var x = j;
+      this.setMarkers(i);
 
-  var y = k;
-
-  var z = l;
-
-  var A = m;
-
-  var B = n;
-
-  var C = o;
-
-  var D = p;
-
-  var E = function(a) {
-    function b(b, c) {
-      var d = this;
-      a.call(this);
-
-      this.editor = b;
-
-      this.markers = null;
-
-      this.nextIdx = -1;
-
-      this.disposed = !1;
-
-      this.toUnbind = [];
-
-      this.ignoreSelectionChange = !1;
-
-      this.setMarkers(c);
-
-      this.toUnbind.push(this.editor.addListener(w.EventType.Disposed, function() {
-        return d.dispose();
+      this._toUnbind.push(this._editor.addListener(d.EventType.Disposed, function() {
+        return o.dispose();
       }));
 
-      this.toUnbind.push(this.editor.addListener(w.EventType.CursorPositionChanged, function() {
-        if (!d.ignoreSelectionChange) {
-          d.nextIdx = -1;
+      this._toUnbind.push(this._editor.addListener(d.EventType.CursorPositionChanged, function() {
+        if (!o._ignoreSelectionChange) {
+          o._nextIdx = -1;
         }
       }));
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.setMarkers = function(a) {
-      this.markers = a || [];
+    t.prototype.setMarkers = function(e) {
+      this._markers = e || [];
 
-      this.markers.sort(function(a, b) {
-        return a.range.startLineNumber === b.range.startLineNumber ? a.range.startColumn - b.range.startColumn : a.range
-          .startLineNumber - b.range.startLineNumber;
+      this._markers.sort(function(e, t) {
+        return e.range.startLineNumber === t.range.startLineNumber ? e.range.startColumn - t.range.startColumn : e.range
+          .startLineNumber - t.range.startLineNumber;
       });
 
-      this.nextIdx = -1;
+      this._nextIdx = -1;
 
-      this.emit(b.Events.MARKER_SET, this);
+      this.emit(t.Events.MARKER_SET, this);
     };
 
-    b.prototype.withoutWatchingEditorPosition = function(a) {
-      this.ignoreSelectionChange = !0;
+    t.prototype.withoutWatchingEditorPosition = function(e) {
+      this._ignoreSelectionChange = !0;
       try {
-        a();
+        e();
       } finally {
-        this.ignoreSelectionChange = !1;
+        this._ignoreSelectionChange = !1;
       }
     };
 
-    b.prototype.initIdx = function(a) {
-      var b = !1;
-
-      var c = this.editor.getPosition();
-      for (var d = 0, e = this.markers.length; d < e && !b; d++) {
-        var f = new y.Range(this.markers[d].range.startLineNumber, this.markers[d].range.startColumn, this.markers[d]
-          .range.endLineNumber, this.markers[d].range.endColumn);
-        if (c.isBeforeOrEqual(f.getStartPosition())) {
-          this.nextIdx = d + (a ? 0 : -1);
-          b = !0;
+    t.prototype.initIdx = function(e) {
+      for (var t = !1, n = this._editor.getPosition(), i = 0, o = this._markers.length; o > i && !t; i++) {
+        var r = new p.Range(this._markers[i].range.startLineNumber, this._markers[i].range.startColumn, this._markers[
+          i].range.endLineNumber, this._markers[i].range.endColumn);
+        if (n.isBeforeOrEqual(r.getStartPosition())) {
+          this._nextIdx = i + (e ? 0 : -1);
+          t = !0;
         }
       }
-      if (!b) {
-        this.nextIdx = a ? 0 : this.markers.length - 1;
+      if (!t) {
+        this._nextIdx = e ? 0 : this._markers.length - 1;
       }
 
-      if (this.nextIdx < 0) {
-        this.nextIdx = this.markers.length - 1;
+      if (this._nextIdx < 0) {
+        this._nextIdx = this._markers.length - 1;
       }
     };
 
-    b.prototype.move = function(a) {
+    t.prototype.move = function(e) {
       if (!this.canNavigate()) {
-        this.emit(b.Events.CURRENT, null);
-        return;
-      }
-      this.nextIdx === -1 ? this.initIdx(a) : a ? (this.nextIdx += 1, this.nextIdx >= this.markers.length && (this.nextIdx =
-        0)) : (this.nextIdx -= 1, this.nextIdx < 0 && (this.nextIdx = this.markers.length - 1));
-      var c = this.markers[this.nextIdx];
-      this.emit(b.Events.CURRENT, c);
+        this.emit(t.Events.CURRENT, null);
+        return void 0;
+      } - 1 === this._nextIdx ? this.initIdx(e) : e ? (this._nextIdx += 1, this._nextIdx >= this._markers.length && (
+        this._nextIdx = 0)) : (this._nextIdx -= 1, this._nextIdx < 0 && (this._nextIdx = this._markers.length - 1));
+      var n = this._markers[this._nextIdx];
+      this.emit(t.Events.CURRENT, n);
     };
 
-    b.prototype.canNavigate = function() {
-      return this.markers.length > 0;
+    t.prototype.canNavigate = function() {
+      return this._markers.length > 0;
     };
 
-    b.prototype.next = function() {
+    t.prototype.next = function() {
       this.move(!0);
     };
 
-    b.prototype.previous = function() {
+    t.prototype.previous = function() {
       this.move(!1);
     };
 
-    b.prototype.reveal = function() {
-      var a = this;
-      if (this.nextIdx === -1) return;
-      this.withoutWatchingEditorPosition(function() {
-        var b = new x.Position(a.markers[a.nextIdx].range.startLineNumber, a.markers[a.nextIdx].range.startColumn);
-        a.editor.setPosition(b, !0, !0, !0);
-      });
+    t.prototype.indexOf = function(e) {
+      return this._markers.indexOf(e);
     };
 
-    b.prototype.dispose = function() {
-      while (this.toUnbind.length > 0) {
-        this.toUnbind.pop()();
+    t.prototype.length = function() {
+      return this._markers.length;
+    };
+
+    t.prototype.reveal = function() {
+      var e = this;
+      if (-1 !== this._nextIdx) {
+        this.withoutWatchingEditorPosition(function() {
+          var t = new h.Position(e._markers[e._nextIdx].range.startLineNumber, e._markers[e._nextIdx].range.startColumn);
+          e._editor.setPosition(t, !0, !0, !0);
+        });
       }
-      this.markers = null;
-
-      this.disposed = !0;
-
-      a.prototype.dispose.call(this);
     };
 
-    b.Events = {
+    t.prototype.dispose = function() {
+      this._toUnbind = n.cAll(this._toUnbind);
+
+      e.prototype.dispose.call(this);
+    };
+
+    t.Events = {
       CURRENT: "onMarker",
       MARKER_SET: "onNewMarkerSet"
     };
 
-    return b;
-  }(u.EventEmitter);
+    return t;
+  }(l.EventEmitter);
 
-  var F = {
+  var b = {
     showFrame: !0,
-    showAbove: !1
+    showArrow: !0
   };
 
-  var G = function(a) {
-    function b(b, c) {
-      a.call(this, b, F);
+  var C = function(e) {
+    function t(t, n) {
+      e.call(this, t, b);
 
-      this.model = c;
+      this._model = n;
 
-      this.element = null;
-
-      this.unhook = function() {};
+      this._callOnDispose = [];
 
       this.create();
 
-      this.wireModelAndView();
+      this._wireModelAndView();
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.fillContainer = function(a) {
-      var b = this;
+    t.prototype.fillContainer = function(e) {
+      var t = this;
 
-      var c = t.withElement(a).addClass("marker-widget");
-      c.div(function(a) {
-        b.element = a;
+      var n = y(e).addClass("marker-widget");
+      n.div(function(e) {
+        t._element = e;
       });
 
-      c.div(function(a) {
-        b.quickFixLabel = a;
+      n.div(function(e) {
+        t._quickFixLabel = e;
       });
 
-      c.on(q.EventType.CLICK, function() {
-        b.editor.focus();
-      });
-    };
-
-    b.prototype.wireModelAndView = function() {
-      var a = this;
-      this.unhook = this.model.addListener(E.Events.CURRENT, function(b) {
-        return a.showAtMarker(b);
+      n.on(r.EventType.CLICK, function() {
+        t.editor.focus();
       });
     };
 
-    b.prototype.showAtMarker = function(a) {
-      var b = this;
-      if (!a) return;
-      switch (a.severity) {
-        case A.Severity.Error:
-          this.options.frameColor = "#ff5a5a";
-          break;
-        case A.Severity.Warning:
-        case A.Severity.Info:
-          this.options.frameColor = "#5aac5a";
-      }
-      this.element.text(a.text);
-      var c = this.editor.getModel().getMode();
-      this.quickFixLabel.hide();
-      if (a.severity === A.Severity.Error && c.quickFixSupport) {
-        var d = a.range.startColumn > 1 && this.editor.getModel().getLineContent(a.range.startLineNumber).charAt(a.range
-          .startColumn - 1 - 1) === ".";
-        if (d) {
-          var e = c.quickFixSupport.quickFix(this.editor.getModel().getAssociatedResource(), {
-            lineNumber: a.range.endLineNumber,
-            column: a.range.endColumn
-          });
-          e.then(function(a) {
-            if (a.length > 0) {
-              var c = a.map(function(a) {
-                return a.label;
-              });
-              b.quickFixLabel.show().text(D.localize("quickFix.label", "Did you mean: {0}", c.join(", ")));
-            }
-          }).done();
+    t.prototype._wireModelAndView = function() {
+      var e = this;
+      this._callOnDispose.push(this._model.addListener2(_.Events.CURRENT, function(t) {
+        return e.showAtMarker(t);
+      }));
+    };
+
+    t.prototype.showAtMarker = function(e) {
+      var t = this;
+      if (e) {
+        switch (e.severity) {
+          case o.Severity.Error:
+            this.options.frameColor = "#ff5a5a";
+            break;
+          case o.Severity.Warning:
+          case o.Severity.Info:
+            this.options.frameColor = "#5aac5a";
         }
+        this._element.text(i.format("({0}/{1}) {2}", this._model.indexOf(e) + 1, this._model.length(), e.text));
+        var n = this.editor.getModel().getMode();
+        if (this._quickFixLabel.hide(), e.severity === o.Severity.Error && n.quickFixSupport) {
+          var r = e.range.startColumn > 1 && "." === this.editor.getModel().getLineContent(e.range.startLineNumber).charAt(
+            e.range.startColumn - 1 - 1);
+          if (r) {
+            var s = n.quickFixSupport.quickFix(this.editor.getModel().getAssociatedResource(), {
+              lineNumber: e.range.endLineNumber,
+              column: e.range.endColumn
+            });
+            s.then(function(e) {
+              if (e.length > 0) {
+                var n = e.map(function(e) {
+                  return e.label;
+                });
+                t._quickFixLabel.show().text(v.localize("vs_editor_contrib_gotoError_gotoError", 0, n.join(", ")));
+              }
+            }).done();
+          }
+        }
+        this._model.withoutWatchingEditorPosition(function() {
+          t.show(new h.Position(e.range.startLineNumber, e.range.startColumn), 3);
+        });
       }
-      this.model.withoutWatchingEditorPosition(function() {
-        b.show(new x.Position(a.range.startLineNumber, a.range.startColumn), 3);
-      });
     };
 
-    b.prototype.dispose = function() {
-      this.unhook();
+    t.prototype.dispose = function() {
+      this._callOnDispose = n.disposeAll(this._callOnDispose);
 
-      a.prototype.dispose.call(this);
+      e.prototype.dispose.call(this);
     };
 
-    return b;
-  }(s.ZoneWidget);
+    return t;
+  }(a.ZoneWidget);
 
-  var H = function(a) {
-    function b(b, c, d) {
-      a.call(this, b, c);
+  var w = function(e) {
+    function t(t, n, i) {
+      e.call(this, t, n);
 
       this.handlerService = null;
 
       this.markerService = null;
 
-      this.isNext = d;
+      this.isNext = i;
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.injectMarkerService = function(a) {
-      this.markerService = a;
+    t.prototype.injectMarkerService = function(e) {
+      this.markerService = e;
     };
 
-    b.prototype.injectionDone = function() {
+    t.prototype.injectionDone = function() {
       this.updateEnablementState();
     };
 
-    b.prototype.getEnablementState = function() {
-      return !!this.markerService && !! this.handlerService && a.prototype.getEnablementState.call(this);
+    t.prototype.getEnablementState = function() {
+      return !!this.markerService && !! this.handlerService && e.prototype.getEnablementState.call(this);
     };
 
-    b.prototype.getOrCreateModel = function() {
+    t.prototype.getOrCreateModel = function() {
       throw new Error("Abstract method");
     };
 
-    b.prototype.run = function() {
-      var a = this.getOrCreateModel();
+    t.prototype.run = function() {
+      var e = this.getOrCreateModel();
       this.telemetryService.log("zoneWidgetShown", {
         mode: "go to error"
       });
 
-      a && (this.isNext ? a.next() : a.previous(), a.reveal());
+      e && (this.isNext ? e.next() : e.previous(), e.reveal());
 
-      return r.Promise.as(!0);
+      return s.TPromise.as(!0);
     };
 
-    return b;
-  }(v.EditorAction);
+    return t;
+  }(c.EditorAction);
 
-  var I = function(a) {
-    function b(b, c) {
-      a.call(this, b, c, !0);
+  var E = function(e) {
+    function t(t, n) {
+      e.call(this, t, n, !0);
 
-      this.model = null;
-
-      this.zone = null;
-
-      this.moreToUnhook = [];
+      this._callOnClose = [];
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.cleanUp = function() {
-      while (this.toUnhook.length > 0) {
-        this.toUnhook.pop()();
-      }
-      if (this.zone) {
-        this.zone.dispose();
-        this.zone = null;
-      }
+    t.prototype._cleanUp = function() {
+      this._callOnClose = n.disposeAll(this._callOnClose);
 
-      if (this.model) {
-        this.model.dispose();
-        this.model = null;
-      }
+      this._zone = null;
+
+      this._model = null;
     };
 
-    b.prototype.getOrCreateModel = function() {
-      var a = this;
-      if (this.model) {
-        return this.model;
+    t.prototype.getOrCreateModel = function() {
+      var e = this;
+      if (this._model) {
+        return this._model;
       }
-      var b = this.getMarkers();
-      this.model = new E(this.editor, b);
+      var t = this._getMarkers();
+      this._model = new _(this.editor, t);
 
-      this.zone = new G(this.editor, this.model);
+      this._zone = new C(this.editor, this._model);
 
-      this.toUnhook.push(this.handlerService.bind({
+      this._callOnClose.push(this._model);
+
+      this._callOnClose.push(this._zone);
+
+      this._callOnClose.push(this.handlerService.bind({
         key: "Escape"
       }, function() {
-        a.cleanUp();
+        e._cleanUp();
 
         return !0;
       }, {
         once: !0,
         id: this.id
-      }).dispose);
-
-      this.toUnhook.push(this.editor.addListener(w.EventType.ModelChanged, function() {
-        a.cleanUp();
       }));
 
-      this.toUnhook.push(this.model.addListener(E.Events.CURRENT, function(b) {
-        if (!b) {
-          a.cleanUp();
+      this._callOnClose.push(this.editor.addListener2(d.EventType.ModelChanged, function() {
+        e._cleanUp();
+      }));
+
+      this._callOnClose.push(this._model.addListener2(_.Events.CURRENT, function(t) {
+        if (!t) {
+          e._cleanUp();
         }
       }));
 
-      this.toUnhook.push(this.markerService.addListener(z.MarkerServiceConstants.SERVICE_CHANGED, function(b) {
-        var c = b.markerSetEvents;
-
-        var d = a.editor.getModel().getAssociatedResource().toExternal();
-        for (var e = 0; e < c.length; e++) {
-          var f = c[e];
-          if (f.resource.toExternal() === d) {
-            var g = a.getMarkers();
-            a.model.setMarkers(g);
+      this._callOnClose.push(this.markerService.addListener2(f.MarkerServiceConstants.SERVICE_CHANGED, function(t) {
+        for (var n = t.markerSetEvents, i = e.editor.getModel().getAssociatedResource().toExternal(), o = 0; o <
+          n.length; o++) {
+          var r = n[o];
+          if (r.resource.toExternal() === i) {
+            var s = e._getMarkers();
+            e._model.setMarkers(s);
             break;
           }
         }
       }));
 
-      return this.model;
+      return this._model;
     };
 
-    b.prototype.getMarkers = function() {
-      var a = this.editor.getModel().getAssociatedResource();
+    t.prototype._getMarkers = function() {
+      var e = this.editor.getModel().getAssociatedResource();
 
-      var b = this.markerService.getMarkerSet(a);
-      return b === null ? null : b.getMarkers();
+      var t = this.markerService.getMarkerSet(e);
+      return null === t ? null : t.getMarkers();
     };
 
-    b.prototype.dispose = function() {
-      a.prototype.dispose.call(this);
+    t.prototype.dispose = function() {
+      e.prototype.dispose.call(this);
 
-      this.cleanUp();
+      this._cleanUp();
     };
 
-    b.ID = "editor.actions.marker.next";
+    t.ID = "editor.actions.marker.next";
 
-    return b;
-  }(H);
+    return t;
+  }(w);
 
-  var J = function(a) {
-    function b(b, c) {
-      a.call(this, b, c, !1);
+  var S = function(e) {
+    function t(t, n) {
+      e.call(this, t, n, !1);
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.getOrCreateModel = function() {
-      return this.editor.getAction(I.ID).getOrCreateModel();
+    t.prototype.getOrCreateModel = function() {
+      return this.editor.getAction(E.ID).getOrCreateModel();
     };
 
-    b.ID = "editor.actions.marker.prev";
+    t.ID = "editor.actions.marker.prev";
 
-    return b;
-  }(H);
+    return t;
+  }(w);
 
-  var K = new C.ActionDescriptor(I, I.ID, D.localize("markerAction.next.label", "Go to next marker"), {
+  var x = new m.ActionDescriptor(E, E.ID, v.localize("vs_editor_contrib_gotoError_gotoError", 1), {
     ctrlCmd: !0,
-    key: ","
+    key: "."
   });
 
-  var L = new C.ActionDescriptor(J, J.ID, D.localize("markerAction.previous.label", "Go to previous marker"), {
+  var L = new m.ActionDescriptor(S, S.ID, v.localize("vs_editor_contrib_gotoError_gotoError", 2), {
     ctrlCmd: !0,
     shift: !0,
-    key: ","
+    key: "."
   });
 
-  var M = B.Registry.as(v.Extensions.EditorContributions);
-  M.registerEditorContribution(K);
+  var T = g.Registry.as(c.Extensions.EditorContributions);
+  T.registerEditorContribution(x);
 
-  M.registerEditorContribution(L);
+  T.registerEditorContribution(L);
 });

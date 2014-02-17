@@ -1,31 +1,9 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a;
-    }
-    for (var c in b) {
-      if (b.hasOwnProperty(c)) {
-        a[c] = b[c];
-      }
-    }
-    d.prototype = b.prototype;
-
-    a.prototype = new d;
-  };
-
-define(["require", "exports", "vs/base/eventEmitter", "vs/base/types", "vs/platform/services",
-  "vs/editor/core/model/mirrorModel"
-], function(a, b, c, d, e, f) {
-  var g = c;
-
-  var h = d;
-
-  var i = e;
-
-  var j = f;
-
-  var k = function(a) {
-    function b() {
-      a.call(this);
+define("vs/editor/worker/resourceService", ["require", "exports", "vs/base/eventEmitter", "vs/base/types",
+  "vs/platform/services", "vs/editor/core/model/mirrorModel"
+], function(e, t, n, i, o, r) {
+  var s = function(e) {
+    function t() {
+      e.call(this);
 
       this.data = {};
 
@@ -33,150 +11,146 @@ define(["require", "exports", "vs/base/eventEmitter", "vs/base/types", "vs/platf
 
       this.unbinds = {};
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.insert = function(a, b) {
-      var c = this;
+    t.prototype.insert = function(e, t) {
+      var n = this;
 
-      var d = this.remove(a, b);
+      var i = this.remove(e, t);
 
-      var e = a.toString();
-      this.data[e] = b;
+      var r = e.toString();
+      this.data[r] = t;
 
-      this.unbinds[e] = [];
+      this.unbinds[r] = [];
 
-      this.unbinds[e].push(b.addBulkListener(function(b) {
-        c.emit(i.ResourceEvents.CHANGED, {
-          url: a,
-          originalEvents: b
+      this.unbinds[r].push(t.addBulkListener(function(t) {
+        n.emit(o.ResourceEvents.CHANGED, {
+          url: e,
+          originalEvents: t
         });
       }));
 
-      this.emit(i.ResourceEvents.ADDED, {
-        url: a,
-        addedElement: b,
-        removedElement: d
+      this.emit(o.ResourceEvents.ADDED, {
+        url: e,
+        addedElement: t,
+        removedElement: i
       });
 
-      return d;
+      return i;
     };
 
-    b.prototype.insertLinked = function(a, b, c) {
-      if (!this.contains(a)) return;
-      var d = a.toExternal();
-      if (!this.linked.hasOwnProperty(d)) {
-        this.linked[d] = {};
+    t.prototype.insertLinked = function(e, t, n) {
+      if (this.contains(e)) {
+        var o = e.toExternal();
+        if (!this.linked.hasOwnProperty(o)) {
+          this.linked[o] = {};
+        }
+
+        this.linked[o][t] = n;
+
+        if (i.isFunction(n.onChange)) {
+          this.unbinds[o].push(this.data[o].addBulkListener(function(e) {
+            n.onChange(e);
+          }));
+        }
       }
-
-      this.linked[d][b] = c;
-
-      if (h.isFunction(c.onChange)) {
-        this.unbinds[d].push(this.data[d].addBulkListener(function(a) {
-          c.onChange(a);
-        }));
-      }
     };
 
-    b.prototype.get = function(a) {
-      return this.data[a.toString()] ? this.data[a.toString()] : null;
+    t.prototype.get = function(e) {
+      return this.data[e.toString()] ? this.data[e.toString()] : null;
     };
 
-    b.prototype.getLinked = function(a, b) {
-      var c = a.toExternal();
-      return this.data[c] ? this.linked.hasOwnProperty(c) ? this.linked[c].hasOwnProperty(b) ? this.linked[c][b] :
+    t.prototype.getLinked = function(e, t) {
+      var n = e.toExternal();
+      return this.data[n] ? this.linked.hasOwnProperty(n) ? this.linked[n].hasOwnProperty(t) ? this.linked[n][t] :
         null : null : null;
     };
 
-    b.prototype.all = function() {
-      var a = this;
-      return Object.keys(this.data).map(function(b) {
-        return a.data[b];
+    t.prototype.all = function() {
+      var e = this;
+      return Object.keys(this.data).map(function(t) {
+        return e.data[t];
       });
     };
 
-    b.prototype.allLinked = function() {
-      var a = this;
+    t.prototype.allLinked = function() {
+      var e = this;
 
-      var b = [];
-      Object.keys(this.linked).forEach(function(c) {
-        Object.keys(a.linked[c]).forEach(function(d) {
-          b.push(a.linked[c][d]);
+      var t = [];
+      Object.keys(this.linked).forEach(function(n) {
+        Object.keys(e.linked[n]).forEach(function(i) {
+          t.push(e.linked[n][i]);
         });
       });
 
-      return b;
+      return t;
     };
 
-    b.prototype.contains = function(a) {
-      return !!this.data[a.toString()];
+    t.prototype.contains = function(e) {
+      return !!this.data[e.toString()];
     };
 
-    b.prototype.remove = function(a, b) {
-      if (!this.contains(a)) {
+    t.prototype.remove = function(e, t) {
+      if (!this.contains(e)) {
         return !1;
       }
-      var c = a.toString();
-
-      var d = this.data[c][0];
-
-      var e = 1;
-      while (this.unbinds[c].length > 0) {
-        this.unbinds[c].pop()();
+      for (var n = e.toString(), r = this.data[n][0]; this.unbinds[n].length > 0;) {
+        this.unbinds[n].pop()();
       }
-      for (var f in this.linked[c])
-        if (this.linked.hasOwnProperty(f)) {
-          var g = this.linked[c][f];
-          if (h.isFunction(g.onRemove)) {
-            g.onRemove();
+      for (var s in this.linked[n])
+        if (this.linked.hasOwnProperty(s)) {
+          var a = this.linked[n][s];
+          if (i.isFunction(a.onRemove)) {
+            a.onRemove();
           }
         }
-      delete this.unbinds[c];
+      delete this.unbinds[n];
 
-      delete this.linked[c];
+      delete this.linked[n];
 
-      delete this.data[c];
+      delete this.data[n];
 
-      this.emit(i.ResourceEvents.REMOVED, {
-        url: a,
-        removedElement: d,
-        addedElement: b
+      this.emit(o.ResourceEvents.REMOVED, {
+        url: e,
+        removedElement: r,
+        addedElement: t
       });
 
       return !0;
     };
 
-    return b;
-  }(g.EventEmitter);
-  b.ResourceService = k;
-  var l = function(a) {
-    function b() {
-      a.apply(this, arguments);
+    return t;
+  }(n.EventEmitter);
+  t.ResourceService = s;
+  var a = function(e) {
+    function t() {
+      e.apply(this, arguments);
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.injectDispatcherService = function(a) {
-      a.register("modelInitialize", this.onModelInitialize.bind(this));
+    t.prototype.injectDispatcherService = function(e) {
+      e.register("modelInitialize", this.onModelInitialize.bind(this));
 
-      a.register("modelDestroy", this.onModelDestroy.bind(this));
+      e.register("modelDestroy", this.onModelDestroy.bind(this));
 
-      a.register("modelEvents", this.onModelEvents.bind(this));
+      e.register("modelEvents", this.onModelEvents.bind(this));
     };
 
-    b.prototype.onModelInitialize = function(a, b, c, d, e) {
-      var f = new j.MirrorModel(a, b, c, e, d);
-      this.insert(e, f);
+    t.prototype.onModelInitialize = function(e, t, n, i) {
+      var o = new r.MirrorModel(e, t, i, n);
+      this.insert(i, o);
     };
 
-    b.prototype.onModelDestroy = function(a) {
-      this.remove(a);
+    t.prototype.onModelDestroy = function(e) {
+      this.remove(e);
     };
 
-    b.prototype.onModelEvents = function(a, b) {
-      var c = this.get(a);
-      c.onEvents(b);
+    t.prototype.onModelEvents = function(e, t) {
+      var n = this.get(e);
+      n.onEvents(t);
     };
 
-    return b;
-  }(k);
-  b.WorkerResourceService = l;
+    return t;
+  }(s);
+  t.WorkerResourceService = a;
 });

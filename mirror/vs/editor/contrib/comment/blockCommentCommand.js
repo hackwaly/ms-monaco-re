@@ -1,98 +1,98 @@
-define(["require", "exports", "vs/editor/core/range", "vs/editor/core/selection"], function(a, b, c, d) {
-  var e = c;
-
-  var f = d;
-
-  var g = function() {
-    function a(a) {
-      this._selection = a;
+define("vs/editor/contrib/comment/blockCommentCommand", ["require", "exports", "vs/editor/core/range",
+  "vs/editor/core/selection"
+], function(e, t, n, i) {
+  var o = function() {
+    function e(e) {
+      this._selection = e;
 
       this._usedEndToken = null;
     }
-    a.prototype._haystackHasNeedleAtOffset = function(a, b, c) {
-      if (c < 0) {
+    e.prototype._haystackHasNeedleAtOffset = function(e, t, n) {
+      if (0 > n) {
         return !1;
       }
-      var d = b.length;
+      var i = t.length;
 
-      var e = a.length;
-      if (c + d > e) {
+      var o = e.length;
+      if (n + i > o) {
         return !1;
       }
-      for (var f = 0; f < d; f++)
-        if (a.charCodeAt(c + f) !== b.charCodeAt(f)) {
+      for (var r = 0; i > r; r++)
+        if (e.charCodeAt(n + r) !== t.charCodeAt(r)) {
           return !1;
         }
       return !0;
     };
 
-    a.prototype._createOperationsForBlockComment = function(a, b, c, d) {
-      var f = a.startLineNumber;
+    e.prototype._createOperationsForBlockComment = function(e, t, i, o) {
+      var r = e.startLineNumber;
 
-      var g = a.startColumn;
+      var s = e.startColumn;
 
-      var h = a.endLineNumber;
+      var a = e.endLineNumber;
 
-      var i = a.endColumn;
+      var u = e.endColumn;
 
-      var j = e.RangeUtils.isEmpty(a);
+      var l = n.isEmpty(e);
 
-      var k = b.blockCommentStartToken;
+      var c = t.blockCommentStartToken;
 
-      var l = k.length;
+      var d = c.length;
 
-      var m = b.blockCommentEndToken;
+      var h = t.blockCommentEndToken;
 
-      var n = m.length;
+      var p = h.length;
 
-      var o = this._haystackHasNeedleAtOffset(c.getLineContent(f), k, g - 1 - l);
+      var f = this._haystackHasNeedleAtOffset(i.getLineContent(r), c, s - 1 - d);
 
-      var p = this._haystackHasNeedleAtOffset(c.getLineContent(h), m, i - 1);
-      o && p ? j ? d.addEditOperation(new e.Range(f, g - l, h, i + n), null) : (d.addEditOperation(new e.Range(f, g -
-        l, f, g), null), d.addEditOperation(new e.Range(h, i, h, i + n), null)) : j ? (d.addEditOperation(new e.Range(
-        f, g, h, i), k + m), this._usedEndToken = m) : (d.addEditOperation(new e.Range(f, g, f, g), k), d.addEditOperation(
-        new e.Range(h, i, h, i), m));
+      var g = this._haystackHasNeedleAtOffset(i.getLineContent(a), h, u - 1);
+      f && g ? l ? o.addEditOperation(new n.Range(r, s - d, a, u + p), null) : (o.addEditOperation(new n.Range(r, s -
+        d, r, s), null), o.addEditOperation(new n.Range(a, u, a, u + p), null)) : l ? (o.addEditOperation(new n.Range(
+        r, s, a, u), c + h), this._usedEndToken = h) : (o.addEditOperation(new n.Range(r, s, r, s), c), o.addEditOperation(
+        new n.Range(a, u, a, u), h));
     };
 
-    a.prototype.getEditOperations = function(a, b) {
-      var c = this._selection.startLineNumber;
+    e.prototype.getEditOperations = function(e, t) {
+      var n = this._selection.startLineNumber;
 
-      var d = this._selection.startColumn;
+      var i = this._selection.startColumn;
 
-      var e = this._selection.endLineNumber;
+      var o = this._selection.endLineNumber;
 
-      var f = this._selection.endColumn;
-      if (c < e && f === 1) {
-        e -= 1;
-        f = a.getLineMaxColumn(e);
+      var r = this._selection.endColumn;
+      if (o > n && 1 === r) {
+        o -= 1;
+        r = e.getLineMaxColumn(o);
       }
-      var g = a.getModeAtPosition(c, d).commentsSupport;
-      if (!g) return;
-      var h = g.getCommentsConfiguration();
-      if (!h || !h.blockCommentStartToken || !h.blockCommentEndToken) return;
-      this._createOperationsForBlockComment({
-        startLineNumber: c,
-        startColumn: d,
-        endLineNumber: e,
-        endColumn: f
-      }, h, a, b);
-    };
-
-    a.prototype.computeCursorState = function(a, b) {
-      var c = b.getInverseEditOperations();
-      if (c.length === 2) {
-        var d = c[0];
-
-        var e = c[1];
-        return new f.Selection(d.range.endLineNumber, d.range.endColumn, e.range.startLineNumber, e.range.startColumn);
+      var s = e.getModeAtPosition(n, i).commentsSupport;
+      if (s) {
+        var a = s.getCommentsConfiguration();
+        if (a && a.blockCommentStartToken && a.blockCommentEndToken) {
+          this._createOperationsForBlockComment({
+            startLineNumber: n,
+            startColumn: i,
+            endLineNumber: o,
+            endColumn: r
+          }, a, e, t);
+        }
       }
-      var g = c[0].range;
-
-      var h = this._usedEndToken ? -this._usedEndToken.length : 0;
-      return new f.Selection(g.endLineNumber, g.endColumn + h, g.endLineNumber, g.endColumn + h);
     };
 
-    return a;
+    e.prototype.computeCursorState = function(e, t) {
+      var n = t.getInverseEditOperations();
+      if (2 === n.length) {
+        var o = n[0];
+
+        var r = n[1];
+        return new i.Selection(o.range.endLineNumber, o.range.endColumn, r.range.startLineNumber, r.range.startColumn);
+      }
+      var s = n[0].range;
+
+      var a = this._usedEndToken ? -this._usedEndToken.length : 0;
+      return new i.Selection(s.endLineNumber, s.endColumn + a, s.endLineNumber, s.endColumn + a);
+    };
+
+    return e;
   }();
-  b.BlockCommentCommand = g;
+  t.BlockCommentCommand = o;
 });

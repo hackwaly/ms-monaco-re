@@ -1,104 +1,76 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a;
-    }
-    for (var c in b) {
-      if (b.hasOwnProperty(c)) {
-        a[c] = b[c];
+define("vs/editor/contrib/suggest/suggestModel", ["require", "exports", "vs/editor/contrib/snippet/snippet",
+  "vs/base/lib/winjs.base", "vs/editor/core/constants", "vs/base/eventEmitter", "vs/base/strings",
+  "vs/base/performance/timer", "vs/editor/contrib/parameterHints/parameterHints"
+], function(e, t, n, i, o, r, s, a, u) {
+  var l;
+  ! function(e) {
+    e[e.NOT_ACTIVE = 0] = "NOT_ACTIVE";
+
+    e[e.MANUAL_TRIGGER = 1] = "MANUAL_TRIGGER";
+
+    e[e.AUTO_TRIGGER = 2] = "AUTO_TRIGGER";
+  }(l || (l = {}));
+  var c = function() {
+    function e(e, t) {
+      if ("undefined" == typeof t) {
+        t = e.getPosition();
       }
-    }
-    d.prototype = b.prototype;
+      var n = e.getModel();
 
-    a.prototype = new d;
-  };
-
-define(["require", "exports", "vs/editor/contrib/snippet/snippet", "vs/base/lib/winjs.base", "vs/editor/core/constants",
-  "vs/editor/core/range", "vs/base/eventEmitter", "vs/base/strings", "vs/base/performance/timer",
-  "vs/editor/contrib/parameterHints/parameterHints"
-], function(a, b, c, d, e, f, g, h, i, j) {
-  var k = c;
-
-  var l = d;
-
-  var m = e;
-
-  var n = f;
-
-  var o = g;
-
-  var p = h;
-
-  var q = i;
-
-  var r = j;
-
-  var s;
-  (function(a) {
-    a[a.NOT_ACTIVE = 0] = "NOT_ACTIVE";
-
-    a[a.MANUAL_TRIGGER = 1] = "MANUAL_TRIGGER";
-
-    a[a.AUTO_TRIGGER = 2] = "AUTO_TRIGGER";
-  })(s || (s = {}));
-  var t = function() {
-    function a(a, b) {
-      if (typeof b == "undefined") {
-        b = a.getPosition();
-      }
-      var c = a.getModel();
-
-      var d = c.getLineContent(b.lineNumber);
+      var i = n.getLineContent(t.lineNumber);
       this.wordBefore = "";
-      var e = c.getWordAtPosition(b, !1);
-      if (e) {
-        this.wordBefore = d.substring(e.startColumn - 1, b.column - 1);
+      var o = n.getWordAtPosition(t, !1, !0);
+      if (o) {
+        this.wordBefore = i.substring(o.startColumn - 1, t.column - 1);
       }
 
-      this.lineNumber = b.lineNumber;
+      this.lineNumber = t.lineNumber;
 
-      this.column = b.column;
+      this.column = t.column;
 
-      this.lineContentBefore = d.substr(0, b.column - 1);
+      this.lineContentBefore = i.substr(0, t.column - 1);
 
-      this.lineContentAfter = d.substr(b.column - 1);
+      this.lineContentAfter = i.substr(t.column - 1);
     }
-    a.prototype.isValidForAutoSuggest = function() {
-      return /^\s*$/.test(this.lineContentAfter) ? this.wordBefore.length === 0 ? !1 : !0 : !1;
+    e.prototype.isValidForAutoSuggest = function() {
+      return /^\s*$/.test(this.lineContentAfter) ? 0 === this.wordBefore.length ? !1 : !0 : !1;
     };
 
-    a.prototype.isValidForNewContext = function(a) {
-      return this.lineNumber !== a.lineNumber ? !1 : a.column < this.column - this.wordBefore.length ? !1 : a.lineContentBefore
-        .indexOf(this.lineContentBefore) !== 0 || this.lineContentAfter !== a.lineContentAfter ? !1 : a.wordBefore ===
-        "" && a.lineContentBefore !== this.lineContentBefore ? !1 : !0;
+    e.prototype.isValidForNewContext = function(e) {
+      return this.lineNumber !== e.lineNumber ? !1 : e.column < this.column - this.wordBefore.length ? !1 : 0 !== e.lineContentBefore
+        .indexOf(this.lineContentBefore) || this.lineContentAfter !== e.lineContentAfter ? !1 : "" === e.wordBefore &&
+        e.lineContentBefore !== this.lineContentBefore ? !1 : !0;
     };
 
-    a.prototype.isValidForRetrigger = function(a) {
-      return this.lineContentBefore.indexOf(a.lineContentBefore) !== 0 || this.lineContentAfter !== a.lineContentAfter ? !
-        1 : this.lineContentBefore.length > a.lineContentBefore.length && this.wordBefore.length === 0 ? !1 : !0;
+    e.prototype.isValidForRetrigger = function(e) {
+      return 0 !== this.lineContentBefore.indexOf(e.lineContentBefore) || this.lineContentAfter !== e.lineContentAfter ? !
+        1 : this.lineContentBefore.length > e.lineContentBefore.length && 0 === this.wordBefore.length ? !1 : !0;
     };
 
-    return a;
+    return e;
   }();
 
-  var u = function(a) {
-    function b(b, c) {
-      var d = this;
-      a.call(this);
+  var d = function(e) {
+    function t(t, n) {
+      var i = this;
+      e.call(this);
 
-      this.editor = b;
+      this.editor = t;
 
-      this.onAccept = c;
+      this.onAccept = n;
 
       this.listenersToRemove = [];
 
       this.autoSuggestDelay = this.editor.getConfiguration().quickSuggestionsDelay;
-      if (isNaN(this.autoSuggestDelay) || !this.autoSuggestDelay && this.autoSuggestDelay !== 0 || this.autoSuggestDelay >
+
+      if (isNaN(this.autoSuggestDelay) || !this.autoSuggestDelay && 0 !== this.autoSuggestDelay || this.autoSuggestDelay >
         2e3 || this.autoSuggestDelay < 0) {
         this.autoSuggestDelay = 500;
       }
+
       this.triggerAutoSuggestPromise = null;
 
-      this.state = s.NOT_ACTIVE;
+      this.state = 0;
 
       this.requestPromise = null;
 
@@ -106,158 +78,155 @@ define(["require", "exports", "vs/editor/contrib/snippet/snippet", "vs/base/lib/
 
       this.requestContext = null;
 
-      this.listenersToRemove.push(this.editor.addListener(m.EventType.CursorSelectionChanged, function(a) {
-        if (!a.selection.isEmpty()) {
-          d.cancel();
-          return;
-        }
-        if (a.source === "mouse") {
-          d.cancel();
-          return;
-        }
-        d.onCursorChange();
+      this.listenersToRemove.push(this.editor.addListener(o.EventType.CursorSelectionChanged, function(e) {
+        return e.selection.isEmpty() ? "mouse" === e.source ? (i.cancel(), void 0) : (i.onCursorChange(), void 0) :
+          (i.cancel(), void 0);
+      }));
+
+      this.listenersToRemove.push(this.editor.addListener(o.EventType.ModelChanged, function() {
+        i.cancel();
       }));
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.cancel = function(a, b) {
-      if (typeof a == "undefined") {
-        a = !1;
+    t.prototype.cancel = function(e, t) {
+      if ("undefined" == typeof e) {
+        e = !1;
       }
 
-      if (typeof b == "undefined") {
-        b = !1;
+      if ("undefined" == typeof t) {
+        t = !1;
       }
-      var c = this.state !== s.NOT_ACTIVE;
+      var n = 0 !== this.state;
       this.triggerAutoSuggestPromise && (this.triggerAutoSuggestPromise.cancel(), this.triggerAutoSuggestPromise =
         null);
 
       this.requestPromise && (this.requestPromise.cancel(), this.requestPromise = null);
 
-      this.state = s.NOT_ACTIVE;
+      this.state = 0;
 
       this.suggestions = null;
 
       this.requestContext = null;
 
-      a || this.emit("cancel", {
-        retrigger: b
+      e || this.emit("cancel", {
+        retrigger: t
       });
 
-      return c;
+      return n;
     };
 
-    b.prototype.isAutoSuggest = function() {
-      return this.state === s.AUTO_TRIGGER;
+    t.prototype.isAutoSuggest = function() {
+      return 2 === this.state;
     };
 
-    b.prototype.onCursorChange = function() {
-      var a = this;
-      if (!this.editor.getModel().getMode().suggestSupport) return;
-      var b = new t(this.editor);
-      this.state === s.NOT_ACTIVE ? (this.cancel(), b.isValidForAutoSuggest() && (this.triggerAutoSuggestPromise = l.Promise
-        .timeout(this.autoSuggestDelay), this.triggerAutoSuggestPromise.then(function() {
-          a.triggerAutoSuggestPromise = null;
+    t.prototype.onCursorChange = function() {
+      var e = this;
+      if (this.editor.getModel().getMode().suggestSupport) {
+        var t = new c(this.editor);
+        0 === this.state ? (this.cancel(), t.isValidForAutoSuggest() && (this.triggerAutoSuggestPromise = i.Promise.timeout(
+          this.autoSuggestDelay), this.triggerAutoSuggestPromise.then(function() {
+          e.triggerAutoSuggestPromise = null;
 
-          a.trigger(!0, !1);
-        }))) : this.onNewContext(b);
-    };
-
-    b.prototype.trigger = function(a, b, c) {
-      if (typeof c == "undefined") {
-        c = !1;
+          e.trigger(!0, !1);
+        }))) : this.onNewContext(t);
       }
-      var d = this;
-
-      var e = this.editor.getModel();
-
-      var f = e.getMode().suggestSupport;
-      if (!f) return;
-      var g = q.start(q.Topic.EDITOR, "suggest/TRIGGER");
-      this.cancel(!1, c);
-
-      this.state = a ? s.AUTO_TRIGGER : s.MANUAL_TRIGGER;
-
-      this.emit("loading", {
-        auto: this.isAutoSuggest(),
-        characterTriggered: b,
-        retrigger: c
-      });
-
-      this.requestContext = new t(this.editor);
-      var h = q.start(q.Topic.EDITOR, "suggest/REQUEST");
-      this.requestPromise = f.suggest(e.getAssociatedResource(), this.editor.getPosition());
-
-      this.requestPromise.then(function(a) {
-        h.stop();
-
-        d.requestPromise = null;
-
-        a.suggestions && a.suggestions.length > 0 ? (d.suggestions = a.suggestions, d.onNewContext(new t(d.editor))) :
-          d.emit("empty");
-
-        g.stop();
-      }, function() {
-        h.stop();
-
-        g.stop();
-      });
     };
 
-    b.prototype.onNewContext = function(a) {
-      if (!this.requestContext.isValidForNewContext(a)) {
-        this.requestContext.isValidForRetrigger(a) ? this.trigger(this.state === s.AUTO_TRIGGER, !1, !0) : this.cancel();
-        return;
+    t.prototype.trigger = function(e, t, n) {
+      if ("undefined" == typeof n) {
+        n = !1;
       }
-      if (this.suggestions) {
-        var b = this.editor.getModel().getMode().suggestSupport;
+      var i = this;
 
-        var c = this.suggestions;
+      var o = this.editor.getModel();
 
-        var d = b.getFilter();
-        if (d) {
-          c = c.filter(d.bind(null, a.wordBefore));
-        }
+      var r = o.getMode().suggestSupport;
+      if (r) {
+        var s = a.start(0, "suggest/TRIGGER");
+        this.cancel(!1, n);
 
-        c = c.sort(function(a, b) {
-          return p.localeCompare(a.label.toLowerCase(), b.label.toLowerCase());
+        this.state = e ? 2 : 1;
+
+        this.emit("loading", {
+          auto: this.isAutoSuggest(),
+          characterTriggered: t,
+          retrigger: n
         });
 
-        c.length > 0 ? this.emit("suggest", {
+        this.requestContext = new c(this.editor);
+        var u = a.start(0, "suggest/REQUEST");
+        this.requestPromise = r.suggest(o.getAssociatedResource(), this.editor.getPosition());
+
+        this.requestPromise.then(function(e) {
+          u.stop();
+
+          i.requestPromise = null;
+
+          e.suggestions && e.suggestions.length > 0 ? (i.suggestions = e.suggestions, i.onNewContext(new c(i.editor))) :
+            i.emit("empty");
+
+          s.stop();
+        }, function() {
+          u.stop();
+
+          s.stop();
+        });
+      }
+    };
+
+    t.prototype.onNewContext = function(e) {
+      if (!this.requestContext.isValidForNewContext(e)) {
+        this.requestContext.isValidForRetrigger(e) ? this.trigger(2 === this.state, !1, !0) : this.cancel();
+        return void 0;
+      }
+      if (this.suggestions) {
+        var t = this.editor.getModel().getMode().suggestSupport;
+
+        var n = this.suggestions;
+
+        var i = t.getFilter();
+        if (i) {
+          n = n.filter(i.bind(null, e.wordBefore));
+        }
+
+        n = n.sort(function(e, t) {
+          return s.localeCompare(e.label.toLowerCase(), t.label.toLowerCase());
+        });
+
+        n.length > 0 ? this.emit("suggest", {
           suggestions: {
-            suggestions: c,
-            currentWord: a.wordBefore
+            suggestions: n,
+            currentWord: e.wordBefore
           },
           auto: this.isAutoSuggest()
         }) : this.emit("empty");
       }
     };
 
-    b.prototype.accept = function(a) {
-      if (!a && this.suggestions === null) {
+    t.prototype.accept = function(e) {
+      if (!e && null === this.suggestions) {
         return !1;
       }
-      a = a || this.suggestions[0];
+      e = e || this.suggestions[0];
 
       this.cancel();
-      var b = new t(this.editor);
+      var t = new c(this.editor);
+      this.onAccept(new n.CodeSnippet(e.codeSnippet), t.wordBefore.length);
+      var i = this.editor.getAction(u.TriggerParameterHintsAction.ID);
 
-      var c = new n.Range(b.lineNumber, b.column - b.wordBefore.length, b.lineNumber, b.column);
-      this.onAccept(new k.CodeSnippet(a.codeSnippet), c);
-      var d = this.editor.getAction(r.TriggerParameterHintsAction.ID);
-
-      var e = d ? d.getModel() : null;
-      e && e.doTrigger();
+      var o = i ? i.getModel() : null;
+      o && o.doTrigger();
 
       return !0;
     };
 
-    b.prototype.destroy = function() {
+    t.prototype.destroy = function() {
       this.cancel(!0);
 
       if (this.listenersToRemove) {
-        this.listenersToRemove.forEach(function(a) {
-          a();
+        this.listenersToRemove.forEach(function(e) {
+          e();
         });
         this.listenersToRemove = null;
       }
@@ -265,7 +234,7 @@ define(["require", "exports", "vs/editor/contrib/snippet/snippet", "vs/base/lib/
       this.emit("destroy", null);
     };
 
-    return b;
-  }(o.EventEmitter);
-  b.SuggestModel = u;
+    return t;
+  }(r.EventEmitter);
+  t.SuggestModel = d;
 });

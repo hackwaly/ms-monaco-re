@@ -1,175 +1,146 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a;
-    }
-    for (var c in b) {
-      if (b.hasOwnProperty(c)) {
-        a[c] = b[c];
-      }
-    }
-    d.prototype = b.prototype;
-
-    a.prototype = new d;
-  };
-
-define(["require", "exports", "vs/nls", "vs/base/env", "vs/base/lib/winjs.base", "vs/editor/core/constants",
-  "vs/editor/core/range", "vs/editor/editorExtensions", "vs/platform/platform", "vs/platform/actionRegistry"
-], function(a, b, c, d, e, f, g, h, i, j) {
-  var k = c;
-
-  var l = d;
-
-  var m = e;
-
-  var n = f;
-
-  var o = g;
-
-  var p = h;
-
-  var q = i;
-
-  var r = j;
-
-  var s = function() {
-    function a(a) {
-      this.editor = a;
+define("vs/editor/contrib/smartSelect/smartSelect", ["require", "exports", "vs/nls!vs/editor/editor.main",
+  "vs/base/env", "vs/base/lib/winjs.base", "vs/editor/core/constants", "vs/editor/core/range",
+  "vs/editor/editorExtensions", "vs/platform/platform", "vs/platform/actionRegistry"
+], function(e, t, n, i, o, r, s, a, u, l) {
+  var c = function() {
+    function e(e) {
+      this.editor = e;
 
       this.next = null;
 
       this.previous = null;
 
-      this.selection = a.getSelection();
+      this.selection = e.getSelection();
     }
-    return a;
+    return e;
   }();
 
-  var t = null;
+  var d = null;
 
-  var u = !1;
+  var h = !1;
 
-  var v = function(a) {
-    function b(b, c, d) {
-      a.call(this, b, c);
+  var p = function(e) {
+    function t(t, n, i) {
+      e.call(this, t, n);
 
-      this.forward = d;
+      this.forward = i;
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.getEnablementState = function() {
-      return a.prototype.getEnablementState.call(this) && !! this.editor.getModel().getMode().logicalSelectionSupport;
+    t.prototype.getEnablementState = function() {
+      return e.prototype.getEnablementState.call(this) && !! this.editor.getModel().getMode().logicalSelectionSupport;
     };
 
-    b.prototype.run = function(a) {
-      var b = this;
+    t.prototype.run = function() {
+      var e = this;
 
-      var c = this.editor.getSelection();
+      var t = this.editor.getSelection();
 
-      var d = this.editor.getModel();
+      var n = this.editor.getModel();
 
-      var e = d.getMode().logicalSelectionSupport;
-      if (t && t.editor !== this.editor) {
-        t = null;
+      var i = n.getMode().logicalSelectionSupport;
+      if (d && d.editor !== this.editor) {
+        d = null;
       }
-      var f = m.Promise.as(t);
-      t || (f = e.getRangesToPosition(d.getAssociatedResource(), c.getStartPosition()).then(function(a) {
-        var c;
-        a.filter(function(a) {
-          var c = b.editor.getSelection();
+      var a = o.Promise.as(d);
+      d || (a = i.getRangesToPosition(n.getAssociatedResource(), t.getStartPosition()).then(function(t) {
+        var n;
+        t.filter(function(t) {
+          var n = e.editor.getSelection();
 
-          var d = new o.Range(a.range.startLineNumber, a.range.startColumn, a.range.endLineNumber, a.range.endColumn);
-          return d.containsPosition(c.getStartPosition()) && d.containsPosition(c.getEndPosition());
-        }).forEach(function(a) {
-          var d = a.range;
+          var i = new s.Range(t.range.startLineNumber, t.range.startColumn, t.range.endLineNumber, t.range.endColumn);
+          return i.containsPosition(n.getStartPosition()) && i.containsPosition(n.getEndPosition());
+        }).forEach(function(t) {
+          var i = t.range;
 
-          var e = new s(b.editor);
-          e.selection = new o.Range(d.startLineNumber, d.startColumn, d.endLineNumber, d.endColumn);
+          var o = new c(e.editor);
+          o.selection = new s.Range(i.startLineNumber, i.startColumn, i.endLineNumber, i.endColumn);
 
-          if (c) {
-            e.next = c;
-            c.previous = e;
+          if (n) {
+            o.next = n;
+            n.previous = o;
           }
 
-          c = e;
+          n = o;
         });
-        var d = new s(b.editor);
-        d.next = c;
+        var i = new c(e.editor);
+        i.next = n;
 
-        if (c) {
-          c.previous = d;
+        if (n) {
+          n.previous = i;
         }
 
-        t = d;
+        d = i;
       }).then(function() {
-        var a = b.editor.addListener(n.EventType.CursorPositionChanged, function(b) {
-          if (u) return;
-          t = null;
-
-          a();
+        var t = e.editor.addListener(r.EventType.CursorPositionChanged, function() {
+          if (!h) {
+            d = null;
+            t();
+          }
         });
       }));
 
-      return f.then(function() {
-        t = b.forward ? t.next : t.previous;
-        if (!t) return;
-        u = !0;
-        try {
-          b.editor.setSelection(t.selection);
-        } finally {
-          u = !1;
+      return a.then(function() {
+        if (d = e.forward ? d.next : d.previous) {
+          h = !0;
+          try {
+            e.editor.setSelection(d.selection);
+          } finally {
+            h = !1;
+          }
         }
       });
     };
 
-    return b;
-  }(p.EditorAction);
+    return t;
+  }(a.EditorAction);
 
-  var w = function(a) {
-    function b(b, c) {
-      a.call(this, b, c, !0);
+  var f = function(e) {
+    function t(t, n) {
+      e.call(this, t, n, !0);
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.ID = "editor.action.smartSelect.grow";
+    t.ID = "editor.action.smartSelect.grow";
 
-    return b;
-  }(v);
+    return t;
+  }(p);
 
-  var x = function(a) {
-    function b(b, c) {
-      a.call(this, b, c, !1);
+  var g = function(e) {
+    function t(t, n) {
+      e.call(this, t, n, !1);
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.ID = "editor.action.smartSelect.shrink";
+    t.ID = "editor.action.smartSelect.shrink";
 
-    return b;
-  }(v);
+    return t;
+  }(p);
 
-  var y = q.Registry.as(p.Extensions.EditorContributions);
-  y.registerEditorContribution(new r.ActionDescriptor(w, w.ID, k.localize("smartSelect.grow", "Expand select"), l.browser
-    .isMacintosh ? {
-      shift: !0,
-      cmdCtrl: !0,
-      winCtrl: !0,
-      alt: !1,
-      key: "RightArrow"
-    } : {
-      shift: !0,
-      alt: !0,
-      key: "RightArrow"
-    }));
+  var m = u.Registry.as(a.Extensions.EditorContributions);
+  m.registerEditorContribution(new l.ActionDescriptor(f, f.ID, n.localize("vs_editor_contrib_smartSelect_smartSelect",
+    0), i.browser.isMacintosh ? {
+    shift: !0,
+    cmdCtrl: !0,
+    winCtrl: !0,
+    alt: !1,
+    key: "RightArrow"
+  } : {
+    shift: !0,
+    alt: !0,
+    key: "RightArrow"
+  }));
 
-  y.registerEditorContribution(new r.ActionDescriptor(x, x.ID, k.localize("smartSelect.shrink", "Shrink select"), l.browser
-    .isMacintosh ? {
-      shift: !0,
-      cmdCtrl: !0,
-      winCtrl: !0,
-      alt: !1,
-      key: "LeftArrow"
-    } : {
-      shift: !0,
-      alt: !0,
-      key: "LeftArrow"
-    }));
+  m.registerEditorContribution(new l.ActionDescriptor(g, g.ID, n.localize("vs_editor_contrib_smartSelect_smartSelect",
+    1), i.browser.isMacintosh ? {
+    shift: !0,
+    cmdCtrl: !0,
+    winCtrl: !0,
+    alt: !1,
+    key: "LeftArrow"
+  } : {
+    shift: !0,
+    alt: !0,
+    key: "LeftArrow"
+  }));
 });

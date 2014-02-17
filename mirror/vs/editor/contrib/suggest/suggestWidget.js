@@ -1,211 +1,172 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a;
-    }
-    for (var c in b) {
-      if (b.hasOwnProperty(c)) {
-        a[c] = b[c];
-      }
-    }
-    d.prototype = b.prototype;
-
-    a.prototype = new d;
-  };
-
-define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/errors", "vs/editor/modes/modes",
-  "vs/base/dom/builder", "vs/base/ui/widgets/tree/preRenderer", "vs/base/ui/widgets/tree/treeImpl",
-  "vs/base/ui/widgets/tree/treeDefaults", "vs/base/ui/widgets/highlightedLabel", "vs/editor/core/constants",
-  "vs/editor/editor", "vs/css!./suggest"
-], function(a, b, c, d, e, f, g, h, i, j, k, l, m) {
-  function E(a, b, c) {
-    var d = a.toLowerCase();
-
-    var e = 0;
-    for (var f = 0; f < b.length && f < a.length; f++)
-      if (b[f] === a[f]) {
-        e += 2;
+define("vs/editor/contrib/suggest/suggestWidget", ["require", "exports", "vs/nls!vs/editor/editor.main",
+  "vs/base/lib/winjs.base", "vs/base/errors", "vs/editor/modes/modes", "vs/base/dom/builder",
+  "vs/base/ui/widgets/tree/preRenderer", "vs/base/ui/widgets/tree/treeImpl", "vs/base/ui/widgets/tree/treeDefaults",
+  "vs/base/ui/widgets/highlightedLabel", "vs/editor/core/constants", "vs/editor/editor", "vs/css!./suggest"
+], function(e, t, n, i, o, r, s, a, u, l, c, d) {
+  function h(e, t, n) {
+    for (var i = e.toLowerCase(), o = 0, r = 0; r < t.length && r < e.length; r++)
+      if (t[r] === e[r]) {
+        o += 2;
       } else {
-        if (c[f] !== d[f]) break;
-        e += 1;
+        if (n[r] !== i[r]) break;
+        o += 1;
       }
-    return e;
+    return o;
   }
-  var n = c;
+  var p = s.$;
 
-  var o = d;
+  var f = function() {
+    function e(e, t) {
+      this.parent = e;
 
-  var p = e;
-
-  var q = f;
-
-  var r = g;
-
-  var s = h;
-
-  var t = i;
-
-  var u = j;
-
-  var v = k;
-
-  var w = l;
-
-  var x = m;
-
-  var y = r.$;
-
-  var z = function() {
-    function a(a, b) {
-      this.parent = a;
-
-      this.message = b;
+      this.message = t;
     }
-    return a;
+    return e;
   }();
-  b.Message = z;
-  var A = function() {
-    function a(a) {
-      this.child = new z(this, a);
+  t.Message = f;
+  var g = function() {
+    function e(e) {
+      this.child = new f(this, e);
     }
-    return a;
+    return e;
   }();
-  b.MessageRoot = A;
-  var B = function() {
-    function a() {
+  t.MessageRoot = g;
+  var m = function() {
+    function e() {
       this.root = null;
     }
-    a.prototype.isRoot = function(a) {
-      return a instanceof A ? !0 : a instanceof z ? !1 : a.suggestions ? (this.root = a, !0) : !1;
+    e.prototype.isRoot = function(e) {
+      return e instanceof g ? !0 : e instanceof f ? !1 : e.suggestions ? (this.root = e, !0) : !1;
     };
 
-    a.prototype.getId = function(b, c) {
-      if (c instanceof A) {
+    e.prototype.getId = function(t, n) {
+      if (n instanceof g) {
         return "messageroot";
       }
-      if (c instanceof z) {
-        return "message" + c.message;
+      if (n instanceof f) {
+        return "message" + n.message;
       }
-      if (!c.suggestions) {
-        if (q.isISuggestion(c)) {
-          typeof c.id != "string" && (c.id = String(a._IdPool++));
-          return c.id;
-        }
-        throw p.illegalArgument("element");
+      if (n.suggestions) {
+        return "root";
       }
-      return "root";
+      if (r.isISuggestion(n)) {
+        "string" != typeof n.id && (n.id = String(e._IdPool++));
+        return n.id;
+      }
+      throw o.illegalArgument("element");
     };
 
-    a.prototype.getParent = function(a, b) {
-      return b instanceof A ? o.Promise.as(null) : b instanceof z ? o.Promise.as(b.parent) : o.Promise.as(this.isRoot(
-        b) ? null : this.root);
+    e.prototype.getParent = function(e, t) {
+      return t instanceof g ? i.Promise.as(null) : t instanceof f ? i.Promise.as(t.parent) : i.Promise.as(this.isRoot(
+        t) ? null : this.root);
     };
 
-    a.prototype.getChildren = function(a, b) {
-      return b instanceof A ? o.Promise.as([b.child]) : b instanceof z ? o.Promise.as([]) : o.Promise.as(this.isRoot(
-        b) ? this.root.suggestions : []);
+    e.prototype.getChildren = function(e, t) {
+      return t instanceof g ? i.Promise.as([t.child]) : t instanceof f ? i.Promise.as([]) : i.Promise.as(this.isRoot(
+        t) ? this.root.suggestions : []);
     };
 
-    a.prototype.hasChildren = function(a, b) {
-      return this.isRoot(b);
+    e.prototype.hasChildren = function(e, t) {
+      return this.isRoot(t);
     };
 
-    a._IdPool = 0;
+    e._IdPool = 0;
 
-    return a;
+    return e;
   }();
 
-  var C = function(a) {
-    function b() {
-      a.apply(this, arguments);
+  var v = function(e) {
+    function t() {
+      e.apply(this, arguments);
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.onLeftClick = function(a, b, c) {
-      c.preventDefault();
+    t.prototype.onLeftClick = function(e, t, n) {
+      n.preventDefault();
 
-      c.stopPropagation();
+      n.stopPropagation();
 
-      b instanceof z || a.setSelection([b], {
+      t instanceof f || e.setSelection([t], {
         origin: "mouse"
       });
 
       return !0;
     };
 
-    return b;
-  }(u.DefaultController);
+    return t;
+  }(l.DefaultController);
 
-  var D = function(a) {
-    function b(b, c) {
-      a.call(this, b);
+  var y = function(e) {
+    function t(t, n) {
+      e.call(this, t);
 
-      this.editor = c;
+      this.editor = n;
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.getHeight = function(b, c) {
-      var d = c;
-      return c instanceof z || !d.documentationLabel || !b.isFocused(d) ? 19 : a.prototype.getHeight.call(this, b, c);
+    t.prototype.getHeight = function(t, n) {
+      var i = n;
+      return n instanceof f || !i.documentationLabel || !t.isFocused(i) ? 19 : e.prototype.getHeight.call(this, t, n);
     };
 
-    b.prototype.render = function(a, b, c) {
-      return this.renderContents(a, b, c);
+    t.prototype.render = function(e, t, n) {
+      return this.renderContents(e, t, n);
     };
 
-    b.prototype.renderContents = function(a, b, c) {
-      var d = y(c);
-      if (b instanceof z) {
-        d.empty().span({
+    t.prototype.renderContents = function(e, t, n) {
+      var i = p(n);
+      if (t instanceof f) {
+        i.empty().span({
           style: {
             opacity: .7,
             "padding-left": "12px"
           },
-          text: b.message
+          text: t.message
         });
         return null;
       }
-      var e = b;
+      var o = t;
 
-      var f = d.getBinding();
+      var r = i.getBinding();
 
-      var g = d.clone();
-      if (!f) {
-        g.attr("aria-label", e.type);
+      var s = i.clone();
+      if (!r) {
+        s.attr("aria-label", o.type);
 
-        y(".icon").addClass(e.type).appendTo(g);
+        p(".icon").addClass(o.type).appendTo(s);
 
-        f = {};
-        var h = y(".text").appendTo(g);
-        f.main = y(".main").appendTo(h);
+        r = {};
+        var a = p(".text").appendTo(s);
+        r.main = p(".main").appendTo(a);
 
-        f.highlightedLabel = new v.HighlightedLabel(f.main);
+        r.highlightedLabel = new c.HighlightedLabel(r.main);
 
-        f.typeLabel = y("span.type-label").appendTo(f.main);
+        r.typeLabel = p("span.type-label").appendTo(r.main);
 
-        f.documentation = y(".docs").appendTo(h);
+        r.documentation = p(".docs").appendTo(a);
 
-        f.documentationLabel = y("span.docs-label").appendTo(f.documentation);
+        r.documentationLabel = p("span.docs-label").appendTo(r.documentation);
 
-        d.bind(f);
+        i.bind(r);
       }
-      f.highlightedLabel.setValue(e.label, e.highlights);
+      r.highlightedLabel.setValue(o.label, o.highlights);
 
-      f.typeLabel.text(e.typeLabel || "");
+      r.typeLabel.text(o.typeLabel || "");
 
-      f.documentationLabel.text(e.documentationLabel || "");
+      r.documentationLabel.text(o.documentationLabel || "");
 
       return function() {
-        f.highlightedLabel.destroy();
+        r.highlightedLabel.destroy();
       };
     };
 
-    return b;
-  }(s.PreRenderer);
+    return t;
+  }(a.PreRenderer);
 
-  var F = function() {
-    function a(b, c) {
-      var d = this;
-      this.editor = b;
+  var _ = function() {
+    function e(t, n) {
+      var s = this;
+      this.editor = t;
 
       this.isActive = !1;
 
@@ -217,313 +178,297 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/error
 
       this.telemetryData = null;
 
-      this.telemetryService = c;
-      var e = function() {
-        var a = d.editor.getModel();
-        a && a.getMode().suggestSupport ? d.shouldShowEmptySuggestionList = a.getMode().suggestSupport.shouldShowEmptySuggestionList() :
-          d.shouldShowEmptySuggestionList = !1;
+      this.telemetryService = n;
+      var a = function() {
+        var e = s.editor.getModel();
+        s.shouldShowEmptySuggestionList = e && e.getMode().suggestSupport ? e.getMode().suggestSupport.shouldShowEmptySuggestionList() : !
+          1;
       };
-      e();
+      a();
 
       this.listenersToRemove = [];
 
-      this.listenersToRemove.push(b.addListener(w.EventType.ModelChanged, e));
+      this.listenersToRemove.push(t.addListener(d.EventType.ModelChanged, a));
 
-      this.listenersToRemove.push(b.addListener(w.EventType.ModelModeChanged, e));
+      this.listenersToRemove.push(t.addListener(d.EventType.ModelModeChanged, a));
 
-      this.builder = y(".editor-widget.suggest-widget.monaco-editor-background").style({
-        width: a.WIDTH + "px",
-        height: a.HEIGHT + "px"
+      this.builder = p(".editor-widget.suggest-widget.monaco-editor-background").style({
+        width: e.WIDTH + "px",
+        height: e.HEIGHT + "px"
       });
 
       if (!this.editor.getConfiguration().iconsInSuggestions) {
         this.builder.addClass("no-icons");
       }
-      var f = new B;
-      this.renderer = new D(f, this.editor);
+      var l = new m;
+      this.renderer = new y(l, this.editor);
 
-      this.tree = new t.Tree(this.builder.getHTMLElement(), {
-        dataSource: f,
+      this.tree = new u.Tree(this.builder.getHTMLElement(), {
+        dataSource: l,
         renderer: this.renderer,
-        controller: new C
+        controller: new v
       }, {
         twistiePixels: 0,
         alwaysFocused: !0,
         verticalScrollMode: "visible"
       });
 
-      this.listenersToRemove.push(b.addListener("blur", function() {
-        o.Promise.timeout(150).done(function() {
-          if (d.tree && !d.tree.isDOMFocused()) {
-            d.hide();
+      this.listenersToRemove.push(t.addListener("blur", function() {
+        i.Promise.timeout(150).done(function() {
+          if (s.tree && !s.tree.isDOMFocused()) {
+            s.hide();
           }
         });
       }));
 
-      this.listenersToRemove.push(this.tree.addListener("selection", function(a) {
-        if (a.selection && a.selection.length > 0) {
-          var b = a.selection[0];
-          if (!b.hasOwnProperty("suggestions") && !(b instanceof A) && !(b instanceof z)) {
-            d.telemetryData.selectedIndex = d.tree.getInput().suggestions.indexOf(b);
-            d.telemetryData.wasCancelled = !1;
-            d.submitTelemetryData();
-            d.model.accept(b);
-            d.editor.focus();
+      this.listenersToRemove.push(this.tree.addListener("selection", function(e) {
+        if (e.selection && e.selection.length > 0) {
+          var t = e.selection[0];
+          if (!(t.hasOwnProperty("suggestions") || t instanceof g || t instanceof f)) {
+            s.telemetryData.selectedIndex = s.tree.getInput().suggestions.indexOf(t);
+            s.telemetryData.wasCancelled = !1;
+            s.submitTelemetryData();
+            s.model.accept(t);
+            s.editor.focus();
           }
         }
       }));
-      var g = null;
-      this.listenersToRemove.push(this.tree.addListener("focus", function(a) {
-        var b = a.focus;
+      var c = null;
+      this.listenersToRemove.push(this.tree.addListener("focus", function(e) {
+        var t = e.focus;
 
-        var c = a.payload;
-        if (q.isISuggestion(b)) {
-          d.resolveDetails(b);
-        }
-        if (b === g) return;
-        var e = [];
-        if (g) {
-          e.push(g);
-        }
-
-        if (b) {
-          e.push(b);
-        }
-
-        g = b;
-
-        d.tree.refreshAll(e).done(function() {
-          if (b) {
-            d.tree.reveal(b, c && c.firstSuggestion ? 0 : null);
+        var n = e.payload;
+        if (r.isISuggestion(t) && s.resolveDetails(t), t !== c) {
+          var i = [];
+          if (c) {
+            i.push(c);
           }
-        }, p.onUnexpectedError);
+
+          if (t) {
+            i.push(t);
+          }
+
+          c = t;
+
+          s.tree.refreshAll(i).done(function() {
+            if (t) {
+              s.tree.reveal(t, n && n.firstSuggestion ? 0 : null);
+            }
+          }, o.onUnexpectedError);
+        }
       }));
 
       this.editor.addContentWidget(this);
 
-      this.listenersToRemove.push(this.editor.addListener(w.EventType.CursorSelectionChanged, function(a) {
-        if (d.isActive) {
-          d.editor.layoutContentWidget(d);
+      this.listenersToRemove.push(this.editor.addListener(d.EventType.CursorSelectionChanged, function() {
+        if (s.isActive) {
+          s.editor.layoutContentWidget(s);
         }
       }));
 
       this.hide();
     }
-    a.prototype.setModel = function(b) {
-      var c = this;
+    e.prototype.setModel = function(t) {
+      var n = this;
       this.releaseModel();
 
-      this.model = b;
-      var d = null;
+      this.model = t;
+      var i;
 
-      var e;
-      this.modelListenersToRemove.push(this.model.addListener("loading", function(b) {
-        if (!b.auto && !c.isActive) {
-          d = c.telemetryService.start("suggestWidgetLoadingTime");
-          c.isLoading = !0;
-          e = setTimeout(function() {
-            c.builder.removeClass("empty");
+      var r = null;
+      this.modelListenersToRemove.push(this.model.addListener("loading", function(t) {
+        if (!(t.auto || n.isActive)) {
+          r = n.telemetryService.start("suggestWidgetLoadingTime");
+          n.isLoading = !0;
+          i = setTimeout(function() {
+            n.builder.removeClass("empty");
 
-            c.tree.setInput(a.LOADING_MESSAGE).done(null, p.onUnexpectedError);
+            n.tree.setInput(e.LOADING_MESSAGE).done(null, o.onUnexpectedError);
 
-            c.show();
+            n.show();
           }, 50);
-          if (!b.retrigger) {
-            c.telemetryData = {
-              wasAutomaticallyTriggered: b.characterTriggered
+          if (!t.retrigger) {
+            n.telemetryData = {
+              wasAutomaticallyTriggered: t.characterTriggered
             };
           }
         }
       }));
 
-      this.modelListenersToRemove.push(this.model.addListener("suggest", function(a) {
-        c.isLoading = !1;
+      this.modelListenersToRemove.push(this.model.addListener("suggest", function(e) {
+        if (n.isLoading = !1, "undefined" != typeof i && clearTimeout(i), !e.auto) {
+          n.builder.removeClass("empty");
 
-        if (typeof e != "undefined") {
-          clearTimeout(e);
-        }
-        if (!a.auto) {
-          c.builder.removeClass("empty");
+          n.tree.setInput(e.suggestions).done(null, o.onUnexpectedError);
 
-          c.tree.setInput(a.suggestions).done(null, p.onUnexpectedError);
-
-          c.show();
-          var b = a.suggestions.currentWord;
-
-          var f = b.toLowerCase();
-
-          var g = a.suggestions.suggestions;
-
-          var h;
-
-          var i = -1;
-
-          var j = a.suggestions.suggestions[0];
-
-          var k = -1;
-          for (var l = 0, m = g.length; l < m; l++) {
-            h = g[l];
-            var n = E(h.label, b, f);
-            if (n > k) {
-              k = n;
-              j = h;
-              i = l;
+          n.show();
+          for (var t, s = e.suggestions.currentWord, a = s.toLowerCase(), u = e.suggestions.suggestions, l = -1,
+              c = e.suggestions.suggestions[0], d = -1, p = 0, f = u.length; f > p; p++) {
+            t = u[p];
+            var g = h(t.label, s, a);
+            if (g > d) {
+              d = g;
+              c = t;
+              l = p;
             }
           }
-          c.resolveDetails(j);
+          n.resolveDetails(c);
 
-          c.tree.setFocus(j, {
+          n.tree.setFocus(c, {
             firstSuggestion: !0
           });
 
-          c.telemetryData.suggestionCount = g.length;
+          n.telemetryData.suggestionCount = u.length;
 
-          c.telemetryData.suggestedIndex = i;
+          n.telemetryData.suggestedIndex = l;
 
-          c.telemetryData.hintLength = b.length;
+          n.telemetryData.hintLength = s.length;
 
-          if (d) {
-            d.data = {
+          if (r) {
+            r.data = {
               reason: "results"
             };
-            d.stop();
-            d = null;
+            r.stop();
+            r = null;
           }
         }
       }));
 
-      this.modelListenersToRemove.push(this.model.addListener("empty", function(b) {
-        c.isLoading = !1;
+      this.modelListenersToRemove.push(this.model.addListener("empty", function(t) {
+        var s = n.isLoading;
+        n.isLoading = !1;
 
-        if (!b.auto) {
-          c.tree.getInput() === a.LOADING_MESSAGE ? c.shouldShowEmptySuggestionList ? c.tree.setInput(a.NO_SUGGESTIONS_MESSAGE)
-            .done(null, p.onUnexpectedError) : c.hide() : c.builder.addClass("empty");
-          if (d) {
-            d.data = {
+        if ("undefined" != typeof i) {
+          clearTimeout(i);
+        }
+
+        if (!t.auto) {
+          s ? n.shouldShowEmptySuggestionList ? (n.builder.removeClass("empty"), n.tree.setInput(e.NO_SUGGESTIONS_MESSAGE)
+            .done(null, o.onUnexpectedError), n.show()) : n.hide() : n.builder.addClass("empty");
+          if (r) {
+            r.data = {
               reason: "empty"
             };
-            d.stop();
-            d = null;
+            r.stop();
+            r = null;
           }
         }
       }));
 
-      this.modelListenersToRemove.push(this.model.addListener("cancel", function(a) {
-        c.isLoading = !1;
+      this.modelListenersToRemove.push(this.model.addListener("cancel", function(e) {
+        n.isLoading = !1;
 
-        c.hide();
+        n.hide();
 
-        if (!a.auto) {
-          if (!a.retrigger && c.telemetryData) {
-            c.telemetryData.selectedIndex = -1;
-            c.telemetryData.wasCancelled = !0;
-            c.submitTelemetryData();
+        if (!e.auto) {
+          if (!e.retrigger && n.telemetryData) {
+            n.telemetryData.selectedIndex = -1;
+            n.telemetryData.wasCancelled = !0;
+            n.submitTelemetryData();
           }
-          if (d) {
-            d.data = {
+          if (r) {
+            r.data = {
               reason: "cancel"
             };
-            d.stop();
-            d = null;
+            r.stop();
+            r = null;
           }
         }
       }));
     };
 
-    a.prototype.resolveDetails = function(a) {
-      var b = this;
-      if (a.detailsResolved === !0) return;
-      var c = this.editor.getModel().getMode().suggestSupport;
-      if (typeof c.getSuggestionDetails != "function") return;
-      if (this.currentSuggestionDetails) {
-        this.currentSuggestionDetails.cancel();
+    e.prototype.resolveDetails = function(e) {
+      var t = this;
+      if (e.detailsResolved !== !0) {
+        var n = this.editor.getModel().getMode().suggestSupport;
+        if ("function" == typeof n.getSuggestionDetails) {
+          if (this.currentSuggestionDetails) {
+            this.currentSuggestionDetails.cancel();
+          }
+          this.currentSuggestionDetails = n.getSuggestionDetails(this.editor.getModel().getAssociatedResource(), this
+            .editor.getPosition(), e);
+          this.currentSuggestionDetails.then(function(n) {
+            e.detailsResolved = !0;
+
+            e.codeSnippet = n.codeSnippet;
+
+            e.documentationLabel = n.documentationLabel;
+
+            e.highlights = n.highlights;
+
+            e.label = n.label;
+
+            e.type = n.type;
+
+            e.typeLabel = n.typeLabel;
+
+            return t.tree.refresh(e);
+          }, function(e) {
+            return o.isPromiseCanceledError(e) ? null : e;
+          }).done(void 0, o.onUnexpectedError);
+        }
       }
-
-      this.currentSuggestionDetails = c.getSuggestionDetails(this.editor.getModel().getAssociatedResource(), this.editor
-        .getPosition(), a);
-
-      this.currentSuggestionDetails.then(function(c) {
-        a.detailsResolved = !0;
-
-        a.codeSnippet = c.codeSnippet;
-
-        a.documentationLabel = c.documentationLabel;
-
-        a.highlights = c.highlights;
-
-        a.label = c.label;
-
-        a.type = c.type;
-
-        a.typeLabel = c.typeLabel;
-
-        return b.tree.refresh(a);
-      }, function(a) {
-        if (p.isPromiseCanceledError(a)) return;
-        throw a;
-      }).done(undefined, p.onUnexpectedError);
     };
 
-    a.prototype.selectNextPage = function() {
+    e.prototype.selectNextPage = function() {
       return this.isLoading ? !0 : this.isActive ? (this.tree.focusNextPage(), !0) : !1;
     };
 
-    a.prototype.selectNext = function() {
+    e.prototype.selectNext = function() {
       if (this.isLoading) {
         return !0;
       }
       if (this.isActive) {
-        var a = this.tree.getFocus();
+        var e = this.tree.getFocus();
         this.tree.focusNext(1);
 
-        a === this.tree.getFocus() && this.tree.focusFirst();
+        e === this.tree.getFocus() && this.tree.focusFirst();
 
         return !0;
       }
       return !1;
     };
 
-    a.prototype.selectPreviousPage = function() {
+    e.prototype.selectPreviousPage = function() {
       return this.isLoading ? !0 : this.isActive ? (this.tree.focusPreviousPage(), !0) : !1;
     };
 
-    a.prototype.selectPrevious = function() {
+    e.prototype.selectPrevious = function() {
       if (this.isLoading) {
         return !0;
       }
       if (this.isActive) {
-        var a = this.tree.getFocus();
+        var e = this.tree.getFocus();
         this.tree.focusPrevious(1);
 
-        a === this.tree.getFocus() && this.tree.focusLast();
+        e === this.tree.getFocus() && this.tree.focusLast();
 
         return !0;
       }
       return !1;
     };
 
-    a.prototype.acceptSelectedSuggestion = function() {
+    e.prototype.acceptSelectedSuggestion = function() {
       if (this.isLoading) {
         return !0;
       }
       if (this.isActive) {
-        var a = this.tree.getFocus();
-        a ? this.tree.setSelection([a]) : this.model.cancel();
+        var e = this.tree.getFocus();
+        e ? this.tree.setSelection([e]) : this.model.cancel();
 
         return !0;
       }
       return !1;
     };
 
-    a.prototype.releaseModel = function() {
-      var a;
-      while (a = this.modelListenersToRemove.pop()) {
-        a();
+    e.prototype.releaseModel = function() {
+      for (var e; e = this.modelListenersToRemove.pop();) {
+        e();
       }
       this.model = null;
     };
 
-    a.prototype.show = function() {
+    e.prototype.show = function() {
       this.isActive = !0;
 
       this.builder.style("visibility", "visible");
@@ -533,7 +478,7 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/error
       this.editor.layoutContentWidget(this);
     };
 
-    a.prototype.hide = function() {
+    e.prototype.hide = function() {
       this.isActive = !1;
 
       this.builder.style("visibility", "hidden");
@@ -541,28 +486,28 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/error
       this.editor.layoutContentWidget(this);
     };
 
-    a.prototype.getPosition = function() {
+    e.prototype.getPosition = function() {
       return this.isActive ? {
         position: this.editor.getPosition(),
-        preference: [x.ContentWidgetPositionPreference.BELOW, x.ContentWidgetPositionPreference.ABOVE]
+        preference: [2, 1]
       } : null;
     };
 
-    a.prototype.getDomNode = function() {
+    e.prototype.getDomNode = function() {
       return this.builder.getHTMLElement();
     };
 
-    a.prototype.getId = function() {
-      return a.ID;
+    e.prototype.getId = function() {
+      return e.ID;
     };
 
-    a.prototype.submitTelemetryData = function() {
+    e.prototype.submitTelemetryData = function() {
       this.telemetryService.publicLog("suggestWidget", this.telemetryData);
 
       this.telemetryData = null;
     };
 
-    a.prototype.destroy = function() {
+    e.prototype.destroy = function() {
       this.releaseModel();
 
       this.builder.destroy();
@@ -576,24 +521,24 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/error
         this.renderer = null;
       }
 
-      this.listenersToRemove.forEach(function(a) {
-        a();
+      this.listenersToRemove.forEach(function(e) {
+        e();
       });
 
       this.listenersToRemove = null;
     };
 
-    a.ID = "editor.widget.suggestWidget";
+    e.ID = "editor.widget.suggestWidget";
 
-    a.WIDTH = 440;
+    e.WIDTH = 440;
 
-    a.HEIGHT = 240;
+    e.HEIGHT = 240;
 
-    a.LOADING_MESSAGE = new A(n.localize("suggestWidget.loading", "Loading..."));
+    e.LOADING_MESSAGE = new g(n.localize("vs_editor_contrib_suggest_suggestWidget", 0));
 
-    a.NO_SUGGESTIONS_MESSAGE = new A(n.localize("suggestWidget.noSuggestions", "No suggestions."));
+    e.NO_SUGGESTIONS_MESSAGE = new g(n.localize("vs_editor_contrib_suggest_suggestWidget", 1));
 
-    return a;
+    return e;
   }();
-  b.SuggestWidget = F;
+  t.SuggestWidget = _;
 });

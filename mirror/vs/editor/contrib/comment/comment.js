@@ -1,81 +1,48 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a;
+define("vs/editor/contrib/comment/comment", ["require", "exports", "vs/nls!vs/editor/editor.main",
+  "vs/base/lib/winjs.base", "vs/platform/platform", "vs/platform/actionRegistry", "./lineCommentCommand",
+  "./blockCommentCommand", "vs/editor/editorExtensions"
+], function(e, t, n, i, o, r, s, a, u) {
+  var l = function(e) {
+    function t(t, n) {
+      e.call(this, t, n);
     }
-    for (var c in b) {
-      if (b.hasOwnProperty(c)) {
-        a[c] = b[c];
+    __extends(t, e);
+
+    t.prototype.run = function() {
+      for (var e = [], t = this.editor.getSelections(), n = 0; n < t.length; n++) {
+        e.push(new s.LineCommentCommand(t[n]));
       }
-    }
-    d.prototype = b.prototype;
+      this.editor.executeCommands(this.id, e);
 
-    a.prototype = new d;
-  };
-
-define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/platform", "vs/platform/actionRegistry",
-  "./lineCommentCommand", "./blockCommentCommand", "vs/editor/editorExtensions"
-], function(a, b, c, d, e, f, g, h, i) {
-  var j = c;
-
-  var k = d;
-
-  var l = e;
-
-  var m = f;
-
-  var n = g;
-
-  var o = h;
-
-  var p = i;
-
-  var q = function(a) {
-    function b(b, c) {
-      a.call(this, b, c);
-    }
-    __extends(b, a);
-
-    b.prototype.run = function() {
-      var a = [];
-
-      var b = this.editor.getSelections();
-      for (var c = 0; c < b.length; c++) {
-        a.push(new n.LineCommentCommand(b[c]));
-      }
-      this.editor.executeCommands(this.id, a);
-
-      return k.Promise.as(null);
+      return i.TPromise.as(null);
     };
 
-    b.ID = "editor.actions.commentLine";
+    t.ID = "editor.actions.commentLine";
 
-    return b;
-  }(p.EditorAction);
+    return t;
+  }(u.EditorAction);
 
-  var r = function(a) {
-    function b(b, c) {
-      a.call(this, b, c);
+  var c = function(e) {
+    function t(t, n) {
+      e.call(this, t, n);
     }
-    __extends(b, a);
+    __extends(t, e);
 
-    b.prototype.run = function() {
-      var a = [];
-
-      var b = this.editor.getSelections();
-      for (var c = 0; c < b.length; c++) {
-        a.push(new o.BlockCommentCommand(b[c]));
+    t.prototype.run = function() {
+      for (var e = [], t = this.editor.getSelections(), n = 0; n < t.length; n++) {
+        e.push(new a.BlockCommentCommand(t[n]));
       }
-      this.editor.executeCommands(this.id, a);
+      this.editor.executeCommands(this.id, e);
 
-      return k.Promise.as(null);
+      return i.TPromise.as(null);
     };
 
-    b.ID = "editor.actions.blockComment";
+    t.ID = "editor.actions.blockComment";
 
-    return b;
-  }(p.EditorAction);
+    return t;
+  }(u.EditorAction);
 
-  var s = new m.ActionDescriptor(q, q.ID, j.localize("comment.line", "Insert line comment"), {
+  var d = new r.ActionDescriptor(l, l.ID, n.localize("vs_editor_contrib_comment_comment", 0), {
     ctrlCmd: !0,
     key: "/"
   }, {
@@ -83,14 +50,14 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
     key: "7"
   });
 
-  var t = new m.ActionDescriptor(r, r.ID, j.localize("comment.block", "Insert block comment"), {
+  var h = new r.ActionDescriptor(c, c.ID, n.localize("vs_editor_contrib_comment_comment", 1), {
     shift: !0,
     alt: !0,
     key: "A"
   });
 
-  var u = l.Registry.as(p.Extensions.EditorContributions);
-  u.registerEditorContribution(s);
+  var p = o.Registry.as(u.Extensions.EditorContributions);
+  p.registerEditorContribution(d);
 
-  u.registerEditorContribution(t);
+  p.registerEditorContribution(h);
 });

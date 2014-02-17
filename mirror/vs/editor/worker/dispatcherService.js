@@ -1,54 +1,49 @@
-define(["require", "exports", "vs/base/lib/winjs.base", "vs/base/types", "vs/base/network"], function(a, b, c, d, e) {
-  var f = c;
-
-  var g = d;
-
-  var h = e;
-
-  var i = function() {
-    function a() {
+define("vs/editor/worker/dispatcherService", ["require", "exports", "vs/base/lib/winjs.base", "vs/base/types",
+  "vs/base/network"
+], function(e, t, n, i, o) {
+  var r = function() {
+    function e() {
       this.table = {};
     }
-    a.prototype.register = function(a) {
-      if (g.isString(a)) {
-        this.table[a] = arguments[1];
+    e.prototype.register = function(e) {
+      if (i.isString(e)) {
+        this.table[e] = arguments[1];
       } else
-        for (var b in a) {
-          var c = a[b];
-          if (g.isFunction(c)) {
-            this.table[b] = c.bind(a);
+        for (var t in e) {
+          var n = e[t];
+          if (i.isFunction(n)) {
+            this.table[t] = n.bind(e);
           }
         }
     };
 
-    a.prototype.dispatch = function(a) {
-      if (!this.table[a.type]) {
-        return f.Promise.wrapError(new Error("no handler/route for: " + a.type));
+    e.prototype.dispatch = function(e) {
+      if (!this.table[e.type]) {
+        return n.Promise.wrapError(new Error("no handler/route for: " + e.type));
       }
       try {
-        var b = this.deserialize(a.payload);
+        var t = this.deserialize(e.payload);
 
-        var c = this.table[a.type].apply(this.table[a.type], b);
-        return f.Promise.is(c) ? c : f.Promise.as(c);
-      } catch (d) {
-        return f.Promise.wrapError(d);
+        var i = this.table[e.type].apply(this.table[e.type], t);
+        return n.Promise.is(i) ? i : n.Promise.as(i);
+      } catch (o) {
+        return n.Promise.wrapError(o);
       }
     };
 
-    a.prototype.deserialize = function(a) {
-      var b = [];
-      for (var c = 0; c < a.length; c++) {
-        var d = a[c];
-        if (!g.isUndefinedOrNull(d) && g.isString(d.$url)) {
-          d = new h.URL(d.$url);
+    e.prototype.deserialize = function(e) {
+      for (var t = [], n = 0; n < e.length; n++) {
+        var r = e[n];
+        if (!i.isUndefinedOrNull(r) && i.isString(r.$url)) {
+          r = new o.URL(r.$url);
         }
 
-        b.push(d);
+        t.push(r);
       }
-      return b;
+      return t;
     };
 
-    return a;
+    return e;
   }();
-  b.DispatcherService = i;
+  t.DispatcherService = r;
 });

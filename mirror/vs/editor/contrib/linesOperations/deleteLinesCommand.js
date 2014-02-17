@@ -1,42 +1,44 @@
-define(["require", "exports", "vs/editor/core/range", "vs/editor/core/selection"], function(a, b, c, d) {
-  var e = c;
+define("vs/editor/contrib/linesOperations/deleteLinesCommand", ["require", "exports", "vs/editor/core/range",
+  "vs/editor/core/selection"
+], function(e, t, n, i) {
+  function o(e) {
+    var t = e.endLineNumber;
+    e.startLineNumber < e.endLineNumber && 1 === e.endColumn && (t -= 1);
 
-  var f = d;
+    return new r(e.startLineNumber, t, e.positionColumn);
+  }
+  t.createFromSelection = o;
+  var r = function() {
+    function e(e, t, n) {
+      this.startLineNumber = e;
 
-  var g = function() {
-    function a(a) {
-      this.selection = a;
+      this.endLineNumber = t;
+
+      this.restoreCursorToColumn = n;
     }
-    a.prototype.getEditOperations = function(a, b) {
-      if (a.getLineCount() === 1 && a.getLineMaxColumn(1) === 1) return;
-      var c = this.selection.startLineNumber;
+    e.prototype.getEditOperations = function(e, t) {
+      if (1 !== e.getLineCount() || 1 !== e.getLineMaxColumn(1)) {
+        var i = this.startLineNumber;
 
-      var d = this.selection.startColumn;
+        var o = this.endLineNumber;
 
-      var f = this.selection.endLineNumber;
+        var r = 1;
 
-      var g = this.selection.endColumn;
-      if (c < f && g === 1) {
-        f -= 1;
+        var s = e.getLineMaxColumn(o);
+        o < e.getLineCount() ? (o += 1, s = 1) : i > 1 && (i -= 1, r = e.getLineMaxColumn(i));
+
+        t.addEditOperation(new n.Range(i, r, o, s), null);
       }
-
-      d = 1;
-
-      g = a.getLineMaxColumn(f);
-
-      f < a.getLineCount() ? (f += 1, g = 1) : c > 1 && (c -= 1, d = a.getLineMaxColumn(c));
-
-      b.addEditOperation(new e.Range(c, d, f, g), null);
     };
 
-    a.prototype.computeCursorState = function(a, b) {
-      var c = b.getInverseEditOperations();
+    e.prototype.computeCursorState = function(e, t) {
+      var n = t.getInverseEditOperations();
 
-      var d = c[0].range;
-      return new f.Selection(d.endLineNumber, this.selection.positionColumn, d.endLineNumber, this.selection.positionColumn);
+      var o = n[0].range;
+      return new i.Selection(o.endLineNumber, this.restoreCursorToColumn, o.endLineNumber, this.restoreCursorToColumn);
     };
 
-    return a;
+    return e;
   }();
-  b.DeleteLinesCommand = g;
+  t.DeleteLinesCommand = r;
 });
