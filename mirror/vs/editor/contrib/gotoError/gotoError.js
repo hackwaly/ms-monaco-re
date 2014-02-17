@@ -82,15 +82,13 @@ define("vs/editor/contrib/gotoError/gotoError", ["require", "exports", "vs/base/
       }
       if (-1 === this._nextIdx) {
         this.initIdx(e);
-      }
-
-      {
+      } else {
         if (e) {
           this._nextIdx += 1;
           if (this._nextIdx >= this._markers.length) {
             this._nextIdx = 0;
           }
-        } {
+        } else {
           this._nextIdx -= 1;
           if (this._nextIdx < 0) {
             this._nextIdx = this._markers.length - 1;

@@ -143,14 +143,12 @@ define("vs/editor/contrib/contextmenu/contextmenu", ["require", "exports", "vs/n
         var s = e[u].id === h.Separator.ID;
         if (s && !a) {
           e.splice(u, 1);
-        }
-
-        {
+        } else {
           if (s) {
             if (s) {
               a = !1;
             }
-          } {
+          } else {
             a = !0;
           }
         }

@@ -28,9 +28,7 @@ define("vs/editor/contrib/linesOperations/deleteLinesCommand", ["require", "expo
         if (o < e.getLineCount()) {
           o += 1;
           s = 1;
-        }
-
-        {
+        } else {
           if (i > 1) {
             i -= 1;
             r = e.getLineMaxColumn(i);

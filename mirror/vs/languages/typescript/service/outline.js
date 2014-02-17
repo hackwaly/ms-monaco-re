@@ -159,9 +159,7 @@ define("vs/languages/typescript/service/outline", ["require", "exports", "vs/bas
       var n;
       if (t.stringLiteral) {
         n = t.stringLiteral.valueText();
-      }
-
-      {
+      } else {
         if (t.name) {
           n = t.name.fullText();
         }

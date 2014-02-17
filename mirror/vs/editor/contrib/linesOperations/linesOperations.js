@@ -109,7 +109,7 @@ define("vs/editor/contrib/linesOperations/linesOperations", ["require", "exports
       for (var t = [], n = e[0], o = 1; o < e.length; o++) {
         if (n.endLineNumber + 1 === e[o].startLineNumber) {
           n.endLineNumber = e[o].endLineNumber;
-        } {
+        } else {
           t.push(n);
           n = e[o];
         }

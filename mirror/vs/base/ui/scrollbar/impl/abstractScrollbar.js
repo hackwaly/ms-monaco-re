@@ -303,7 +303,7 @@ define("vs/base/ui/scrollbar/impl/abstractScrollbar", ["require", "exports", "vs
               t.domNode.style.display = "none";
             }, 800);
           }
-        } {
+        } else {
           this.domNode.style.display = "none";
         }
       }

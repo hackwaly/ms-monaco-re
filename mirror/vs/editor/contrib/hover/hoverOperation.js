@@ -59,9 +59,7 @@ define("vs/editor/contrib/hover/hoverOperation", ["require", "exports", "vs/base
           }).done(null, function() {
             return e._onError;
           });
-        }
-
-        {
+        } else {
           this._asyncComputationPromiseDone = !0;
         }
       };
@@ -74,9 +72,7 @@ define("vs/editor/contrib/hover/hoverOperation", ["require", "exports", "vs/base
         if (this._asyncComputationPromiseDone) {
           this._state = 0;
           this._onComplete(this._computer.getResult());
-        }
-
-        {
+        } else {
           this._state = 3;
           this._onProgress(this._computer.getResult());
         }
@@ -102,9 +98,7 @@ define("vs/editor/contrib/hover/hoverOperation", ["require", "exports", "vs/base
       e.prototype._onError = function(e) {
         if (this._errorCallback) {
           this._errorCallback(e);
-        }
-
-        {
+        } else {
           i.onUnexpectedError(e);
         }
       };

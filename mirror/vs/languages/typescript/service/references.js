@@ -363,9 +363,7 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
                 message: "cyclic reference",
                 path: s.path
               };
-            }
-
-            {
+            } else {
               i.file = s;
               if (r.recursive && i.file instanceof e) {
                 u();
@@ -490,7 +488,7 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
           if (r.kind === n.SyntaxKind.CloseParenToken) {
             if (a) {
               this.references.push(new m(c + 1, -2 + u, h));
-            } {
+            } else {
               this.references.push(new f(c + 1, -2 + u, h));
             }
           }

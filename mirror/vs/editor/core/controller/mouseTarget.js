@@ -294,9 +294,7 @@ define("vs/editor/core/controller/mouseTarget", ["require", "exports", "vs/edito
         if (t.afterLineNumber === s || r > e && t.afterLineNumber > 0) {
           i = t.afterLineNumber;
           o = this.context.model.getLineMaxColumn(i);
-        }
-
-        {
+        } else {
           i = t.afterLineNumber + 1;
           o = 1;
         }

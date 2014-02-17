@@ -130,11 +130,11 @@ define("vs/editor/core/view/model/characterHardWrappingLineMapper", ["require", 
           if (-1 !== C) {
             d = C;
             h = w;
-          } {
+          } else {
             if (-1 !== E) {
               d = E;
               h = S;
-            } {
+            } else {
               d = t;
               h = 0;
             }

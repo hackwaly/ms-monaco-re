@@ -90,16 +90,14 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
     if (u && 0 !== u.length) {
       if (/^\w*$/.test(p)) {
         h = "==";
-      } {
+      } else {
         l = u.match(/^(@|!@|~|!~|==|!=)(.*)$/);
         if (l) {
           h = l[1];
           p = l[2];
         }
       }
-    }
-
-    {
+    } else {
       h = "!=";
       p = "";
     }
@@ -235,9 +233,7 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
                 value: c,
                 name: u
               });
-            }
-
-            {
+            } else {
               if ("@eos" === u) {
                 l.push({
                   test: function(e, t, n, i) {
@@ -246,7 +242,7 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
                   value: c,
                   name: u
                 });
-              } {
+              } else {
                 l.push(h(e, t, u, c));
               }
             }
@@ -381,7 +377,7 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
     if (!n.lineComment && e.lineComments) {
       if ("string" == typeof e.lineComments) {
         n.lineComment = e.lineComments;
-      } {
+      } else {
         if ("string" == typeof e.lineComments[0]) {
           n.lineComment = e.lineComments[0];
         }
@@ -437,9 +433,7 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
       if (!(e.brackets instanceof Array)) {
         o.throwError(n, "the 'brackets' attribute must be defined as an array");
       }
-    }
-
-    {
+    } else {
       e.brackets = [{
         open: "{",
         close: "}",
@@ -481,9 +475,7 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
             open: o.fixCase(n, a(m.open)),
             close: o.fixCase(n, a(m.close))
           });
-        }
-
-        {
+        } else {
           o.throwError(n, "every element in the 'brackets' array must be a '{open,close,token}' object or array");
         }
       }
@@ -520,14 +512,14 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
                 close: o.fixCase(n, b[1])
               };
               n.autoClosingPairs.push(_);
-            } {
+            } else {
               if ("string" == typeof b.open && 1 === b.open.length && "string" == typeof b.close && 1 === b.close.length) {
                 _ = {
                   open: o.fixCase(n, b.open[0]),
                   close: o.fixCase(n, b.close[0])
                 };
                 n.autoClosingPairs.push(_);
-              } {
+              } else {
                 o.throwError(n,
                   "every element in an 'autoClosingPairs' array must be a pair of 1 character strings, or a '@brackets' directive"
                 );
@@ -627,12 +619,10 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
       var n;
       if ("string" == typeof t) {
         n = t;
-      }
-
-      {
+      } else {
         if (t instanceof RegExp) {
           n = t.source;
-        } {
+        } else {
           o.throwError(e, "rules must start with a match string or regular expression: " + this.name);
         }
       }

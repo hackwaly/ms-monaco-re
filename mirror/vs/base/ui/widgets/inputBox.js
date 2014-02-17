@@ -250,7 +250,7 @@ define("vs/base/ui/widgets/inputBox", ["require", "exports", "vs/base/env", "vs/
       if (this.$placeholderShim) {
         if (this.value) {
           this.$placeholderShim.hide();
-        } {
+        } else {
           this.$placeholderShim.show();
         }
       }

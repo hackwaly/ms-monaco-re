@@ -543,9 +543,7 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
             }
             if (a) {
               o += r;
-            }
-
-            {
+            } else {
               s += r;
             }
           } else {
@@ -634,16 +632,14 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
               range: r.getRangeFromOffsetAndLength(o.offset, o.length),
               url: i.join(i.dirname(e.toExternal()), o.path + ".ts")
             });
-          } {
+          } else {
             n.push({
               openInEditor: !0,
               range: r.getRangeFromOffsetAndLength(o.offset, o.length),
               url: i.join(t._compilationSettings.scope, o.path + ".ts")
             });
           }
-        }
-
-        {
+        } else {
           if (o instanceof f.TripleSlashReference) {
             n.push({
               openInEditor: !0,

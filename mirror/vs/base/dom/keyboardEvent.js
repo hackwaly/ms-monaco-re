@@ -87,9 +87,7 @@ define("vs/base/dom/keyboardEvent", ["require", "vs/base/lib/winjs.base", "vs/ba
     };
     if (n.browser.isIE11orEarlier) {
       e.Meta = 91;
-    }
-
-    {
+    } else {
       if (n.browser.isFirefox) {
         e["-"] = 109;
         e["="] = 107;
@@ -97,7 +95,7 @@ define("vs/base/dom/keyboardEvent", ["require", "vs/base/lib/winjs.base", "vs/ba
         if (n.browser.isMacintosh) {
           e.Meta = 224;
         }
-      } {
+      } else {
         if (n.browser.isOpera) {
           e["-"] = 109;
           e["="] = 61;
@@ -105,7 +103,7 @@ define("vs/base/dom/keyboardEvent", ["require", "vs/base/lib/winjs.base", "vs/ba
           if (n.browser.isMacintosh) {
             e.Meta = 57392;
           }
-        } {
+        } else {
           if (n.browser.isWebKit && n.browser.isMacintosh) {
             e.Meta = 91;
           }
@@ -125,9 +123,7 @@ define("vs/base/dom/keyboardEvent", ["require", "vs/base/lib/winjs.base", "vs/ba
       t[189] = "-";
       t[187] = "=";
       t[186] = ";";
-    }
-
-    {
+    } else {
       if (n.browser.isWebKit && n.browser.isMacintosh) {
         t[93] = "Meta";
       }
@@ -164,9 +160,7 @@ define("vs/base/dom/keyboardEvent", ["require", "vs/base/lib/winjs.base", "vs/ba
 
       if ("Ctrl" === this.key) {
         this.key = "Meta";
-      }
-
-      {
+      } else {
         if ("Meta" === this.key) {
           this.key = "Ctrl";
         }
@@ -176,18 +170,14 @@ define("vs/base/dom/keyboardEvent", ["require", "vs/base/lib/winjs.base", "vs/ba
     preventDefault: function() {
       if (this.browserEvent.preventDefault) {
         this.browserEvent.preventDefault();
-      }
-
-      {
+      } else {
         this.browserEvent.returnValue = !1;
       }
     },
     stopPropagation: function() {
       if (this.browserEvent.stopPropagation) {
         this.browserEvent.stopPropagation();
-      }
-
-      {
+      } else {
         this.browserEvent.cancelBubble = !0;
       }
     },

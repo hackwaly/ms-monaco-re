@@ -348,10 +348,10 @@ define("vs/editor/contrib/suggest/suggestWidget", ["require", "exports", "vs/nls
               n.builder.removeClass("empty");
               n.tree.setInput(e.NO_SUGGESTIONS_MESSAGE).done(null, o.onUnexpectedError);
               n.show();
-            } {
+            } else {
               n.hide();
             }
-          } {
+          } else {
             n.builder.addClass("empty");
           }
           if (r) {

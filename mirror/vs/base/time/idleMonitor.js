@@ -150,9 +150,7 @@ define("vs/base/time/idleMonitor", ["require", "exports", "vs/base/dom/dom", "vs
       var e = (new Date).getTime() - this.lastActiveTime;
       if (e >= t.IDLE_TIME) {
         this.onUserIdle();
-      }
-
-      {
+      } else {
         this.scheduleIdleCheck();
       }
     };

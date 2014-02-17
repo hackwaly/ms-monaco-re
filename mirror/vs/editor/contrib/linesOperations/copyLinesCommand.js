@@ -28,9 +28,7 @@ define("vs/editor/contrib/linesOperations/copyLinesCommand", ["require", "export
 
       if (this._isCopyingDown) {
         t.addEditOperation(new n.Range(i.startLineNumber, 1, i.startLineNumber, 1), s + "\n");
-      }
-
-      {
+      } else {
         t.addEditOperation(new n.Range(i.endLineNumber, e.getLineMaxColumn(i.endLineNumber), i.endLineNumber, e.getLineMaxColumn(
           i.endLineNumber)), "\n" + s);
       }

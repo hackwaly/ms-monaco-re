@@ -144,9 +144,7 @@ define("vs/base/ui/scrollbar/impl/scrollableElement", ["require", "exports", "vs
       var t = this;
       if (e) {
         this.actualElementDimensions();
-      }
-
-      {
+      } else {
         if (-1 === this.onElementDimensionsTimeout) {
           this.onElementDimensionsTimeout = window.setTimeout(function() {
             return t.actualElementDimensions();
@@ -172,9 +170,7 @@ define("vs/base/ui/scrollbar/impl/scrollableElement", ["require", "exports", "vs
       var t = this;
       if (e) {
         this.actualElementInternalDimensions();
-      }
-
-      {
+      } else {
         if (-1 === this.onElementInternalDimensionsTimeout) {
           this.onElementInternalDimensionsTimeout = window.setTimeout(function() {
             return t.actualElementInternalDimensions();

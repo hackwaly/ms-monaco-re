@@ -13,9 +13,7 @@ define("vs/base/dom/mockDom", ["require", "exports"], function(e, t) {
     e.prototype.addEventListener = function(e, t) {
       if (e in this.eventMap) {
         this.eventMap[e].push(t);
-      }
-
-      {
+      } else {
         this.eventMap[e] = [t];
       }
     };
@@ -610,9 +608,7 @@ define("vs/base/dom/mockDom", ["require", "exports"], function(e, t) {
         var t = e.document.createTextNode(this.textContent);
         if (e.currentNode) {
           e.currentNode.appendChild(t);
-        }
-
-        {
+        } else {
           e.root.push(t);
         }
       }
@@ -667,9 +663,7 @@ define("vs/base/dom/mockDom", ["require", "exports"], function(e, t) {
 
           if (e.currentNode) {
             e.currentNode.appendChild(i);
-          }
-
-          {
+          } else {
             e.root.push(i);
           }
 

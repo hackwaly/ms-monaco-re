@@ -308,9 +308,7 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
         e = this.selection.startLineNumber;
         t = this.selection.startColumn;
         i = this.previousSetTextAreaState.getSelectionStart() + 1;
-      }
-
-      {
+      } else {
         e = this.cursorPosition.lineNumber;
         t = this.cursorPosition.column;
         i = t;
@@ -330,9 +328,7 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
           this.textArea.style.left = this.contentLeft + u.left - l.left - this.scrollLeft + "px";
           this.textArea.style.width = this.contentWidth + "px";
         }
-      }
-
-      {
+      } else {
         if (u) {
           this.textArea.style.left = this.contentLeft + u.left - this.scrollLeft + "px";
           this.textArea.style.top = u.top + "px";
@@ -458,7 +454,7 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
       if ("" !== i) {
         if (0 === e) {
           this.executeType(i);
-        } {
+        } else {
           this.executePaste(i);
         }
       }
@@ -493,13 +489,11 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
       if (e && e.clipboardData) {
         e.preventDefault();
         this.executePaste(e.clipboardData.getData("text/plain"));
-      }
-
-      {
+      } else {
         if (e && window.clipboardData) {
           e.preventDefault();
           this.executePaste(window.clipboardData.getData("Text"));
-        } {
+        } else {
           if (this.textArea.selectionStart !== this.textArea.selectionEnd) {
             this.setTextAreaState(new h("", 0, 0, 0), !1);
           }
@@ -531,13 +525,11 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
       if (e && e.clipboardData) {
         e.clipboardData.setData("text/plain", t);
         e.preventDefault();
-      }
-
-      {
+      } else {
         if (e && window.clipboardData) {
           window.clipboardData.setData("Text", t);
           e.preventDefault();
-        } {
+        } else {
           this.setTextAreaState(new h(t, 0, t.length, 0), !0);
         }
       }

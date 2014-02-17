@@ -118,9 +118,7 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
         var r = this.OriginalSequence.getElementHash(n);
         if (i.hasOwnProperty(r)) {
           this.m_originalIds[n] = i[r];
-        }
-
-        {
+        } else {
           this.m_originalIds[n] = o++;
           i[r] = this.m_originalIds[n];
         }
@@ -129,9 +127,7 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
         var s = this.ModifiedSequence.getElementHash(n);
         if (i.hasOwnProperty(s)) {
           this.m_modifiedIds[n] = i[s];
-        }
-
-        {
+        } else {
           this.m_modifiedIds[n] = o++;
           i[s] = this.m_modifiedIds[n];
         }
@@ -223,7 +219,7 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
           x = h;
           E.AddModifiedElement(h + 1, g);
           T = b + 1 - e;
-        } {
+        } else {
           h = c[b - 1] + 1;
           g = h - T - o;
           if (x > h) {
@@ -274,7 +270,7 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
             x = h + 1;
             E.AddOriginalElement(h + 1, g + 1);
             T = b + 1 - r;
-          } {
+          } else {
             h = d[b - 1];
             g = h - T - l;
             if (h > x) {

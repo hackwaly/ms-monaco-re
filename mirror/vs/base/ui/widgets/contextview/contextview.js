@@ -140,9 +140,7 @@ define("vs/base/ui/widgets/contextview/contextview", ["require", "exports", "vs/
         if (m + e + o > y && r - m > o) {
           e = r - o - m;
         }
-      }
-
-      {
+      } else {
         e = r - o - m;
         if (0 > e + m && y > r + l + o - m) {
           e = r + l - m;
@@ -154,9 +152,7 @@ define("vs/base/ui/widgets/contextview/contextview", ["require", "exports", "vs/
         if (v + t + n > _) {
           t -= n - u;
         }
-      }
-
-      {
+      } else {
         t = a + u - n - v;
         if (0 > t + v && _ > a + n) {
           t = a - v;

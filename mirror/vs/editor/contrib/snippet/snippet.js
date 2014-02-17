@@ -36,9 +36,7 @@ define("vs/editor/contrib/snippet/snippet", ["require", "exports", "vs/base/coll
           var h = new o.Range(t + 1, d.startColumn, t + 1, d.endColumn);
           if (n.contains(a, d.value)) {
             c = a[d.value];
-          }
-
-          {
+          } else {
             c = {
               value: d.value,
               occurences: []
@@ -129,7 +127,7 @@ define("vs/editor/contrib/snippet/snippet", ["require", "exports", "vs/base/coll
         if (0 === u) {
           g[u + 1] = n;
           h[u] = o;
-        } {
+        } else {
           r = this.extractLineIndentation(o);
           s = o.substr(r.length);
           a = i.normalizeIndentation(f + r);
@@ -428,9 +426,7 @@ define("vs/editor/contrib/snippet/snippet", ["require", "exports", "vs/base/coll
     e.run = function(e, t, n, i) {
       if (0 === n.placeHolders.length) {
         this._runForAllSelections(e, t, n, i);
-      }
-
-      {
+      } else {
         this._runForPrimarySelection(e, t, n, i);
       }
     };
@@ -464,9 +460,7 @@ define("vs/editor/contrib/snippet/snippet", ["require", "exports", "vs/base/coll
       var c = e._getSnippetCursorOnly(u);
       if (c) {
         t.setSelection(new a.Selection(c.lineNumber, c.column, c.lineNumber, c.column));
-      }
-
-      {
+      } else {
         if (u.placeHolders.length > 0) {
           new l(t, n, u, s.startLineNumber);
         }

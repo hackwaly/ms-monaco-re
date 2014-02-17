@@ -146,9 +146,7 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
       });
       if (t.equals(n)) {
         this._stopSelectionMode();
-      }
-
-      {
+      } else {
         this._startSelectionModeFromPosition(t, this.viewModelHelper.convertModelPositionToViewPosition(t.lineNumber,
           t.column));
       }
@@ -192,9 +190,7 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
 
       if (this.positionMarkerId) {
         this.model._changeMarker(this.positionMarkerId, this.position.lineNumber, this.position.column);
-      }
-
-      {
+      } else {
         this.positionMarkerId = this.model._addMarker(this.position.lineNumber, this.position.column, !0);
       }
     };
@@ -245,19 +241,17 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
       if (this.inSelectionMode) {
         if (this.selStartMarkerId) {
           this.model._changeMarker(this.selStartMarkerId, this.selectionStart.startLineNumber, this.selectionStart.startColumn);
-        } {
+        } else {
           this.selStartMarkerId = this.model._addMarker(this.selectionStart.startLineNumber, this.selectionStart.startColumn, !
             0);
         }
         if (this.selEndMarkerId) {
           this.model._changeMarker(this.selEndMarkerId, this.selectionStart.endLineNumber, this.selectionStart.endColumn);
-        } {
+        } else {
           this.selEndMarkerId = this.model._addMarker(this.selectionStart.endLineNumber, this.selectionStart.endColumn, !
             0);
         }
-      }
-
-      {
+      } else {
         if (this.selStartMarkerId) {
           this.model._removeMarker(this.selStartMarkerId);
           this.selStartMarkerId = null;
@@ -286,9 +280,7 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
         if (i < l.startLineNumber || i === l.startLineNumber && o < l.startColumn) {
           i = l.startLineNumber;
           o = l.startColumn;
-        }
-
-        {
+        } else {
           if (i > l.endLineNumber || i === l.endLineNumber && o > l.endColumn) {
             i = l.endLineNumber;
             o = l.endColumn;
@@ -328,7 +320,7 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
           i = null;
           if (a.equals(n)) {
             a = null;
-          } {
+          } else {
             u = this.viewModelHelper.convertModelPositionToViewPosition(a.lineNumber, a.column);
           }
         } else {
@@ -340,12 +332,10 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
       }
       if (i) {
         this._startSelectionModeFromRange(i, o);
-      }
-
-      {
+      } else {
         if (a) {
           this._startSelectionModeFromPosition(a, u);
-        } {
+        } else {
           this._stopSelectionMode();
         }
       }
@@ -688,9 +678,7 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
           if (l.column === d || "left" === n) {
             o = l.column - 1;
             r = l.column;
-          }
-
-          {
+          } else {
             o = l.column;
             r = l.column + 1;
           }

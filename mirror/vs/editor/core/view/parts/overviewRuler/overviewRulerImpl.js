@@ -173,7 +173,7 @@ define("vs/editor/core/view/parts/overviewRuler/overviewRulerImpl", ["require", 
             for (g = h[f], g.sort(y), m = g[0].from, v = g[0].to, e.fillStyle = f, r = 1, s = g.length; s > r; r++) {
               if (v >= g[r].from) {
                 v = Math.max(v, g[r].to);
-              } {
+              } else {
                 e.fillRect(i, m, o, v - m);
                 m = g[r].from;
                 v = g[r].to;
@@ -192,12 +192,10 @@ define("vs/editor/core/view/parts/overviewRuler/overviewRulerImpl", ["require", 
           var i = this._width - this._canvasLeftOffset - 1;
           if (this._lanesCount >= 3) {
             this._renderThreeLanes(n, e, i);
-          }
-
-          {
+          } else {
             if (2 === this._lanesCount) {
               this._renderTwoLanes(n, e, i);
-            } {
+            } else {
               if (1 === this._lanesCount) {
                 this._renderOneLane(n, e, i);
               }

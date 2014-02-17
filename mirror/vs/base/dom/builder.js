@@ -162,9 +162,7 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
         if (t instanceof e) {
           t = t.getHTMLElement();
         }
-      }
-
-      {
+      } else {
         t = this.container;
       }
 
@@ -193,9 +191,7 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
         if (t instanceof e) {
           t = t.getHTMLElement();
         }
-      }
-
-      {
+      } else {
         t = this.container;
       }
 
@@ -350,9 +346,7 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
             this.captureToUnbind[a] = [];
           }
           this.captureToUnbind[a].push(u);
-        }
-
-        {
+        } else {
           if (!this.toUnbind[a]) {
             this.toUnbind[a] = [];
           }
@@ -414,7 +408,7 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
         if (t) {
           if (e.stopPropagation) {
             e.stopPropagation();
-          } {
+          } else {
             e.cancelBubble = !0;
           }
         }
@@ -443,12 +437,10 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
       if (this[e]) {
         if (i.isArray(t)) {
           this[e].apply(this, t);
-        } {
+        } else {
           this[e].call(this, t);
         }
-      }
-
-      {
+      } else {
         this.currentElement.setAttribute(e, t);
       }
     };
@@ -1066,7 +1058,7 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
         for (var o = 0; o < n.length; o++) {
           if (n[o] instanceof HTMLElement) {
             this.push(h(n[o]));
-          } {
+          } else {
             this.push(n[o]);
           }
         } else

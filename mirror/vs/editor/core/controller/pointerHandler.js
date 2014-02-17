@@ -69,9 +69,7 @@ define("vs/editor/core/controller/pointerHandler", ["require", "exports", "vs/ba
       if (o.browserEvent.fromElement) {
         o.preventDefault();
         this.viewHelper.focusTextArea();
-      }
-
-      {
+      } else {
         setTimeout(function() {
           t.viewHelper.focusTextArea();
         });

@@ -127,9 +127,7 @@ define("vs/base/ui/widgets/quickopen/quickOpenModel", ["require", "exports", "vs
     t.prototype.setHighlights = function(t) {
       if (this.entry) {
         this.entry.setHighlights(t);
-      }
-
-      {
+      } else {
         e.prototype.setHighlights.call(this, t);
       }
     };

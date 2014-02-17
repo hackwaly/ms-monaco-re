@@ -86,9 +86,7 @@ define("vs/base/worker/workerClient", ["require", "exports", "vs/base/lib/winjs.
     t.prototype.postMessage = function(e) {
       if (this.loaded === !0) {
         window.frames[this.iframeId()].postMessage(JSON.stringify(e), "*");
-      }
-
-      {
+      } else {
         this.beforeLoadMessages.push(e);
       }
     };
@@ -144,9 +142,7 @@ define("vs/base/worker/workerClient", ["require", "exports", "vs/base/lib/winjs.
       var r = window.require;
       if ("function" == typeof r.getConfig) {
         o = r.getConfig();
-      }
-
-      {
+      } else {
         if ("undefined" != typeof window.requirejs) {
           o = window.requirejs.s.contexts._.config;
         }
@@ -178,9 +174,7 @@ define("vs/base/worker/workerClient", ["require", "exports", "vs/base/lib/winjs.
       }, function() {
         if (r) {
           r.cancel();
-        }
-
-        {
+        } else {
           s = !0;
         }
       });
@@ -364,9 +358,7 @@ define("vs/base/worker/workerClient", ["require", "exports", "vs/base/lib/winjs.
               var i = this._messageHandlers[e.type];
               if (i && "function" == typeof i) {
                 i(e.payload);
-              }
-
-              {
+              } else {
                 this._onError("Received unexpected message from Worker:", e);
               }
             }

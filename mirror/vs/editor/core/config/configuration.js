@@ -141,9 +141,7 @@ define("vs/editor/core/config/configuration", ["require", "exports", "vs/nls!vs/
         var g = e._USUAL_CHARS.charAt(h);
         if (g >= "0" && "9" >= g) {
           c = Math.max(c, i[h]);
-        }
-
-        {
+        } else {
           if ("|" === g) {
             d = i[h];
           }
@@ -431,7 +429,7 @@ define("vs/editor/core/config/configuration", ["require", "exports", "vs/nls!vs/
       for (t = 0; t < e.length; t++) {
         if ("	" === e.charAt(t)) {
           i += n.tabSize;
-        } {
+        } else {
           i++;
         }
       }

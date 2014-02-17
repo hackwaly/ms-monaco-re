@@ -180,7 +180,7 @@ define("vs/editor/modes/stream", ["require", "exports"], function(e, t) {
       }; !this.eos() && s(r = i());) {
         if (r > 0) {
           this.advance(r);
-        } {
+        } else {
           this.next();
         }
       }

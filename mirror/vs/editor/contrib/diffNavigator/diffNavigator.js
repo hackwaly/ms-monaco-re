@@ -87,9 +87,7 @@ define("vs/editor/contrib/diffNavigator/diffNavigator", ["require", "exports", "
                   .modifiedEndColumn)
               });
             });
-          }
-
-          {
+          } else {
             n.ranges.push({
               rhs: !0,
               range: new r.Range(e.modifiedStartLineNumber, 1, e.modifiedStartLineNumber, 1)
@@ -127,15 +125,13 @@ define("vs/editor/contrib/diffNavigator/diffNavigator", ["require", "exports", "
       if (i.ok(!this.disposed, "Illegal State - diff navigator has been disposed"), this.canNavigate()) {
         if (-1 === this.nextIdx) {
           this.initIdx(e);
-        }
-
-        {
+        } else {
           if (e) {
             this.nextIdx += 1;
             if (this.nextIdx >= this.ranges.length) {
               this.nextIdx = 0;
             }
-          } {
+          } else {
             this.nextIdx -= 1;
             if (this.nextIdx < 0) {
               this.nextIdx = this.ranges.length - 1;

@@ -347,13 +347,13 @@ define("vs/languages/typescript/typescript", ["require", "exports", "vs/editor/m
         if (0 !== n) {
           if (4 === n) {
             e = '"\\\n' + e;
-          } {
+          } else {
             if (3 === n) {
               e = "'\\\n" + e;
-            } {
+            } else {
               if (1 === n) {
                 e = "/*\n" + e;
-              } {
+              } else {
                 if (2 === n) {
                   e = "/**\n" + e;
                 }
@@ -479,12 +479,10 @@ define("vs/languages/typescript/typescript", ["require", "exports", "vs/editor/m
             if (p.characterIsBracket(n)) {
               this.bracket = p.bracketTypeFromChar(n);
               this.type = p.tokenTypeFromChar(n);
-            }
-
-            {
+            } else {
               if (a.SyntaxFacts.isAnyKeyword(t)) {
                 this.type = "keyword.ts";
-              } {
+              } else {
                 if (a.SyntaxFacts.isAnyPunctuation(t)) {
                   this.type = "delimiter.ts";
                 }

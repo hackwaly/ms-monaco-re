@@ -25,9 +25,7 @@ define("vs/base/paths", ["require", "exports"], function(e, t) {
       if ("." === s || 0 === s.length) {
         n.splice(o, 1);
         o -= 1;
-      }
-
-      {
+      } else {
         if (o > 0 && ".." === s) {
           n.splice(o - 1, 2);
           o -= 2;

@@ -115,9 +115,7 @@ define("vs/editor/core/range", ["require", "exports", "vs/editor/core/position"]
         this.startColumn = i;
         this.endLineNumber = e;
         this.endColumn = t;
-      }
-
-      {
+      } else {
         this.startLineNumber = e;
         this.startColumn = t;
         this.endLineNumber = n;

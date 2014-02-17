@@ -82,9 +82,7 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
       set: function(e) {
         if (e) {
           this.addClass("expanded");
-        }
-
-        {
+        } else {
           this.removeClass("expanded");
         }
       },
@@ -96,9 +94,7 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
       set: function(e) {
         if (e) {
           this.addClass("loading");
-        }
-
-        {
+        } else {
           this.removeClass("loading");
         }
       },
@@ -123,9 +119,7 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
       set: function(e) {
         if (e) {
           this.addClass("drop-target");
-        }
-
-        {
+        } else {
           this.removeClass("drop-target");
         }
       },
@@ -178,7 +172,7 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
             this.unbindDragStart = r.addListener(this.row, "dragstart", function(e) {
               t.onDragStart(e);
             });
-          } {
+          } else {
             this.uri = null;
           }
         }
@@ -204,7 +198,7 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
       if (!this.row.parentElement) {
         if (null === t) {
           e.appendChild(this.row);
-        } {
+        } else {
           e.insertBefore(this.row, t);
         }
         this.render();
@@ -302,9 +296,7 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
       if (null === t) {
         o = 0;
         a = 0;
-      }
-
-      {
+      } else {
         o = this.indexes[t] + 1;
         a = this.heightMap[o - 1].top + this.heightMap[o - 1].height;
       }
@@ -497,9 +489,7 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
       if (i.browser.isIE11orEarlier) {
         this.wrapper.style.msTouchAction = "none";
         this.wrapper.style.msContentZooming = "none";
-      }
-
-      {
+      } else {
         this.wrapperGesture = new l.Gesture(this.wrapper);
       }
 
@@ -1034,9 +1024,7 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
           var s = this.scrollTop + this.viewHeight;
           if (i.top < this.scrollTop) {
             this.scrollTop = i.top;
-          }
-
-          {
+          } else {
             if (r >= s) {
               this.scrollTop = r - this.viewHeight;
             }
@@ -1122,9 +1110,7 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
 
       if (this.shouldBeRendered(e)) {
         this.insertItemInDOM(e);
-      }
-
-      {
+      } else {
         this.removeItemFromDOM(e);
       }
     };
@@ -1237,9 +1223,7 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
             var i = e.viewHeight - 35;
             if (35 > t) {
               n = Math.max(-14, .2 * (t - 35));
-            }
-
-            {
+            } else {
               if (t > i) {
                 n = Math.min(14, .2 * (t - i));
               }
@@ -1316,9 +1300,7 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
         this.currentDropElement = a.getElement();
         n.preventDefault();
         n.dataTransfer.dropEffect = n.ctrlKey ? "copy" : "move";
-      }
-
-      {
+      } else {
         delete this.currentDropElement;
       }
       var l = a.id === this.inputItem.id ? this.inputItem : this.items[a.id];

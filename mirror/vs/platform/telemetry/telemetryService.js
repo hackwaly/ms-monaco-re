@@ -66,9 +66,7 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
 
       if ("public" === e.topic) {
         this.publicLog(e.name, t);
-      }
-
-      {
+      } else {
         this.log(e.name, t);
       }
     };
@@ -171,7 +169,7 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
             clearTimeout(this.waitIntervalId);
             this.waitIntervalId = null;
             this.sendEvents();
-          } {
+          } else {
             this.sendSoon();
           }
         }

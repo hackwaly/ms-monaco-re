@@ -56,7 +56,7 @@ define("vs/base/arrays", ["require", "exports"], function(e, t) {
       n = i + Math.ceil((o - i) / 2);
       if (e[n].startIndex > t) {
         o = n - 1;
-      } {
+      } else {
         i = n;
       }
     }

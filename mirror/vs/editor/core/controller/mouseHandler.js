@@ -174,23 +174,21 @@ define("vs/editor/core/controller/mouseHandler", ["require", "exports", "vs/base
           if (i.browserEvent.fromElement) {
             i.preventDefault();
             this.viewHelper.focusTextArea();
-          } {
+          } else {
             setTimeout(function() {
               t.viewHelper.focusTextArea();
             });
           }
-        } {
+        } else {
           i.preventDefault();
           this.viewHelper.focusTextArea();
         }
         this._updateMouse(a.type, i, i.shiftKey, i.detail);
         this._hook(a.type);
-      }
-
-      {
+      } else {
         if (l) {
           i.preventDefault();
-        } {
+        } else {
           if (h && this.viewHelper.shouldSuppressMouseDownOnViewZone(a.detail)) {
             i.preventDefault();
           }
@@ -294,9 +292,7 @@ define("vs/editor/core/controller/mouseHandler", ["require", "exports", "vs/base
         var f = new i.Position(a, u);
         if (this.lastMouseDownPosition && this.lastMouseDownPosition.equals(f)) {
           this.lastMouseDownPositionEqualCount++;
-        }
-
-        {
+        } else {
           this.lastMouseDownPositionEqualCount = 1;
         }
 
@@ -310,13 +306,13 @@ define("vs/editor/core/controller/mouseHandler", ["require", "exports", "vs/base
         if (n.altKey) {
           if (o) {
             this.viewController.lastCursorLineSelect("mouse", a, u);
-          } {
+          } else {
             this.viewController.createCursor("mouse", a, u, !0);
           }
-        } {
+        } else {
           if (o) {
             this.viewController.lineSelectDrag("mouse", a, u);
-          } {
+          } else {
             this.viewController.lineSelect("mouse", a, u);
           }
         }
@@ -326,13 +322,13 @@ define("vs/editor/core/controller/mouseHandler", ["require", "exports", "vs/base
         if (n.altKey) {
           if (o) {
             this.viewController.lastCursorLineSelectDrag("mouse", a, u);
-          } {
+          } else {
             this.viewController.lastCursorLineSelect("mouse", a, u);
           }
-        } {
+        } else {
           if (o) {
             this.viewController.lineSelectDrag("mouse", a, u);
-          } {
+          } else {
             this.viewController.lineSelect("mouse", a, u);
           }
         }
@@ -342,9 +338,7 @@ define("vs/editor/core/controller/mouseHandler", ["require", "exports", "vs/base
         var m = "none";
         if (n.posx > g) {
           m = "right";
-        }
-
-        {
+        } else {
           if (n.posx < g) {
             m = "left";
           }
@@ -352,12 +346,10 @@ define("vs/editor/core/controller/mouseHandler", ["require", "exports", "vs/base
 
         if (n.altKey) {
           this.viewController.lastCursorWordSelect("mouse", a, u, m);
-        }
-
-        {
+        } else {
           if (o) {
             this.viewController.wordSelectDrag("mouse", a, u, m);
-          } {
+          } else {
             this.viewController.wordSelect("mouse", a, u, m);
           }
         }
@@ -365,13 +357,13 @@ define("vs/editor/core/controller/mouseHandler", ["require", "exports", "vs/base
         if (n.altKey) {
           if (o) {
             this.viewController.lastCursorMoveToSelect("mouse", a, u);
-          } {
+          } else {
             this.viewController.createCursor("mouse", a, u, !1);
           }
-        } {
+        } else {
           if (o) {
             this.viewController.moveToSelect("mouse", a, u);
-          } {
+          } else {
             this.viewController.moveTo("mouse", a, u);
           }
         }

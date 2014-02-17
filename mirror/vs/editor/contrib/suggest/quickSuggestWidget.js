@@ -103,7 +103,7 @@ define("vs/editor/contrib/suggest/quickSuggestWidget", ["require", "exports", "v
             t.currentSuggestionIndex = 0;
             t.currentSuggestion = t.suggestions[t.currentSuggestionIndex];
             t.onSuggestions();
-          } {
+          } else {
             t.cancel();
           }
         }

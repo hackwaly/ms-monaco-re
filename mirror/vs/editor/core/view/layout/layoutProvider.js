@@ -125,9 +125,7 @@ define("vs/editor/core/view/layout/layoutProvider", ["require", "exports", "vs/e
       var i = -1;
       if (0 === n) {
         i = Math.max(1, Math.floor((e.contentWidth - e.verticalScrollbarWidth) / this.configuration.editor.thinnestCharacterWidth));
-      }
-
-      {
+      } else {
         if (n > 0) {
           i = n;
         }

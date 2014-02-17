@@ -117,7 +117,7 @@ define("vs/languages/typescript/lint/rules/javascript", ["require", "exports", "
           } else {
             if (a.right.kind() === o.SyntaxKind.NullKeyword) {
               l = !0;
-            } {
+            } else {
               if ("undefined" === i.syntaxHelper.text(a.right)) {
                 l = !0;
               }

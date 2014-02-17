@@ -85,9 +85,7 @@ define("vs/editor/contrib/referenceSearch/referenceSearchWidget", ["require", "e
             if (l) {
               this.decorationIgnoreSet.add(a);
               o.push(n[r].id);
-            }
-
-            {
+            } else {
               a.range = u;
             }
           }
@@ -522,9 +520,7 @@ define("vs/editor/contrib/referenceSearch/referenceSearchWidget", ["require", "e
 
       if (this.position && g.containsPosition(e.range, this.position)) {
         this.show(this.position, 18);
-      }
-
-      {
+      } else {
         this.show(e.range, 18);
       }
 
@@ -539,17 +535,13 @@ define("vs/editor/contrib/referenceSearch/referenceSearchWidget", ["require", "e
         if (i) {
           t.preview.setModel(i.textEditorModel);
           t.preview.setSelection(e.range, !0, !0, !0);
-        }
-
-        {
+        } else {
           t.preview.setModel(t.previewNotAvailableMessage);
         }
 
         if (e.resource.getScheme() !== u.schemas.inMemory) {
           t.setTitle(e.name, e.directory);
-        }
-
-        {
+        } else {
           t.setTitle(n.localize("vs_editor_contrib_referenceSearch_referenceSearchWidget", 3));
         }
       }, l.onUnexpectedError);

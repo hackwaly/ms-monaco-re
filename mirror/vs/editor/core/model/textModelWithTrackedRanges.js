@@ -39,9 +39,7 @@ define("vs/editor/core/model/textModelWithTrackedRanges", ["require", "exports",
       var n = this._multiLineTrackedRanges.hasOwnProperty(e);
       if (!n && t) {
         this._multiLineTrackedRanges[e] = !0;
-      }
-
-      {
+      } else {
         if (n && !t) {
           delete this._multiLineTrackedRanges[e];
         }
@@ -219,7 +217,7 @@ define("vs/editor/core/model/textModelWithTrackedRanges", ["require", "exports",
           n = this._ranges[i];
           if (a.hasOwnProperty(n.id)) {
             t = a[n.id];
-          } {
+          } else {
             t = {
               startLineNumber: 0,
               startColumn: 0,
@@ -231,7 +229,7 @@ define("vs/editor/core/model/textModelWithTrackedRanges", ["require", "exports",
           if (o.id === n.startMarkerId) {
             t.startLineNumber = o.oldLineNumber;
             t.startColumn = o.oldColumn;
-          } {
+          } else {
             t.endLineNumber = o.oldLineNumber;
             t.endColumn = o.oldColumn;
           }

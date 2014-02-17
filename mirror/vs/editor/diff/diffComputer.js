@@ -26,7 +26,7 @@ define("vs/editor/diff/diffComputer", ["require", "exports", "vs/base/diff/diff"
       if (r > s) {
         l.originalLength = a.originalStart + a.originalLength - l.originalStart;
         l.modifiedLength = a.modifiedStart + a.modifiedLength - l.modifiedStart;
-      } {
+      } else {
         u.push(a);
         l = a;
       }
@@ -167,9 +167,7 @@ define("vs/editor/diff/diffComputer", ["require", "exports", "vs/base/diff/diff"
         this.originalStartColumn = 0;
         this.originalEndLineNumber = 0;
         this.originalEndColumn = 0;
-      }
-
-      {
+      } else {
         this.originalStartLineNumber = t.getStartLineNumber(e.originalStart);
         this.originalStartColumn = t.getStartColumn(e.originalStart);
         this.originalEndLineNumber = t.getEndLineNumber(e.originalStart + e.originalLength - 1);
@@ -181,9 +179,7 @@ define("vs/editor/diff/diffComputer", ["require", "exports", "vs/base/diff/diff"
         this.modifiedStartColumn = 0;
         this.modifiedEndLineNumber = 0;
         this.modifiedEndColumn = 0;
-      }
-
-      {
+      } else {
         this.modifiedStartLineNumber = n.getStartLineNumber(e.modifiedStart);
         this.modifiedStartColumn = n.getStartColumn(e.modifiedStart);
         this.modifiedEndLineNumber = n.getEndLineNumber(e.modifiedStart + e.modifiedLength - 1);

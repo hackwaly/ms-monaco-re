@@ -216,7 +216,7 @@ define("vs/editor/core/view/parts/zones/zones", ["require", "exports", "vs/base/
                 if (n.isFunction(l.delegate.onDomNodeTop)) {
                   l.delegate.onDomNodeTop(e.getScrolledTopFromAbsoluteTop(s[u].verticalOffset));
                 }
-              } {
+              } else {
                 if (l.isVisible) {
                   l.delegate.domNode.style.display = "none";
                   l.isVisible = !1;

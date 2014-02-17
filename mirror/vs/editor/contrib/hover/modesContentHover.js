@@ -123,9 +123,7 @@ define("vs/editor/contrib/hover/modesContentHover", ["require", "exports", "vs/e
             }
             if (t.length > 0) {
               this._renderMessages(e, t);
-            }
-
-            {
+            } else {
               this.hide();
             }
           }
@@ -152,9 +150,7 @@ define("vs/editor/contrib/hover/modesContentHover", ["require", "exports", "vs/e
 
       if (this._messages.length > 0) {
         this._renderMessages(this._lastRange, this._messages);
-      }
-
-      {
+      } else {
         if (t) {
           this.hide();
         }
@@ -188,9 +184,7 @@ define("vs/editor/contrib/hover/modesContentHover", ["require", "exports", "vs/e
             e.htmlContent.forEach(function(e) {
               u.appendChild(s.renderHtml(e));
             });
-          }
-
-          {
+          } else {
             u.textContent = e.value;
           }
 

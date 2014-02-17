@@ -121,9 +121,7 @@ define("vs/editor/core/view/overlays/currentLineHighlight/currentLineHighlight",
           this._currentLine.style.display = "block";
           this._currentLineIsVisible = !0;
         }
-      }
-
-      {
+      } else {
         if (this._currentLineIsVisible) {
           this._currentLine.style.display = "none";
           this._currentLineIsVisible = !1;

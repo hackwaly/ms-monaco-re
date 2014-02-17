@@ -117,9 +117,7 @@ define("vs/editor/contrib/parameterHints/parameterHintsWidget", ["require", "exp
     e.prototype.render = function(e) {
       if (e.signatures.length > 1) {
         this.$el.addClass("multiple");
-      }
-
-      {
+      } else {
         this.$el.removeClass("multiple");
       }
 

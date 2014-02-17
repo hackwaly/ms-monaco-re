@@ -72,7 +72,7 @@ define("vs/editor/contrib/comment/lineCommentCommand", ["require", "exports",
             f = i.firstNonWhitespaceIndex(p);
             if (-1 === f) {
               v = !1;
-            } {
+            } else {
               if (!this._haystackHasNeedleAtOffset(p, g, f)) {
                 v = !1;
               }

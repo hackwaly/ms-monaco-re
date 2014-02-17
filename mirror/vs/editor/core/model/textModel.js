@@ -113,7 +113,7 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
         i = s[t].text.length;
         if (i >= e) {
           r += i;
-        } {
+        } else {
           o += i;
         }
       }
@@ -265,7 +265,7 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
           for (c = 0, d = 0, h = l; n > h; h += l) {
             if (s[h]) {
               c += s[h];
-            } {
+            } else {
               d += l / h;
             }
           }

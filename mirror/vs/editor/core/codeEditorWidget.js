@@ -63,9 +63,7 @@ define("vs/editor/core/codeEditorWidget", ["require", "exports", "vs/base/lib/wi
         this._lifetimeListeners.push(this.addListener("focus", function() {
           return o.bindings.activate();
         }));
-      }
-
-      {
+      } else {
         this.bindings = null;
       }
 
@@ -356,9 +354,7 @@ define("vs/editor/core/codeEditorWidget", ["require", "exports", "vs/base/lib/wi
           var i = n.cursorState;
           if (s.isArray(i)) {
             this.cursor.restoreState(i);
-          }
-
-          {
+          } else {
             this.cursor.restoreState([i]);
           }
 
@@ -422,9 +418,7 @@ define("vs/editor/core/codeEditorWidget", ["require", "exports", "vs/base/lib/wi
         if (o.enabled) {
           n.Promise.as(o.run()).done();
         }
-      }
-
-      {
+      } else {
         this.configuration.handlerDispatcher.trigger(e, t, i);
       }
     };

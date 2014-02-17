@@ -329,7 +329,7 @@ define("vs/editor/core/view/lines/viewLayer", ["require", "exports", "vs/base/do
             d += o.partsCount;
             p += o.charactersCount;
           }
-        } {
+        } else {
           if (e.frameData) {
             o = i.getLineStatistics();
             u++;

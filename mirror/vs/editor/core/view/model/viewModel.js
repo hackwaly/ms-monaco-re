@@ -112,9 +112,7 @@ define("vs/editor/core/view/model/viewModel", ["require", "exports", "vs/base/ev
           n.cursors.onLineMappingChanged(function(e, t) {
             return n.emit(e, t);
           });
-        }
-
-        {
+        } else {
           n.restoreCurrentCenteredModelRange = null;
         }
 

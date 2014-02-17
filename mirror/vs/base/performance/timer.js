@@ -95,15 +95,13 @@ define("vs/base/performance/timer", ["require", "exports", "vs/base/env", "vs/ba
       }
       if (0 === e) {
         e = "Editor";
-      }
-
-      {
+      } else {
         if (1 === e) {
           e = "Languages";
-        } {
+        } else {
           if (2 === e) {
             e = "Worker";
-          } {
+          } else {
             if (3 === e) {
               e = "Workbench";
             }

@@ -37,9 +37,7 @@ define("vs/editor/modes/monarch/monarch", ["require", "exports", "vs/platform/pl
 
         if (t[r].startIndex < n) {
           i.push(s);
-        }
-
-        {
+        } else {
           o.push(s);
         }
       }
@@ -70,7 +68,7 @@ define("vs/editor/modes/monarch/monarch", ["require", "exports", "vs/platform/pl
     for (o = 0; o < n.length && n[o].startIndex < i; o++) {
       if (1 === n[o].bracket) {
         s.push(o);
-      } {
+      } else {
         if (-1 === n[o].bracket && s.length > 0) {
           s.pop();
         }
@@ -314,9 +312,7 @@ define("vs/editor/modes/monarch/monarch", ["require", "exports", "vs/platform/pl
 
           if (s.findRules(this.lexer, y)) {
             this.stack[0] = y;
-          }
-
-          {
+          } else {
             s.throwError(this.lexer, "trying to switch to a state '" + y + "' that is undefined in rule: " + d.name);
           }
 
@@ -329,13 +325,13 @@ define("vs/editor/modes/monarch/monarch", ["require", "exports", "vs/platform/pl
             if (this.stack.length >= this.lexer.maxStack) {
               s.throwError(this.lexer, "maximum tokenizer stack size reached: [" + this.stack[0] + "," + this.stack[1] +
                 ",...," + this.stack[this.stack.length - 2] + "," + this.stack[this.stack.length - 1] + "]");
-            } {
+            } else {
               this.stack.unshift(o);
             }
           } else if ("@pop" === u.next) {
           if (this.stack.length <= 1) {
             s.throwError(this.lexer, "trying to pop an empty stack in rule: " + d.name);
-          } {
+          } else {
             this.stack.shift();
           }
         } else if ("@popall" === u.next) {
@@ -350,9 +346,7 @@ define("vs/editor/modes/monarch/monarch", ["require", "exports", "vs/platform/pl
 
           if (s.findRules(this.lexer, y)) {
             this.stack.unshift(y);
-          }
-
-          {
+          } else {
             s.throwError(this.lexer, "trying to set a next state '" + y + "' that is undefined in rule: " + d.name);
           }
         }

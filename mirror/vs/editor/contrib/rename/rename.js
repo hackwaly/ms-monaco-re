@@ -137,9 +137,7 @@ define("vs/editor/contrib/rename/rename", ["require", "exports", "vs/base/lib/wi
         if (o) {
           r = n.positionColumn - e[i].startColumn;
           s = n.selectionStartColumn - e[i].startColumn;
-        }
-
-        {
+        } else {
           r = e[i].endColumn - e[i].startColumn;
           s = 0;
         }
@@ -234,9 +232,7 @@ define("vs/editor/contrib/rename/rename", ["require", "exports", "vs/base/lib/wi
           }
           if (s) {
             t(i.localize("vs_editor_contrib_rename_rename", 0));
-          }
-
-          {
+          } else {
             e(a);
           }
         }, t, n);

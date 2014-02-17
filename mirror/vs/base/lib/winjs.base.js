@@ -14,9 +14,7 @@ define("vs/base/lib/winjs.base", ["./raw.winjs.base", "vs/base/errors"], functio
           var i = e[n];
           if (i.exception) {
             t.onUnexpectedError(i.exception);
-          }
-
-          {
+          } else {
             if (i.error) {
               t.onUnexpectedError(i.error);
             }

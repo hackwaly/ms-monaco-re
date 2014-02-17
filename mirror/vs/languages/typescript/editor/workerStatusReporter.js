@@ -139,9 +139,7 @@ define("vs/languages/typescript/editor/workerStatusReporter", ["require", "expor
               }));
             });
           }
-        }
-
-        {
+        } else {
           this.domNode.hide();
         }
       }
@@ -151,22 +149,20 @@ define("vs/languages/typescript/editor/workerStatusReporter", ["require", "expor
       if (t && 0 !== t) {
         if (4 === t) {
           e.attr("status", "ok");
-        } {
+        } else {
           if (1 === t) {
             e.attr("status", "updating");
-          } {
+          } else {
             if (2 === t) {
               e.attr("status", "fetching");
-            } {
+            } else {
               if (3 === t) {
                 e.attr("status", "error");
               }
             }
           }
         }
-      }
-
-      {
+      } else {
         e.attr("status", "unkown");
       }
     };

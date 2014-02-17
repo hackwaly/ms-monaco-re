@@ -26,7 +26,7 @@ if ("undefined" == typeof WinJS) {
         if (!l || "object" != typeof l || l.value === t && "function" != typeof l.get && "function" != typeof l.set) {
           if (u) {
             e[a] = l;
-          } {
+          } else {
             i = i || {};
             i[a] = {
               value: l,
@@ -35,9 +35,7 @@ if ("undefined" == typeof WinJS) {
               writable: !0
             };
           }
-        }
-
-        {
+        } else {
           if (l.enumerable === t) {
             l.enumerable = u;
           }
@@ -207,12 +205,10 @@ if ("undefined" == typeof WinJS) {
           if ("complete" === a || e.document && null !== document.body) {
             if (i) {
               e.setImmediate(s);
-            } {
+            } else {
               s();
             }
-          }
-
-          {
+          } else {
             e.addEventListener("DOMContentLoaded", s, !1);
           }
         });
@@ -361,9 +357,7 @@ if ("undefined" == typeof WinJS) {
               this.addEventListener(e, i.wrapper, !1);
             }
             i.userHandler = n;
-          }
-
-          {
+          } else {
             if (i) {
               this.removeEventListener(e, i.wrapper, !1);
               this[t] = null;
@@ -711,9 +705,7 @@ if ("undefined" == typeof WinJS) {
                   p(l, n, r, e, u);
                 }
                 l._setCompleteValue(u(n));
-              }
-
-              {
+              } else {
                 l._setChainedErrorValue(n, e);
               }
             } catch (c) {
@@ -761,9 +753,7 @@ if ("undefined" == typeof WinJS) {
       if (n) {
         n = Array.isArray(n) ? n : [n];
         n.push(t);
-      }
-
-      {
+      } else {
         n = t;
       }
 
@@ -810,9 +800,7 @@ if ("undefined" == typeof WinJS) {
       return new WinJS.Promise(function(n) {
         if (e) {
           t = setTimeout(n, e);
-        }
-
-        {
+        } else {
           setImmediate(n);
         }
       }, function() {
@@ -920,9 +908,7 @@ if ("undefined" == typeof WinJS) {
         var n = function(i) {
           if (t._errorId) {
             e._chainedError(i, t);
-          }
-
-          {
+          } else {
             p(e, i, r, t, n);
             e._error(i);
           }
@@ -1324,9 +1310,7 @@ if ("undefined" == typeof WinJS) {
             var i = Object.keys(e);
             if (Array.isArray(e)) {
               [];
-            }
-
-            {
+            } else {
               ({});
             }
           }
@@ -1400,9 +1384,7 @@ if ("undefined" == typeof WinJS) {
 
                 if (u === t) {
                   n(WinJS.Promise.cancel);
-                }
-
-                {
+                } else {
                   i(s);
                 }
               }
@@ -1417,9 +1399,7 @@ if ("undefined" == typeof WinJS) {
             var i = e[n];
             if (i === t) {
               u++;
-            }
-
-            {
+            } else {
               j.then(i, function(e) {
                 a[n] = e;
 
@@ -1559,11 +1539,11 @@ if ("undefined" == typeof WinJS) {
               if (4 === t.readyState) {
                 if (t.status >= 200 && t.status < 300 || 1223 === t.status) {
                   n(t);
-                } {
+                } else {
                   i(t);
                 }
                 t.onreadystatechange = function() {};
-              } {
+              } else {
                 o(t);
               }
             }
@@ -1814,13 +1794,11 @@ define("vs/base/objects", ["require", "exports", "./types"], function(e, t, n) {
         if (o) {
           if (n.isObject(e[r]) && n.isObject(i[r])) {
             t.mixin(e[r], i[r], o);
-          } {
+          } else {
             e[r] = i[r];
           }
         }
-      }
-
-      {
+      } else {
         e[r] = i[r];
       }
     }), e) : i;
@@ -2752,9 +2730,7 @@ define("vs/base/dom/mockDom", ["require", "exports"], function(e, t) {
     e.prototype.addEventListener = function(e, t) {
       if (e in this.eventMap) {
         this.eventMap[e].push(t);
-      }
-
-      {
+      } else {
         this.eventMap[e] = [t];
       }
     };
@@ -3349,9 +3325,7 @@ define("vs/base/dom/mockDom", ["require", "exports"], function(e, t) {
         var t = e.document.createTextNode(this.textContent);
         if (e.currentNode) {
           e.currentNode.appendChild(t);
-        }
-
-        {
+        } else {
           e.root.push(t);
         }
       }
@@ -3406,9 +3380,7 @@ define("vs/base/dom/mockDom", ["require", "exports"], function(e, t) {
 
           if (e.currentNode) {
             e.currentNode.appendChild(i);
-          }
-
-          {
+          } else {
             e.root.push(i);
           }
 
@@ -3642,7 +3614,7 @@ define("vs/base/dom/iframe", ["require", "exports"], function(e, t) {
             window: t,
             iframeElement: i(e, t)
           });
-        } {
+        } else {
           u.push({
             window: t,
             iframeElement: null
@@ -4019,9 +3991,7 @@ define("vs/platform/markers/markers", ["require", "exports", "vs/base/assert", "
           var n = o[t];
           if (n) {
             s[e] = n;
-          }
-
-          {
+          } else {
             o[t] = t;
           }
         });
@@ -4104,18 +4074,14 @@ define("vs/platform/markers/markersWorker", ["require", "exports", "vs/base/asse
       if ("undefined" == typeof o) {
         s = e.DEFAULT_GROUP;
         a = n;
-      }
-
-      {
+      } else {
         s = n;
         a = o;
       }
       var u = this.markerUpdates[i.computeKey(t, s)];
       if (u) {
         a(new r(u));
-      }
-
-      {
+      } else {
         a(null);
       }
     };
@@ -4141,9 +4107,7 @@ define("vs/platform/markers/markersWorker", ["require", "exports", "vs/base/asse
       if ("undefined" == typeof o) {
         r = e.DEFAULT_GROUP;
         s = i;
-      }
-
-      {
+      } else {
         r = i;
         s = o;
       }
@@ -4198,9 +4162,7 @@ define("vs/platform/markers/markersWorker", ["require", "exports", "vs/base/asse
       var n = this.markerUpdateChangeCounts[t];
       if (n > 1) {
         this.markerUpdateChangeCounts[t] = --n;
-      }
-
-      {
+      } else {
         delete this.markerUpdateChangeCounts[t];
         if (0 === this.globalChangeCount) {
           this._publishMarkerUpdate(e);
@@ -4739,9 +4701,7 @@ define("vs/editor/core/range", ["require", "exports", "vs/editor/core/position"]
         this.startColumn = i;
         this.endLineNumber = e;
         this.endColumn = t;
-      }
-
-      {
+      } else {
         this.startLineNumber = e;
         this.startColumn = t;
         this.endLineNumber = n;
@@ -4888,7 +4848,7 @@ define("vs/base/arrays", ["require", "exports"], function(e, t) {
       n = i + Math.ceil((o - i) / 2);
       if (e[n].startIndex > t) {
         o = n - 1;
-      } {
+      } else {
         i = n;
       }
     }
@@ -4963,9 +4923,7 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
     e.prototype._recreateLineTokens = function(t) {
       if (0 === this.text.length) {
         t = e.DEFAULT_TOKENS_EMPTY_TEXT;
-      }
-
-      {
+      } else {
         if (!(t && 0 !== t.length)) {
           t = e.DEFAULT_TOKENS_NON_EMPTY_TEXT;
         }
@@ -5058,9 +5016,7 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
             var g = f;
             if (f >= i - 1) {
               g = f - a.length;
-            }
-
-            {
+            } else {
               if (f >= n - 1) {
                 g = n - 1;
               }
@@ -5069,9 +5025,7 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
             if (g >= p.length) {
               d.splice(h, 1);
               h--;
-            }
-
-            {
+            } else {
               d[h].startIndex = g;
               if (h > 0 && d[h - 1].startIndex >= g) {
                 d.splice(h - 1, 1);
@@ -5092,7 +5046,7 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
           m.oldLineNumber = m.oldLineNumber || this.lineNumber;
           m.oldColumn = m.oldColumn || m.column;
           m.column -= a.length;
-        } {
+        } else {
           if (m.column > n || m.column === n && (r || !m.stickToPreviousCharacter)) {
             t[m.id] = !0;
             m.oldLineNumber = m.oldLineNumber || this.lineNumber;
@@ -5103,7 +5057,7 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
               this.markers.splice(h, 1);
               h--;
               u.push(m);
-            } {
+            } else {
               m.column = n;
             }
           }
@@ -5593,9 +5547,7 @@ define("vs/base/lib/winjs.base", ["./raw.winjs.base", "vs/base/errors"], functio
           var i = e[n];
           if (i.exception) {
             t.onUnexpectedError(i.exception);
-          }
-
-          {
+          } else {
             if (i.error) {
               t.onUnexpectedError(i.error);
             }
@@ -5966,9 +5918,7 @@ define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], functio
         "This object will never emit this event type!");
       if (this._listeners.hasOwnProperty(e)) {
         this._listeners[e].push(t);
-      }
-
-      {
+      } else {
         this._listeners[e] = [t];
       }
       var n = this;
@@ -6039,9 +5989,7 @@ define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], functio
         }
         if (0 === n._deferredCnt) {
           n._emitEvents(o);
-        }
-
-        {
+        } else {
           n._collectedEvents.push.apply(n._collectedEvents, o);
         }
       });
@@ -6117,9 +6065,7 @@ define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], functio
         var n = new i(e, t);
         if (0 === this._deferredCnt) {
           this._emitEvents([n]);
-        }
-
-        {
+        } else {
           this._collectedEvents.push(n);
         }
       }
@@ -6278,7 +6224,7 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
         i = s[t].text.length;
         if (i >= e) {
           r += i;
-        } {
+        } else {
           o += i;
         }
       }
@@ -6430,7 +6376,7 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
           for (c = 0, d = 0, h = l; n > h; h += l) {
             if (s[h]) {
               c += s[h];
-            } {
+            } else {
               d += l / h;
             }
           }
@@ -7553,15 +7499,13 @@ define("vs/base/performance/timer", ["require", "exports", "vs/base/env", "vs/ba
       }
       if (0 === e) {
         e = "Editor";
-      }
-
-      {
+      } else {
         if (1 === e) {
           e = "Languages";
-        } {
+        } else {
           if (2 === e) {
             e = "Worker";
-          } {
+          } else {
             if (3 === e) {
               e = "Workbench";
             }
@@ -8521,9 +8465,7 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
       if (e.clientX || e.clientY) {
         this.posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
         this.posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-      }
-
-      {
+      } else {
         if (e.pageX || e.pageY) {
           this.posx = e.pageX;
           this.posy = e.pageY;
@@ -8537,9 +8479,7 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
     e.prototype.preventDefault = function() {
       if (this.browserEvent.preventDefault) {
         this.browserEvent.preventDefault();
-      }
-
-      {
+      } else {
         this.browserEvent.returnValue = !1;
       }
     };
@@ -8547,9 +8487,7 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
     e.prototype.stopPropagation = function() {
       if (this.browserEvent.stopPropagation) {
         this.browserEvent.stopPropagation();
-      }
-
-      {
+      } else {
         this.browserEvent.cancelBubble = !0;
       }
     };
@@ -8586,9 +8524,7 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
         var s = e;
         if ("undefined" != typeof r.wheelDeltaY) {
           this.deltaY = o(r.wheelDeltaY);
-        }
-
-        {
+        } else {
           if ("undefined" != typeof s.VERTICAL_AXIS && s.axis === s.VERTICAL_AXIS) {
             this.deltaY = -s.detail / 3;
           }
@@ -8596,9 +8532,7 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
 
         if ("undefined" != typeof r.wheelDeltaX) {
           this.deltaX = n.browser.isSafari && n.browser.isWindows ? -o(r.wheelDeltaX) : o(r.wheelDeltaX);
-        }
-
-        {
+        } else {
           if ("undefined" != typeof s.HORIZONTAL_AXIS && s.axis === s.HORIZONTAL_AXIS) {
             this.deltaX = -e.detail / 3;
           }
@@ -8613,7 +8547,7 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
       if (this.browserEvent) {
         if (this.browserEvent.preventDefault) {
           this.browserEvent.preventDefault();
-        } {
+        } else {
           this.browserEvent.returnValue = !1;
         }
       }
@@ -8623,7 +8557,7 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
       if (this.browserEvent) {
         if (this.browserEvent.stopPropagation) {
           this.browserEvent.stopPropagation();
-        } {
+        } else {
           this.browserEvent.cancelBubble = !0;
         }
       }
@@ -8723,9 +8657,7 @@ define("vs/base/dom/keyboardEvent", ["require", "vs/base/lib/winjs.base", "vs/ba
     };
     if (n.browser.isIE11orEarlier) {
       e.Meta = 91;
-    }
-
-    {
+    } else {
       if (n.browser.isFirefox) {
         e["-"] = 109;
         e["="] = 107;
@@ -8733,7 +8665,7 @@ define("vs/base/dom/keyboardEvent", ["require", "vs/base/lib/winjs.base", "vs/ba
         if (n.browser.isMacintosh) {
           e.Meta = 224;
         }
-      } {
+      } else {
         if (n.browser.isOpera) {
           e["-"] = 109;
           e["="] = 61;
@@ -8741,7 +8673,7 @@ define("vs/base/dom/keyboardEvent", ["require", "vs/base/lib/winjs.base", "vs/ba
           if (n.browser.isMacintosh) {
             e.Meta = 57392;
           }
-        } {
+        } else {
           if (n.browser.isWebKit && n.browser.isMacintosh) {
             e.Meta = 91;
           }
@@ -8761,9 +8693,7 @@ define("vs/base/dom/keyboardEvent", ["require", "vs/base/lib/winjs.base", "vs/ba
       t[189] = "-";
       t[187] = "=";
       t[186] = ";";
-    }
-
-    {
+    } else {
       if (n.browser.isWebKit && n.browser.isMacintosh) {
         t[93] = "Meta";
       }
@@ -8800,9 +8730,7 @@ define("vs/base/dom/keyboardEvent", ["require", "vs/base/lib/winjs.base", "vs/ba
 
       if ("Ctrl" === this.key) {
         this.key = "Meta";
-      }
-
-      {
+      } else {
         if ("Meta" === this.key) {
           this.key = "Ctrl";
         }
@@ -8812,18 +8740,14 @@ define("vs/base/dom/keyboardEvent", ["require", "vs/base/lib/winjs.base", "vs/ba
     preventDefault: function() {
       if (this.browserEvent.preventDefault) {
         this.browserEvent.preventDefault();
-      }
-
-      {
+      } else {
         this.browserEvent.returnValue = !1;
       }
     },
     stopPropagation: function() {
       if (this.browserEvent.stopPropagation) {
         this.browserEvent.stopPropagation();
-      }
-
-      {
+      } else {
         this.browserEvent.cancelBubble = !0;
       }
     },
@@ -8968,9 +8892,7 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
         var e = (new Date).getTime() - a;
         if (e >= r) {
           c();
-        }
-
-        {
+        } else {
           if (!l) {
             l = !0;
             t.scheduleAtNextAnimationFrame(d, Number.MAX_VALUE);
@@ -9026,9 +8948,7 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
           window.clearTimeout(u);
         }
         l();
-      }
-
-      {
+      } else {
         if (-1 === u) {
           u = window.setTimeout(l, r - t);
         }
@@ -9271,7 +9191,7 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
             i = !1;
             s.emit("blur", {});
           }
-        } {
+        } else {
           window.setTimeout(function() {
             if (r) {
               r = !1;
@@ -9361,9 +9281,7 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
         if (-1 === n) {
           t.className = t.className + " " + i;
         }
-      }
-
-      {
+      } else {
         t.className = i;
       }
     };
@@ -9642,16 +9560,14 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
     stop: function(e, t) {
       if (e.preventDefault) {
         e.preventDefault();
-      }
-
-      {
+      } else {
         e.returnValue = !1;
       }
 
       if (t) {
         if (e.stopPropagation) {
           e.stopPropagation();
-        } {
+        } else {
           e.cancelBubble = !0;
         }
       }
@@ -9857,9 +9773,7 @@ define("vs/base/time/idleMonitor", ["require", "exports", "vs/base/dom/dom", "vs
       var e = (new Date).getTime() - this.lastActiveTime;
       if (e >= t.IDLE_TIME) {
         this.onUserIdle();
-      }
-
-      {
+      } else {
         this.scheduleIdleCheck();
       }
     };
@@ -9938,9 +9852,7 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
 
       if ("public" === e.topic) {
         this.publicLog(e.name, t);
-      }
-
-      {
+      } else {
         this.log(e.name, t);
       }
     };
@@ -10043,7 +9955,7 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
             clearTimeout(this.waitIntervalId);
             this.waitIntervalId = null;
             this.sendEvents();
-          } {
+          } else {
             this.sendSoon();
           }
         }
@@ -10286,9 +10198,7 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
         var r = this.OriginalSequence.getElementHash(n);
         if (i.hasOwnProperty(r)) {
           this.m_originalIds[n] = i[r];
-        }
-
-        {
+        } else {
           this.m_originalIds[n] = o++;
           i[r] = this.m_originalIds[n];
         }
@@ -10297,9 +10207,7 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
         var s = this.ModifiedSequence.getElementHash(n);
         if (i.hasOwnProperty(s)) {
           this.m_modifiedIds[n] = i[s];
-        }
-
-        {
+        } else {
           this.m_modifiedIds[n] = o++;
           i[s] = this.m_modifiedIds[n];
         }
@@ -10391,7 +10299,7 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
           x = h;
           E.AddModifiedElement(h + 1, g);
           T = b + 1 - e;
-        } {
+        } else {
           h = c[b - 1] + 1;
           g = h - T - o;
           if (x > h) {
@@ -10442,7 +10350,7 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
             x = h + 1;
             E.AddOriginalElement(h + 1, g + 1);
             T = b + 1 - r;
-          } {
+          } else {
             h = d[b - 1];
             g = h - T - l;
             if (h > x) {
@@ -10675,7 +10583,7 @@ define("vs/editor/diff/diffComputer", ["require", "exports", "vs/base/diff/diff"
       if (r > s) {
         l.originalLength = a.originalStart + a.originalLength - l.originalStart;
         l.modifiedLength = a.modifiedStart + a.modifiedLength - l.modifiedStart;
-      } {
+      } else {
         u.push(a);
         l = a;
       }
@@ -10816,9 +10724,7 @@ define("vs/editor/diff/diffComputer", ["require", "exports", "vs/base/diff/diff"
         this.originalStartColumn = 0;
         this.originalEndLineNumber = 0;
         this.originalEndColumn = 0;
-      }
-
-      {
+      } else {
         this.originalStartLineNumber = t.getStartLineNumber(e.originalStart);
         this.originalStartColumn = t.getStartColumn(e.originalStart);
         this.originalEndLineNumber = t.getEndLineNumber(e.originalStart + e.originalLength - 1);
@@ -10830,9 +10736,7 @@ define("vs/editor/diff/diffComputer", ["require", "exports", "vs/base/diff/diff"
         this.modifiedStartColumn = 0;
         this.modifiedEndLineNumber = 0;
         this.modifiedEndColumn = 0;
-      }
-
-      {
+      } else {
         this.modifiedStartLineNumber = n.getStartLineNumber(e.modifiedStart);
         this.modifiedStartColumn = n.getStartColumn(e.modifiedStart);
         this.modifiedEndLineNumber = n.getEndLineNumber(e.modifiedStart + e.modifiedLength - 1);
@@ -11525,17 +11429,17 @@ define("vs/editor/worker/modesWorker", ["require", "exports", "vs/base/lib/winjs
               r.push(this.createLink(p, t, v, f));
               C = !0;
             }
-          } {
+          } else {
             if (y === u) {
               if (" " === _ || "	" === _ || _ === m) {
                 C = !0;
-              } {
+              } else {
                 y = l;
               }
-            } {
+            } else {
               if (s[y].hasOwnProperty(_)) {
                 y = s[y][_];
-              } {
+              } else {
                 C = !0;
               }
             }

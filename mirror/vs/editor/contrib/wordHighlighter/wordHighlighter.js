@@ -149,9 +149,7 @@ define("vs/editor/contrib/wordHighlighter/wordHighlighter", ["require", "exports
       if (t >= n) {
         this.renderDecorationsTimer = -1;
         this.renderDecorations();
-      }
-
-      {
+      } else {
         this.renderDecorationsTimer = window.setTimeout(function() {
           e.renderDecorations();
         }, n - t);

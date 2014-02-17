@@ -97,9 +97,7 @@ define("vs/editor/contrib/hover/modesGlyphHover", ["require", "exports", "vs/edi
 
       if (this._messages.length > 0) {
         this._renderMessages(this._lastLineNumber, this._messages);
-      }
-
-      {
+      } else {
         this.hide();
       }
     };
@@ -115,9 +113,7 @@ define("vs/editor/contrib/hover/modesGlyphHover", ["require", "exports", "vs/edi
           i.textContent = e.value;
           i.className = e.className;
           t.appendChild(i);
-        }
-
-        {
+        } else {
           t.textContent = e.value;
         }
 

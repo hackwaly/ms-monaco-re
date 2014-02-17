@@ -62,18 +62,14 @@ define("vs/platform/markers/markersWorker", ["require", "exports", "vs/base/asse
       if ("undefined" == typeof o) {
         s = e.DEFAULT_GROUP;
         a = n;
-      }
-
-      {
+      } else {
         s = n;
         a = o;
       }
       var u = this.markerUpdates[i.computeKey(t, s)];
       if (u) {
         a(new r(u));
-      }
-
-      {
+      } else {
         a(null);
       }
     };
@@ -99,9 +95,7 @@ define("vs/platform/markers/markersWorker", ["require", "exports", "vs/base/asse
       if ("undefined" == typeof o) {
         r = e.DEFAULT_GROUP;
         s = i;
-      }
-
-      {
+      } else {
         r = i;
         s = o;
       }
@@ -156,9 +150,7 @@ define("vs/platform/markers/markersWorker", ["require", "exports", "vs/base/asse
       var n = this.markerUpdateChangeCounts[t];
       if (n > 1) {
         this.markerUpdateChangeCounts[t] = --n;
-      }
-
-      {
+      } else {
         delete this.markerUpdateChangeCounts[t];
         if (0 === this.globalChangeCount) {
           this._publishMarkerUpdate(e);

@@ -36,9 +36,7 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
       if (e.clientX || e.clientY) {
         this.posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
         this.posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-      }
-
-      {
+      } else {
         if (e.pageX || e.pageY) {
           this.posx = e.pageX;
           this.posy = e.pageY;
@@ -52,9 +50,7 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
     e.prototype.preventDefault = function() {
       if (this.browserEvent.preventDefault) {
         this.browserEvent.preventDefault();
-      }
-
-      {
+      } else {
         this.browserEvent.returnValue = !1;
       }
     };
@@ -62,9 +58,7 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
     e.prototype.stopPropagation = function() {
       if (this.browserEvent.stopPropagation) {
         this.browserEvent.stopPropagation();
-      }
-
-      {
+      } else {
         this.browserEvent.cancelBubble = !0;
       }
     };
@@ -101,9 +95,7 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
         var s = e;
         if ("undefined" != typeof r.wheelDeltaY) {
           this.deltaY = o(r.wheelDeltaY);
-        }
-
-        {
+        } else {
           if ("undefined" != typeof s.VERTICAL_AXIS && s.axis === s.VERTICAL_AXIS) {
             this.deltaY = -s.detail / 3;
           }
@@ -111,9 +103,7 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
 
         if ("undefined" != typeof r.wheelDeltaX) {
           this.deltaX = n.browser.isSafari && n.browser.isWindows ? -o(r.wheelDeltaX) : o(r.wheelDeltaX);
-        }
-
-        {
+        } else {
           if ("undefined" != typeof s.HORIZONTAL_AXIS && s.axis === s.HORIZONTAL_AXIS) {
             this.deltaX = -e.detail / 3;
           }
@@ -128,7 +118,7 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
       if (this.browserEvent) {
         if (this.browserEvent.preventDefault) {
           this.browserEvent.preventDefault();
-        } {
+        } else {
           this.browserEvent.returnValue = !1;
         }
       }
@@ -138,7 +128,7 @@ define("vs/base/dom/mouseEvent", ["require", "exports", "vs/base/env", "vs/base/
       if (this.browserEvent) {
         if (this.browserEvent.stopPropagation) {
           this.browserEvent.stopPropagation();
-        } {
+        } else {
           this.browserEvent.cancelBubble = !0;
         }
       }

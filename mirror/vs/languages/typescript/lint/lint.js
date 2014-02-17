@@ -57,9 +57,7 @@ define("vs/languages/typescript/lint/lint", ["require", "exports", "vs/nls!vs/la
       };
       if (e.rule.filter) {
         e.rule.filter.forEach(n);
-      }
-
-      {
+      } else {
         n(-1);
       }
     };
@@ -128,7 +126,7 @@ define("vs/languages/typescript/lint/lint", ["require", "exports", "vs/nls!vs/la
             this._checkNodeOrToken(this._currentTrivia);
             if (r !== n) {
               this._currentTriviaPosition += this._currentTrivia.fullWidth();
-            } {
+            } else {
               this._currentTriviaPosition = this.end(e) - e.trailingTriviaWidth();
             }
           }

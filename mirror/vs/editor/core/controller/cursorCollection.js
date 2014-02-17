@@ -201,9 +201,7 @@ define("vs/editor/core/controller/cursorCollection", ["require", "exports", "vs/
               if (d === this.lastAddedCursorIndex) {
                 g = v;
                 this.lastAddedCursorIndex = h;
-              }
-
-              {
+              } else {
                 g = y;
               }
               var _;

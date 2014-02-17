@@ -79,7 +79,7 @@ function deobsecure(code) {
                         var elseStmts = [];
                         exprToStmts(expr[2], thenStmts, false, true);
                         exprToStmts(expr[3], elseStmts, false, true);
-                        stmts.push(['if', expr[1], ['block', thenStmts]], ['block', elseStmts]);
+                        stmts.push(['if', expr[1], ['block', thenStmts], ['block', elseStmts]]);
                         break;
                     }
                 }
@@ -321,12 +321,12 @@ function processModule(moduleId, callback) {
                 _parseModule(body, moduleId);
                 console.log('found new module: ' + moduleId);
                 // big js cause memery out problem, skip it.
-                if (body.length > 1000000) {
-                    console.log('undeobsecured module: ' + moduleId);
-                    fs.writeFile(result.path, body, 'utf-8', callback);
-                } else {
+//                if (body.length > 1000000) {
+//                    console.log('undeobsecured module: ' + moduleId);
+//                    fs.writeFile(result.path, body, 'utf-8', callback);
+//                } else {
                     fs.writeFile(result.path, deobsecure(body), 'utf-8', callback);
-                }
+//                }
             } else {
                 fs.writeFile(result.path, body, 'utf-8', callback);
             }
@@ -355,5 +355,5 @@ function loop() {
 loop();
 
 //console.log(
-//    deobsecure(fs.readFileSync(path.join(__dirname, 'mirror', 'vs/base/ui/scrollbar/scrollable.js'), 'utf-8'))
+//    deobsecure(fs.readFileSync(path.join(__dirname, 'mirror', 'vs/editor/core/model/trackedRanges.js'), 'utf-8'))
 //);

@@ -78,9 +78,7 @@ define("vs/base/paths", ["require", "exports"], function(e, t) {
       if ("." === s || 0 === s.length) {
         n.splice(o, 1);
         o -= 1;
-      }
-
-      {
+      } else {
         if (o > 0 && ".." === s) {
           n.splice(o - 1, 2);
           o -= 2;
@@ -798,7 +796,7 @@ define("vs/languages/typescript/lint/rules/javascript", ["require", "exports", "
           } else {
             if (a.right.kind() === o.SyntaxKind.NullKeyword) {
               l = !0;
-            } {
+            } else {
               if ("undefined" === i.syntaxHelper.text(a.right)) {
                 l = !0;
               }
@@ -962,9 +960,7 @@ define("vs/languages/typescript/lint/lint", ["require", "exports", "vs/nls!vs/la
       };
       if (e.rule.filter) {
         e.rule.filter.forEach(n);
-      }
-
-      {
+      } else {
         n(-1);
       }
     };
@@ -1033,7 +1029,7 @@ define("vs/languages/typescript/lint/lint", ["require", "exports", "vs/nls!vs/la
             this._checkNodeOrToken(this._currentTrivia);
             if (r !== n) {
               this._currentTriviaPosition += this._currentTrivia.fullWidth();
-            } {
+            } else {
               this._currentTriviaPosition = this.end(e) - e.trailingTriviaWidth();
             }
           }
@@ -1318,9 +1314,7 @@ define("vs/languages/typescript/service/outline", ["require", "exports", "vs/bas
       var n;
       if (t.stringLiteral) {
         n = t.stringLiteral.valueText();
-      }
-
-      {
+      } else {
         if (t.name) {
           n = t.name.fullText();
         }
@@ -1753,9 +1747,7 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
                 message: "cyclic reference",
                 path: s.path
               };
-            }
-
-            {
+            } else {
               i.file = s;
               if (r.recursive && i.file instanceof e) {
                 u();
@@ -1880,7 +1872,7 @@ define("vs/languages/typescript/service/references", ["require", "exports", "../
           if (r.kind === n.SyntaxKind.CloseParenToken) {
             if (a) {
               this.references.push(new m(c + 1, -2 + u, h));
-            } {
+            } else {
               this.references.push(new f(c + 1, -2 + u, h));
             }
           }
@@ -2453,9 +2445,7 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
             }
             if (a) {
               o += r;
-            }
-
-            {
+            } else {
               s += r;
             }
           } else {
@@ -2544,16 +2534,14 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
               range: r.getRangeFromOffsetAndLength(o.offset, o.length),
               url: i.join(i.dirname(e.toExternal()), o.path + ".ts")
             });
-          } {
+          } else {
             n.push({
               openInEditor: !0,
               range: r.getRangeFromOffsetAndLength(o.offset, o.length),
               url: i.join(t._compilationSettings.scope, o.path + ".ts")
             });
           }
-        }
-
-        {
+        } else {
           if (o instanceof f.TripleSlashReference) {
             n.push({
               openInEditor: !0,
@@ -3964,9 +3952,7 @@ define("vs/languages/typescript/typescriptWorker2", ["require", "exports", "vs/b
         }, function(e) {
           if (e === l) {
             i(null);
-          }
-
-          {
+          } else {
             o(e);
           }
         });

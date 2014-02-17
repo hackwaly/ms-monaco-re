@@ -23,9 +23,7 @@ define("vs/base/ui/widgets/sash", ["require", "exports", "vs/base/dom/builder", 
 
       if (0 === i.orientation) {
         this.$e.addClass("horizontal");
-      }
-
-      {
+      } else {
         this.$e.addClass("vertical");
       }
 

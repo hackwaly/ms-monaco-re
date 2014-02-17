@@ -104,14 +104,14 @@ define("vs/editor/core/model/modelEditOperation", ["require", "exports", "vs/edi
             endColumn: 1
           };
           c = "";
-        } {
+        } else {
           if (s.isEmpty()) {
             c = "";
             a = {
               lineNumber: s.startLineNumber,
               column: s.startColumn
             };
-          } {
+          } else {
             l = t.deleteText(s);
             c = l.deletedText;
             a = l.position;
@@ -124,7 +124,7 @@ define("vs/editor/core/model/modelEditOperation", ["require", "exports", "vs/edi
               endLineNumber: u.lineNumber,
               endColumn: u.column
             };
-          } {
+          } else {
             d = {
               startLineNumber: a.lineNumber,
               startColumn: a.column,

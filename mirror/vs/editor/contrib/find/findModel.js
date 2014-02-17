@@ -157,9 +157,7 @@ define("vs/editor/contrib/find/findModel", ["require", "exports", "vs/editor/cor
         if (this.decorations.length > 0) {
           this.setSelectionToDecoration(this.decorations[this.decorationIndex]);
         }
-      }
-
-      {
+      } else {
         this.decorationIndex = this.previousIndex(this.decorationIndex);
       }
       var o = !1;

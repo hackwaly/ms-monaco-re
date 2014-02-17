@@ -124,9 +124,7 @@ define("vs/editor/standalone/standaloneEditor", ["require", "exports", "vs/edito
       if ("undefined" == typeof i.model) {
         i.model = t.createModel(i.value || "", i.mode || "text/plain");
         this._ownsModel = !0;
-      }
-
-      {
+      } else {
         this._ownsModel = !1;
       }
 

@@ -142,9 +142,7 @@ define("vs/editor/contrib/inEditorActions/inEditorActions", ["require", "exports
           e.toUnhook.push(e.actionBar.addListener(m.EventType.RUN, function(t) {
             if (t.result && l.isFunction(t.result.focus)) {
               t.result.focus();
-            }
-
-            {
+            } else {
               e.editor.focus();
             }
           }));
@@ -210,9 +208,7 @@ define("vs/editor/contrib/inEditorActions/inEditorActions", ["require", "exports
 
         if (h.length > 0) {
           this.show();
-        }
-
-        {
+        } else {
           this.hide();
         }
       };
@@ -224,7 +220,7 @@ define("vs/editor/contrib/inEditorActions/inEditorActions", ["require", "exports
             this.details.show();
             this.trigger.addClass("active");
             this.actionBar.focus(!0);
-          } {
+          } else {
             this.details.hide();
             this.trigger.removeClass("active");
           }

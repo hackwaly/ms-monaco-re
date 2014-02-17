@@ -447,12 +447,10 @@ define("vs/languages/javascript/javascript", ["require", "exports", "vs/base/lib
             }
             if ("[" === t) {
               i = !0;
-            }
-
-            {
+            } else {
               if ("]" === t) {
                 i = !1;
-              } {
+              } else {
                 if ("\\" === t) {
                   n = !0;
                 }

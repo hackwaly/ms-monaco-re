@@ -139,9 +139,7 @@ define("vs/editor/diff/diffEditorWidget", ["require", "exports", "vs/editor/core
 
       if (this._renderSideBySide) {
         this._setStrategy(new v(this._createDataSource(), this._enableSplitViewResizing));
-      }
-
-      {
+      } else {
         this._setStrategy(new y(this._createDataSource(), this._enableSplitViewResizing));
       }
     }
@@ -287,7 +285,7 @@ define("vs/editor/diff/diffEditorWidget", ["require", "exports", "vs/editor/core
       if (n) {
         if (this._renderSideBySide) {
           this._setStrategy(new v(this._createDataSource(), this._enableSplitViewResizing));
-        } {
+        } else {
           this._setStrategy(new y(this._createDataSource(), this._enableSplitViewResizing));
         }
       }
@@ -323,9 +321,7 @@ define("vs/editor/diff/diffEditorWidget", ["require", "exports", "vs/editor/core
       if (e) {
         this._recreateOverviewRulers();
         this._beginUpdateDecorations();
-      }
-
-      {
+      } else {
         this._lineChanges = null;
       }
     };
@@ -749,7 +745,7 @@ define("vs/editor/diff/diffEditorWidget", ["require", "exports", "vs/editor/core
         this._disableSash = t;
         if (this._disableSash) {
           this._sash.disable();
-        } {
+        } else {
           this._sash.enable();
         }
       }

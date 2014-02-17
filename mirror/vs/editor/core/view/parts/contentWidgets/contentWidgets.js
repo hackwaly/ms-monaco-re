@@ -266,7 +266,7 @@ define("vs/editor/core/view/parts/contentWidgets/contentWidgets", ["require", "e
               if (!t.isVisible) {
                 t.isVisible = !0;
               }
-            } {
+            } else {
               if (t.isVisible) {
                 t.isVisible = !1;
                 n.style.top = "-1000px";

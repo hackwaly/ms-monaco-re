@@ -134,9 +134,7 @@ define("vs/editor/contrib/suggest/suggestModel", ["require", "exports", "vs/edit
               e.trigger(!0, !1);
             });
           }
-        }
-
-        {
+        } else {
           this.onNewContext(t);
         }
       }
@@ -175,9 +173,7 @@ define("vs/editor/contrib/suggest/suggestModel", ["require", "exports", "vs/edit
           if (e.suggestions && e.suggestions.length > 0) {
             i.suggestions = e.suggestions;
             i.onNewContext(new c(i.editor));
-          }
-
-          {
+          } else {
             i.emit("empty");
           }
 
@@ -217,9 +213,7 @@ define("vs/editor/contrib/suggest/suggestModel", ["require", "exports", "vs/edit
             },
             auto: this.isAutoSuggest()
           });
-        }
-
-        {
+        } else {
           this.emit("empty");
         }
       }

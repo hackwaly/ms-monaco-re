@@ -414,9 +414,7 @@ define("vs/editor/contrib/goToDeclaration/goToDeclaration", ["require", "exports
                   if (null === p) {
                     g = s.trim(s.trim(u[f], "	"));
                     p = u[f].substr(0, u[f].length - g.length);
-                  }
-
-                  {
+                  } else {
                     g = 0 === u[f].indexOf(p) ? u[f].substring(p.length).replace("	", "    ") : u[f];
                   }
 

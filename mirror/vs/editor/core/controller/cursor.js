@@ -158,9 +158,7 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
         this.emitCursorPositionChanged("", "");
         this.emitCursorSelectionChanged("", "");
         this.emitCursorRevealRange(!1, !0);
-      }
-
-      {
+      } else {
         if (!this._isHandling) {
           this._onHandler("recoverSelectionFromMarkers", function(e) {
             var n = t._invokeForAll(e, function(e, t, n) {
@@ -360,9 +358,7 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
           if (t.startColumn === r) {
             n = !0;
             i = !0;
-          }
-
-          {
+          } else {
             n = !1;
             i = !1;
           }
@@ -370,7 +366,7 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
           if (0 === t.getDirection()) {
             n = !1;
             i = !0;
-          } {
+          } else {
             n = !0;
             i = !1;
           }
@@ -410,7 +406,7 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
           o = o.concat(n.operations);
           r[s] = n.hadTrackedRange;
           i = i || r[s];
-        } {
+        } else {
           r[s] = !1;
         }
       }
@@ -529,7 +525,7 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
                 return new s.Selection(o.lineNumber, o.column, r.lineNumber, r.column);
               }
             });
-          } {
+          } else {
             d[u] = o[u];
           }
         }

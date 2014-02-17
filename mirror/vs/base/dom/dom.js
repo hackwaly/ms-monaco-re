@@ -101,9 +101,7 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
         var e = (new Date).getTime() - a;
         if (e >= r) {
           c();
-        }
-
-        {
+        } else {
           if (!l) {
             l = !0;
             t.scheduleAtNextAnimationFrame(d, Number.MAX_VALUE);
@@ -159,9 +157,7 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
           window.clearTimeout(u);
         }
         l();
-      }
-
-      {
+      } else {
         if (-1 === u) {
           u = window.setTimeout(l, r - t);
         }
@@ -404,7 +400,7 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
             i = !1;
             s.emit("blur", {});
           }
-        } {
+        } else {
           window.setTimeout(function() {
             if (r) {
               r = !1;
@@ -494,9 +490,7 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
         if (-1 === n) {
           t.className = t.className + " " + i;
         }
-      }
-
-      {
+      } else {
         t.className = i;
       }
     };
@@ -775,16 +769,14 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
     stop: function(e, t) {
       if (e.preventDefault) {
         e.preventDefault();
-      }
-
-      {
+      } else {
         e.returnValue = !1;
       }
 
       if (t) {
         if (e.stopPropagation) {
           e.stopPropagation();
-        } {
+        } else {
           e.cancelBubble = !0;
         }
       }

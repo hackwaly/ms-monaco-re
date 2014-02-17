@@ -134,9 +134,7 @@ define("vs/platform/actionRegistry", ["require", "exports", "vs/platform/platfor
       set: function(e) {
         if (this._cachedAction instanceof o.Action) {
           this._cachedAction.label = e;
-        }
-
-        {
+        } else {
           this._setLabel(e);
         }
       },
@@ -151,9 +149,7 @@ define("vs/platform/actionRegistry", ["require", "exports", "vs/platform/platfor
       set: function(e) {
         if (this._cachedAction instanceof o.Action) {
           this._cachedAction.class = e;
-        }
-
-        {
+        } else {
           this._setClass(e);
         }
       },
@@ -168,9 +164,7 @@ define("vs/platform/actionRegistry", ["require", "exports", "vs/platform/platfor
       set: function(e) {
         if (this._cachedAction instanceof o.Action) {
           this._cachedAction.enabled = e;
-        }
-
-        {
+        } else {
           this._setEnabled(e);
         }
       },
@@ -185,9 +179,7 @@ define("vs/platform/actionRegistry", ["require", "exports", "vs/platform/platfor
       set: function(e) {
         if (this._cachedAction instanceof o.Action) {
           this._cachedAction.order = e;
-        }
-
-        {
+        } else {
           this._order = e;
         }
       },

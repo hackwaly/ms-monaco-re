@@ -112,7 +112,7 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
             })) {
               g.EventHelper.stop(t, !0);
               e.navigateInTree(n.shiftKey ? "UpArrow" : "DownArrow");
-            } {
+            } else {
               if ("DownArrow" === n.key || "UpArrow" === n.key || "PageDown" === n.key || "PageUp" === n.key) {
                 g.EventHelper.stop(t, !0);
                 e.navigateInTree(n.key);
@@ -137,7 +137,7 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
       if (this.helpText) {
         if (e) {
           this.helpText.hide();
-        } {
+        } else {
           this.helpText.show();
         }
       }
@@ -177,7 +177,7 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
       if (i) {
         if (r) {
           this.tree.reveal(this.tree.getFocus(), 0);
-        } {
+        } else {
           this.tree.reveal(this.tree.getFocus());
         }
       }
@@ -266,9 +266,7 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
         this.treeContainer.removeClass("transition");
         this.builder.show();
         this.tree.DOMFocus();
-      }
-
-      {
+      } else {
         this.inputContainer.show();
         this.treeContainer.addClass("transition");
         this.builder.show();
@@ -278,16 +276,14 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
       if (this.helpText) {
         if (this.quickNavigateConfiguration || r.isString(e)) {
           this.helpText.hide();
-        } {
+        } else {
           this.helpText.show();
         }
       }
 
       if (r.isString(e)) {
         this.doShowWithPrefix(e);
-      }
-
-      {
+      } else {
         this.doShowWithInput(e, t);
       }
     };
@@ -409,9 +405,7 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
 
         if (this.tree.isDOMFocused()) {
           this.tree.DOMBlur();
-        }
-
-        {
+        } else {
           if (this.inputBox.$input.hasFocus()) {
             this.inputBox.$input.domBlur();
           }
@@ -419,9 +413,7 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
 
         if (e) {
           this.callbacks.onCancel();
-        }
-
-        {
+        } else {
           this.callbacks.onOk();
         }
       }
@@ -455,9 +447,7 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
       if (e) {
         this.builder.addClass(e);
         this.builder.setProperty("extra-class", e);
-      }
-
-      {
+      } else {
         if (t) {
           this.builder.removeProperty("extra-class");
         }

@@ -40,7 +40,7 @@ define("vs/base/dom/iframe", ["require", "exports"], function(e, t) {
             window: t,
             iframeElement: i(e, t)
           });
-        } {
+        } else {
           u.push({
             window: t,
             iframeElement: null

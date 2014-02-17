@@ -37,9 +37,7 @@ define("vs/base/ui/widgets/tree/actionsRenderer", ["require", "exports", "vs/bas
             a.onError(e.error);
           }
         });
-      }
-
-      {
+      } else {
         c.removeClass("has-actions");
       }
       var h = this.renderContents(e, t, d.getHTMLElement(), function() {});

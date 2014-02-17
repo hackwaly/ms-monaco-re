@@ -152,9 +152,7 @@ define("vs/editor/contrib/quickOpen/quickOutline", ["require", "exports", "vs/nl
           if (f > 0) {
             p = h.substr(f);
             h = h.substr(0, f);
-          }
-
-          {
+          } else {
             p = "()";
           }
         }
@@ -180,9 +178,7 @@ define("vs/editor/contrib/quickOpen/quickOutline", ["require", "exports", "vs/nl
             y = b;
             _ = 1;
             b.setShowBorder(u > 0);
-          }
-
-          {
+          } else {
             _++;
           }
         }

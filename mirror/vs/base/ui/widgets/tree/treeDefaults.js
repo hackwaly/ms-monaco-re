@@ -34,9 +34,7 @@ define("vs/base/ui/widgets/tree/treeDefaults", ["require", "exports", "vs/base/e
 
       if (n.browser.isMacintosh) {
         this.upKeyBindings["Meta-Enter"] = this.onEnter.bind(this);
-      }
-
-      {
+      } else {
         this.upKeyBindings["Ctrl-Enter"] = this.onEnter.bind(this);
       }
     }

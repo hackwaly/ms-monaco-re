@@ -254,7 +254,7 @@ define("vs/editor/core/config/config", ["require", "exports", "vs/base/env", "vs
           winCtrl: !0,
           key: "Y"
         });
-      } {
+      } else {
         t.Config.addKeyBinding(i.Handler.Undo, {
           ctrlCmd: !0,
           key: "Z"
@@ -327,9 +327,7 @@ define("vs/editor/core/config/config", ["require", "exports", "vs/base/env", "vs
         winCtrl: !0,
         key: "V"
       });
-    }
-
-    {
+    } else {
       t.Config.addKeyBinding(i.Handler.CursorTop, {
         ctrlCmd: !0,
         key: "Home"

@@ -110,10 +110,10 @@ define("vs/base/ui/widgets/progressbar", ["require", "exports", "vs/base/lib/win
             if (t.element.hasClass(u)) {
               t.bit.style.display = "none";
               t.bit.style.left = "0";
-            } {
+            } else {
               if (t.element.isHidden()) {
                 o();
-              } {
+              } else {
                 i = (i + 1) % 95;
                 t.bit.style.left = i + "%";
                 o();

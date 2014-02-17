@@ -160,14 +160,14 @@ define("vs/editor/core/view/overlays/selections/selections", ["require", "export
           r = e[c - 1].left + e[c - 1].width;
           if (n === o) {
             u.top = 2;
-          } {
+          } else {
             if (n > o) {
               u.top = 1;
             }
           }
           if (i === r) {
             l.top = 2;
-          } {
+          } else {
             if (i > o && r > i) {
               l.top = 1;
             }
@@ -178,14 +178,14 @@ define("vs/editor/core/view/overlays/selections/selections", ["require", "export
           a = e[c + 1].left + e[c + 1].width;
           if (n === s) {
             u.bottom = 2;
-          } {
+          } else {
             if (n > s && a > n) {
               u.bottom = 1;
             }
           }
           if (i === a) {
             l.bottom = 2;
-          } {
+          } else {
             if (a > i) {
               l.bottom = 1;
             }

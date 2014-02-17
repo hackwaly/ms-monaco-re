@@ -128,9 +128,7 @@ define("vs/editor/contrib/zoneWidget/zoneWidget", ["require", "exports", "vs/bas
           endLineNumber: e.lineNumber,
           endColumn: e.column
         }, t);
-      }
-
-      {
+      } else {
         this.showImpl(e, t);
       }
     };

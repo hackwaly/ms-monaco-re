@@ -67,9 +67,7 @@ var CSSLoaderPlugin;
       var n = t.getElementsByTagName("link") || document.head.getElementsByTagName("script");
       if (n.length > 0) {
         t.insertBefore(e, n[n.length - 1]);
-      }
-
-      {
+      } else {
         t.appendChild(e);
       }
     };
@@ -144,9 +142,7 @@ var CSSLoaderPlugin;
       var o = this.createLinkTag(e, t, n, r);
       if (this._styleSheetCount() < 31) {
         this._insertLinkNode(o);
-      }
-
-      {
+      } else {
         this._blockedLoads.push(o);
         this._handleBlocked();
       }

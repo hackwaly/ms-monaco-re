@@ -19,9 +19,7 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
     e.prototype._recreateLineTokens = function(t) {
       if (0 === this.text.length) {
         t = e.DEFAULT_TOKENS_EMPTY_TEXT;
-      }
-
-      {
+      } else {
         if (!(t && 0 !== t.length)) {
           t = e.DEFAULT_TOKENS_NON_EMPTY_TEXT;
         }
@@ -114,9 +112,7 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
             var g = f;
             if (f >= i - 1) {
               g = f - a.length;
-            }
-
-            {
+            } else {
               if (f >= n - 1) {
                 g = n - 1;
               }
@@ -125,9 +121,7 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
             if (g >= p.length) {
               d.splice(h, 1);
               h--;
-            }
-
-            {
+            } else {
               d[h].startIndex = g;
               if (h > 0 && d[h - 1].startIndex >= g) {
                 d.splice(h - 1, 1);
@@ -148,7 +142,7 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
           m.oldLineNumber = m.oldLineNumber || this.lineNumber;
           m.oldColumn = m.oldColumn || m.column;
           m.column -= a.length;
-        } {
+        } else {
           if (m.column > n || m.column === n && (r || !m.stickToPreviousCharacter)) {
             t[m.id] = !0;
             m.oldLineNumber = m.oldLineNumber || this.lineNumber;
@@ -159,7 +153,7 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
               this.markers.splice(h, 1);
               h--;
               u.push(m);
-            } {
+            } else {
               m.column = n;
             }
           }

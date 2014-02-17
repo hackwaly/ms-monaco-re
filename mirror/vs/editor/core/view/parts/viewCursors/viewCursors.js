@@ -148,9 +148,7 @@ define("vs/editor/core/view/parts/viewCursors/viewCursors", ["require", "exports
       var n = this._getRenderType();
       if (1 === n || 2 === n) {
         this._show();
-      }
-
-      {
+      } else {
         this._hide();
       }
 
@@ -164,9 +162,7 @@ define("vs/editor/core/view/parts/viewCursors/viewCursors", ["require", "exports
     t.prototype._blink = function() {
       if (this._isVisible) {
         this._hide();
-      }
-
-      {
+      } else {
         this._show();
       }
     };

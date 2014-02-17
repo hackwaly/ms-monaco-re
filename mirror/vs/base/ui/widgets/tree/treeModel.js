@@ -430,21 +430,19 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
       if (n) {
         this.firstChild = this.lastChild = e;
         e.next = e.previous = null;
-      }
-
-      {
+      } else {
         if (i) {
           this.firstChild.previous = e;
           e.next = this.firstChild;
           e.previous = null;
           this.firstChild = e;
-        } {
+        } else {
           if (o) {
             this.lastChild.next = e;
             e.next = null;
             e.previous = this.lastChild;
             this.lastChild = e;
-          } {
+          } else {
             e.previous = t;
             e.next = t.next;
             t.next.previous = e;
@@ -468,17 +466,15 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
       var n = this.lastChild === e;
       if (t && n) {
         this.firstChild = this.lastChild = null;
-      }
-
-      {
+      } else {
         if (t) {
           e.next.previous = null;
           this.firstChild = e.next;
-        } {
+        } else {
           if (n) {
             e.previous.next = null;
             this.lastChild = e.previous;
-          } {
+          } else {
             e.next.previous = e.previous;
             e.previous.next = e.next;
           }
@@ -1121,7 +1117,7 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
           if (a.hasOwnProperty(s)) {
             if (i.hasOwnProperty(s)) {
               delete i[s];
-            } {
+            } else {
               u.push(a[s]);
             }
           }

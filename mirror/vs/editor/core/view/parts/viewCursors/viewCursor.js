@@ -93,9 +93,7 @@ define("vs/editor/core/view/parts/viewCursors/viewCursor", ["require", "exports"
       if (t) {
         this._positionTop = t.top;
         this._positionLeft = t.left;
-      }
-
-      {
+      } else {
         this._positionTop = -1e3;
       }
     };

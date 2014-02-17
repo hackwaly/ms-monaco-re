@@ -18,13 +18,11 @@ define("vs/base/objects", ["require", "exports", "./types"], function(e, t, n) {
         if (o) {
           if (n.isObject(e[r]) && n.isObject(i[r])) {
             t.mixin(e[r], i[r], o);
-          } {
+          } else {
             e[r] = i[r];
           }
         }
-      }
-
-      {
+      } else {
         e[r] = i[r];
       }
     }), e) : i;

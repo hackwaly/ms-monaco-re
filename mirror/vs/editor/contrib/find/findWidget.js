@@ -71,9 +71,7 @@ define("vs/editor/contrib/find/findWidget", ["require", "exports", "vs/nls!vs/ed
 
       if (e.isReplaceRevealed) {
         this._enableReplace(!1);
-      }
-
-      {
+      } else {
         this._disableReplace(!1);
       }
 
@@ -116,9 +114,7 @@ define("vs/editor/contrib/find/findWidget", ["require", "exports", "vs/nls!vs/ed
           r.toggleClass(t._domNode, "no-results-in-selection", "" !== t._findInput.getValue() && 0 === e.count &&
             e.matchesOnlyOutsideSelection);
         }));
-      }
-
-      {
+      } else {
         this._hide(!1);
       }
     };
@@ -196,9 +192,7 @@ define("vs/editor/contrib/find/findWidget", ["require", "exports", "vs/nls!vs/ed
       }
       if (o) {
         e.preventDefault();
-      }
-
-      {
+      } else {
         setTimeout(function() {
           t._onFindValueChange();
 
@@ -240,9 +234,7 @@ define("vs/editor/contrib/find/findWidget", ["require", "exports", "vs/nls!vs/ed
       }
       if (o) {
         e.preventDefault();
-      }
-
-      {
+      } else {
         setTimeout(function() {
           t._emitUserInputEvent(!0);
         }, 10);
@@ -392,9 +384,7 @@ define("vs/editor/contrib/find/findWidget", ["require", "exports", "vs/nls!vs/ed
         function() {
           if (e._isReplaceVisible) {
             e._disableReplace(!0);
-          }
-
-          {
+          } else {
             e._enableReplace(!0);
           }
         });

@@ -58,11 +58,11 @@ define("vs/editor/contrib/hover/hover", ["require", "exports", "vs/editor/core/c
         if (this._editor.getConfiguration().hover && 6 === t) {
           this._glyphWidget.hide();
           this._contentWidget.startShowingAt(e.target.range);
-        } {
+        } else {
           if (this._editor.getConfiguration().hover && 2 === t) {
             this._contentWidget.hide();
             this._glyphWidget.startShowingAt(e.target.position.lineNumber);
-          } {
+          } else {
             this._hideWidgets();
           }
         }

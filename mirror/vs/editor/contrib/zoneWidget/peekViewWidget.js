@@ -80,9 +80,7 @@ define("vs/editor/contrib/zoneWidget/peekViewWidget", ["require", "exports", "vs
 
       if (t) {
         s.$(this._dirnameElement).safeInnerHtml(r.rtrim(t, "/"));
-      }
-
-      {
+      } else {
         a.clearNode(this._dirnameElement);
       }
     };

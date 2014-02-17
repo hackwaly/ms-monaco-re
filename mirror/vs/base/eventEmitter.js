@@ -56,9 +56,7 @@ define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], functio
         "This object will never emit this event type!");
       if (this._listeners.hasOwnProperty(e)) {
         this._listeners[e].push(t);
-      }
-
-      {
+      } else {
         this._listeners[e] = [t];
       }
       var n = this;
@@ -129,9 +127,7 @@ define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], functio
         }
         if (0 === n._deferredCnt) {
           n._emitEvents(o);
-        }
-
-        {
+        } else {
           n._collectedEvents.push.apply(n._collectedEvents, o);
         }
       });
@@ -207,9 +203,7 @@ define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], functio
         var n = new i(e, t);
         if (0 === this._deferredCnt) {
           this._emitEvents([n]);
-        }
-
-        {
+        } else {
           this._collectedEvents.push(n);
         }
       }

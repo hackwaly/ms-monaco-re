@@ -49,17 +49,15 @@ define("vs/editor/contrib/comment/blockCommentCommand", ["require", "exports", "
       if (f && g) {
         if (l) {
           o.addEditOperation(new n.Range(r, s - d, a, u + p), null);
-        } {
+        } else {
           o.addEditOperation(new n.Range(r, s - d, r, s), null);
           o.addEditOperation(new n.Range(a, u, a, u + p), null);
         }
-      }
-
-      {
+      } else {
         if (l) {
           o.addEditOperation(new n.Range(r, s, a, u), c + h);
           this._usedEndToken = h;
-        } {
+        } else {
           o.addEditOperation(new n.Range(r, s, r, s), c);
           o.addEditOperation(new n.Range(a, u, a, u), h);
         }

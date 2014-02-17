@@ -446,9 +446,7 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
       if (s + 1 < o.length) {
         d = h.findIndexInSegmentsArray(r, o[s + 1].startIndex);
         c = r[d].startIndex;
-      }
-
-      {
+      } else {
         d = r.length;
         c = e.length;
       }
@@ -625,9 +623,7 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
           if (c < l.length - 1) {
             e = s.substring(a, l[c + 1].startIndex);
             a = l[c + 1].startIndex;
-          }
-
-          {
+          } else {
             e = s.substr(a);
           }
           var h = "token";

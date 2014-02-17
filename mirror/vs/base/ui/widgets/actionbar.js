@@ -217,9 +217,7 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
           this.$e.addClass(this.cssClass);
         }
         this._updateEnabled();
-      }
-
-      {
+      } else {
         this.$e.removeClass("icon");
       }
     };
@@ -228,9 +226,7 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
       if (this.getAction().enabled) {
         this.builder.removeClass("disabled");
         this.$e.removeClass("disabled");
-      }
-
-      {
+      } else {
         this.builder.addClass("disabled");
         this.$e.addClass("disabled");
       }
@@ -239,9 +235,7 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
     t.prototype._updateChecked = function() {
       if (this.getAction().checked) {
         this.$e.addClass("checked");
-      }
-
-      {
+      } else {
         this.$e.removeClass("checked");
       }
     };
@@ -293,9 +287,7 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
         if (e.error) {
           d(r).removeClass("active");
           d(s).addClass("active");
-        }
-
-        {
+        } else {
           d(s).removeClass("active");
           d(r).addClass("active");
         }
@@ -483,9 +475,7 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
 
         if (null === i || 0 > i || i >= n.actionsList.children.length) {
           n.actionsList.appendChild(o);
-        }
-
-        {
+        } else {
           n.actionsList.insertBefore(o, n.actionsList.children[i++]);
         }
 
@@ -572,9 +562,7 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
           if (u.isFunction(n.focus)) {
             n.focus();
           }
-        }
-
-        {
+        } else {
           if (u.isFunction(n.blur)) {
             n.blur();
           }

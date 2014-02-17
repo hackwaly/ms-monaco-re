@@ -93,9 +93,7 @@ define("vs/editor/core/view/layout/lines/verticalObjects", ["require", "exports"
       if (-1 === u) {
         u = l;
         o = s + 1;
-      }
-
-      {
+      } else {
         o = this.whitespaces.getAfterLineNumberForWhitespaceIndex(u);
         i = this.whitespaces.getHeightForWhitespaceIndex(u);
       }
@@ -106,7 +104,7 @@ define("vs/editor/core/view/layout/lines/verticalObjects", ["require", "exports"
           u++;
           if (u >= l) {
             o = s + 1;
-          } {
+          } else {
             o = this.whitespaces.getAfterLineNumberForWhitespaceIndex(u);
             i = this.whitespaces.getHeightForWhitespaceIndex(u);
           }

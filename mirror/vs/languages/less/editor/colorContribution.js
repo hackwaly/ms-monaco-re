@@ -166,7 +166,7 @@ define("vs/languages/less/editor/colorContribution", ["require", "exports", "vs/
             if (!(i && i.equalsRange(o))) {
               l.changeDecoration(r.renderingDecorationId, o);
             }
-          } {
+          } else {
             u[e] = "";
           }
         }

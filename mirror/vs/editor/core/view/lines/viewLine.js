@@ -305,7 +305,7 @@ define("vs/editor/core/view/lines/viewLine", ["require", "exports", "vs/base/env
         u = a[d];
         if (c.left + c.width + .001 >= u.left) {
           c.width = Math.max(c.width, u.left + u.width - c.left);
-        } {
+        } else {
           l.push(c);
           c = u;
         }
@@ -397,9 +397,7 @@ define("vs/editor/core/view/lines/viewLine", ["require", "exports", "vs/base/env
       if (i + 1 < o.length) {
         r = o[i + 1].startIndex;
         s = this._charOffsetInPart[r - 1] + this._charOffsetInPart[r];
-      }
-
-      {
+      } else {
         r = this._context.model.getLineMaxColumn(e) - 1;
         s = this._charOffsetInPart[r];
       }
@@ -419,9 +417,7 @@ define("vs/editor/core/view/lines/viewLine", ["require", "exports", "vs/base/env
         }
         if (f >= n) {
           c = u - 1;
-        }
-
-        {
+        } else {
           l = u + 1;
         }
       }
@@ -485,9 +481,7 @@ define("vs/editor/core/view/lines/viewLine", ["require", "exports", "vs/base/env
         var p = a[a.length - 1];
         if (h && p.top === d.top && p.left < d.left) {
           p.width = d.left - p.left;
-        }
-
-        {
+        } else {
           if (p.top > d.top) {
             a.splice(a.length - 1, 1);
           }

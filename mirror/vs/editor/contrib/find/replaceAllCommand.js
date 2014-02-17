@@ -22,7 +22,7 @@ define("vs/editor/contrib/find/replaceAllCommand", ["require", "exports", "vs/ed
           if (s.range.endLineNumber === i[o].range.startLineNumber && s.range.endColumn === i[o].range.startColumn) {
             s.range = s.range.plusRange(i[o].range);
             s.text = s.text + i[o].text;
-          } {
+          } else {
             r.push(s);
             s = i[o];
           }

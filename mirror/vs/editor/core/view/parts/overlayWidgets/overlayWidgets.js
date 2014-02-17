@@ -81,7 +81,7 @@ define("vs/editor/core/view/parts/overlayWidgets/overlayWidgets", ["require", "e
           }
           n.style.top = "0px";
           n.style.right = 2 * this._verticalScrollbarWidth + "px";
-        } {
+        } else {
           if (1 === e.preference) {
             if (!n.hasAttribute(t)) {
               n.setAttribute(t, n.style.top);

@@ -393,17 +393,17 @@ define("vs/editor/worker/modesWorker", ["require", "exports", "vs/base/lib/winjs
               r.push(this.createLink(p, t, v, f));
               C = !0;
             }
-          } {
+          } else {
             if (y === u) {
               if (" " === _ || "	" === _ || _ === m) {
                 C = !0;
-              } {
+              } else {
                 y = l;
               }
-            } {
+            } else {
               if (s[y].hasOwnProperty(_)) {
                 y = s[y][_];
-              } {
+              } else {
                 C = !0;
               }
             }

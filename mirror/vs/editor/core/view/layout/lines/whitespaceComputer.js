@@ -20,7 +20,7 @@ define("vs/editor/core/view/layout/lines/whitespaceComputer", ["require", "expor
         n = Math.floor((i + o) / 2);
         if (t < e[n]) {
           o = n;
-        } {
+        } else {
           i = n + 1;
         }
       }
@@ -135,7 +135,7 @@ define("vs/editor/core/view/layout/lines/whitespaceComputer", ["require", "expor
         n = this.afterLineNumbers[i];
         if (n >= e && t >= n) {
           this.afterLineNumbers[i] = e - 1;
-        } {
+        } else {
           if (n > t) {
             this.afterLineNumbers[i] -= t - e + 1;
           }
