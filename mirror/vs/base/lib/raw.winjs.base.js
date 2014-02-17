@@ -1,1 +1,1 @@
-define('vs/base/lib/raw.winjs.base', [], {})
+define("vs/base/lib/raw.winjs.base", [], {});

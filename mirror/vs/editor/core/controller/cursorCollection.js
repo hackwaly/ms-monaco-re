@@ -1,144 +1,246 @@
-define(["require", "exports", "vs/editor/core/controller/oneCursor", "vs/editor/core/selection", "vs/base/errors"],
-  function(a, b, c, d, e) {
-    var f = c,
-      g = d,
-      h = e,
-      i = function() {
-        function a(a, b, c, d) {
-          this.editorId = a, this.model = b, this.configuration = c, this.viewModelHelper = d, this.modeConfiguration =
-            this.getModeConfiguration(), this.primaryCursor = new f.OneCursor(this.editorId, this.model, this.configuration,
-              this.modeConfiguration, this.viewModelHelper), this.secondaryCursors = [], this.lastAddedCursorIndex = 0
-        }
-        return a.prototype.dispose = function() {
-          this.primaryCursor.dispose(), this.killSecondaryCursors()
-        }, a.prototype.getAll = function() {
-          var a = [];
-          return a.push(this.primaryCursor), a = a.concat(this.secondaryCursors), a
-        }, a.prototype.getPosition = function(a) {
-          return a === 0 ? this.primaryCursor.getPosition() : this.secondaryCursors[a - 1].getPosition()
-        }, a.prototype.getViewPosition = function(a) {
-          return a === 0 ? this.primaryCursor.getViewPosition() : this.secondaryCursors[a - 1].getViewPosition()
-        }, a.prototype.getPositions = function() {
-          var a = [];
-          a.push(this.primaryCursor.getPosition());
-          for (var b = 0, c = this.secondaryCursors.length; b < c; b++) a.push(this.secondaryCursors[b].getPosition());
-          return a
-        }, a.prototype.getViewPositions = function() {
-          var a = [];
-          a.push(this.primaryCursor.getViewPosition());
-          for (var b = 0, c = this.secondaryCursors.length; b < c; b++) a.push(this.secondaryCursors[b].getViewPosition());
-          return a
-        }, a.prototype.getSelection = function(a) {
-          return a === 0 ? this.primaryCursor.getSelection() : this.secondaryCursors[a - 1].getSelection()
-        }, a.prototype.getSelections = function() {
-          var a = [];
-          a.push(this.primaryCursor.getSelection());
-          for (var b = 0, c = this.secondaryCursors.length; b < c; b++) a.push(this.secondaryCursors[b].getSelection());
-          return a
-        }, a.prototype.getViewSelections = function() {
-          var a = [];
-          a.push(this.primaryCursor.getViewSelection());
-          for (var b = 0, c = this.secondaryCursors.length; b < c; b++) a.push(this.secondaryCursors[b].getViewSelection());
-          return a
-        }, a.prototype.setSelections = function(a) {
-          this.primaryCursor.setSelection(a[0]), this._setSecondarySelections(a.slice(1))
-        }, a.prototype.killSecondaryCursors = function() {
-          return this._setSecondarySelections([]) > 0
-        }, a.prototype.normalize = function() {
-          this._mergeCursorsIfNecessary(), this.primaryCursor.adjustBracketDecorations();
-          for (var a = 0, b = this.secondaryCursors.length; a < b; a++) this.secondaryCursors[a].adjustBracketDecorations()
-        }, a.prototype.addSecondaryCursor = function(a) {
-          var b = new f.OneCursor(this.editorId, this.model, this.configuration, this.modeConfiguration, this.viewModelHelper);
-          a && b.setSelection(a), this.secondaryCursors.push(b), this.lastAddedCursorIndex = this.secondaryCursors.length
-        }, a.prototype.getLastAddedCursor = function() {
-          return this.secondaryCursors.length === 0 || this.lastAddedCursorIndex === 0 ? this.primaryCursor : this.secondaryCursors[
-            this.lastAddedCursorIndex - 1]
-        }, a.prototype._setSecondarySelections = function(a) {
-          var b = this.secondaryCursors.length,
-            c = a.length,
-            d = c - b;
-          if (b < c) {
-            var e = c - b;
-            for (var f = 0; f < e; f++) this.addSecondaryCursor(null)
-          } else if (b > c) {
-            var g = b - c;
-            for (var f = 0; f < g; f++) this._removeSecondaryCursor(this.secondaryCursors.length - 1)
-          }
-          for (var f = 0; f < c; f++) a[f] && this.secondaryCursors[f].setSelection(a[f]);
-          return d
-        }, a.prototype._removeSecondaryCursor = function(a) {
-          this.lastAddedCursorIndex >= a + 1 && this.lastAddedCursorIndex--, this.secondaryCursors[a].dispose(), this.secondaryCursors
-            .splice(a, 1)
-        }, a.prototype._mergeCursorsIfNecessary = function() {
-          if (this.secondaryCursors.length === 0) return;
-          var a = this.getAll(),
-            b = [];
-          for (var c = 0; c < a.length; c++) b.push({
-            index: c,
-            selection: a[c].getSelection()
-          });
-          b.sort(function(a, b) {
-            return a.selection.startLineNumber === b.selection.startLineNumber ? a.selection.startColumn - b.selection
-              .startColumn : a.selection.startLineNumber - b.selection.startLineNumber
-          });
-          for (var d = 0; d < b.length - 1; d++) {
-            var e = b[d],
-              f = b[d + 1],
-              h = e.selection,
-              i = f.selection;
-            if (i.getStartPosition().isBeforeOrEqual(h.getEndPosition())) {
-              var j = e.index < f.index ? d : d + 1,
-                k = e.index < f.index ? d + 1 : d,
-                l = b[k].index,
-                m = b[j].index,
-                n = b[k].selection,
-                o = b[j].selection,
-                p = n.plusRange(o),
-                q = n.selectionStartLineNumber === n.startLineNumber && n.selectionStartColumn === n.startColumn,
-                r = o.selectionStartLineNumber === o.startLineNumber && o.selectionStartColumn === o.startColumn,
-                s;
-              l === this.lastAddedCursorIndex ? (s = q, this.lastAddedCursorIndex = m) : s = r;
-              var t;
-              s ? t = new g.Selection(p.startLineNumber, p.startColumn, p.endLineNumber, p.endColumn) : t = new g.Selection(
-                p.endLineNumber, p.endColumn, p.startLineNumber, p.startColumn), b[j].selection = t, a[m].setSelection(
-                t);
-              for (var u = 0; u < b.length; u++) b[u].index > l && b[u].index--;
-              a.splice(l, 1), b.splice(k, 1), this._removeSecondaryCursor(l - 1), d--
+define("vs/editor/core/controller/cursorCollection", ["require", "exports", "vs/editor/core/controller/oneCursor",
+  "vs/editor/core/selection", "vs/base/errors"
+], function(e, t, n, i, o) {
+  var r = function() {
+    function e(e, t, i, o) {
+      this.editorId = e;
+
+      this.model = t;
+
+      this.configuration = i;
+
+      this.viewModelHelper = o;
+
+      this.modeConfiguration = this.getModeConfiguration();
+
+      this.primaryCursor = new n.OneCursor(this.editorId, this.model, this.configuration, this.modeConfiguration,
+        this.viewModelHelper);
+
+      this.secondaryCursors = [];
+
+      this.lastAddedCursorIndex = 0;
+    }
+    e.prototype.dispose = function() {
+      this.primaryCursor.dispose();
+
+      this.killSecondaryCursors();
+    };
+
+    e.prototype.getAll = function() {
+      var e = [];
+      e.push(this.primaryCursor);
+
+      return e = e.concat(this.secondaryCursors);
+    };
+
+    e.prototype.getPosition = function(e) {
+      return 0 === e ? this.primaryCursor.getPosition() : this.secondaryCursors[e - 1].getPosition();
+    };
+
+    e.prototype.getViewPosition = function(e) {
+      return 0 === e ? this.primaryCursor.getViewPosition() : this.secondaryCursors[e - 1].getViewPosition();
+    };
+
+    e.prototype.getPositions = function() {
+      var e = [];
+      e.push(this.primaryCursor.getPosition());
+      for (var t = 0, n = this.secondaryCursors.length; n > t; t++) e.push(this.secondaryCursors[t].getPosition());
+      return e;
+    };
+
+    e.prototype.getViewPositions = function() {
+      var e = [];
+      e.push(this.primaryCursor.getViewPosition());
+      for (var t = 0, n = this.secondaryCursors.length; n > t; t++) e.push(this.secondaryCursors[t].getViewPosition());
+      return e;
+    };
+
+    e.prototype.getSelection = function(e) {
+      return 0 === e ? this.primaryCursor.getSelection() : this.secondaryCursors[e - 1].getSelection();
+    };
+
+    e.prototype.getSelections = function() {
+      var e = [];
+      e.push(this.primaryCursor.getSelection());
+      for (var t = 0, n = this.secondaryCursors.length; n > t; t++) e.push(this.secondaryCursors[t].getSelection());
+      return e;
+    };
+
+    e.prototype.getViewSelections = function() {
+      var e = [];
+      e.push(this.primaryCursor.getViewSelection());
+      for (var t = 0, n = this.secondaryCursors.length; n > t; t++) e.push(this.secondaryCursors[t].getViewSelection());
+      return e;
+    };
+
+    e.prototype.setSelections = function(e) {
+      this.primaryCursor.setSelection(e[0]);
+
+      this._setSecondarySelections(e.slice(1));
+    };
+
+    e.prototype.killSecondaryCursors = function() {
+      return this._setSecondarySelections([]) > 0;
+    };
+
+    e.prototype.normalize = function() {
+      this._mergeCursorsIfNecessary();
+
+      this.primaryCursor.adjustBracketDecorations();
+      for (var e = 0, t = this.secondaryCursors.length; t > e; e++) this.secondaryCursors[e].adjustBracketDecorations();
+    };
+
+    e.prototype.addSecondaryCursor = function(e) {
+      var t = new n.OneCursor(this.editorId, this.model, this.configuration, this.modeConfiguration, this.viewModelHelper);
+      e && t.setSelection(e);
+
+      this.secondaryCursors.push(t);
+
+      this.lastAddedCursorIndex = this.secondaryCursors.length;
+    };
+
+    e.prototype.duplicateCursors = function() {
+      var e = [];
+      e.push(this.primaryCursor.duplicate());
+      for (var t = 0, n = this.secondaryCursors.length; n > t; t++) e.push(this.secondaryCursors[t].duplicate());
+      this.secondaryCursors = this.secondaryCursors.concat(e);
+
+      this.lastAddedCursorIndex = this.secondaryCursors.length;
+    };
+
+    e.prototype.getLastAddedCursor = function() {
+      return 0 === this.secondaryCursors.length || 0 === this.lastAddedCursorIndex ? this.primaryCursor : this.secondaryCursors[
+        this.lastAddedCursorIndex - 1];
+    };
+
+    e.prototype._setSecondarySelections = function(e) {
+      var t = this.secondaryCursors.length;
+
+      var n = e.length;
+
+      var i = n - t;
+      if (n > t)
+        for (var o = n - t, r = 0; o > r; r++) this.addSecondaryCursor(null);
+      else if (t > n)
+        for (var s = t - n, r = 0; s > r; r++) this._removeSecondaryCursor(this.secondaryCursors.length - 1);
+      for (var r = 0; n > r; r++) e[r] && this.secondaryCursors[r].setSelection(e[r]);
+      return i;
+    };
+
+    e.prototype._removeSecondaryCursor = function(e) {
+      this.lastAddedCursorIndex >= e + 1 && this.lastAddedCursorIndex--;
+
+      this.secondaryCursors[e].dispose();
+
+      this.secondaryCursors.splice(e, 1);
+    };
+
+    e.prototype._mergeCursorsIfNecessary = function() {
+      if (0 !== this.secondaryCursors.length) {
+        for (var e = this.getAll(), t = [], n = 0; n < e.length; n++) t.push({
+          index: n,
+          selection: e[n].getSelection()
+        });
+        t.sort(function(e, t) {
+          return e.selection.startLineNumber === t.selection.startLineNumber ? e.selection.startColumn - t.selection
+            .startColumn : e.selection.startLineNumber - t.selection.startLineNumber;
+        });
+        for (var o = 0; o < t.length - 1; o++) {
+          var r = t[o];
+
+          var s = t[o + 1];
+
+          var a = r.selection;
+
+          var u = s.selection;
+          if (u.getStartPosition().isBeforeOrEqual(a.getEndPosition())) {
+            var l = r.index < s.index ? o : o + 1;
+
+            var c = r.index < s.index ? o + 1 : o;
+
+            var d = t[c].index;
+
+            var h = t[l].index;
+
+            var p = t[c].selection;
+
+            var f = t[l].selection;
+            if (!p.equalsSelection(f)) {
+              var g;
+
+              var m = p.plusRange(f);
+
+              var v = p.selectionStartLineNumber === p.startLineNumber && p.selectionStartColumn === p.startColumn;
+
+              var y = f.selectionStartLineNumber === f.startLineNumber && f.selectionStartColumn === f.startColumn;
+              d === this.lastAddedCursorIndex ? (g = v, this.lastAddedCursorIndex = h) : g = y;
+              var _;
+              _ = g ? new i.Selection(m.startLineNumber, m.startColumn, m.endLineNumber, m.endColumn) : new i.Selection(
+                m.endLineNumber, m.endColumn, m.startLineNumber, m.startColumn);
+
+              t[l].selection = _;
+
+              e[h].setSelection(_);
             }
+            for (var b = 0; b < t.length; b++) t[b].index > d && t[b].index--;
+            e.splice(d, 1);
+
+            t.splice(c, 1);
+
+            this._removeSecondaryCursor(d - 1);
+
+            o--;
           }
-        }, a.prototype.getModeConfiguration = function() {
-          var a, b = {
-              electricChars: {},
-              autoClosingPairsOpen: {},
-              autoClosingPairsClose: {},
-              surroundingPairs: {}
-            }, c;
-          if (this.model.getMode().electricCharacterSupport) try {
-            c = this.model.getMode().electricCharacterSupport.getElectricCharacters()
-          } catch (d) {
-            h.onUnexpectedError(d), c = null
-          }
-          if (c)
-            for (a = 0; a < c.length; a++) b.electricChars[c[a]] = !0;
-          var e;
-          if (this.model.getMode().characterPairSupport) try {
-            e = this.model.getMode().characterPairSupport.getAutoClosingPairs()
-          } catch (d) {
-            h.onUnexpectedError(d), e = null
-          }
-          if (e)
-            for (a = 0; a < e.length; a++) b.autoClosingPairsOpen[e[a].open] = e[a].close, b.autoClosingPairsClose[e[a]
-              .close] = e[a].open;
-          var f;
-          if (this.model.getMode().characterPairSupport) try {
-            f = this.model.getMode().characterPairSupport.getSurroundingPairs()
-          } catch (d) {
-            h.onUnexpectedError(d), f = null
-          }
-          if (f)
-            for (a = 0; a < f.length; a++) b.surroundingPairs[f[a].open] = f[a].close;
-          return b
-        }, a
-      }();
-    b.CursorCollection = i
-  })
+        }
+      }
+    };
+
+    e.prototype.getModeConfiguration = function() {
+      var e;
+
+      var t;
+
+      var n = {
+        electricChars: {},
+        autoClosingPairsOpen: {},
+        autoClosingPairsClose: {},
+        surroundingPairs: {}
+      };
+      if (this.model.getMode().electricCharacterSupport) try {
+        t = this.model.getMode().electricCharacterSupport.getElectricCharacters();
+      } catch (i) {
+        o.onUnexpectedError(i);
+
+        t = null;
+      }
+      if (t)
+        for (e = 0; e < t.length; e++) n.electricChars[t[e]] = !0;
+      var r;
+      if (this.model.getMode().characterPairSupport) try {
+        r = this.model.getMode().characterPairSupport.getAutoClosingPairs();
+      } catch (i) {
+        o.onUnexpectedError(i);
+
+        r = null;
+      }
+      if (r)
+        for (e = 0; e < r.length; e++) n.autoClosingPairsOpen[r[e].open] = r[e].close;
+
+      n.autoClosingPairsClose[r[e].close] = r[e].open;
+      var s;
+      if (this.model.getMode().characterPairSupport) try {
+        s = this.model.getMode().characterPairSupport.getSurroundingPairs();
+      } catch (i) {
+        o.onUnexpectedError(i);
+
+        s = null;
+      }
+      if (s)
+        for (e = 0; e < s.length; e++) n.surroundingPairs[s[e].open] = s[e].close;
+      return n;
+    };
+
+    return e;
+  }();
+  t.CursorCollection = r;
+});

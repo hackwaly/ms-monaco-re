@@ -1,18 +1,27 @@
-define(["require", "exports", "vs/editor/core/selection"], function(a, b, c) {
-  var d = c,
-    e = function() {
-      function a(a, b, c) {
-        this._editRange = a, this._originalSelection = b, this._text = c
+define("vs/editor/contrib/inPlaceReplace/inPlaceReplaceCommand", ["require", "exports", "vs/editor/core/selection"],
+  function(e, t, n) {
+    var i = function() {
+      function e(e, t, n) {
+        this._editRange = e;
+
+        this._originalSelection = t;
+
+        this._text = n;
       }
-      return a.prototype.getEditOperations = function(a, b) {
-        b.addEditOperation(this._editRange, this._text)
-      }, a.prototype.computeCursorState = function(a, b) {
-        var c = b.getInverseEditOperations(),
-          e = c[0].range;
-        return this._originalSelection.isEmpty() ? new d.Selection(e.endLineNumber, Math.min(this._originalSelection.positionColumn,
-          e.endColumn), e.endLineNumber, Math.min(this._originalSelection.positionColumn, e.endColumn)) : new d.Selection(
-          e.endLineNumber, e.endColumn - this._text.length, e.endLineNumber, e.endColumn)
-      }, a
+      e.prototype.getEditOperations = function(e, t) {
+        t.addEditOperation(this._editRange, this._text);
+      };
+
+      e.prototype.computeCursorState = function(e, t) {
+        var i = t.getInverseEditOperations();
+
+        var o = i[0].range;
+        return this._originalSelection.isEmpty() ? new n.Selection(o.endLineNumber, Math.min(this._originalSelection.positionColumn,
+          o.endColumn), o.endLineNumber, Math.min(this._originalSelection.positionColumn, o.endColumn)) : new n.Selection(
+          o.endLineNumber, o.endColumn - this._text.length, o.endLineNumber, o.endColumn);
+      };
+
+      return e;
     }();
-  b.InPlaceReplaceCommand = e
-})
+    t.InPlaceReplaceCommand = i;
+  });

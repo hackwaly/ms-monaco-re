@@ -1,34 +1,49 @@
-define(["require", "exports"], function(a, b) {
-  var c = function() {
-    function a(a, b) {
-      this.source = a, this.data = b
+define("vs/editor/core/handlerDispatcher", ["require", "exports"], function(e, t) {
+  var n = function() {
+    function e(e, t) {
+      this.source = e;
+
+      this.data = t;
     }
-    return a.prototype.getSource = function() {
-      return this.source
-    }, a.prototype.getData = function() {
-      return this.data
-    }, a
+    e.prototype.getSource = function() {
+      return this.source;
+    };
+
+    e.prototype.getData = function() {
+      return this.data;
+    };
+
+    return e;
   }();
-  b.DispatcherEvent = c;
-  var d = function() {
-    function a() {
-      this.registry = {}
+  t.DispatcherEvent = n;
+  var i = function() {
+    function e() {
+      this.registry = {};
     }
-    return a.prototype.setHandler = function(a, b) {
-      this.registry[a] = b
-    }, a.prototype.clearHandlers = function() {
-      this.registry = {}
-    }, a.prototype.getHandler = function(a) {
-      return this.registry.hasOwnProperty(a) ? this.registry[a] : null
-    }, a.prototype.trigger = function(a, b, d) {
-      var e = this.getHandler(b),
-        f = !1;
-      if (e) {
-        var g = new c(a, d);
-        f = e(g)
+    e.prototype.setHandler = function(e, t) {
+      this.registry[e] = t;
+    };
+
+    e.prototype.clearHandlers = function() {
+      this.registry = {};
+    };
+
+    e.prototype.getHandler = function(e) {
+      return this.registry.hasOwnProperty(e) ? this.registry[e] : null;
+    };
+
+    e.prototype.trigger = function(e, t, i) {
+      var o = this.getHandler(t);
+
+      var r = !1;
+      if (o) {
+        var s = new n(e, i);
+        r = o(s);
       }
-      return f
-    }, a
+      return r;
+    };
+
+    return e;
   }();
-  b.HandlerDispatcher = d
-})
+  t.HandlerDispatcher = i;
+});

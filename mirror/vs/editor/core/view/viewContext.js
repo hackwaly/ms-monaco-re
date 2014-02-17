@@ -1,7 +1,9 @@
-define(["require", "exports"], function(a, b) {
-  b.ClassNames = {
+define("vs/editor/core/view/viewContext", ["require", "exports"], function(e, t) {
+  t.ClassNames = {
     TEXTAREA_COVER: "textAreaCover",
     TEXTAREA: "inputarea",
+    LINES_CONTENT: "lines-content",
+    OVERFLOW_GUARD: "overflow-guard",
     VIEW_LINES: "view-lines",
     VIEW_LINE: "view-line",
     SCROLLABLE_ELEMENT: "editor-scrollable",
@@ -9,24 +11,37 @@ define(["require", "exports"], function(a, b) {
     OVERLAY_WIDGETS: "overlayWidgets",
     LINES_DECORATIONS: "lines-decorations",
     LINE_NUMBERS: "line-numbers",
-    GLYPH_MARGIN: "glyph-margin"
-  }, b.EventNames = {
+    GLYPH_MARGIN: "glyph-margin",
+    SCROLL_DECORATION: "scroll-decoration"
+  };
+
+  t.EventNames = {
     ModelFlushedEvent: "modelFlushedEvent",
     LinesDeletedEvent: "linesDeletedEvent",
     LinesInsertedEvent: "linesInsertedEvent",
     LineChangedEvent: "lineChangedEvent",
+    TokensChangedEvent: "tokensChangedEvent",
     DecorationsChangedEvent: "decorationsChangedEvent",
     CursorPositionChangedEvent: "cursorPositionChangedEvent",
     CursorSelectionChangedEvent: "cursorSelectionChangedEvent",
     RevealRangeEvent: "revealRangeEvent",
     LineMappingChangedEvent: "lineMappingChangedEvent"
   };
-  var c = function() {
-    function a(a, b, c, d, e, f) {
-      this.editorId = a, this.configuration = b, this.model = c, this.privateViewEventBus = d, this.addEventHandler =
-        e, this.removeEventHandler = f
+  var n = function() {
+    function e(e, t, n, i, o, r) {
+      this.editorId = e;
+
+      this.configuration = t;
+
+      this.model = n;
+
+      this.privateViewEventBus = i;
+
+      this.addEventHandler = o;
+
+      this.removeEventHandler = r;
     }
-    return a
+    return e;
   }();
-  b.ViewContext = c
-})
+  t.ViewContext = n;
+});

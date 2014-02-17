@@ -1,69 +1,153 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a
+define("vs/base/ui/widgets/sash", ["require", "exports", "vs/base/dom/builder", "vs/base/dom/dom",
+  "vs/base/eventEmitter", "vs/base/dom/mouseEvent", "vs/css!./sash"
+], function(e, t, n, i, o, r) {
+  var s = n.$;
+  ! function(e) {
+    e[e.HORIZONTAL = 0] = "HORIZONTAL";
+
+    e[e.VERTICAL = 1] = "VERTICAL";
+  }(t.Orientation || (t.Orientation = {}));
+  var a = (t.Orientation, function(e) {
+    function t(t, n, i) {
+      "undefined" == typeof i && (i = {
+        orientation: 1
+      });
+      var o = this;
+      e.call(this);
+
+      this.$e = s(".monaco-sash").appendTo(t).on("mousedown", function(e) {
+        o.onMouseDown(e);
+      });
+
+      0 === i.orientation ? this.$e.addClass("horizontal") : this.$e.addClass("vertical");
+
+      this.isDisabled = !1;
+
+      this.hidden = !1;
+
+      this.layoutProvider = n;
+
+      this.options = i;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
-    d.prototype = b.prototype, a.prototype = new d
-  };
-define(["require", "exports", "vs/base/dom/builder", "vs/base/dom/dom", "vs/base/eventEmitter",
-  "vs/base/dom/mouseEvent", "vs/css!./sash"
-], function(a, b, c, d, e, f) {
-  var g = c,
-    h = d,
-    i = e,
-    j = f,
-    k = g.$,
-    l = function(a) {
-      function b(b, c) {
-        var d = this;
-        a.call(this), this.$e = k(".monaco-sash").appendTo(b).on("mousedown", function(a, b, c) {
-          d.onMouseDown(a)
-        }), this.dataProvider = c
-      }
-      return __extends(b, a), b.prototype.getHTMLElement = function() {
-        return this.$e.getHTMLElement()
-      }, b.prototype.onMouseDown = function(a) {
-        var b = this;
-        h.EventHelper.stop(a, !1);
-        var c = new j.MouseEvent(a),
-          d = c.posx;
-        this.$e.addClass("active"), this.emit("start");
-        var e = k("div").style({
+    __extends(t, e);
+
+    t.prototype.getHTMLElement = function() {
+      return this.$e.getHTMLElement();
+    };
+
+    t.prototype.onMouseDown = function(e) {
+      var t = this;
+      if (i.EventHelper.stop(e, !1), !this.isDisabled) {
+        var n = new r.StandardMouseEvent(e);
+
+        var o = n.posx;
+
+        var a = n.posy;
+
+        var u = {
+          startX: o,
+          currentX: o,
+          startY: a,
+          currentY: a
+        };
+        this.$e.addClass("active");
+
+        this.emit("start", u);
+        var l = s("div").style({
           position: "absolute",
           top: 0,
           left: 0,
           width: "100%",
           height: "100%",
           zIndex: 1e6,
-          cursor: "ew-resize"
-        }),
-          f = k(window);
-        f.on("mousemove", function(a) {
-          h.EventHelper.stop(a, !1);
-          var c = new j.MouseEvent(a),
-            e = {
-              startX: d,
-              currentX: c.posx
-            };
-          b.emit("change", e)
-        }).once("mouseup", function(a) {
-          h.EventHelper.stop(a, !1);
-          var c = new j.MouseEvent(a);
-          b.$e.removeClass("active"), b.emit("end"), f.off("mousemove"), e.destroy()
-        }), e.appendTo(document.body)
-      }, b.prototype.layout = function() {
+          cursor: 1 === this.options.orientation ? "ew-resize" : "ns-resize"
+        });
+
+        var c = s(window);
+        c.on("mousemove", function(e) {
+          i.EventHelper.stop(e, !1);
+          var n = new r.StandardMouseEvent(e);
+
+          var s = {
+            startX: o,
+            currentX: n.posx,
+            startY: a,
+            currentY: n.posy
+          };
+          t.emit("change", s);
+        }).once("mouseup", function(e) {
+          i.EventHelper.stop(e, !1);
+
+          t.$e.removeClass("active");
+
+          t.emit("end");
+
+          c.off("mousemove");
+
+          l.destroy();
+        });
+
+        l.appendTo(document.body);
+      }
+    };
+
+    t.prototype.layout = function() {
+      if (1 === this.options.orientation) {
+        var e = this.layoutProvider;
         this.$e.style({
-          height: this.dataProvider.getSashHeight(this) + "px",
-          top: this.dataProvider.getSashTop(this) + "px",
-          left: this.dataProvider.getSashLeft(this) - this.$e.getTotalSize().width / 2 + "px"
-        })
-      }, b.prototype.show = function() {
-        this.$e.show()
-      }, b.prototype.hide = function() {
-        this.$e.hide()
-      }, b.prototype.dispose = function() {
-        this.$e && (this.$e.destroy(), this.$e = null), a.prototype.dispose.call(this)
-      }, b
-    }(i.EventEmitter);
-  b.Sash = l
-})
+          height: e.getVerticalSashHeight(this) + "px",
+          top: e.getVerticalSashTop(this) + "px",
+          left: e.getVerticalSashLeft(this) - this.$e.getTotalSize().width / 2 + "px"
+        });
+      } else {
+        var t = this.layoutProvider;
+        this.$e.style({
+          width: t.getHorizontalSashWidth(this) + "px",
+          top: t.getHorizontalSashTop(this) - this.$e.getTotalSize().height / 2 + "px",
+          left: t.getHorizontalSashLeft(this)
+        });
+      }
+    };
+
+    t.prototype.show = function() {
+      this.hidden = !1;
+
+      this.$e.show();
+    };
+
+    t.prototype.hide = function() {
+      this.hidden = !0;
+
+      this.$e.hide();
+    };
+
+    t.prototype.isHidden = function() {
+      return this.hidden;
+    };
+
+    t.prototype.isVisible = function() {
+      return !this.hidden;
+    };
+
+    t.prototype.enable = function() {
+      this.$e.removeClass("disabled");
+
+      this.isDisabled = !1;
+    };
+
+    t.prototype.disable = function() {
+      this.$e.addClass("disabled");
+
+      this.isDisabled = !0;
+    };
+
+    t.prototype.dispose = function() {
+      this.$e && (this.$e.destroy(), this.$e = null);
+
+      e.prototype.dispose.call(this);
+    };
+
+    return t;
+  }(o.EventEmitter));
+  t.Sash = a;
+});

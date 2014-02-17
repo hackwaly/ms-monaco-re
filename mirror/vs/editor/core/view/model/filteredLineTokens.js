@@ -1,40 +1,53 @@
-define(["require", "exports", "vs/base/arrays"], function(a, b, c) {
-  var d = c,
-    e = function() {
-      function a(a, b, c) {
-        this._original = a, this._startOffset = b, this._endOffset = c, this.tokens = [];
-        var e = a.getTokens();
-        if (e.length > 0) {
-          var f = d.findIndexInSegmentsArray(e, b),
-            g, h, i;
-          this.tokens.push({
-            startIndex: 0,
-            type: e[f].type
-          });
-          for (h = f + 1, i = e.length; h < i; h++) {
-            g = e[h];
-            if (g.startIndex >= c) break;
-            this.tokens.push({
-              startIndex: g.startIndex - b,
-              type: g.type
-            })
-          }
-        }
+define("vs/editor/core/view/model/filteredLineTokens", ["require", "exports", "vs/base/arrays"], function(e, t, n) {
+  var i = function() {
+    function e(e, t, i) {
+      this._original = e;
+
+      this._startOffset = t;
+
+      this._endOffset = i;
+
+      this.tokens = [];
+      var o = e.getTokens();
+      if (o.length > 0) {
+        var r;
+
+        var s;
+
+        var a;
+
+        var u = n.findIndexInSegmentsArray(o, t);
+        for (this.tokens.push({
+          startIndex: 0,
+          type: o[u].type
+        }), s = u + 1, a = o.length; a > s && (r = o[s], !(r.startIndex >= i)); s++) this.tokens.push({
+          startIndex: r.startIndex - t,
+          type: r.type
+        });
       }
-      return a.prototype.getTokens = function() {
-        return this.tokens
-      }, a.prototype.getTextLength = function() {
-        return this._endOffset - this._startOffset
-      }, a.prototype.equals = function(b) {
-        if (b instanceof a) {
-          var c = b;
-          return this._startOffset !== c._startOffset ? !1 : this._endOffset !== c._endOffset ? !1 : this._original.equals(
-            c._original)
-        }
-        return !1
-      }, a.prototype.findIndexOfOffset = function(a) {
-        return d.findIndexInSegmentsArray(this.tokens, a)
-      }, a
-    }();
-  b.FilteredLineTokens = e
-})
+    }
+    e.prototype.getTokens = function() {
+      return this.tokens;
+    };
+
+    e.prototype.getTextLength = function() {
+      return this._endOffset - this._startOffset;
+    };
+
+    e.prototype.equals = function(t) {
+      if (t instanceof e) {
+        var n = t;
+        return this._startOffset !== n._startOffset ? !1 : this._endOffset !== n._endOffset ? !1 : this._original.equals(
+          n._original);
+      }
+      return !1;
+    };
+
+    e.prototype.findIndexOfOffset = function(e) {
+      return n.findIndexInSegmentsArray(this.tokens, e);
+    };
+
+    return e;
+  }();
+  t.FilteredLineTokens = i;
+});

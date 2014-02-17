@@ -1,614 +1,996 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a
+define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/assert", "vs/base/eventEmitter",
+  "vs/base/lib/winjs.base"
+], function(e, t, n, i, o) {
+  var r = function(e) {
+    function t(t) {
+      e.call(this);
+
+      this._item = t;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
-    d.prototype = b.prototype, a.prototype = new d
-  };
-define(["require", "exports", "vs/base/assert", "vs/base/eventEmitter", "vs/base/lib/winjs.base"], function(a, b, c, d,
-  e) {
-  var f = c,
-    g = d,
-    h = e,
-    i = !1,
-    j = function() {
-      function a() {
-        this.lockedItems = {}, this.lock = h.Promise.as(null)
-      }
-      return a.prototype.makePromise = function(a, b) {
-        var c = this;
-        return new h.Promise(function(d, e, f) {
-          return c.lockedItems[a.id] = a, b().then(function(b) {
-            return delete c.lockedItems[a.id], b
-          }).then(d, e, f)
-        })
-      }, a.prototype.intersectLock = function(a) {
-        var b;
-        for (b in this.lockedItems)
-          if (this.lockedItems.hasOwnProperty(b)) {
-            var c = this.lockedItems[b];
-            if (a.intersects(c)) return !0
-          }
-        return !1
-      }, a.prototype.run = function(a, b) {
-        var c = this,
-          d = function() {
-            return c.makePromise(a, b)
-          }, e = this.lock;
-        return this.intersectLock(a) ? this.lock = this.lock.then(d) : (e = d(), this.lock = h.Promise.join([this.lock,
-          e
-        ])), e
-      }, a.prototype.isLocked = function(a) {
-        return !!this.lockedItems[a.id]
-      }, a
-    }();
-  b.Lock = j;
-  var k = function(a) {
-    function b() {
-      a.call(this), this.items = {}
+    __extends(t, e);
+
+    Object.defineProperty(t.prototype, "item", {
+      get: function() {
+        return this._item;
+      },
+      enumerable: !0,
+      configurable: !0
+    });
+
+    t.prototype.dispose = function() {
+      this.emit("unlock");
+
+      e.prototype.dispose.call(this);
+    };
+
+    return t;
+  }(i.EventEmitter);
+  t.LockData = r;
+  var s = function() {
+    function e() {
+      this.locks = Object.create({});
     }
-    return __extends(b, a), b.prototype.register = function(a) {
-      f.ok(!this.isRegistered(a.id)), this.items[a.id] = a, this.emit("register", a)
-    }, b.prototype.deregister = function(a) {
-      f.ok(this.isRegistered(a.id)), delete this.items[a.id], this.emit("deregister", a)
-    }, b.prototype.isRegistered = function(a) {
-      return this.items.hasOwnProperty(a)
-    }, b.prototype.getItem = function(a) {
-      return this.items[a] || null
-    }, b.prototype.dispose = function() {
-      a.prototype.dispose.call(this), delete this.items
-    }, b
-  }(g.EventEmitter);
-  b.ItemRegistry = k;
-  var l = function(a) {
-    function b(b, c, d, e, f) {
-      a.call(this), this.registry = c, this.context = d, this.lock = e, this.element = f, this.id = b, this.registry.register(
-        this), this.doesHaveChildren = this.context.dataSource.hasChildren(this.context.tree, this.element), this.needsChildrenRefresh = !
-        0, this.parent = null, this.previous = null, this.next = null, this.firstChild = null, this.lastChild = null,
-        this.userContent = null, this.traits = {}, this.level = 0, this.expanded = !1, this.emit("item:create", {
-          item: this
-        }), this.visible = this._isVisible(), this.height = this._getHeight()
-    }
-    return __extends(b, a), b.prototype.getElement = function() {
-      return this.element
-    }, b.prototype.hasChildren = function() {
-      return this.doesHaveChildren
-    }, b.prototype.setHasChildren = function(a) {
-      var b = a !== this.doesHaveChildren;
-      this.doesHaveChildren = a;
-      if (b) {
-        var c = {
-          item: this
-        };
-        this.emit("item:refresh", c)
-      }
-    }, b.prototype.getLevel = function() {
-      return this.level
-    }, b.prototype.isVisible = function() {
-      return this.visible
-    }, b.prototype.setVisible = function(a) {
-      this.visible = a
-    }, b.prototype.isExpanded = function() {
-      return this.expanded
-    }, b.prototype._setExpanded = function(a) {
-      this.expanded = a
-    }, b.prototype.reveal = function(a) {
-      typeof a == "undefined" && (a = null);
-      var b = {
-        item: this,
-        relativeTop: a
-      };
-      this.emit("item:reveal", b)
-    }, b.prototype.expand = function() {
-      var a = this;
-      if (this.isExpanded() || !this.doesHaveChildren || this.lock.isLocked(this)) return h.Promise.as(!1);
-      var b = this.lock.run(this, function() {
-        var b = {
-          item: a
-        }, c;
-        return a.emit("item:expanding", b), a.needsChildrenRefresh ? c = a.refreshChildren(!1, !0, !0) : c = h.Promise
-          .as(null), c.then(function() {
-            return a._setExpanded(!0), a.emit("item:expanded", b), !0
-          })
-      });
-      return b.then(function(b) {
-        return b && a.firstChild !== null && a.firstChild === a.lastChild ? a.firstChild.expand().then(function() {
-          return !0
-        }) : b
-      })
-    }, b.prototype.collapse = function(a) {
-      typeof a == "undefined" && (a = !1);
-      var b = this;
-      if (a) {
-        var c = h.Promise.as(null);
-        return this.forEachChild(function(a) {
-          c = c.then(function() {
-            return a.collapse(!0)
-          })
-        }), c.then(function() {
-          return b.collapse(!1)
-        })
-      }
-      return !this.isExpanded() || this.lock.isLocked(this) ? h.Promise.as(!1) : this.lock.run(this, function() {
-        var a = {
-          item: b
-        };
-        return b.emit("item:collapsing", a), b._setExpanded(!1), b.emit("item:collapsed", a), h.Promise.as(!0)
-      })
-    }, b.prototype.addTrait = function(a) {
-      var b = {
-        item: this,
-        trait: a
-      };
-      this.traits[a] = !0, this.emit("item:addTrait", b)
-    }, b.prototype.removeTrait = function(a) {
-      var b = {
-        item: this,
-        trait: a
-      };
-      delete this.traits[a], this.emit("item:removeTrait", b)
-    }, b.prototype.hasTrait = function(a) {
-      return this.traits[a] || !1
-    }, b.prototype.getAllTraits = function() {
-      var a = [],
-        b;
-      for (b in this.traits) this.traits.hasOwnProperty(b) && this.traits[b] && a.push(b);
-      return a
-    }, b.prototype.getHeight = function() {
-      return this.height
-    }, b.prototype.refreshChildren = function(a, c, d) {
-      typeof c == "undefined" && (c = !1), typeof d == "undefined" && (d = !1);
-      var e = this;
-      if (!d && !this.isExpanded()) return this.needsChildrenRefresh = !0, h.Promise.as(this);
-      this.needsChildrenRefresh = !1;
-      var f, g = function() {
-          var d = {
-            item: e,
-            isNested: c
-          };
-          e.emit("item:childrenRefreshing", d);
-          var g;
-          return e.doesHaveChildren ? g = e.context.dataSource.getChildren(e.context.tree, e.element) : g = h.Promise
-            .as([]), g.then(function(c) {
-              c = c ? c.slice(0) : [], c = e.sort(c), f = c.length > 0;
-              var d = {};
-              while (e.firstChild !== null) d[e.firstChild.id] = e.firstChild, e.removeChild(e.firstChild);
-              for (var g = 0, i = c.length; g < i; g++) {
-                var j = c[g],
-                  k = e.context.dataSource.getId(e.context.tree, j),
-                  l = d[k] || new b(k, e.registry, e.context, e.lock, j);
-                a && (l.needsChildrenRefresh = a), delete d[k], e.addChild(l)
-              }
-              for (var k in d) d.hasOwnProperty(k) && d[k].dispose();
-              return a ? h.Promise.join(e.mapEachChild(function(b) {
-                return b.doRefresh(a, !0)
-              })) : h.Promise.as(null)
-            }).then(function() {
-              e.emit("item:childrenRefreshed", d)
-            })
-        }, i = c ? g() : this.lock.run(this, g);
-      return i.then(function() {
-        e.setHasChildren(f);
-        if (!e.doesHaveChildren) return e.collapse()
-      })
-    }, b.prototype.doRefresh = function(a, b) {
-      typeof b == "undefined" && (b = !1);
-      var c = {
-        item: this
-      };
-      return this.doesHaveChildren = this.context.dataSource.hasChildren(this.context.tree, this.element), this.height =
-        this._getHeight(), this.setVisible(this._isVisible()), this.emit("item:refresh", c), this.refreshChildren(a,
-          b)
-    }, b.prototype.refresh = function(a) {
-      return this.doRefresh(a)
-    }, b.prototype.getNavigator = function() {
-      return new n(this)
-    }, b.prototype.intersects = function(a) {
-      return this.isAncestorOf(a) || a.isAncestorOf(this)
-    }, b.prototype.isAncestorOf = function(a) {
-      while (a) {
-        if (a.id === this.id) return !0;
-        a = a.parent
-      }
-      return !1
-    }, b.prototype.addChild = function(a, b) {
-      typeof b == "undefined" && (b = this.lastChild);
-      var c = this.firstChild === null,
-        d = b === null,
-        e = b === this.lastChild;
-      c ? (this.firstChild = this.lastChild = a, a.next = a.previous = null) : d ? (this.firstChild.previous = a, a.next =
-        this.firstChild, a.previous = null, this.firstChild = a) : e ? (this.lastChild.next = a, a.next = null, a.previous =
-        this.lastChild, this.lastChild = a) : (a.previous = b, a.next = b.next, b.next.previous = a, b.next = a), a.parent =
-        this, a.level = this.level + 1
-    }, b.prototype.removeChild = function(a) {
-      var b = this.firstChild === a,
-        c = this.lastChild === a;
-      b && c ? this.firstChild = this.lastChild = null : b ? (a.next.previous = null, this.firstChild = a.next) : c ?
-        (a.previous.next = null, this.lastChild = a.previous) : (a.next.previous = a.previous, a.previous.next = a.next),
-        a.parent = null, a.level = null
-    }, b.prototype.forEachChild = function(a) {
-      var b = this.firstChild,
-        c;
-      while (b) c = b.next, a(b), b = c
-    }, b.prototype.mapEachChild = function(a) {
-      var b = [];
-      return this.forEachChild(function(c) {
-        b.push(a(c))
-      }), b
-    }, b.prototype.sort = function(a) {
-      var b = this;
-      return this.context.sorter ? a.sort(function(a, c) {
-        return b.context.sorter.compare(b.context.tree, a, c)
-      }) : a
-    }, b.prototype._getHeight = function() {
-      return this.context.renderer.getHeight(this.context.tree, this.element)
-    }, b.prototype._isVisible = function() {
-      return this.context.filter.isVisible(this.context.tree, this.element)
-    }, b.prototype.dispose = function() {
-      this.forEachChild(function(a) {
-        return a.dispose()
-      }), delete this.parent, delete this.previous, delete this.next, delete this.firstChild, delete this.lastChild;
-      var b = {
-        item: this
-      };
-      this.emit("item:dispose", b), this.registry.deregister(this), a.prototype.dispose.call(this)
-    }, b
-  }(g.EventEmitter);
-  b.Item = l;
-  var m = function(a) {
-    function b(b, c, d, e, f) {
-      a.call(this, b, c, d, e, f)
-    }
-    return __extends(b, a), b.prototype.isVisible = function() {
-      return !1
-    }, b.prototype.setVisible = function(a) {}, b.prototype.isExpanded = function() {
-      return !0
-    }, b.prototype._setExpanded = function(a) {}, b.prototype.render = function() {}, b.prototype._getHeight =
-      function() {
-        return 0
-    }, b.prototype._isVisible = function() {
-      return !1
-    }, b
-  }(l),
-    n = function() {
-      function a(a, b) {
-        typeof b == "undefined" && (b = !0), this.item = a, this.start = b ? a : null
-      }
-      return a.lastDescendantOf = function(b) {
-        return b ? !b.isVisible() || !b.isExpanded() || b.lastChild === null ? b : a.lastDescendantOf(b.lastChild) :
-          null
-      }, a.prototype.current = function() {
-        return this.item || null
-      }, a.prototype.next = function() {
-        if (this.item)
-          do
-            if ((this.item instanceof m || this.item.isVisible() && this.item.isExpanded()) && this.item.firstChild)
-              this.item = this.item.firstChild;
-            else if (this.item === this.start) this.item = null;
-        else {
-          while (this.item && this.item !== this.start && !this.item.next) this.item = this.item.parent;
-          this.item === this.start && (this.item = null), this.item = this.item ? this.item.next : null
-        }
-        while (this.item && !this.item.isVisible());
-        return this.item || null
-      }, a.prototype.previous = function() {
-        if (this.item)
-          do {
-            var b = a.lastDescendantOf(this.item.previous);
-            b ? this.item = b : this.item.parent && this.item.parent !== this.start && this.item.parent.isVisible() ?
-              this.item = this.item.parent : this.item = null
-          } while (this.item && !this.item.isVisible());
-        return this.item || null
-      }, a.prototype.parent = function() {
-        if (this.item) {
-          var a = this.item.parent;
-          a && a !== this.start && a.isVisible() ? this.item = a : this.item = null
-        }
-        return this.item || null
-      }, a.prototype.first = function() {
-        return this.item = this.start, this.next(), this.item || null
-      }, a.prototype.last = function() {
-        return this.start && this.start.isExpanded() && (this.item = this.start.lastChild, this.item && !this.item.isVisible() &&
-          this.previous()), this.item || null
-      }, a
-    }();
-  b.TreeNavigator = n;
-  var o = function(a) {
-    function b(b) {
-      a.call(this), this.context = b, this.input = null, this.traitsToItems = {}
-    }
-    return __extends(b, a), b.prototype.setInput = function(a) {
-      var b = this,
-        c = {
-          item: this.input
-        };
-      this.emit("clearingInput", c), this.setSelection([]), this.setFocus(), this.setHighlight(), this.lock = new j,
-        this.input && this.input.dispose(), this.registry && (this.registry.dispose(), this.unbindRegistryListener()),
-        this.registry = new k, this.unbindRegistryListener = this.registry.addListener("register", function(a) {
-          var c = b.addEmitter(a),
-            d = b.registry.addListener("deregister", function(e) {
-              if (e.id === a.id) {
-                var f = e.getAllTraits();
-                for (var g = 0, h = f.length; g < h; g++) {
-                  var i = f[g];
-                  delete b.traitsToItems[i][e.id]
-                }
-                c(), d()
-              }
-            })
+    e.prototype.isLocked = function(e) {
+      return !!this.locks[e.id];
+    };
+
+    e.prototype.run = function(e, t) {
+      var n = this;
+
+      var i = this.getLock(e);
+      if (i) {
+        var s;
+        return new o.Promise(function(o, r) {
+          s = i.addOneTimeListener("unlock", function() {
+            return n.run(e, t).then(o, r);
+          });
+        }, function() {
+          return s();
         });
-      var d = this.context.dataSource.getId(this.context.tree, a);
-      return this.input = new m(d, this.registry, this.context, this.lock, a), c = {
-        item: this.input
-      }, this.emit("setInput", c), this.refresh(this.input)
-    }, b.prototype.getInput = function() {
-      return this.input ? this.input.getElement() : null
-    }, b.prototype.refresh = function(a, b) {
-      typeof a == "undefined" && (a = null), typeof b == "undefined" && (b = !0);
-      var c = this;
-      try {
-        var d = this.getItem(a)
-      } catch (e) {
-        return h.Promise.as(null)
       }
-      var f = {
-        item: d,
-        recursive: b
+      var a;
+      return new o.Promise(function(i, o) {
+        if (e.isDisposed()) return o(new Error("Item is disposed."));
+        var s = n.locks[e.id] = new r(e);
+        return a = t().then(function(t) {
+          delete n.locks[e.id];
+
+          s.dispose();
+
+          return t;
+        }).then(i, o);
+      }, function() {
+        return a.cancel();
+      });
+    };
+
+    e.prototype.getLock = function(e) {
+      var t;
+      for (t in this.locks) {
+        var n = this.locks[t];
+        if (e.intersects(n.item)) return n;
+      }
+      return null;
+    };
+
+    return e;
+  }();
+  t.Lock = s;
+  var a = function(e) {
+    function t() {
+      e.call(this);
+
+      this.items = {};
+    }
+    __extends(t, e);
+
+    t.prototype.register = function(e) {
+      n.ok(!this.isRegistered(e.id));
+
+      this.items[e.id] = e;
+
+      this.emit("register", e);
+    };
+
+    t.prototype.deregister = function(e) {
+      n.ok(this.isRegistered(e.id));
+
+      delete this.items[e.id];
+
+      this.emit("deregister", e);
+    };
+
+    t.prototype.isRegistered = function(e) {
+      return this.items.hasOwnProperty(e);
+    };
+
+    t.prototype.getItem = function(e) {
+      return this.items[e] || null;
+    };
+
+    t.prototype.dispose = function() {
+      e.prototype.dispose.call(this);
+
+      delete this.items;
+    };
+
+    return t;
+  }(i.EventEmitter);
+  t.ItemRegistry = a;
+  var u = function(e) {
+    function t(t, n, i, o, r) {
+      e.call(this);
+
+      this.registry = n;
+
+      this.context = i;
+
+      this.lock = o;
+
+      this.element = r;
+
+      this.id = t;
+
+      this.registry.register(this);
+
+      this.doesHaveChildren = this.context.dataSource.hasChildren(this.context.tree, this.element);
+
+      this.needsChildrenRefresh = !0;
+
+      this.parent = null;
+
+      this.previous = null;
+
+      this.next = null;
+
+      this.firstChild = null;
+
+      this.lastChild = null;
+
+      this.userContent = null;
+
+      this.traits = {};
+
+      this.depth = 0;
+
+      this.maxDepth = 0;
+
+      this.expanded = !1;
+
+      this.emit("item:create", {
+        item: this
+      });
+
+      this.visible = this._isVisible();
+
+      this.height = this._getHeight();
+
+      this._isDisposed = !1;
+    }
+    __extends(t, e);
+
+    t.prototype.getElement = function() {
+      return this.element;
+    };
+
+    t.prototype.hasChildren = function() {
+      return this.doesHaveChildren;
+    };
+
+    t.prototype.getDepth = function() {
+      return this.depth;
+    };
+
+    t.prototype.getMaxDepth = function() {
+      return this.maxDepth;
+    };
+
+    t.prototype.isVisible = function() {
+      return this.visible;
+    };
+
+    t.prototype.setVisible = function(e) {
+      this.visible = e;
+    };
+
+    t.prototype.isExpanded = function() {
+      return this.expanded;
+    };
+
+    t.prototype._setExpanded = function(e) {
+      this.expanded = e;
+    };
+
+    t.prototype.reveal = function(e) {
+      "undefined" == typeof e && (e = null);
+      var t = {
+        item: this,
+        relativeTop: e
       };
-      return this.emit("refreshing", f), d.refresh(b).then(function() {
-        c.emit("refreshed", f)
-      })
-    }, b.prototype.refreshAll = function(a, b) {
-      typeof b == "undefined" && (b = !0);
-      var c = this,
-        d = [];
-      return this.deferredEmit(function() {
-        for (var e = 0, f = a.length; e < f; e++) d.push(c.refresh(a[e], b))
-      }), h.Promise.join(d)
-    }, b.prototype.expand = function(a) {
-      try {
-        return this.getItem(a).expand()
-      } catch (b) {
-        return h.Promise.as(!1)
+      this.emit("item:reveal", t);
+    };
+
+    t.prototype.expand = function() {
+      var e = this;
+      if (this.isExpanded() || !this.doesHaveChildren || this.lock.isLocked(this)) return o.Promise.as(!1);
+      var t = this.lock.run(this, function() {
+        var t;
+
+        var n = {
+          item: e
+        };
+        e.emit("item:expanding", n);
+
+        t = e.needsChildrenRefresh ? e.refreshChildren(!1, !0, !0) : o.Promise.as(null);
+
+        return t.then(function() {
+          e._setExpanded(!0);
+
+          e.emit("item:expanded", n);
+
+          return !0;
+        });
+      });
+      return t.then(function(t) {
+        return e.isDisposed() ? !1 : t && null !== e.firstChild && e.firstChild === e.lastChild && e.firstChild.isVisible() ?
+          e.firstChild.expand().then(function() {
+            return !0;
+          }) : t;
+      });
+    };
+
+    t.prototype.collapse = function(e) {
+      "undefined" == typeof e && (e = !1);
+      var t = this;
+      if (e) {
+        var n = o.Promise.as(null);
+        this.forEachChild(function(e) {
+          n = n.then(function() {
+            return e.collapse(!0);
+          });
+        });
+
+        return n.then(function() {
+          return t.collapse(!1);
+        });
       }
-    }, b.prototype.expandAll = function(a) {
-      var b = [];
-      for (var c = 0, d = a.length; c < d; c++) b.push(this.expand(a[c]));
-      return h.Promise.join(b)
-    }, b.prototype.collapse = function(a, b) {
-      typeof b == "undefined" && (b = !1);
-      try {
-        return this.getItem(a).collapse(b)
-      } catch (c) {
-        return h.Promise.as(!1)
-      }
-    }, b.prototype.collapseAll = function(a, b) {
-      typeof a == "undefined" && (a = null), typeof b == "undefined" && (b = !1), a || (a = [this.input], b = !0);
-      var c = [];
-      for (var d = 0, e = a.length; d < e; d++) c.push(this.collapse(a[d], b));
-      return h.Promise.join(c)
-    }, b.prototype.toggleExpansion = function(a) {
-      return this.isExpanded(a) ? this.collapse(a) : this.expand(a)
-    }, b.prototype.toggleExpansionAll = function(a) {
-      var b = [];
-      for (var c = 0, d = a.length; c < d; c++) b.push(this.toggleExpansion(a[c]));
-      return h.Promise.join(b)
-    }, b.prototype.isExpanded = function(a) {
-      try {
-        return this.getItem(a).isExpanded()
-      } catch (b) {
-        return !1
-      }
-    }, b.prototype.reveal = function(a, b) {
-      typeof b == "undefined" && (b = null);
-      var c = this;
-      return this.resolveUnknownParentChain(a).then(function(a) {
-        var b = h.Promise.as(null);
-        return a.forEach(function(a) {
-          b = b.then(function() {
-            return c.expand(a)
-          })
-        }), b
-      }).then(function() {
-        try {
-          c.getItem(a).reveal(b)
-        } catch (d) {}
-      })
-    }, b.prototype.resolveUnknownParentChain = function(a) {
-      var b = this;
-      return this.context.dataSource.getParent(this.context.tree, a).then(function(a) {
-        return a ? b.resolveUnknownParentChain(a).then(function(b) {
-          return b.push(a), b
-        }) : h.Promise.as([])
-      })
-    }, b.prototype.setHighlight = function(a, b) {
-      var c = this.getHighlight();
-      this.setTraits("highlighted", a ? [a] : []), c && this.isElementInTree(c) && c !== a && this.refresh(c, !1);
-      var d = {
-        highlight: this.getHighlight(),
-        payload: b
+      return !this.isExpanded() || this.lock.isLocked(this) ? o.Promise.as(!1) : this.lock.run(this, function() {
+        var e = {
+          item: t
+        };
+        t.emit("item:collapsing", e);
+
+        t._setExpanded(!1);
+
+        t.emit("item:collapsed", e);
+
+        return o.Promise.as(!0);
+      });
+    };
+
+    t.prototype.addTrait = function(e) {
+      var t = {
+        item: this,
+        trait: e
       };
-      this.emit("highlight", d)
-    }, b.prototype.getHighlight = function() {
-      var a = this.getElementsWithTrait("highlighted");
-      return a.length === 0 ? null : a[0]
-    }, b.prototype.isHighlighted = function(a) {
-      try {
-        return this.getItem(a).hasTrait("highlighted")
-      } catch (b) {
-        return !1
-      }
-    }, b.prototype.select = function(a, b) {
-      this.selectAll([a], b)
-    }, b.prototype.selectAll = function(a, b) {
-      this.addTraits("selected", a);
-      var c = {
-        selection: this.getSelection(),
-        payload: b
+      this.traits[e] = !0;
+
+      this.emit("item:addTrait", t);
+    };
+
+    t.prototype.removeTrait = function(e) {
+      var t = {
+        item: this,
+        trait: e
       };
-      this.emit("selection", c)
-    }, b.prototype.deselect = function(a, b) {
-      this.deselectAll([a], b)
-    }, b.prototype.deselectAll = function(a, b) {
-      this.removeTraits("selected", a);
-      var c = {
-        selection: this.getSelection(),
-        payload: b
+      delete this.traits[e];
+
+      this.emit("item:removeTrait", t);
+    };
+
+    t.prototype.hasTrait = function(e) {
+      return this.traits[e] || !1;
+    };
+
+    t.prototype.getAllTraits = function() {
+      var e;
+
+      var t = [];
+      for (e in this.traits) this.traits.hasOwnProperty(e) && this.traits[e] && t.push(e);
+      return t;
+    };
+
+    t.prototype.getHeight = function() {
+      return this.height;
+    };
+
+    t.prototype.refreshChildren = function(e, n, i) {
+      "undefined" == typeof n && (n = !1);
+
+      "undefined" == typeof i && (i = !1);
+      var r = this;
+      if (!i && !this.isExpanded()) this.needsChildrenRefresh = !0;
+
+      return o.Promise.as(this);
+      this.needsChildrenRefresh = !1;
+      var s = function() {
+        var i = {
+          item: r,
+          isNested: n
+        };
+        r.emit("item:childrenRefreshing", i);
+        var s;
+        s = r.doesHaveChildren ? r.context.dataSource.getChildren(r.context.tree, r.element) : o.Promise.as([]);
+
+        return s.then(function(n) {
+          n = n ? n.slice(0) : [];
+
+          n = r.sort(n);
+          for (var i = {}; null !== r.firstChild;) i[r.firstChild.id] = r.firstChild;
+
+          r.removeChild(r.firstChild);
+          for (var s = 0, a = n.length; a > s; s++) {
+            var u = n[s];
+
+            var l = r.context.dataSource.getId(r.context.tree, u);
+
+            var c = i[l] || new t(l, r.registry, r.context, r.lock, u);
+            e && (c.needsChildrenRefresh = e);
+
+            delete i[l];
+
+            r.addChild(c);
+          }
+          for (var d in i) i.hasOwnProperty(d) && i[d].dispose();
+          return e ? o.Promise.join(r.mapEachChild(function(t) {
+            return t.doRefresh(e, !0);
+          })) : o.Promise.as(null);
+        }).then(function() {
+          r.emit("item:childrenRefreshed", i);
+        });
       };
-      this.emit("selection", c)
-    }, b.prototype.setSelection = function(a, b) {
-      this.setTraits("selected", a);
-      var c = {
-        selection: this.getSelection(),
-        payload: b
+      return n ? s() : this.lock.run(this, s);
+    };
+
+    t.prototype.doRefresh = function(e, t) {
+      "undefined" == typeof t && (t = !1);
+      var n = {
+        item: this
       };
-      this.emit("selection", c)
-    }, b.prototype.isSelected = function(a) {
-      try {
-        return this.getItem(a).hasTrait("selected")
-      } catch (b) {
-        return !1
+      this.doesHaveChildren = this.context.dataSource.hasChildren(this.context.tree, this.element);
+
+      this.height = this._getHeight();
+
+      this.setVisible(this._isVisible());
+
+      this.emit("item:refresh", n);
+
+      return this.refreshChildren(e, t);
+    };
+
+    t.prototype.refresh = function(e) {
+      return this.doRefresh(e);
+    };
+
+    t.prototype.getNavigator = function() {
+      return new c(this);
+    };
+
+    t.prototype.intersects = function(e) {
+      return this.isAncestorOf(e) || e.isAncestorOf(this);
+    };
+
+    t.prototype.isAncestorOf = function(e) {
+      for (; e;) {
+        if (e.id === this.id) return !0;
+        e = e.parent;
       }
-    }, b.prototype.getSelection = function() {
-      return this.getElementsWithTrait("selected")
-    }, b.prototype.selectNext = function(a, b) {
-      typeof a == "undefined" && (a = 1);
-      var c = this.getSelection(),
-        d = c.length > 0 ? c[0] : this.input,
-        e, f = this.getNavigator(d, !1);
-      for (var g = 0; g < a; g++) {
-        e = f.next();
-        if (!e) break;
-        d = e
-      }
-      this.setSelection([d], b)
-    }, b.prototype.selectPrevious = function(a, b) {
-      typeof a == "undefined" && (a = 1);
-      var c = this.getSelection();
-      if (c.length === 0) {
-        var d = this.getNavigator(this.input),
-          e = null,
-          f = null;
-        while (e = d.next()) f = e;
-        this.setSelection([f], b);
-        return
-      }
-      var e = c[0],
-        f, d = this.getNavigator(e, !1);
-      for (var g = 0; g < a; g++) {
-        f = d.previous();
-        if (!f) break;
-        e = f
-      }
-      this.setSelection([e], b)
-    }, b.prototype.selectParent = function(a) {
-      var b = this.getSelection(),
-        c = b.length > 0 ? b[0] : this.input,
-        d = this.getNavigator(c, !1),
-        e = d.parent();
-      e && this.setSelection([e], a)
-    }, b.prototype.setFocus = function(a, b) {
-      this.setTraits("focused", a ? [a] : []);
-      var c = {
-        focus: this.getFocus(),
-        payload: b
+      return !1;
+    };
+
+    t.prototype.addChild = function(e, t) {
+      "undefined" == typeof t && (t = this.lastChild);
+      var n = null === this.firstChild;
+
+      var i = null === t;
+
+      var o = t === this.lastChild;
+      n ? (this.firstChild = this.lastChild = e, e.next = e.previous = null) : i ? (this.firstChild.previous = e, e.next =
+        this.firstChild, e.previous = null, this.firstChild = e) : o ? (this.lastChild.next = e, e.next = null, e.previous =
+        this.lastChild, this.lastChild = e) : (e.previous = t, e.next = t.next, t.next.previous = e, t.next = e);
+
+      e.parent = this;
+
+      e.depth = this.depth + 1;
+      for (var r = this, s = e.maxDepth + 1; r && r.maxDepth < s;) r.maxDepth = s++;
+
+      r = r.parent;
+    };
+
+    t.prototype.removeChild = function(e) {
+      var t = this.firstChild === e;
+
+      var n = this.lastChild === e;
+      t && n ? this.firstChild = this.lastChild = null : t ? (e.next.previous = null, this.firstChild = e.next) : n ?
+        (e.previous.next = null, this.lastChild = e.previous) : (e.next.previous = e.previous, e.previous.next = e.next);
+
+      e.parent = null;
+
+      e.depth = null;
+      for (var i = this, o = e.maxDepth + 1; i && i.maxDepth === o;) o = i.maxDepth + 1;
+
+      i.maxDepth = Math.max.apply(null, this.mapEachChild(function(e) {
+        return e.maxDepth;
+      })) + 1;
+
+      i = i.parent;
+    };
+
+    t.prototype.forEachChild = function(e) {
+      for (var t, n = this.firstChild; n;) t = n.next;
+
+      e(n);
+
+      n = t;
+    };
+
+    t.prototype.mapEachChild = function(e) {
+      var t = [];
+      this.forEachChild(function(n) {
+        t.push(e(n));
+      });
+
+      return t;
+    };
+
+    t.prototype.sort = function(e) {
+      var t = this;
+      return this.context.sorter ? e.sort(function(e, n) {
+        return t.context.sorter.compare(t.context.tree, e, n);
+      }) : e;
+    };
+
+    t.prototype._getHeight = function() {
+      return this.context.renderer.getHeight(this.context.tree, this.element);
+    };
+
+    t.prototype._isVisible = function() {
+      return this.context.filter.isVisible(this.context.tree, this.element);
+    };
+
+    t.prototype.isDisposed = function() {
+      return this._isDisposed;
+    };
+
+    t.prototype.dispose = function() {
+      this.forEachChild(function(e) {
+        return e.dispose();
+      });
+
+      delete this.parent;
+
+      delete this.previous;
+
+      delete this.next;
+
+      delete this.firstChild;
+
+      delete this.lastChild;
+      var t = {
+        item: this
       };
-      this.emit("focus", c)
-    }, b.prototype.isFocused = function(a) {
-      try {
-        return this.getItem(a).hasTrait("focused")
-      } catch (b) {
-        return !1
-      }
-    }, b.prototype.getFocus = function() {
-      var a = this.getElementsWithTrait("focused");
-      return a.length === 0 ? null : a[0]
-    }, b.prototype.focusNext = function(a, b) {
-      typeof a == "undefined" && (a = 1);
-      var c = this.getFocus() || this.input,
-        d, e = this.getNavigator(c, !1);
-      for (var f = 0; f < a; f++) {
-        d = e.next();
-        if (!d) break;
-        c = d
-      }
-      this.setFocus(c, b)
-    }, b.prototype.focusPrevious = function(a, b) {
-      typeof a == "undefined" && (a = 1);
-      var c = this.getFocus() || this.input,
-        d, e = this.getNavigator(c, !1);
-      for (var f = 0; f < a; f++) {
-        d = e.previous();
-        if (!d) break;
-        c = d
-      }
-      this.setFocus(c, b)
-    }, b.prototype.focusParent = function(a) {
-      var b = this.getFocus() || this.input,
-        c = this.getNavigator(b, !1),
-        d = c.parent();
-      d && this.setFocus(d, a)
-    }, b.prototype.focusFirst = function(a) {
-      var b = this.getNavigator(this.input),
-        c = b.first();
-      c && this.setFocus(c, a)
-    }, b.prototype.focusLast = function(a) {
-      var b = this.getNavigator(this.input),
-        c = b.last();
-      c && this.setFocus(c, a)
-    }, b.prototype.getNavigator = function(a, b) {
-      typeof a == "undefined" && (a = null), typeof b == "undefined" && (b = !0);
-      var c = null;
-      try {
-        c = this.getItem(a)
-      } catch (d) {}
-      return new n(c, b)
-    }, b.prototype.isElementInTree = function(a) {
-      return this.registry.isRegistered(this.context.dataSource.getId(this.context.tree, a))
-    }, b.prototype.getItem = function(a) {
-      typeof a == "undefined" && (a = null);
-      var b;
-      a === null ? b = this.input : a instanceof l ? b = a : typeof a == "string" ? b = this.registry.getItem(a) : b =
-        this.registry.getItem(this.context.dataSource.getId(this.context.tree, a));
-      if (b === null) throw new Error("No such element in the tree");
-      return b
-    }, b.prototype.addTraits = function(a, b) {
-      var c = this.traitsToItems[a] || {}, d;
-      for (var e = 0, f = b.length; e < f; e++) try {
-        d = this.getItem(b[e]), d.addTrait(a), c[d.id] = d
-      } catch (g) {}
-      this.traitsToItems[a] = c
-    }, b.prototype.removeTraits = function(a, b) {
-      var c = this.traitsToItems[a] || {}, d, e;
-      if (b.length === 0) {
-        for (e in c) c.hasOwnProperty(e) && (d = c[e], d.removeTrait(a));
-        delete this.traitsToItems[a]
-      } else
-        for (var f = 0, g = b.length; f < g; f++) try {
-          d = this.getItem(b[f]), d.removeTrait(a), delete c[d.id]
-        } catch (h) {}
-    }, b.prototype.setTraits = function(a, b) {
-      if (b.length === 0) this.removeTraits(a, b);
+      this.emit("item:dispose", t);
+
+      this.registry.deregister(this);
+
+      e.prototype.dispose.call(this);
+
+      this._isDisposed = !0;
+    };
+
+    return t;
+  }(i.EventEmitter);
+  t.Item = u;
+  var l = function(e) {
+    function t(t, n, i, o, r) {
+      e.call(this, t, n, i, o, r);
+    }
+    __extends(t, e);
+
+    t.prototype.isVisible = function() {
+      return !1;
+    };
+
+    t.prototype.setVisible = function() {};
+
+    t.prototype.isExpanded = function() {
+      return !0;
+    };
+
+    t.prototype._setExpanded = function() {};
+
+    t.prototype.render = function() {};
+
+    t.prototype._getHeight = function() {
+      return 0;
+    };
+
+    t.prototype._isVisible = function() {
+      return !1;
+    };
+
+    return t;
+  }(u);
+
+  var c = function() {
+    function e(e, t) {
+      "undefined" == typeof t && (t = !0);
+
+      this.item = e;
+
+      this.start = t ? e : null;
+    }
+    e.lastDescendantOf = function(t) {
+      return t ? t.isVisible() && t.isExpanded() && null !== t.lastChild ? e.lastDescendantOf(t.lastChild) : t : null;
+    };
+
+    e.prototype.current = function() {
+      return this.item || null;
+    };
+
+    e.prototype.next = function() {
+      if (this.item)
+        do
+          if ((this.item instanceof l || this.item.isVisible() && this.item.isExpanded()) && this.item.firstChild)
+            this.item = this.item.firstChild;
+          else if (this.item === this.start) this.item = null;
       else {
-        var c = {}, d;
-        for (var e = 0, f = b.length; e < f; e++) try {
-          d = this.getItem(b[e]), c[d.id] = d
-        } catch (g) {}
-        var h = this.traitsToItems[a] || {}, i = [],
-          j;
-        for (j in h) h.hasOwnProperty(j) && (c.hasOwnProperty(j) ? delete c[j] : i.push(h[j]));
-        for (var e = 0, f = i.length; e < f; e++) d = i[e], d.removeTrait(a), delete h[d.id];
-        for (j in c) c.hasOwnProperty(j) && (d = c[j], d.addTrait(a), h[j] = d);
-        this.traitsToItems[a] = h
+        for (; this.item && this.item !== this.start && !this.item.next;) this.item = this.item.parent;
+        this.item === this.start && (this.item = null);
+
+        this.item = this.item ? this.item.next : null;
       }
-    }, b.prototype.getElementsWithTrait = function(a) {
-      var b = [],
-        c = this.traitsToItems[a] || {}, d;
-      for (d in c) c.hasOwnProperty(d) && b.push(c[d].getElement());
-      return b
-    }, b.prototype.dispose = function() {
-      this.registry && (this.registry.dispose(), this.registry = null), a.prototype.dispose.call(this)
-    }, b
-  }(g.EventEmitter);
-  b.TreeModel = o
-})
+      while (this.item && !this.item.isVisible());
+      return this.item || null;
+    };
+
+    e.prototype.previous = function() {
+      if (this.item)
+        do {
+          var t = e.lastDescendantOf(this.item.previous);
+          this.item = t ? t : this.item.parent && this.item.parent !== this.start && this.item.parent.isVisible() ?
+            this.item.parent : null;
+        } while (this.item && !this.item.isVisible());
+      return this.item || null;
+    };
+
+    e.prototype.parent = function() {
+      if (this.item) {
+        var e = this.item.parent;
+        this.item = e && e !== this.start && e.isVisible() ? e : null;
+      }
+      return this.item || null;
+    };
+
+    e.prototype.first = function() {
+      this.item = this.start;
+
+      this.next();
+
+      return this.item || null;
+    };
+
+    e.prototype.last = function() {
+      this.start && this.start.isExpanded() && (this.item = this.start.lastChild, this.item && !this.item.isVisible() &&
+        this.previous());
+
+      return this.item || null;
+    };
+
+    return e;
+  }();
+  t.TreeNavigator = c;
+  var d = function(e) {
+    function t(t) {
+      e.call(this);
+
+      this.context = t;
+
+      this.input = null;
+
+      this.traitsToItems = {};
+    }
+    __extends(t, e);
+
+    t.prototype.setInput = function(e) {
+      var t = this;
+
+      var n = {
+        item: this.input
+      };
+      this.emit("clearingInput", n);
+
+      this.setSelection([]);
+
+      this.setFocus();
+
+      this.setHighlight();
+
+      this.lock = new s;
+
+      this.input && this.input.dispose();
+
+      this.registry && (this.registry.dispose(), this.unbindRegistryListener());
+
+      this.registry = new a;
+
+      this.unbindRegistryListener = this.registry.addListener("register", function(e) {
+        var n = t.addEmitter(e);
+
+        var i = t.registry.addListener("deregister", function(o) {
+          if (o.id === e.id) {
+            for (var r = o.getAllTraits(), s = 0, a = r.length; a > s; s++) {
+              var u = r[s];
+              delete t.traitsToItems[u][o.id];
+            }
+            n();
+
+            i();
+          }
+        });
+      });
+      var i = this.context.dataSource.getId(this.context.tree, e);
+      this.input = new l(i, this.registry, this.context, this.lock, e);
+
+      n = {
+        item: this.input
+      };
+
+      this.emit("setInput", n);
+
+      return this.refresh(this.input);
+    };
+
+    t.prototype.getInput = function() {
+      return this.input ? this.input.getElement() : null;
+    };
+
+    t.prototype.refresh = function(e, t) {
+      "undefined" == typeof e && (e = null);
+
+      "undefined" == typeof t && (t = !0);
+      var n = this;
+
+      var i = this.getItem(e);
+      if (!i) return o.Promise.as(null);
+      var r = {
+        item: i,
+        recursive: t
+      };
+      this.emit("refreshing", r);
+
+      return i.refresh(t).then(function() {
+        n.emit("refreshed", r);
+      });
+    };
+
+    t.prototype.refreshAll = function(e, t) {
+      "undefined" == typeof t && (t = !0);
+      var n = this;
+
+      var i = [];
+      this.deferredEmit(function() {
+        for (var o = 0, r = e.length; r > o; o++) i.push(n.refresh(e[o], t));
+      });
+
+      return o.Promise.join(i);
+    };
+
+    t.prototype.expand = function(e) {
+      var t = this.getItem(e);
+      return t ? t.expand() : o.Promise.as(!1);
+    };
+
+    t.prototype.expandAll = function(e) {
+      for (var t = [], n = 0, i = e.length; i > n; n++) t.push(this.expand(e[n]));
+      return o.Promise.join(t);
+    };
+
+    t.prototype.collapse = function(e, t) {
+      "undefined" == typeof t && (t = !1);
+      var n = this.getItem(e);
+      return n ? n.collapse(t) : o.Promise.as(!1);
+    };
+
+    t.prototype.collapseAll = function(e, t) {
+      "undefined" == typeof e && (e = null);
+
+      "undefined" == typeof t && (t = !1);
+
+      e || (e = [this.input], t = !0);
+      for (var n = [], i = 0, r = e.length; r > i; i++) n.push(this.collapse(e[i], t));
+      return o.Promise.join(n);
+    };
+
+    t.prototype.toggleExpansion = function(e) {
+      return this.isExpanded(e) ? this.collapse(e) : this.expand(e);
+    };
+
+    t.prototype.toggleExpansionAll = function(e) {
+      for (var t = [], n = 0, i = e.length; i > n; n++) t.push(this.toggleExpansion(e[n]));
+      return o.Promise.join(t);
+    };
+
+    t.prototype.isExpanded = function(e) {
+      var t = this.getItem(e);
+      return t ? t.isExpanded() : !1;
+    };
+
+    t.prototype.reveal = function(e, t) {
+      "undefined" == typeof t && (t = null);
+      var n = this;
+      return this.resolveUnknownParentChain(e).then(function(e) {
+        var t = o.Promise.as(null);
+        e.forEach(function(e) {
+          t = t.then(function() {
+            return n.expand(e);
+          });
+        });
+
+        return t;
+      }).then(function() {
+        var i = n.getItem(e);
+        i && i.reveal(t);
+      });
+    };
+
+    t.prototype.resolveUnknownParentChain = function(e) {
+      var t = this;
+      return this.context.dataSource.getParent(this.context.tree, e).then(function(e) {
+        return e ? t.resolveUnknownParentChain(e).then(function(t) {
+          t.push(e);
+
+          return t;
+        }) : o.Promise.as([]);
+      });
+    };
+
+    t.prototype.setHighlight = function(e, t) {
+      this.getHighlight();
+      this.setTraits("highlighted", e ? [e] : []);
+      var n = {
+        highlight: this.getHighlight(),
+        payload: t
+      };
+      this.emit("highlight", n);
+    };
+
+    t.prototype.getHighlight = function() {
+      var e = this.getElementsWithTrait("highlighted");
+      return 0 === e.length ? null : e[0];
+    };
+
+    t.prototype.isHighlighted = function(e) {
+      var t = this.getItem(e);
+      return t ? t.hasTrait("highlighted") : !1;
+    };
+
+    t.prototype.select = function(e, t) {
+      this.selectAll([e], t);
+    };
+
+    t.prototype.selectAll = function(e, t) {
+      this.addTraits("selected", e);
+      var n = {
+        selection: this.getSelection(),
+        payload: t
+      };
+      this.emit("selection", n);
+    };
+
+    t.prototype.deselect = function(e, t) {
+      this.deselectAll([e], t);
+    };
+
+    t.prototype.deselectAll = function(e, t) {
+      this.removeTraits("selected", e);
+      var n = {
+        selection: this.getSelection(),
+        payload: t
+      };
+      this.emit("selection", n);
+    };
+
+    t.prototype.setSelection = function(e, t) {
+      this.setTraits("selected", e);
+      var n = {
+        selection: this.getSelection(),
+        payload: t
+      };
+      this.emit("selection", n);
+    };
+
+    t.prototype.isSelected = function(e) {
+      var t = this.getItem(e);
+      return t ? t.hasTrait("selected") : !1;
+    };
+
+    t.prototype.getSelection = function() {
+      return this.getElementsWithTrait("selected");
+    };
+
+    t.prototype.selectNext = function(e, t) {
+      "undefined" == typeof e && (e = 1);
+      for (var n, i = this.getSelection(), o = i.length > 0 ? i[0] : this.input, r = this.getNavigator(o, !1), s = 0; e >
+        s && (n = r.next(), n); s++) o = n;
+      this.setSelection([o], t);
+    };
+
+    t.prototype.selectPrevious = function(e, t) {
+      "undefined" == typeof e && (e = 1);
+      var n = this.getSelection();
+
+      var i = null;
+
+      var o = null;
+      if (0 === n.length) {
+        for (var r = this.getNavigator(this.input); i = r.next();) o = i;
+        this.setSelection([o], t);
+
+        return void 0;
+      }
+      i = n[0];
+      for (var r = this.getNavigator(i, !1), s = 0; e > s && (o = r.previous(), o); s++) i = o;
+      this.setSelection([i], t);
+    };
+
+    t.prototype.selectParent = function(e) {
+      var t = this.getSelection();
+
+      var n = t.length > 0 ? t[0] : this.input;
+
+      var i = this.getNavigator(n, !1);
+
+      var o = i.parent();
+      o && this.setSelection([o], e);
+    };
+
+    t.prototype.setFocus = function(e, t) {
+      this.setTraits("focused", e ? [e] : []);
+      var n = {
+        focus: this.getFocus(),
+        payload: t
+      };
+      this.emit("focus", n);
+    };
+
+    t.prototype.isFocused = function(e) {
+      var t = this.getItem(e);
+      return t ? t.hasTrait("focused") : !1;
+    };
+
+    t.prototype.getFocus = function() {
+      var e = this.getElementsWithTrait("focused");
+      return 0 === e.length ? null : e[0];
+    };
+
+    t.prototype.focusNext = function(e, t) {
+      "undefined" == typeof e && (e = 1);
+      for (var n, i = this.getFocus() || this.input, o = this.getNavigator(i, !1), r = 0; e > r && (n = o.next(), n); r++)
+        i = n;
+      this.setFocus(i, t);
+    };
+
+    t.prototype.focusPrevious = function(e, t) {
+      "undefined" == typeof e && (e = 1);
+      for (var n, i = this.getFocus() || this.input, o = this.getNavigator(i, !1), r = 0; e > r && (n = o.previous(),
+        n); r++) i = n;
+      this.setFocus(i, t);
+    };
+
+    t.prototype.focusParent = function(e) {
+      var t = this.getFocus() || this.input;
+
+      var n = this.getNavigator(t, !1);
+
+      var i = n.parent();
+      i && this.setFocus(i, e);
+    };
+
+    t.prototype.focusFirst = function(e) {
+      var t = this.getNavigator(this.input);
+
+      var n = t.first();
+      n && this.setFocus(n, e);
+    };
+
+    t.prototype.focusLast = function(e) {
+      var t = this.getNavigator(this.input);
+
+      var n = t.last();
+      n && this.setFocus(n, e);
+    };
+
+    t.prototype.getNavigator = function(e, t) {
+      "undefined" == typeof e && (e = null);
+
+      "undefined" == typeof t && (t = !0);
+
+      return new c(this.getItem(e), t);
+    };
+
+    t.prototype.isElementInTree = function(e) {
+      return this.registry.isRegistered(this.context.dataSource.getId(this.context.tree, e));
+    };
+
+    t.prototype.getItem = function(e) {
+      "undefined" == typeof e && (e = null);
+
+      return null === e ? this.input : e instanceof u ? e : "string" == typeof e ? this.registry.getItem(e) : this.registry
+        .getItem(this.context.dataSource.getId(this.context.tree, e));
+    };
+
+    t.prototype.addTraits = function(e, t) {
+      for (var n, i = this.traitsToItems[e] || {}, o = 0, r = t.length; r > o; o++) n = this.getItem(t[o]);
+
+      n && (n.addTrait(e), i[n.id] = n);
+      this.traitsToItems[e] = i;
+    };
+
+    t.prototype.removeTraits = function(e, t) {
+      var n;
+
+      var i;
+
+      var o = this.traitsToItems[e] || {};
+      if (0 === t.length) {
+        for (i in o) o.hasOwnProperty(i) && (n = o[i], n.removeTrait(e));
+        delete this.traitsToItems[e];
+      } else
+        for (var r = 0, s = t.length; s > r; r++) n = this.getItem(t[r]);
+
+      n && (n.removeTrait(e), delete o[n.id]);
+    };
+
+    t.prototype.setTraits = function(e, t) {
+      if (0 === t.length) this.removeTraits(e, t);
+      else {
+        for (var n, i = {}, o = 0, r = t.length; r > o; o++) n = this.getItem(t[o]);
+
+        n && (i[n.id] = n);
+        var s;
+
+        var a = this.traitsToItems[e] || {};
+
+        var u = [];
+        for (s in a) a.hasOwnProperty(s) && (i.hasOwnProperty(s) ? delete i[s] : u.push(a[s]));
+        for (var o = 0, r = u.length; r > o; o++) n = u[o];
+
+        n.removeTrait(e);
+
+        delete a[n.id];
+        for (s in i) i.hasOwnProperty(s) && (n = i[s], n.addTrait(e), a[s] = n);
+        this.traitsToItems[e] = a;
+      }
+    };
+
+    t.prototype.getElementsWithTrait = function(e) {
+      var t;
+
+      var n = [];
+
+      var i = this.traitsToItems[e] || {};
+      for (t in i) i.hasOwnProperty(t) && n.push(i[t].getElement());
+      return n;
+    };
+
+    t.prototype.dispose = function() {
+      this.registry && (this.registry.dispose(), this.registry = null);
+
+      e.prototype.dispose.call(this);
+    };
+
+    return t;
+  }(i.EventEmitter);
+  t.TreeModel = d;
+});

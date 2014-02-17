@@ -1,11 +1,7 @@
-define('vs/editor/core/range', [
-  'require',
-  'exports',
-  'vs/editor/core/position'
-], function(e, t, n) {
+define("vs/editor/core/range", ["require", "exports", "vs/editor/core/position"], function(e, t, n) {
   function i(e) {
-    return e && 'number' == typeof e.startLineNumber && 'number' == typeof e.startColumn && 'number' == typeof e.endLineNumber &&
-      'number' == typeof e.endColumn;
+    return e && "number" == typeof e.startLineNumber && "number" == typeof e.startColumn && "number" == typeof e.endLineNumber &&
+      "number" == typeof e.endColumn;
   }
 
   function o(e) {
@@ -24,25 +20,43 @@ define('vs/editor/core/range', [
   }
 
   function a(e, t) {
-    var n = e.startLineNumber,
-      i = e.startColumn,
-      o = e.endLineNumber,
-      r = e.endColumn,
-      s = t.startLineNumber,
-      a = t.startColumn,
-      u = t.endLineNumber,
-      l = t.endColumn;
-    return s > n ? (n = s, i = a) : n === s && (i = Math.max(i, a)), o > u ? (o = u, r = l) : o === u && (r = Math.min(
-      r, l)), n > o ? null : n === o && i > r ? null : new g(n, i, o, r);
+    var n = e.startLineNumber;
+
+    var i = e.startColumn;
+
+    var o = e.endLineNumber;
+
+    var r = e.endColumn;
+
+    var s = t.startLineNumber;
+
+    var a = t.startColumn;
+
+    var u = t.endLineNumber;
+
+    var l = t.endColumn;
+    s > n ? (n = s, i = a) : n === s && (i = Math.max(i, a));
+
+    o > u ? (o = u, r = l) : o === u && (r = Math.min(r, l));
+
+    return n > o ? null : n === o && i > r ? null : new g(n, i, o, r);
   }
 
   function u(e, t) {
-    var n, i, o, r;
-    return t.startLineNumber < e.startLineNumber ? (n = t.startLineNumber, i = t.startColumn) : t.startLineNumber ===
-      e.startLineNumber ? (n = t.startLineNumber, i = Math.min(t.startColumn, e.startColumn)) : (n = e.startLineNumber,
-        i = e.startColumn), t.endLineNumber > e.endLineNumber ? (o = t.endLineNumber, r = t.endColumn) : t.endLineNumber ===
-      e.endLineNumber ? (o = t.endLineNumber, r = Math.max(t.endColumn, e.endColumn)) : (o = e.endLineNumber, r = e.endColumn),
-      new g(n, i, o, r);
+    var n;
+
+    var i;
+
+    var o;
+
+    var r;
+    t.startLineNumber < e.startLineNumber ? (n = t.startLineNumber, i = t.startColumn) : t.startLineNumber === e.startLineNumber ?
+      (n = t.startLineNumber, i = Math.min(t.startColumn, e.startColumn)) : (n = e.startLineNumber, i = e.startColumn);
+
+    t.endLineNumber > e.endLineNumber ? (o = t.endLineNumber, r = t.endColumn) : t.endLineNumber === e.endLineNumber ?
+      (o = t.endLineNumber, r = Math.max(t.endColumn, e.endColumn)) : (o = e.endLineNumber, r = e.endColumn);
+
+    return new g(n, i, o, r);
   }
 
   function l(e, t) {
@@ -73,40 +87,84 @@ define('vs/editor/core/range', [
   function f(e) {
     return new g(e.startLineNumber, e.startColumn, e.endLineNumber, e.endColumn);
   }
-  t.isIRange = i, t.isEmpty = o, t.containsPosition = r, t.containsRange = s, t.intersectRanges = a, t.plusRange = u,
-    t.equalsRange = l, t.compareRangesUsingStarts = c, t.compareRangesUsingEnds = d, t.spansMultipleLines = h, t.hashCode =
-    p;
+  t.isIRange = i;
+
+  t.isEmpty = o;
+
+  t.containsPosition = r;
+
+  t.containsRange = s;
+
+  t.intersectRanges = a;
+
+  t.plusRange = u;
+
+  t.equalsRange = l;
+
+  t.compareRangesUsingStarts = c;
+
+  t.compareRangesUsingEnds = d;
+
+  t.spansMultipleLines = h;
+
+  t.hashCode = p;
   var g = function() {
     function e(e, t, n, i) {
       e > n || e === n && t > i ? (this.startLineNumber = n, this.startColumn = i, this.endLineNumber = e, this.endColumn =
         t) : (this.startLineNumber = e, this.startColumn = t, this.endLineNumber = n, this.endColumn = i);
     }
-    return e.prototype.isEmpty = function() {
+    e.prototype.isEmpty = function() {
       return t.isEmpty(this);
-    }, e.prototype.containsPosition = function(e) {
+    };
+
+    e.prototype.containsPosition = function(e) {
       return t.containsPosition(this, e);
-    }, e.prototype.containsRange = function(e) {
+    };
+
+    e.prototype.containsRange = function(e) {
       return t.containsRange(this, e);
-    }, e.prototype.plusRange = function(e) {
+    };
+
+    e.prototype.plusRange = function(e) {
       return t.plusRange(this, e);
-    }, e.prototype.intersectRanges = function(e) {
+    };
+
+    e.prototype.intersectRanges = function(e) {
       return t.intersectRanges(this, e);
-    }, e.prototype.equalsRange = function(e) {
+    };
+
+    e.prototype.equalsRange = function(e) {
       return t.equalsRange(this, e);
-    }, e.prototype.getEndPosition = function() {
+    };
+
+    e.prototype.getEndPosition = function() {
       return new n.Position(this.endLineNumber, this.endColumn);
-    }, e.prototype.getStartPosition = function() {
+    };
+
+    e.prototype.getStartPosition = function() {
       return new n.Position(this.startLineNumber, this.startColumn);
-    }, e.prototype.cloneRange = function() {
+    };
+
+    e.prototype.cloneRange = function() {
       return new e(this.startLineNumber, this.startColumn, this.endLineNumber, this.endColumn);
-    }, e.prototype.toString = function() {
-      return '[' + this.startLineNumber + ',' + this.startColumn + ' -> ' + this.endLineNumber + ',' + this.endColumn +
-        ']';
-    }, e.prototype.setEndPosition = function(t, n) {
+    };
+
+    e.prototype.toString = function() {
+      return "[" + this.startLineNumber + "," + this.startColumn + " -> " + this.endLineNumber + "," + this.endColumn +
+        "]";
+    };
+
+    e.prototype.setEndPosition = function(t, n) {
       return new e(this.startLineNumber, this.startColumn, t, n);
-    }, e.prototype.setStartPosition = function(t, n) {
+    };
+
+    e.prototype.setStartPosition = function(t, n) {
       return new e(t, n, this.endLineNumber, this.endColumn);
-    }, e;
+    };
+
+    return e;
   }();
-  t.Range = g, t.create = f;
-})
+  t.Range = g;
+
+  t.create = f;
+});

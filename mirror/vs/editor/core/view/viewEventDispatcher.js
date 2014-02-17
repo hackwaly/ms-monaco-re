@@ -1,36 +1,53 @@
-define(["require", "exports", "vs/base/eventEmitter"], function(a, b, c) {
-  var d = c,
-    e = function() {
-      function a(a) {
-        this.eventHandlerGateKeeper = a, this.eventHandlers = [], this.eventQueue = [], this.isConsumingQueue = !1
-      }
-      return a.prototype.addEventHandler = function(a) {
-        this.eventHandlers.push(a)
-      }, a.prototype.removeEventHandler = function(a) {
-        for (var b = 0; b < this.eventHandlers.length; b++)
-          if (this.eventHandlers[b] === a) {
-            this.eventHandlers.splice(b, 1);
-            break
-          }
-      }, a.prototype.emit = function(a, b) {
-        this.eventQueue.push(new d.EmitterEvent(a, b)), this.isConsumingQueue || this.consumeQueue()
-      }, a.prototype.emitMany = function(a) {
-        this.eventQueue = this.eventQueue.concat(a), this.isConsumingQueue || this.consumeQueue()
-      }, a.prototype.consumeQueue = function() {
-        var a = this;
-        this.eventHandlerGateKeeper(function() {
-          try {
-            a.isConsumingQueue = !0;
-            var b, c, d, e;
-            while (a.eventQueue.length > 0) {
-              e = a.eventQueue, a.eventQueue = [], d = a.eventHandlers.slice(0);
-              for (b = 0, c = d.length; b < c; b++) d[b].handleEvents(e)
-            }
-          } finally {
-            a.isConsumingQueue = !1
-          }
-        })
-      }, a
-    }();
-  b.ViewEventDispatcher = e
-})
+define("vs/editor/core/view/viewEventDispatcher", ["require", "exports", "vs/base/eventEmitter"], function(e, t, n) {
+  var i = function() {
+    function e(e) {
+      this.eventHandlerGateKeeper = e;
+
+      this.eventHandlers = [];
+
+      this.eventQueue = [];
+
+      this.isConsumingQueue = !1;
+    }
+    e.prototype.addEventHandler = function(e) {
+      this.eventHandlers.push(e);
+    };
+
+    e.prototype.removeEventHandler = function(e) {
+      for (var t = 0; t < this.eventHandlers.length; t++)
+        if (this.eventHandlers[t] === e) {
+          this.eventHandlers.splice(t, 1);
+          break;
+        }
+    };
+
+    e.prototype.emit = function(e, t) {
+      this.eventQueue.push(new n.EmitterEvent(e, t));
+
+      this.isConsumingQueue || this.consumeQueue();
+    };
+
+    e.prototype.emitMany = function(e) {
+      this.eventQueue = this.eventQueue.concat(e);
+
+      this.isConsumingQueue || this.consumeQueue();
+    };
+
+    e.prototype.consumeQueue = function() {
+      var e = this;
+      this.eventHandlerGateKeeper(function() {
+        try {
+          e.isConsumingQueue = !0;
+          for (var t, n, i, o; e.eventQueue.length > 0;)
+            for (o = e.eventQueue, e.eventQueue = [], i = e.eventHandlers.slice(0), t = 0, n = i.length; n > t; t++)
+              i[t].handleEvents(o);
+        } finally {
+          e.isConsumingQueue = !1;
+        }
+      });
+    };
+
+    return e;
+  }();
+  t.ViewEventDispatcher = i;
+});

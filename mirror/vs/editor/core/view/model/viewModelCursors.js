@@ -1,67 +1,79 @@
-define(["require", "exports", "vs/editor/core/range", "vs/editor/core/selection", "vs/editor/core/view/viewContext"],
-  function(a, b, c, d, e) {
-    var f = c,
-      g = d,
-      h = e,
-      i = function() {
-        function a(a, b) {
-          this.configuration = a, this.converter = b, this.lastCursorPositionChangedEvent = null, this.lastCursorSelectionChangedEvent =
-            null
-        }
-        return a.prototype.getSelections = function() {
-          if (this.lastCursorSelectionChangedEvent) {
-            var a = [];
-            a.push(this.converter.convertModelSelectionToViewSelection(this.lastCursorSelectionChangedEvent.selection));
-            for (var b = 0, c = this.lastCursorSelectionChangedEvent.secondarySelections.length; b < c; b++) a.push(
-              this.converter.convertModelSelectionToViewSelection(this.lastCursorSelectionChangedEvent.secondarySelections[
-                b]));
-            return a
-          }
-          return [new g.Selection(1, 1, 1, 1)]
-        }, a.prototype.onCursorPositionChanged = function(a, b) {
-          this.lastCursorPositionChangedEvent = a;
-          var c = this.converter.validateViewPosition(a.viewPosition.lineNumber, a.viewPosition.column, a.position),
-            d = this.configuration.editor.stopRenderingLineAfter;
-          d !== -1 && c.column > d && (c = c.clone(), c.column = d);
-          var e = [];
-          for (var f = 0, g = a.secondaryPositions.length; f < g; f++) e[f] = this.converter.validateViewPosition(a.secondaryViewPositions[
-            f].lineNumber, a.secondaryViewPositions[f].column, a.secondaryPositions[f]), d !== -1 && e[f].column > d &&
-            (e[f] = e[f].clone(), e[f].column = d);
-          var i = {
-            position: c,
-            secondaryPositions: e,
-            isInEditableRange: a.isInEditableRange
-          };
-          b(h.EventNames.CursorPositionChangedEvent, i)
-        }, a.prototype.onCursorSelectionChanged = function(a, b) {
-          this.lastCursorSelectionChangedEvent = a;
-          var c = this.converter.convertModelSelectionToViewSelection(a.selection),
-            d = [];
-          for (var e = 0, f = a.secondarySelections.length; e < f; e++) d[e] = this.converter.convertModelSelectionToViewSelection(
-            a.secondarySelections[e]);
-          var g = {
-            selection: c,
-            secondarySelections: d
-          };
-          b(h.EventNames.CursorSelectionChangedEvent, g)
-        }, a.prototype.onCursorRevealRange = function(a, b) {
-          var c = null;
-          if (a.viewRange) {
-            var d = this.converter.validateViewPosition(a.viewRange.startLineNumber, a.viewRange.startColumn, a.range.getStartPosition()),
-              e = this.converter.validateViewPosition(a.viewRange.endLineNumber, a.viewRange.endColumn, a.range.getEndPosition());
-            c = new f.Range(d.lineNumber, d.column, e.lineNumber, e.column)
-          } else c = this.converter.convertModelRangeToViewRange(a.range);
-          var g = {
-            range: c,
-            revealVerticalInCenter: a.revealVerticalInCenter,
-            revealHorizontal: a.revealHorizontal
-          };
-          b(h.EventNames.RevealRangeEvent, g)
-        }, a.prototype.onLineMappingChanged = function(a) {
-          this.lastCursorPositionChangedEvent && this.onCursorPositionChanged(this.lastCursorPositionChangedEvent, a),
-            this.lastCursorSelectionChangedEvent && this.onCursorSelectionChanged(this.lastCursorSelectionChangedEvent,
-              a)
-        }, a
-      }();
-    b.ViewModelCursors = i
-  })
+define("vs/editor/core/view/model/viewModelCursors", ["require", "exports", "vs/editor/core/range",
+  "vs/editor/core/selection", "vs/editor/core/view/viewContext"
+], function(e, t, n, i, o) {
+  var r = function() {
+    function e(e, t) {
+      this.configuration = e;
+
+      this.converter = t;
+
+      this.lastCursorPositionChangedEvent = null;
+
+      this.lastCursorSelectionChangedEvent = null;
+    }
+    e.prototype.getSelections = function() {
+      if (this.lastCursorSelectionChangedEvent) {
+        var e = [];
+        e.push(this.converter.convertModelSelectionToViewSelection(this.lastCursorSelectionChangedEvent.selection));
+        for (var t = 0, n = this.lastCursorSelectionChangedEvent.secondarySelections.length; n > t; t++) e.push(this.converter
+          .convertModelSelectionToViewSelection(this.lastCursorSelectionChangedEvent.secondarySelections[t]));
+        return e;
+      }
+      return [new i.Selection(1, 1, 1, 1)];
+    };
+
+    e.prototype.onCursorPositionChanged = function(e, t) {
+      this.lastCursorPositionChangedEvent = e;
+      var n = this.converter.validateViewPosition(e.viewPosition.lineNumber, e.viewPosition.column, e.position);
+
+      var i = this.configuration.editor.stopRenderingLineAfter; - 1 !== i && n.column > i && (n = n.clone(), n.column =
+        i);
+      for (var r = [], s = 0, a = e.secondaryPositions.length; a > s; s++) r[s] = this.converter.validateViewPosition(
+        e.secondaryViewPositions[s].lineNumber, e.secondaryViewPositions[s].column, e.secondaryPositions[s]);
+
+      - 1 !== i && r[s].column > i && (r[s] = r[s].clone(), r[s].column = i);
+      var u = {
+        position: n,
+        secondaryPositions: r,
+        isInEditableRange: e.isInEditableRange
+      };
+      t(o.EventNames.CursorPositionChangedEvent, u);
+    };
+
+    e.prototype.onCursorSelectionChanged = function(e, t) {
+      this.lastCursorSelectionChangedEvent = e;
+      for (var n = this.converter.convertModelSelectionToViewSelection(e.selection), i = [], r = 0, s = e.secondarySelections
+          .length; s > r; r++) i[r] = this.converter.convertModelSelectionToViewSelection(e.secondarySelections[r]);
+      var a = {
+        selection: n,
+        secondarySelections: i
+      };
+      t(o.EventNames.CursorSelectionChangedEvent, a);
+    };
+
+    e.prototype.onCursorRevealRange = function(e, t) {
+      var i = null;
+      if (e.viewRange) {
+        var r = this.converter.validateViewPosition(e.viewRange.startLineNumber, e.viewRange.startColumn, e.range.getStartPosition());
+
+        var s = this.converter.validateViewPosition(e.viewRange.endLineNumber, e.viewRange.endColumn, e.range.getEndPosition());
+        i = new n.Range(r.lineNumber, r.column, s.lineNumber, s.column);
+      } else i = this.converter.convertModelRangeToViewRange(e.range);
+      var a = {
+        range: i,
+        revealVerticalInCenter: e.revealVerticalInCenter,
+        revealHorizontal: e.revealHorizontal
+      };
+      t(o.EventNames.RevealRangeEvent, a);
+    };
+
+    e.prototype.onLineMappingChanged = function(e) {
+      this.lastCursorPositionChangedEvent && this.onCursorPositionChanged(this.lastCursorPositionChangedEvent, e);
+
+      this.lastCursorSelectionChangedEvent && this.onCursorSelectionChanged(this.lastCursorSelectionChangedEvent, e);
+    };
+
+    return e;
+  }();
+  t.ViewModelCursors = r;
+});

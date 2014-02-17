@@ -1,237 +1,360 @@
-define(["require", "exports", "vs/editor/core/position", "vs/editor/core/range", "vs/editor/core/view/viewContext",
-  "vs/editor/editor"
-], function(a, b, c, d, e, f) {
-  var g = c,
-    h = d,
-    i = e,
-    j = f,
-    k = function() {
-      function a(a, b, c, d, e) {
-        typeof c == "undefined" && (c = null), typeof d == "undefined" && (d = null), typeof e == "undefined" && (e =
-          null), this.element = a, this.type = b, this.position = c, !d && c && (d = new h.Range(c.lineNumber, c.column,
-          c.lineNumber, c.column)), this.range = d, this.detail = e
+define("vs/editor/core/controller/mouseTarget", ["require", "exports", "vs/editor/core/position",
+  "vs/editor/core/range", "vs/editor/core/view/viewContext", "vs/editor/editor"
+], function(e, t, n, i, o) {
+  var r = function() {
+    function e(e, t, n, o, r) {
+      "undefined" == typeof n && (n = null);
+
+      "undefined" == typeof o && (o = null);
+
+      "undefined" == typeof r && (r = null);
+
+      this.element = e;
+
+      this.type = t;
+
+      this.position = n;
+
+      !o && n && (o = new i.Range(n.lineNumber, n.column, n.lineNumber, n.column));
+
+      this.range = o;
+
+      this.detail = r;
+    }
+    e.prototype._typeToString = function() {
+      return 1 === this.type ? "TEXTAREA" : 2 === this.type ? "GUTTER_GLYPH_MARGIN" : 3 === this.type ?
+        "GUTTER_LINE_NUMBERS" : 4 === this.type ? "GUTTER_LINE_DECORATIONS" : 5 === this.type ? "GUTTER_VIEW_ZONE" :
+        6 === this.type ? "CONTENT_TEXT" : 7 === this.type ? "CONTENT_EMPTY" : 8 === this.type ? "CONTENT_VIEW_ZONE" :
+        9 === this.type ? "CONTENT_WIDGET" : 10 === this.type ? "OVERVIEW_RULER" : 11 === this.type ? "SCROLLBAR" :
+        12 === this.type ? "OVERLAY_WIDGET" : "UNKNOWN";
+    };
+
+    e.prototype.toString = function() {
+      return this._typeToString() + ": " + this.position + " - " + this.range + " - " + this.detail;
+    };
+
+    return e;
+  }();
+
+  var s = function() {
+    function e(e) {
+      return "[^/]*" + e + "[^/]*";
+    }
+
+    function t() {
+      return "[^/]+";
+    }
+
+    function n() {
+      for (var e = [], t = 0; t < arguments.length - 0; t++) e[t] = arguments[t + 0];
+      var n = !1;
+      "$" === e[e.length - 1] && (n = !0, e.pop());
+
+      return new RegExp(i + e.join("\\/") + (n ? "$" : ""));
+    }
+    var i = "^" + o.ClassNames.OVERFLOW_GUARD + "\\/";
+    return {
+      IS_TEXTAREA_COVER: n(e(o.ClassNames.TEXTAREA_COVER), "$"),
+      IS_TEXTAREA: n(o.ClassNames.TEXTAREA, "$"),
+      IS_VIEW_LINES: n(t(), t(), o.ClassNames.VIEW_LINES, "$"),
+      IS_CHILD_OF_VIEW_LINES: n(t(), t(), o.ClassNames.VIEW_LINES),
+      IS_CHILD_OF_SCROLLABLE_ELEMENT: n(e(o.ClassNames.SCROLLABLE_ELEMENT)),
+      IS_CHILD_OF_CONTENT_WIDGETS: n(t(), t(), o.ClassNames.CONTENT_WIDGETS),
+      IS_CHILD_OF_OVERLAY_WIDGETS: n(o.ClassNames.OVERLAY_WIDGETS),
+      IS_CHILD_OF_LINES_DECORATIONS: n(o.ClassNames.LINES_DECORATIONS),
+      IS_CHILD_OF_LINE_NUMBERS: n(t(), t(), o.ClassNames.LINE_NUMBERS),
+      IS_CHILD_OF_GLYPH_MARGIN: n(t(), t(), o.ClassNames.GLYPH_MARGIN)
+    };
+  }();
+
+  var a = function() {
+    function e(e, t) {
+      this.context = e;
+
+      this.viewHelper = t;
+    }
+    e.prototype.getClassNamePathTo = function(e, t) {
+      for (var n, i = []; e && e !== document.body && e !== t;) e.nodeType === e.ELEMENT_NODE && (n = e.className, n &&
+        i.unshift(n));
+
+      e = e.parentNode;
+      return i.join("/");
+    };
+
+    e.prototype.createMouseTarget = function(e, t, n) {
+      var i = Math.max(0, this.viewHelper.getScrollTop() + (t.posy - e.top));
+
+      var o = this.viewHelper.getScrollLeft() + (t.posx - e.left);
+
+      var a = t.target;
+
+      var u = this.getClassNamePathTo(a, this.viewHelper.viewDomNode);
+
+      var l = a.hasAttribute && a.hasAttribute("lineNumber") ? a.getAttribute("lineNumber") : null;
+
+      var c = a.hasAttribute && a.hasAttribute("column") ? a.getAttribute("column") : null;
+      if (l && c) return this.createMouseTargetFromViewCursor(a, parseInt(l, 10), parseInt(c, 10));
+      if (s.IS_CHILD_OF_CONTENT_WIDGETS.test(u)) return this.createMouseTargetFromContentWidgetsChild(a);
+      if (s.IS_CHILD_OF_OVERLAY_WIDGETS.test(u)) return this.createMouseTargetFromOverlayWidgetsChild(a);
+      if (s.IS_TEXTAREA_COVER.test(u)) return this.context.configuration.editor.glyphMargin ? this.createMouseTargetFromGlyphMargin(
+        a, i) : this.context.configuration.editor.lineNumbers ? this.createMouseTargetFromLineNumbers(a, i) : this.createMouseTargetFromLinesDecorationsChild(
+        a, i);
+      if (s.IS_TEXTAREA.test(u)) return new r(a, 1);
+      if (s.IS_VIEW_LINES.test(u)) return this.createMouseTargetFromViewLines(a, i);
+      if (!n || s.IS_CHILD_OF_VIEW_LINES.test(u)) {
+        var d = this._doHitTest(e, t);
+        if (d.position) return this.createMouseTargetFromHitTestPosition(a, d.position.lineNumber, d.position.column,
+          o);
+        d.hitTarget && (a = d.hitTarget, u = this.getClassNamePathTo(a, this.viewHelper.viewDomNode));
       }
-      return a.prototype._typeToString = function() {
-        return this.type === j.MouseTargetType.TEXTAREA ? "TEXTAREA" : this.type === j.MouseTargetType.GUTTER_GLYPH_MARGIN ?
-          "GUTTER_GLYPH_MARGIN" : this.type === j.MouseTargetType.GUTTER_LINE_NUMBERS ? "GUTTER_LINE_NUMBERS" : this.type ===
-          j.MouseTargetType.GUTTER_LINE_DECORATIONS ? "GUTTER_LINE_DECORATIONS" : this.type === j.MouseTargetType.GUTTER_VIEW_ZONE ?
-          "GUTTER_VIEW_ZONE" : this.type === j.MouseTargetType.CONTENT_TEXT ? "CONTENT_TEXT" : this.type === j.MouseTargetType
-          .CONTENT_EMPTY ? "CONTENT_EMPTY" : this.type === j.MouseTargetType.CONTENT_VIEW_ZONE ? "CONTENT_VIEW_ZONE" :
-          this.type === j.MouseTargetType.CONTENT_WIDGET ? "CONTENT_WIDGET" : this.type === j.MouseTargetType.OVERVIEW_RULER ?
-          "OVERVIEW_RULER" : this.type === j.MouseTargetType.SCROLLBAR ? "SCROLLBAR" : this.type === j.MouseTargetType
-          .OVERLAY_WIDGET ? "OVERLAY_WIDGET" : "UNKNOWN"
-      }, a.prototype.toString = function() {
-        return this._typeToString() + ": " + this.position + " - " + this.range + " - " + this.detail
-      }, a
-    }(),
-    l = {
-      IS_TEXTAREA_COVER: new RegExp("^[^/]*" + i.ClassNames.TEXTAREA_COVER + "[^/]*$"),
-      IS_TEXTAREA: new RegExp("^" + i.ClassNames.TEXTAREA + "$"),
-      IS_VIEW_LINES: new RegExp("^[^/]+/[^/]+/" + i.ClassNames.VIEW_LINES + "$"),
-      IS_CHILD_OF_VIEW_LINES: new RegExp("^[^/]+/[^/]+/" + i.ClassNames.VIEW_LINES),
-      IS_CHILD_OF_SCROLLABLE_ELEMENT: new RegExp("^[^/]*" + i.ClassNames.SCROLLABLE_ELEMENT),
-      IS_CHILD_OF_CONTENT_WIDGETS: new RegExp("^[^/]+/[^/]+/" + i.ClassNames.CONTENT_WIDGETS),
-      IS_CHILD_OF_OVERLAY_WIDGETS: new RegExp("^" + i.ClassNames.OVERLAY_WIDGETS),
-      IS_CHILD_OF_LINES_DECORATIONS: new RegExp(i.ClassNames.LINES_DECORATIONS),
-      IS_CHILD_OF_LINE_NUMBERS: new RegExp("^[^/]+/[^/]+/" + i.ClassNames.LINE_NUMBERS),
-      IS_CHILD_OF_GLYPH_MARGIN: new RegExp("^[^/]+/[^/]+/" + i.ClassNames.GLYPH_MARGIN)
-    }, m = function() {
-      function a(a, b) {
-        this.context = a, this.viewHelper = b
+      return s.IS_CHILD_OF_SCROLLABLE_ELEMENT.test(u) ? this.createMouseTargetFromScrollbar(a, i) : s.IS_CHILD_OF_LINES_DECORATIONS
+        .test(u) ? this.createMouseTargetFromLinesDecorationsChild(a, i) : s.IS_CHILD_OF_LINE_NUMBERS.test(u) ? this.createMouseTargetFromLineNumbers(
+          a, i) : s.IS_CHILD_OF_GLYPH_MARGIN.test(u) ? this.createMouseTargetFromGlyphMargin(a, i) : this.createMouseTargetFromUnknownTarget(
+          a);
+    };
+
+    e.prototype._isChild = function(e, t, n) {
+      for (; e && e !== document.body;) {
+        if (e === t) return !0;
+        if (e === n) return !1;
+        e = e.parentNode;
       }
-      return a.prototype.getClassNamePathTo = function(a, b) {
-        var c = [],
-          d;
-        while (a && a !== document.body) {
-          if (a === b) break;
-          a.nodeType === a.ELEMENT_NODE && (d = a.className, d && c.unshift(d)), a = a.parentNode
+      return !1;
+    };
+
+    e.prototype._findAttribute = function(e, t, n) {
+      for (; e && e !== document.body;) {
+        if (e.hasAttribute(t)) return e.getAttribute(t);
+        if (e === n) return null;
+        e = e.parentNode;
+      }
+      return null;
+    };
+
+    e.prototype._doHitTestWithCaretRangeFromPoint = function(e, t) {
+      var n = null;
+
+      var i = null;
+
+      var r = t.posx - document.body.scrollLeft - document.documentElement.scrollLeft;
+
+      var s = t.posy - document.body.scrollTop - document.documentElement.scrollTop;
+
+      var a = document.caretRangeFromPoint(r, s);
+
+      var u = a ? a.startContainer : null;
+
+      var l = u ? u.parentNode : null;
+
+      var c = l ? l.parentNode : null;
+
+      var d = c ? c.parentNode : null;
+
+      var h = d && d.nodeType === d.ELEMENT_NODE ? d.className : "";
+      h === o.ClassNames.VIEW_LINE ? n = this.viewHelper.getPositionFromDOMInfo(a.startContainer.parentNode, a.startOffset) :
+        i = l;
+
+      a && a.detach();
+
+      return {
+        position: n,
+        hitTarget: i
+      };
+    };
+
+    e.prototype._doHitTestWithCaretPositionFromPoint = function(e) {
+      var t = null;
+
+      var n = null;
+
+      var i = e.posx - document.body.scrollLeft - document.documentElement.scrollLeft;
+
+      var o = e.posy - document.body.scrollTop - document.documentElement.scrollTop;
+
+      var r = document.caretPositionFromPoint(i, o);
+
+      var s = document.createRange();
+      s.setStart(r.offsetNode, r.offset);
+
+      s.collapse(!0);
+
+      t = this.viewHelper.getPositionFromDOMInfo(s.startContainer.parentNode, s.startOffset);
+
+      s.detach();
+
+      return {
+        position: t,
+        hitTarget: n
+      };
+    };
+
+    e.prototype._doHitTestWithMoveToPoint = function(e) {
+      var t = null;
+
+      var n = null;
+
+      var i = document.body.createTextRange();
+      try {
+        var r = e.posx - document.body.scrollLeft - document.documentElement.scrollLeft;
+
+        var s = e.posy - document.body.scrollTop - document.documentElement.scrollTop;
+        i.moveToPoint(r, s);
+      } catch (a) {
+        return {
+          position: null,
+          hitTarget: null
+        };
+      }
+      i.collapse(!0);
+      var u = i ? i.parentElement() : null;
+
+      var l = u ? u.parentNode : null;
+
+      var c = l ? l.parentNode : null;
+
+      var d = c && c.nodeType === c.ELEMENT_NODE ? c.className : "";
+      if (d === o.ClassNames.VIEW_LINE) {
+        var h = i.duplicate();
+        h.moveToElementText(u);
+
+        h.setEndPoint("EndToStart", i);
+
+        t = this.viewHelper.getPositionFromDOMInfo(u, h.text.length);
+
+        h.moveToElementText(this.viewHelper.viewDomNode);
+      } else n = u;
+      i.moveToElementText(this.viewHelper.viewDomNode);
+
+      return {
+        position: t,
+        hitTarget: n
+      };
+    };
+
+    e.prototype._doHitTest = function(e, t) {
+      return document.caretRangeFromPoint ? this._doHitTestWithCaretRangeFromPoint(e, t) : document.caretPositionFromPoint ?
+        this._doHitTestWithCaretPositionFromPoint(t) : document.body.createTextRange ? this._doHitTestWithMoveToPoint(
+          t) : {
+          position: null,
+          hitTarget: null
+      };
+    };
+
+    e.prototype._getZoneAtCoord = function(e) {
+      var t = this.viewHelper.getWhitespaceAtVerticalOffset(e);
+      if (t) {
+        var i;
+
+        var o;
+
+        var r = t.verticalOffset + t.height / 2;
+
+        var s = this.context.model.getLineCount();
+        t.afterLineNumber === s || r > e && t.afterLineNumber > 0 ? (i = t.afterLineNumber, o = this.context.model.getLineMaxColumn(
+          i)) : (i = t.afterLineNumber + 1, o = 1);
+        var a = new n.Position(i, o);
+        return {
+          viewZoneId: t.id,
+          position: a
+        };
+      }
+      return null;
+    };
+
+    e.prototype._getFullLineRangeAtCoord = function(e) {
+      var t = this.viewHelper.getLineNumberAtVerticalOffset(e);
+
+      var n = this.context.model.getLineMaxColumn(t);
+      return new i.Range(t, 1, t, n);
+    };
+
+    e.prototype.createMouseTargetFromViewCursor = function(e, t, i) {
+      return new r(e, 6, new n.Position(t, i));
+    };
+
+    e.prototype.createMouseTargetFromViewLines = function(e, t) {
+      var i = this._getZoneAtCoord(t);
+      if (i) return new r(e, 8, i.position, null, i.viewZoneId);
+      var o = this.context.model.getLineCount();
+
+      var s = this.context.model.getLineMaxColumn(o);
+      return new r(e, 7, new n.Position(o, s));
+    };
+
+    e.prototype.createMouseTargetFromHitTestPosition = function(e, t, o, s) {
+      var a = new n.Position(t, o);
+
+      var u = this.viewHelper.getLineWidth(t);
+      if (s > u) return new r(e, 7, a);
+      var l = this.viewHelper.visibleRangeForPosition2(t, o).left;
+      if (s === l) return new r(e, 6, a);
+      var c;
+      if (o > 1) {
+        var d = this.viewHelper.visibleRangeForPosition2(t, o).left;
+        if (c = !1, c = c || s > d && l > s, c = c || s > l && d > s) {
+          var h = new i.Range(t, o, t, o - 1);
+          return new r(e, 6, a, h);
         }
-        return c.join("/")
-      }, a.prototype.createMouseTarget = function(a, b, c) {
-        var d = Math.max(0, this.viewHelper.getScrollTop() + (b.posy - a.top)),
-          e = this.viewHelper.getScrollLeft() + (b.posx - a.left),
-          f = b.target,
-          g = this.getClassNamePathTo(f, this.viewHelper.viewDomNode),
-          h = f.hasAttribute("lineNumber") ? f.getAttribute("lineNumber") : null,
-          i = f.hasAttribute("column") ? f.getAttribute("column") : null;
-        if (h && i) return this.createMouseTargetFromViewCursor(f, parseInt(h, 10), parseInt(i, 10));
-        if (l.IS_CHILD_OF_CONTENT_WIDGETS.test(g)) return this.createMouseTargetFromContentWidgetsChild(f);
-        if (l.IS_CHILD_OF_OVERLAY_WIDGETS.test(g)) return this.createMouseTargetFromOverlayWidgetsChild(f);
-        if (l.IS_TEXTAREA_COVER.test(g)) return this.context.configuration.editor.glyphMargin ? this.createMouseTargetFromGlyphMargin(
-          f, d) : this.context.configuration.editor.lineNumbers ? this.createMouseTargetFromLineNumbers(f, d) : this.createMouseTargetFromLinesDecorationsChild(
-          f, d);
-        if (l.IS_TEXTAREA.test(g)) return new k(f, j.MouseTargetType.TEXTAREA);
-        if (l.IS_VIEW_LINES.test(g)) return this.createMouseTargetFromViewLines(f, d);
-        if (!c || l.IS_CHILD_OF_VIEW_LINES.test(g)) {
-          var m = this._doHitTest(a, b);
-          if (m.position) return this.createMouseTargetFromHitTestPosition(f, m.position.lineNumber, m.position.column,
-            e);
-          m.hitTarget && (f = m.hitTarget, g = this.getClassNamePathTo(f, this.viewHelper.viewDomNode))
-        }
-        return l.IS_CHILD_OF_SCROLLABLE_ELEMENT.test(g) ? this.createMouseTargetFromScrollbar(f, d) : l.IS_CHILD_OF_LINES_DECORATIONS
-          .test(g) ? this.createMouseTargetFromLinesDecorationsChild(f, d) : l.IS_CHILD_OF_LINE_NUMBERS.test(g) ?
-          this.createMouseTargetFromLineNumbers(f, d) : l.IS_CHILD_OF_GLYPH_MARGIN.test(g) ? this.createMouseTargetFromGlyphMargin(
-            f, d) : this.createMouseTargetFromUnknownTarget(f)
-      }, a.prototype._isChild = function(a, b, c) {
-        while (a && a !== document.body) {
-          if (a === b) return !0;
-          if (a === c) return !1;
-          a = a.parentNode
-        }
-        return !1
-      }, a.prototype._findAttribute = function(a, b, c) {
-        while (a && a !== document.body) {
-          if (a.hasAttribute(b)) return a.getAttribute(b);
-          if (a === c) return null;
-          a = a.parentNode
-        }
-        return null
-      }, a.prototype._doHitTestWithCaretRangeFromPoint = function(a, b) {
-        var c = null,
-          d = null,
-          e = b.posx - document.body.scrollLeft - document.documentElement.scrollLeft,
-          f = b.posy - document.body.scrollTop - document.documentElement.scrollTop,
-          g = document.caretRangeFromPoint(e, f),
-          h = g ? g.startContainer : null,
-          j = h ? h.parentNode : null,
-          k = j ? j.parentNode : null,
-          l = k ? k.parentNode : null,
-          m = l && l.nodeType === l.ELEMENT_NODE ? l.className : "";
-        return m === i.ClassNames.VIEW_LINE ? c = this.viewHelper.getPositionFromDOMInfo(g.startContainer.parentNode,
-          g.startOffset) : d = j, g.detach(), {
-          position: c,
-          hitTarget: d
-        }
-      }, a.prototype._doHitTestWithRangeProperties = function(a) {
-        var b = null,
-          c = null,
-          d, e;
-        a.browserEvent.rangeParent ? (d = a.browserEvent.rangeParent, e = a.browserEvent.rangeOffset) : (d = a.extraData
-          .rangeParent, e = a.extraData.rangeOffset);
-        var f = document.createRange();
-        return f.setStart(d, e), f.collapse(!0), b = this.viewHelper.getPositionFromDOMInfo(f.startContainer.parentNode,
-          f.startOffset), f.detach(), {
-          position: b,
-          hitTarget: c
-        }
-      }, a.prototype._doHitTestWithMoveToPoint = function(a) {
-        var b = null,
-          c = null,
-          d = document.body.createTextRange();
-        try {
-          var e = a.posx - document.body.scrollLeft - document.documentElement.scrollLeft,
-            f = a.posy - document.body.scrollTop - document.documentElement.scrollTop;
-          d.moveToPoint(e, f)
-        } catch (g) {
-          return {
-            position: null,
-            hitTarget: null
+      }
+      var p = this.context.model.getLineMaxColumn(t);
+      if (p > o) {
+        var f = this.viewHelper.visibleRangeForPosition2(t, o + 1);
+        if (f) {
+          var g = this.viewHelper.visibleRangeForPosition2(t, o + 1).left;
+          if (c = !1, c = c || s > l && g > s, c = c || s > g && l > s) {
+            var h = new i.Range(t, o, t, o + 1);
+            return new r(e, 6, a, h);
           }
         }
-        d.collapse(!0);
-        var h = d ? d.parentElement() : null,
-          j = h ? h.parentNode : null,
-          k = j ? j.parentNode : null,
-          l = k && k.nodeType === k.ELEMENT_NODE ? k.className : "";
-        if (l === i.ClassNames.VIEW_LINE) {
-          var m = d.duplicate();
-          m.moveToElementText(h), m.setEndPoint("EndToStart", d), b = this.viewHelper.getPositionFromDOMInfo(h, m.text
-            .length), m.moveToElementText(this.viewHelper.viewDomNode)
-        } else c = h;
-        return d.moveToElementText(this.viewHelper.viewDomNode), {
-          position: b,
-          hitTarget: c
-        }
-      }, a.prototype._doHitTest = function(a, b) {
-        return document.caretRangeFromPoint ? this._doHitTestWithCaretRangeFromPoint(a, b) : b.extraData || b.browserEvent
-          .rangeParent ? this._doHitTestWithRangeProperties(b) : document.body.createTextRange ? this._doHitTestWithMoveToPoint(
-            b) : {
-            position: null,
-            hitTarget: null
-        }
-      }, a.prototype._getZoneAtCoord = function(a) {
-        var b = this.viewHelper.getWhitespaceAtVerticalOffset(a);
-        if (b) {
-          var c = b.verticalOffset + b.height / 2,
-            d, e, f = this.context.model.getLineCount();
-          b.afterLineNumber === f || a < c && b.afterLineNumber > 0 ? (d = b.afterLineNumber, e = this.context.model.getLineMaxColumn(
-            d)) : (d = b.afterLineNumber + 1, e = 1);
-          var h = new g.Position(d, e);
-          return {
-            viewZoneId: b.id,
-            position: h
-          }
-        }
-        return null
-      }, a.prototype._getFullLineRangeAtCoord = function(a) {
-        var b = this.viewHelper.getLineNumberAtVerticalOffset(a),
-          c = this.context.model.getLineMaxColumn(b);
-        return new h.Range(b, 1, b, c)
-      }, a.prototype.createMouseTargetFromViewCursor = function(a, b, c) {
-        return new k(a, j.MouseTargetType.CONTENT_TEXT, new g.Position(b, c))
-      }, a.prototype.createMouseTargetFromViewLines = function(a, b) {
-        var c = this._getZoneAtCoord(b);
-        if (c) return new k(a, j.MouseTargetType.CONTENT_VIEW_ZONE, c.position, null, c.viewZoneId);
-        var d = this.context.model.getLineCount(),
-          e = this.context.model.getLineMaxColumn(d);
-        return new k(a, j.MouseTargetType.CONTENT_EMPTY, new g.Position(d, e))
-      }, a.prototype.createMouseTargetFromHitTestPosition = function(a, b, c, d) {
-        var e = new g.Position(b, c),
-          f = this.viewHelper.getLineWidth(b);
-        if (d > f) return new k(a, j.MouseTargetType.CONTENT_EMPTY, e);
-        var i = this.viewHelper.visibleRangeForPosition2(b, c).left;
-        if (d === i) return new k(a, j.MouseTargetType.CONTENT_TEXT, e);
-        var l;
-        if (c > 1) {
-          var m = this.viewHelper.visibleRangeForPosition2(b, c).left;
-          l = !1, l = l || m < d && d < i, l = l || i < d && d < m;
-          if (l) {
-            var n = new h.Range(b, c, b, c - 1);
-            return new k(a, j.MouseTargetType.CONTENT_TEXT, e, n)
-          }
-        }
-        var o = this.context.model.getLineMaxColumn(b);
-        if (c < o) {
-          var p = this.viewHelper.visibleRangeForPosition2(b, c + 1);
-          if (p) {
-            var q = this.viewHelper.visibleRangeForPosition2(b, c + 1).left;
-            l = !1, l = l || i < d && d < q, l = l || q < d && d < i;
-            if (l) {
-              var n = new h.Range(b, c, b, c + 1);
-              return new k(a, j.MouseTargetType.CONTENT_TEXT, e, n)
-            }
-          }
-        }
-        return new k(a, j.MouseTargetType.CONTENT_TEXT, e)
-      }, a.prototype.createMouseTargetFromContentWidgetsChild = function(a) {
-        var b = this._findAttribute(a, "widgetId", this.viewHelper.viewDomNode);
-        return b ? new k(a, j.MouseTargetType.CONTENT_WIDGET, null, null, b) : new k(a, j.MouseTargetType.UNKNOWN)
-      }, a.prototype.createMouseTargetFromOverlayWidgetsChild = function(a) {
-        var b = this._findAttribute(a, "widgetId", this.viewHelper.viewDomNode);
-        return b ? new k(a, j.MouseTargetType.OVERLAY_WIDGET, null, null, b) : new k(a, j.MouseTargetType.UNKNOWN)
-      }, a.prototype.createMouseTargetFromLinesDecorationsChild = function(a, b) {
-        var c = this._getZoneAtCoord(b);
-        if (c) return new k(a, j.MouseTargetType.GUTTER_VIEW_ZONE, c.position, null, c.viewZoneId);
-        var d = this._getFullLineRangeAtCoord(b);
-        return new k(a, j.MouseTargetType.GUTTER_LINE_DECORATIONS, new g.Position(d.startLineNumber, 1), d)
-      }, a.prototype.createMouseTargetFromLineNumbers = function(a, b) {
-        var c = this._getZoneAtCoord(b);
-        if (c) return new k(a, j.MouseTargetType.GUTTER_VIEW_ZONE, c.position, null, c.viewZoneId);
-        var d = this._getFullLineRangeAtCoord(b);
-        return new k(a, j.MouseTargetType.GUTTER_LINE_NUMBERS, new g.Position(d.startLineNumber, 1), d)
-      }, a.prototype.createMouseTargetFromGlyphMargin = function(a, b) {
-        var c = this._getZoneAtCoord(b);
-        if (c) return new k(a, j.MouseTargetType.GUTTER_VIEW_ZONE, c.position, null, c.viewZoneId);
-        var d = this._getFullLineRangeAtCoord(b);
-        return new k(a, j.MouseTargetType.GUTTER_GLYPH_MARGIN, new g.Position(d.startLineNumber, 1), d)
-      }, a.prototype.createMouseTargetFromScrollbar = function(a, b) {
-        return new k(a, j.MouseTargetType.SCROLLBAR)
-      }, a.prototype.createMouseTargetFromUnknownTarget = function(a) {
-        var b = this._isChild(a, this.viewHelper.viewDomNode, this.viewHelper.viewDomNode),
-          c = null;
-        return b && (c = this._findAttribute(a, "widgetId", this.viewHelper.viewDomNode)), c ? new k(a, j.MouseTargetType
-          .OVERLAY_WIDGET, null, null, c) : new k(a, j.MouseTargetType.UNKNOWN)
-      }, a
-    }();
-  b.MouseTargetFactory = m
-})
+      }
+      return new r(e, 6, a);
+    };
+
+    e.prototype.createMouseTargetFromContentWidgetsChild = function(e) {
+      var t = this._findAttribute(e, "widgetId", this.viewHelper.viewDomNode);
+      return t ? new r(e, 9, null, null, t) : new r(e, 0);
+    };
+
+    e.prototype.createMouseTargetFromOverlayWidgetsChild = function(e) {
+      var t = this._findAttribute(e, "widgetId", this.viewHelper.viewDomNode);
+      return t ? new r(e, 12, null, null, t) : new r(e, 0);
+    };
+
+    e.prototype.createMouseTargetFromLinesDecorationsChild = function(e, t) {
+      var i = this._getZoneAtCoord(t);
+      if (i) return new r(e, 5, i.position, null, i.viewZoneId);
+      var o = this._getFullLineRangeAtCoord(t);
+      return new r(e, 4, new n.Position(o.startLineNumber, 1), o);
+    };
+
+    e.prototype.createMouseTargetFromLineNumbers = function(e, t) {
+      var i = this._getZoneAtCoord(t);
+      if (i) return new r(e, 5, i.position, null, i.viewZoneId);
+      var o = this._getFullLineRangeAtCoord(t);
+      return new r(e, 3, new n.Position(o.startLineNumber, 1), o);
+    };
+
+    e.prototype.createMouseTargetFromGlyphMargin = function(e, t) {
+      var i = this._getZoneAtCoord(t);
+      if (i) return new r(e, 5, i.position, null, i.viewZoneId);
+      var o = this._getFullLineRangeAtCoord(t);
+      return new r(e, 2, new n.Position(o.startLineNumber, 1), o);
+    };
+
+    e.prototype.createMouseTargetFromScrollbar = function(e) {
+      return new r(e, 11);
+    };
+
+    e.prototype.createMouseTargetFromUnknownTarget = function(e) {
+      var t = this._isChild(e, this.viewHelper.viewDomNode, this.viewHelper.viewDomNode);
+
+      var n = null;
+      t && (n = this._findAttribute(e, "widgetId", this.viewHelper.viewDomNode));
+
+      return n ? new r(e, 12, null, null, n) : new r(e, 0);
+    };
+
+    return e;
+  }();
+  t.MouseTargetFactory = a;
+});

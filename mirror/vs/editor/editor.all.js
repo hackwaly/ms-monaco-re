@@ -6,4 +6,4 @@ define(["./core/codeEditorWidget", "./diff/diffEditorWidget", "./contrib/find/fi
   "./contrib/smartSelect/smartSelect", "./contrib/smartSelect/jumpToBracket", "./contrib/color/colorPicker",
   "./contrib/referenceSearch/referenceSearch", "./contrib/links/links", "./contrib/inEditorActions/inEditorActions",
   "./contrib/toggleTabFocusMode/toggleTabFocusMode", "./contrib/wordHighlighter/wordHighlighter"
-], function() {})
+], function() {});

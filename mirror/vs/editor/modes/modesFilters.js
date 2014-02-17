@@ -1,12 +1,10 @@
-define('vs/editor/modes/modesFilters', [
-  'require',
-  'exports',
-  'vs/base/filters'
-], function(e, t, n) {
+define("vs/editor/modes/modesFilters", ["require", "exports", "vs/base/filters"], function(e, t, n) {
   function i(e) {
     return function(t, n) {
       var i = e(t, n.label);
-      return n.highlights = i || [], !! i;
+      n.highlights = i || [];
+
+      return !!i;
     };
   }
 
@@ -29,7 +27,19 @@ define('vs/editor/modes/modesFilters', [
       return t[o] ? !1 : (t[o] = !0, !0);
     };
   }
-  t.StrictPrefix = i(n.matchesStrictPrefix), t.Prefix = i(n.matchesPrefix), t.CamelCase = i(n.matchesCamelCase), t.ContiguousSubString =
-    i(n.matchesContiguousSubString), t.or = o, t.and = r, t.newDuplicateFilter = s, t.DefaultFilter = t.or(t.or(t.Prefix,
-      t.CamelCase), t.ContiguousSubString);
-})
+  t.StrictPrefix = i(n.matchesStrictPrefix);
+
+  t.Prefix = i(n.matchesPrefix);
+
+  t.CamelCase = i(n.matchesCamelCase);
+
+  t.ContiguousSubString = i(n.matchesContiguousSubString);
+
+  t.or = o;
+
+  t.and = r;
+
+  t.newDuplicateFilter = s;
+
+  t.DefaultFilter = t.or(t.or(t.Prefix, t.CamelCase), t.ContiguousSubString);
+});

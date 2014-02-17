@@ -1,4 +1,1 @@
-define('vs/editor/modes/monarch/monarchTypes', [
-  'require',
-  'exports'
-], function() {})
+define("vs/editor/modes/monarch/monarchTypes", ["require", "exports"], function() {});

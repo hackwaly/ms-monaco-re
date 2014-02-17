@@ -1,132 +1,222 @@
-define(["vs/base/lib/winjs.base", "vs/editor/diff/diff"], function(a, b) {
-  function i(a) {
-    if (a.length <= 1) return a;
-    var b = [a[0]],
-      c, e, f, g, h, i = b[0],
-      j;
-    for (c = 1, e = a.length; c < e; c++) j = a[c], f = j.originalStart - (i.originalStart + i.originalLength), g = j
-      .modifiedStart - (i.modifiedStart + i.modifiedLength), h = Math.min(f, g), h < d ? (i.originalLength = j.originalStart +
-        j.originalLength - i.originalStart, i.modifiedLength = j.modifiedStart + j.modifiedLength - i.modifiedStart) :
-      (b.push(j), i = j);
-    return b
+define("vs/editor/diff/diffComputer", ["require", "exports", "vs/base/diff/diff"], function(e, t, n) {
+  function i(e) {
+    if (e.length <= 1) return e;
+    var t;
+
+    var n;
+
+    var i;
+
+    var o;
+
+    var s;
+
+    var a;
+
+    var u = [e[0]];
+
+    var l = u[0];
+    for (t = 1, n = e.length; n > t; t++) a = e[t];
+
+    i = a.originalStart - (l.originalStart + l.originalLength);
+
+    o = a.modifiedStart - (l.modifiedStart + l.modifiedLength);
+
+    s = Math.min(i, o);
+
+    r > s ? (l.originalLength = a.originalStart + a.originalLength - l.originalStart, l.modifiedLength = a.modifiedStart +
+      a.modifiedLength - l.modifiedStart) : (u.push(a), l = a);
+    return u;
   }
-  var c = 2e3,
-    d = 3,
-    e = b.LcsDiff,
-    f = a.Class.define(function(b, c, d) {
-      this.buffer = b, this.startMarkers = c, this.endMarkers = d
-    }, {
-      getLength: function() {
-        return this.startMarkers.length
-      },
-      getElementHash: function(a) {
-        return this.buffer.substring(this.startMarkers[a].offset, this.endMarkers[a].offset)
-      },
-      getStartLineNumber: function(a) {
-        return a === this.startMarkers.length ? this.startMarkers[a - 1].lineNumber + 1 : this.startMarkers[a].lineNumber
-      },
-      getStartColumn: function(a) {
-        return this.startMarkers[a].column
-      },
-      getEndLineNumber: function(a) {
-        return this.endMarkers[a].lineNumber
-      },
-      getEndColumn: function(a) {
-        return this.endMarkers[a].column
+  var o = 2e3;
+
+  var r = 3;
+
+  var s = function() {
+    function e(e, t, n) {
+      this.buffer = e;
+
+      this.startMarkers = t;
+
+      this.endMarkers = n;
+    }
+    e.prototype.getLength = function() {
+      return this.startMarkers.length;
+    };
+
+    e.prototype.getElementHash = function(e) {
+      return this.buffer.substring(this.startMarkers[e].offset, this.endMarkers[e].offset);
+    };
+
+    e.prototype.getStartLineNumber = function(e) {
+      return e === this.startMarkers.length ? this.startMarkers[e - 1].lineNumber + 1 : this.startMarkers[e].lineNumber;
+    };
+
+    e.prototype.getStartColumn = function(e) {
+      return this.startMarkers[e].column;
+    };
+
+    e.prototype.getEndLineNumber = function(e) {
+      return this.endMarkers[e].lineNumber;
+    };
+
+    e.prototype.getEndColumn = function(e) {
+      return this.endMarkers[e].column;
+    };
+
+    return e;
+  }();
+
+  var a = function(e) {
+    function t(t, n) {
+      var i;
+
+      var o;
+
+      var r;
+
+      var s;
+
+      var a;
+
+      var u = "";
+
+      var l = [];
+
+      var c = [];
+      for (r = 0, i = 0, o = t.length; o > i; i++) u += t[i];
+
+      s = 1;
+
+      a = t[i].length + 1;
+
+      n && (s = this._getFirstNonBlankColumn(t[i], 1), a = this._getLastNonBlankColumn(t[i], 1));
+
+      l.push({
+        offset: r + s - 1,
+        lineNumber: i + 1,
+        column: s
+      });
+
+      c.push({
+        offset: r + a - 1,
+        lineNumber: i + 1,
+        column: a
+      });
+
+      r += t[i].length;
+      e.call(this, u, l, c);
+    }
+    __extends(t, e);
+
+    t.prototype._getFirstNonBlankColumn = function(e, t) {
+      for (var n = 0, i = e.length; i > n; n++)
+        if (" " !== e.charAt(n) && "	" !== e.charAt(n)) return n + 1;
+      return t;
+    };
+
+    t.prototype._getLastNonBlankColumn = function(e, t) {
+      for (var n = e.length - 1; n >= 0; n--)
+        if (" " !== e.charAt(n) && "	" !== e.charAt(n)) return n + 2;
+      return t;
+    };
+
+    t.prototype.getCharSequence = function(e, t) {
+      var n;
+
+      var i;
+
+      var o;
+
+      var r;
+
+      var a = [];
+
+      var u = [];
+      for (n = e; t >= n; n++)
+        for (o = this.startMarkers[n], r = this.endMarkers[n], i = o.offset; i < r.offset; i++) a.push({
+          offset: i,
+          lineNumber: o.lineNumber,
+          column: o.column + (i - o.offset)
+        });
+
+      u.push({
+        offset: i + 1,
+        lineNumber: o.lineNumber,
+        column: o.column + (i - o.offset) + 1
+      });
+      return new s(this.buffer, a, u);
+    };
+
+    return t;
+  }(s);
+
+  var u = function() {
+    function e(e, t, n) {
+      0 === e.originalLength ? (this.originalStartLineNumber = 0, this.originalStartColumn = 0, this.originalEndLineNumber =
+        0, this.originalEndColumn = 0) : (this.originalStartLineNumber = t.getStartLineNumber(e.originalStart), this.originalStartColumn =
+        t.getStartColumn(e.originalStart), this.originalEndLineNumber = t.getEndLineNumber(e.originalStart + e.originalLength -
+          1), this.originalEndColumn = t.getEndColumn(e.originalStart + e.originalLength - 1));
+
+      0 === e.modifiedLength ? (this.modifiedStartLineNumber = 0, this.modifiedStartColumn = 0, this.modifiedEndLineNumber =
+        0, this.modifiedEndColumn = 0) : (this.modifiedStartLineNumber = n.getStartLineNumber(e.modifiedStart), this.modifiedStartColumn =
+        n.getStartColumn(e.modifiedStart), this.modifiedEndLineNumber = n.getEndLineNumber(e.modifiedStart + e.modifiedLength -
+          1), this.modifiedEndColumn = n.getEndColumn(e.modifiedStart + e.modifiedLength - 1));
+    }
+    return e;
+  }();
+
+  var l = function() {
+    function e(e, t, o, r, s) {
+      if (0 === e.originalLength ? (this.originalStartLineNumber = t.getStartLineNumber(e.originalStart) - 1, this.originalEndLineNumber =
+          0) : (this.originalStartLineNumber = t.getStartLineNumber(e.originalStart), this.originalEndLineNumber = t.getEndLineNumber(
+          e.originalStart + e.originalLength - 1)), 0 === e.modifiedLength ? (this.modifiedStartLineNumber = o.getStartLineNumber(
+          e.modifiedStart) - 1, this.modifiedEndLineNumber = 0) : (this.modifiedStartLineNumber = o.getStartLineNumber(
+          e.modifiedStart), this.modifiedEndLineNumber = o.getEndLineNumber(e.modifiedStart + e.modifiedLength - 1)),
+        0 !== e.originalLength && 0 !== e.modifiedLength && r()) {
+        var a = t.getCharSequence(e.originalStart, e.originalStart + e.originalLength - 1);
+
+        var l = o.getCharSequence(e.modifiedStart, e.modifiedStart + e.modifiedLength - 1);
+
+        var c = new n.LcsDiff(a, l, r);
+
+        var d = c.ComputeDiff();
+        s && (d = i(d));
+
+        this.charChanges = [];
+        for (var h = 0, p = d.length; p > h; h++) this.charChanges.push(new u(d[h], a, l));
       }
-    }),
-    g = a.Class.derive(f, function(b, c) {
-      var d, e, g, h = "",
-        i = [],
-        j = [],
-        k, l;
-      for (g = 0, d = 0, e = b.length; d < e; d++) h += b[d], k = 1, l = b[d].length + 1, c && (k = this._getFirstNonBlankColumn(
-        b[d], 1), l = this._getLastNonBlankColumn(b[d], 1)), i.push({
-        offset: g + k - 1,
-        lineNumber: d + 1,
-        column: k
-      }), j.push({
-        offset: g + l - 1,
-        lineNumber: d + 1,
-        column: l
-      }), g += b[d].length;
-      f.call(this, h, i, j)
-    }, {
-      _getFirstNonBlankColumn: function(a, b) {
-        for (var c = 0, d = a.length; c < d; c++)
-          if (a.charAt(c) !== " " && a.charAt(c) !== "	") return c + 1;
-        return b
-      },
-      _getLastNonBlankColumn: function(a, b) {
-        for (var c = a.length - 1; c >= 0; c--)
-          if (a.charAt(c) !== " " && a.charAt(c) !== "	") return c + 2;
-        return b
-      },
-      getCharSequence: function(a, b) {
-        var c = [],
-          d = [],
-          e, g, h, i;
-        for (e = a; e <= b; e++) {
-          h = this.startMarkers[e], i = this.endMarkers[e];
-          for (g = h.offset; g < i.offset; g++) c.push({
-            offset: g,
-            lineNumber: h.lineNumber,
-            column: h.column + (g - h.offset)
-          }), d.push({
-            offset: g + 1,
-            lineNumber: h.lineNumber,
-            column: h.column + (g - h.offset) + 1
-          })
-        }
-        return new f(this.buffer, c, d)
-      }
-    }),
-    h = a.Class.define(function(b, c, d) {
-      b.originalLength === 0 ? (this.originalStartLineNumber = 0, this.originalStartColumn = 0, this.originalEndLineNumber =
-        0, this.originalEndColumn = 0) : (this.originalStartLineNumber = c.getStartLineNumber(b.originalStart),
-        this.originalStartColumn = c.getStartColumn(b.originalStart), this.originalEndLineNumber = c.getEndLineNumber(
-          b.originalStart + b.originalLength - 1), this.originalEndColumn = c.getEndColumn(b.originalStart + b.originalLength -
-          1)), b.modifiedLength === 0 ? (this.modifiedStartLineNumber = 0, this.modifiedStartColumn = 0, this.modifiedEndLineNumber =
-        0, this.modifiedEndColumn = 0) : (this.modifiedStartLineNumber = d.getStartLineNumber(b.modifiedStart),
-        this.modifiedStartColumn = d.getStartColumn(b.modifiedStart), this.modifiedEndLineNumber = d.getEndLineNumber(
-          b.modifiedStart + b.modifiedLength - 1), this.modifiedEndColumn = d.getEndColumn(b.modifiedStart + b.modifiedLength -
-          1))
-    }),
-    j = a.Class.define(function(b, c, d, f, g) {
-      b.originalLength === 0 ? (this.originalStartLineNumber = c.getStartLineNumber(b.originalStart) - 1, this.originalEndLineNumber =
-        0) : (this.originalStartLineNumber = c.getStartLineNumber(b.originalStart), this.originalEndLineNumber = c.getEndLineNumber(
-        b.originalStart + b.originalLength - 1)), b.modifiedLength === 0 ? (this.modifiedStartLineNumber = d.getStartLineNumber(
-        b.modifiedStart) - 1, this.modifiedEndLineNumber = 0) : (this.modifiedStartLineNumber = d.getStartLineNumber(
-        b.modifiedStart), this.modifiedEndLineNumber = d.getEndLineNumber(b.modifiedStart + b.modifiedLength - 1));
-      if (b.originalLength !== 0 && b.modifiedLength !== 0 && f()) {
-        var j = c.getCharSequence(b.originalStart, b.originalStart + b.originalLength - 1),
-          k = d.getCharSequence(b.modifiedStart, b.modifiedStart + b.modifiedLength - 1),
-          l = new e(j, k, f),
-          m = l.ComputeDiff();
-        g && (m = i(m)), this.charChanges = [];
-        for (var n = 0, o = m.length; n < o; n++) this.charChanges.push(new h(m[n], j, k))
-      }
-    }),
-    k = a.Class.define(function(b, d, e, f) {
-      this.shouldPostProcessCharChanges = e || !1, this.shouldIgnoreTrimWhitespace = f || !1, this.maximumRunTimeMs =
-        c, this.original = new g(b, this.shouldIgnoreTrimWhitespace), this.modified = new g(d, this.shouldIgnoreTrimWhitespace)
-    }, {
-      computeDiff: function() {
-        this.computationStartTime = (new Date).getTime();
-        var a = new e(this.original, this.modified, this._continueProcessingPredicate.bind(this)),
-          b = a.ComputeDiff(),
-          c = [];
-        for (var d = 0, f = b.length; d < f; d++) c.push(new j(b[d], this.original, this.modified, this._continueProcessingPredicate
-          .bind(this), this.shouldPostProcessCharChanges));
-        return c
-      },
-      _continueProcessingPredicate: function() {
-        if (this.maximumRunTimeMs === 0) return !0;
-        var a = (new Date).getTime();
-        return a - this.computationStartTime < this.maximumRunTimeMs
-      }
-    });
-  return {
-    DiffComputer: k
-  }
-})
+    }
+    return e;
+  }();
+
+  var c = function() {
+    function e(e, t, n, i) {
+      this.shouldPostProcessCharChanges = n || !1;
+
+      this.shouldIgnoreTrimWhitespace = i || !1;
+
+      this.maximumRunTimeMs = o;
+
+      this.original = new a(e, this.shouldIgnoreTrimWhitespace);
+
+      this.modified = new a(t, this.shouldIgnoreTrimWhitespace);
+    }
+    e.prototype.computeDiff = function() {
+      this.computationStartTime = (new Date).getTime();
+      for (var e = new n.LcsDiff(this.original, this.modified, this._continueProcessingPredicate.bind(this)), t = e.ComputeDiff(),
+          i = [], o = 0, r = t.length; r > o; o++) i.push(new l(t[o], this.original, this.modified, this._continueProcessingPredicate
+        .bind(this), this.shouldPostProcessCharChanges));
+      return i;
+    };
+
+    e.prototype._continueProcessingPredicate = function() {
+      if (0 === this.maximumRunTimeMs) return !0;
+      var e = (new Date).getTime();
+      return e - this.computationStartTime < this.maximumRunTimeMs;
+    };
+
+    return e;
+  }();
+  t.DiffComputer = c;
+});

@@ -25,6 +25,5 @@ define(["require", "exports"], function(a, b) {
     }, a.prototype.getReferenceElementWidth = function() {
       return
     }, a
-  }();
-  b.ElementSizeObserver = c
+  }() b.ElementSizeObserver = c
 })

@@ -1,715 +1,1153 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a
-    }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
-    d.prototype = b.prototype, a.prototype = new d
-  };
-define(["require", "exports", "vs/nls", "vs/editor/core/constants", "vs/editor/core/range", "vs/editor/core/selection",
+define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/editor/editor.main",
+  "vs/editor/core/internalConstants", "vs/editor/core/constants", "vs/editor/core/range", "vs/editor/core/selection",
   "vs/base/eventEmitter", "vs/editor/core/handlerDispatcher", "vs/editor/editor",
   "vs/editor/core/controller/cursorCollection", "vs/base/errors", "vs/editor/core/position"
-], function(a, b, c, d, e, f, g, h, i, j, k, l) {
-  var m = c,
-    n = d,
-    o = e,
-    p = f,
-    q = g,
-    r = h,
-    s = i,
-    t = j,
-    u = k,
-    v = l,
-    w = function(a) {
-      function b(b, c, d, e, f) {
-        var g = this;
-        a.call(this), this.editorId = b, this.configuration = c, this.model = d, this.renderOnce = e, this.viewModelHelper =
-          f, this.viewModelHelper || (this.viewModelHelper = {
-            viewModel: this.model,
-            convertModelPositionToViewPosition: function(a, b) {
-              return new v.Position(a, b)
-            },
-            convertViewToModelPosition: function(a, b) {
-              return new v.Position(a, b)
-            },
-            validateViewPosition: function(a, b, c) {
-              return c
-            }
-          }), this.cursors = new t.CursorCollection(this.editorId, this.model, this.configuration, this.viewModelHelper),
-          this.typingListeners = {}, this._isHandling = !1, this.modelUnbind = this.model.addListener(n.EventType.ModelContentChanged,
-            function(a) {
-              g._onModelContentChanged(a)
-            }), this._registerHandlers()
+], function(e, t, n, i, o, r, s, a, u, l, c, d, h) {
+  var p = function(e) {
+    function t(t, n, i, r, s) {
+      var a = this;
+      e.call(this, [o.EventType.CursorPositionChanged, o.EventType.CursorSelectionChanged, o.EventType.CursorRevealRange]);
+
+      this.editorId = t;
+
+      this.configuration = n;
+
+      this.model = i;
+
+      this.renderOnce = r;
+
+      this.viewModelHelper = s;
+
+      this.viewModelHelper || (this.viewModelHelper = {
+        viewModel: this.model,
+        convertModelPositionToViewPosition: function(e, t) {
+          return new h.Position(e, t);
+        },
+        convertViewToModelPosition: function(e, t) {
+          return new h.Position(e, t);
+        },
+        validateViewPosition: function(e, t, n) {
+          return n;
+        }
+      });
+
+      this.cursors = new c.CursorCollection(this.editorId, this.model, this.configuration, this.viewModelHelper);
+
+      this.typingListeners = {};
+
+      this._isHandling = !1;
+
+      this.modelUnbind = this.model.addListener(o.EventType.ModelContentChanged, function(e) {
+        a._onModelContentChanged(e);
+      });
+
+      this._registerHandlers();
+    }
+    __extends(t, e);
+
+    t.prototype.dispose = function() {
+      this.modelUnbind();
+
+      this.modelUnbind = null;
+
+      this.model = null;
+
+      this.cursors.dispose();
+
+      this.cursors = null;
+
+      this.configuration.handlerDispatcher.clearHandlers();
+
+      this.configuration = null;
+
+      this.renderOnce = null;
+
+      this.viewModelHelper = null;
+
+      e.prototype.dispose.call(this);
+    };
+
+    t.prototype.saveState = function() {
+      for (var e, t = this.cursors.getSelections(), n = [], i = 0; i < t.length; i++) e = t[i];
+
+      n.push({
+        inSelectionMode: !e.isEmpty(),
+        selectionStart: {
+          lineNumber: e.selectionStartLineNumber,
+          column: e.selectionStartColumn
+        },
+        position: {
+          lineNumber: e.positionLineNumber,
+          column: e.positionColumn
+        }
+      });
+      return n;
+    };
+
+    t.prototype.restoreState = function(e) {
+      for (var t, n = this, i = [], o = 0; o < e.length; o++) {
+        t = e[o];
+        var r = 1;
+
+        var s = 1;
+        t.position && t.position.lineNumber && (r = t.position.lineNumber);
+
+        t.position && t.position.column && (s = t.position.column);
+        var a = r;
+
+        var l = s;
+        t.selectionStart && t.selectionStart.lineNumber && (a = t.selectionStart.lineNumber);
+
+        t.selectionStart && t.selectionStart.column && (l = t.selectionStart.column);
+
+        i.push({
+          selectionStartLineNumber: a,
+          selectionStartColumn: l,
+          positionLineNumber: r,
+          positionColumn: s
+        });
       }
-      return __extends(b, a), b.prototype.dispose = function() {
-        this.modelUnbind(), this.modelUnbind = null, this.model = null, this.cursors.dispose(), this.cursors = null,
-          this.configuration.handlerDispatcher.clearHandlers(), this.configuration = null, this.renderOnce = null,
-          this.viewModelHelper = null, a.prototype.dispose.call(this)
-      }, b.prototype.saveState = function() {
-        var a = this.cursors.getSelections(),
-          b = [],
-          c;
-        for (var d = 0; d < a.length; d++) c = a[d], b.push({
-          inSelectionMode: !c.isEmpty(),
-          selectionStart: {
-            lineNumber: c.selectionStartLineNumber,
-            column: c.selectionStartColumn
-          },
-          position: {
-            lineNumber: c.positionLineNumber,
-            column: c.positionColumn
-          }
-        });
-        return b
-      }, b.prototype.restoreState = function(a) {
-        var b = this,
-          c = [],
-          d;
-        for (var e = 0; e < a.length; e++) {
-          d = a[e];
-          var f = d.inSelectionMode,
-            g = 1,
-            h = 1;
-          d.position && d.position.lineNumber && (g = d.position.lineNumber), d.position && d.position.column && (h =
-            d.position.column);
-          var i = g,
-            j = h;
-          d.selectionStart && d.selectionStart.lineNumber && (i = d.selectionStart.lineNumber), d.selectionStart && d
-            .selectionStart.column && (j = d.selectionStart.column), c.push({
-              selectionStartLineNumber: i,
-              selectionStartColumn: j,
-              positionLineNumber: g,
-              positionColumn: h
-            })
-        }
-        this._onHandler("restoreState", function(a) {
-          return b.cursors.setSelections(c), !1
-        }, new r.DispatcherEvent("restoreState", null))
-      }, b.prototype.setEditableRange = function(a) {
-        this.model.setEditableRange(a)
-      }, b.prototype.getEditableRange = function() {
-        return this.model.getEditableRange()
-      }, b.prototype.addTypingListener = function(a, b) {
-        this.typingListeners.hasOwnProperty(a) || (this.typingListeners[a] = []), this.typingListeners[a].push(b)
-      }, b.prototype.removeTypingListener = function(a, b) {
-        if (this.typingListeners.hasOwnProperty(a)) {
-          var c = this.typingListeners[a];
-          for (var d = 0; d < c.length; d++)
-            if (c[d] === b) {
-              c.splice(d, 1);
-              return
-            }
-        }
-      }, b.prototype._onModelContentChanged = function(a) {
-        var b = this;
-        a.changeType === n.EventType.ModelContentChangedFlush ? (this.cursors.dispose(), this.cursors = new t.CursorCollection(
-          this.editorId, this.model, this.configuration, this.viewModelHelper), this.emitCursorPositionChanged("",
-          ""), this.emitCursorSelectionChanged("", ""), this.emitCursorRevealRange(!1, !0)) : this._isHandling ||
-          this._onHandler("recoverSelectionFromMarkers", function(a) {
-            var c = b._invokeForAll(a, function(a, b, c) {
-              return b.recoverSelectionFromMarkers(c)
-            });
-            return a.shouldPushStackElementBefore = !1, a.shouldPushStackElementAfter = !1, c
-          }, new r.DispatcherEvent("modelChange", null))
-      }, b.prototype.getSelection = function() {
-        return this.cursors.getSelection(0)
-      }, b.prototype.getSelections = function() {
-        return this.cursors.getSelections()
-      }, b.prototype.getPosition = function() {
-        return this.cursors.getPosition(0)
-      }, b.prototype.setSelections = function(a, b) {
-        var c = this;
-        this._onHandler("setSelections", function(a) {
-          return a.shouldReveal = !1, c.cursors.setSelections(b), !1
-        }, new r.DispatcherEvent(a, null))
-      }, b.prototype._createAndInterpretHandlerCtx = function(a, b, c) {
-        var d = {
-          cursorPositionChangeReason: "",
-          shouldReveal: !0,
-          shouldRevealVerticalInCenter: !1,
-          shouldRevealHorizontal: !0,
-          eventSource: a,
-          eventData: b,
-          executeCommands: [],
-          postOperationRunnables: [],
-          shouldPushStackElementBefore: !1,
-          shouldPushStackElementAfter: !1
-        };
-        c(d), this._interpretHandlerContext(d), this.cursors.normalize()
-      }, b.prototype._onHandler = function(a, b, c) {
-        var d = this;
-        if (this._isHandling) throw new Error("Why am I recursive?");
-        this._isHandling = !0, this.charactersTyped = "";
-        var e = !1;
-        return this.renderOnce(function() {
-          var a = d.cursors.getSelections(),
-            f = d.cursors.getViewSelections(),
-            g = c.getSource(),
-            h, i, j, k;
-          d._createAndInterpretHandlerCtx(g, c.getData(), function(a) {
-            e = b(a), h = a.cursorPositionChangeReason, i = a.shouldReveal, j = a.shouldRevealVerticalInCenter, k =
-              a.shouldRevealHorizontal
+      this._onHandler("restoreState", function() {
+        n.cursors.setSelections(i);
+
+        return !1;
+      }, new u.DispatcherEvent("restoreState", null));
+    };
+
+    t.prototype.setEditableRange = function(e) {
+      this.model.setEditableRange(e);
+    };
+
+    t.prototype.getEditableRange = function() {
+      return this.model.getEditableRange();
+    };
+
+    t.prototype.addTypingListener = function(e, t) {
+      this.typingListeners.hasOwnProperty(e) || (this.typingListeners[e] = []);
+
+      this.typingListeners[e].push(t);
+    };
+
+    t.prototype.removeTypingListener = function(e, t) {
+      if (this.typingListeners.hasOwnProperty(e))
+        for (var n = this.typingListeners[e], i = 0; i < n.length; i++)
+          if (n[i] === t) n.splice(i, 1);
+
+      return void 0;
+    };
+
+    t.prototype._onModelContentChanged = function(e) {
+      var t = this;
+      e.changeType === o.EventType.ModelContentChangedFlush ? (this.cursors.dispose(), this.cursors = new c.CursorCollection(
+          this.editorId, this.model, this.configuration, this.viewModelHelper), this.emitCursorPositionChanged("", ""),
+        this.emitCursorSelectionChanged("", ""), this.emitCursorRevealRange(!1, !0)) : this._isHandling || this._onHandler(
+        "recoverSelectionFromMarkers", function(e) {
+          var n = t._invokeForAll(e, function(e, t, n) {
+            return t.recoverSelectionFromMarkers(n);
           });
-          for (var l = 0; l < d.charactersTyped.length; l++) {
-            var m = d.charactersTyped.charAt(l);
-            if (d.typingListeners.hasOwnProperty(m)) {
-              var n = d.typingListeners[m].slice(0);
-              for (var o = 0, p = n.length; o < p; o++) n[o]()
-            }
+          e.shouldPushStackElementBefore = !1;
+
+          e.shouldPushStackElementAfter = !1;
+
+          return n;
+        }, new u.DispatcherEvent("modelChange", null));
+    };
+
+    t.prototype.getSelection = function() {
+      return this.cursors.getSelection(0);
+    };
+
+    t.prototype.getSelections = function() {
+      return this.cursors.getSelections();
+    };
+
+    t.prototype.getPosition = function() {
+      return this.cursors.getPosition(0);
+    };
+
+    t.prototype.setSelections = function(e, t) {
+      var n = this;
+      this._onHandler("setSelections", function(e) {
+        e.shouldReveal = !1;
+
+        n.cursors.setSelections(t);
+
+        return !1;
+      }, new u.DispatcherEvent(e, null));
+    };
+
+    t.prototype._createAndInterpretHandlerCtx = function(e, t, n) {
+      var i = {
+        cursorPositionChangeReason: "",
+        shouldReveal: !0,
+        shouldRevealVerticalInCenter: !1,
+        shouldRevealHorizontal: !0,
+        eventSource: e,
+        eventData: t,
+        executeCommands: [],
+        postOperationRunnables: [],
+        shouldPushStackElementBefore: !1,
+        shouldPushStackElementAfter: !1
+      };
+      n(i);
+
+      this._interpretHandlerContext(i);
+
+      this.cursors.normalize();
+    };
+
+    t.prototype._onHandler = function(e, t, n) {
+      var i = this;
+      if (this._isHandling) throw new Error("Why am I recursive?");
+      this._isHandling = !0;
+
+      this.charactersTyped = "";
+      var o = !1;
+      try {
+        this.renderOnce(function() {
+          var e;
+
+          var r;
+
+          var s;
+
+          var a;
+
+          var u = i.cursors.getSelections();
+
+          var l = i.cursors.getViewSelections();
+
+          var c = n.getSource();
+          i._createAndInterpretHandlerCtx(c, n.getData(), function(n) {
+            o = t(n);
+
+            e = n.cursorPositionChangeReason;
+
+            r = n.shouldReveal;
+
+            s = n.shouldRevealVerticalInCenter;
+
+            a = n.shouldRevealHorizontal;
+          });
+          for (var d = 0; d < i.charactersTyped.length; d++) {
+            var h = i.charactersTyped.charAt(d);
+            if (i.typingListeners.hasOwnProperty(h))
+              for (var p = i.typingListeners[h].slice(0), f = 0, g = p.length; g > f; f++) p[f]();
           }
-          var q = d.cursors.getSelections(),
-            r = d.cursors.getViewSelections(),
-            s = !1;
-          if (a.length !== q.length) s = !0;
+          var m = i.cursors.getSelections();
+
+          var v = i.cursors.getViewSelections();
+
+          var y = !1;
+          if (u.length !== m.length) y = !0;
           else {
-            for (var l = 0, t = a.length; !s && l < t; l++) a[l].equalsSelection(q[l]) || (s = !0);
-            for (var l = 0, t = f.length; !s && l < t; l++) f[l].equalsSelection(r[l]) || (s = !0)
+            for (var d = 0, _ = u.length; !y && _ > d; d++) u[d].equalsSelection(m[d]) || (y = !0);
+            for (var d = 0, _ = l.length; !y && _ > d; d++) l[d].equalsSelection(v[d]) || (y = !0);
           }
-          s && (d.emitCursorPositionChanged(g, h), i && d.emitCursorRevealRange(j, k), d.emitCursorSelectionChanged(
-            g, h))
-        }), this._isHandling = !1, e
-      }, b.prototype._interpretHandlerContext = function(a) {
-        a.shouldPushStackElementBefore && (this.model.pushStackElement(), a.shouldPushStackElementBefore = !1), this._internalExecuteCommands(
-          a.executeCommands, a.postOperationRunnables), a.executeCommands = [], a.shouldPushStackElementAfter && (
-          this.model.pushStackElement(), a.shouldPushStackElementAfter = !1);
-        var b = !1;
-        for (var c = 0, d = a.postOperationRunnables.length; c < d; c++)
-          if (a.postOperationRunnables[c]) {
-            b = !0;
-            break
-          }
-        if (b) {
-          var e = a.postOperationRunnables.slice(0);
-          a.postOperationRunnables = [], this._invokeForAll(a, function(a, b, c) {
-            return e[a] && e[a](c), !1
-          }), this._interpretHandlerContext(a)
+          y && (i.emitCursorPositionChanged(c, e), r && i.emitCursorRevealRange(s, a), i.emitCursorSelectionChanged(
+            c, e));
+        });
+      } catch (r) {
+        d.onUnexpectedError(r);
+      }
+      this._isHandling = !1;
+
+      return o;
+    };
+
+    t.prototype._interpretHandlerContext = function(e) {
+      e.shouldPushStackElementBefore && (this.model.pushStackElement(), e.shouldPushStackElementBefore = !1);
+
+      this._internalExecuteCommands(e.executeCommands, e.postOperationRunnables);
+
+      e.executeCommands = [];
+
+      e.shouldPushStackElementAfter && (this.model.pushStackElement(), e.shouldPushStackElementAfter = !1);
+      for (var t = !1, n = 0, i = e.postOperationRunnables.length; i > n; n++)
+        if (e.postOperationRunnables[n]) {
+          t = !0;
+          break;
         }
-      }, b.prototype._interpretCommandResult = function(a) {
-        return a ? (this.cursors.setSelections(a), !0) : !1
-      }, b.prototype._getEditOperationsFromCommand = function(a, b, c) {
-        var d = this,
-          e = [],
-          f = [],
-          g = 0,
-          h = function(a, c) {
-            (!a.isEmpty() || c) && e.push({
-              identifier: {
-                major: b,
-                minor: g++
-              },
-              range: a,
-              text: c
-            })
-          }, i = !1,
-          j = function(b) {
-            var c, e;
-            i = !0;
-            if (b.isEmpty()) {
-              var f = d.model.getLineMaxColumn(b.startLineNumber);
-              b.startColumn === f ? (c = "start", e = "start") : (c = "end", e = "end")
-            } else b.getDirection() === s.SelectionDirection.LTR ? (c = "end", e = "start") : (c = "start", e = "end");
-            var g = a.selectionStartMarkers.length;
-            return a.selectionStartMarkers[g] = d.model._addMarker(b.selectionStartLineNumber - 1, b.selectionStartColumn,
-              c), a.positionMarkers[g] = d.model._addMarker(b.positionLineNumber - 1, b.positionColumn, e), g.toString()
-          }, k = {
-            addEditOperation: h,
-            trackSelection: j
-          };
-        try {
-          c.getEditOperations(this.model, k)
-        } catch (l) {
-          return u.onUnexpectedError(l, m.localize("corrupt.commands",
-            "Unexpected exception while executing command.")), {
-            operations: [],
-            hadTrackedRange: !1
-          }
-        }
+      if (t) {
+        var o = e.postOperationRunnables.slice(0);
+        e.postOperationRunnables = [];
+
+        this._invokeForAll(e, function(e, t, n) {
+          o[e] && o[e](n);
+
+          return !1;
+        });
+
+        this._interpretHandlerContext(e);
+      }
+    };
+
+    t.prototype._interpretCommandResult = function(e) {
+      return e ? (this.cursors.setSelections(e), !0) : !1;
+    };
+
+    t.prototype._getEditOperationsFromCommand = function(e, t, i) {
+      var o = this;
+
+      var r = [];
+
+      var s = 0;
+
+      var a = function(e, n) {
+        r.push({
+          identifier: {
+            major: t,
+            minor: s++
+          },
+          range: e,
+          text: n
+        });
+      };
+
+      var u = !1;
+
+      var l = function(t) {
+        var n;
+
+        var i;
+        if (t.isEmpty()) {
+          var r = o.model.getLineMaxColumn(t.startLineNumber);
+          t.startColumn === r ? (n = !0, i = !0) : (n = !1, i = !1);
+        } else 0 === t.getDirection() ? (n = !1, i = !0) : (n = !0, i = !1);
+        var s = e.selectionStartMarkers.length;
+        e.selectionStartMarkers[s] = o.model._addMarker(t.selectionStartLineNumber, t.selectionStartColumn, n);
+
+        e.positionMarkers[s] = o.model._addMarker(t.positionLineNumber, t.positionColumn, i);
+
+        return s.toString();
+      };
+
+      var c = {
+        addEditOperation: a,
+        trackSelection: l
+      };
+      try {
+        i.getEditOperations(this.model, c);
+      } catch (h) {
+        d.onUnexpectedError(h, n.localize("vs_editor_core_controller_cursor", 0));
+
         return {
-          operations: e,
-          hadTrackedRange: i
-        }
-      }, b.prototype._getEditOperations = function(a, b) {
-        var c, d = [],
-          e = [],
-          f;
-        for (var g = 0; g < b.length; g++) b[g] ? (c = this._getEditOperationsFromCommand(a, g, b[g]), d = d.concat(c
-          .operations), e[g] = c.hadTrackedRange, f = f || e[g]) : e[g] = !1;
-        return {
-          operations: d,
-          hadTrackedRanges: e,
-          anyoneHadTrackedRange: f
-        }
-      }, b.prototype._getLooserCursorMap = function(a) {
-        a = a.slice(0), a.sort(function(a, b) {
-          return -o.RangeUtils.compareRangesUsingEnds(a.range, b.range)
-        });
-        var b = {}, c, d, e;
-        for (var f = 1; f < a.length; f++) {
-          c = a[f - 1], d = a[f];
-          if (c.range.getStartPosition().isBeforeOrEqual(d.range.getEndPosition())) {
-            c.identifier.major > d.identifier.major ? e = c.identifier.major : e = d.identifier.major, b[e.toString()] = !
-              0;
-            for (var g = 0; g < a.length; g++) a[g].identifier.major === e && (a.splice(g, 1), g < f && f--, g--);
-            f > 0 && f--
-          }
-        }
-        return b
-      }, b.prototype._internalExecuteCommands = function(a, b) {
-        var c = {
-          selectionStartMarkers: [],
-          positionMarkers: []
-        }, d = this._innerExecuteCommands(c, a, b);
-        for (var e = 0; e < c.selectionStartMarkers.length; e++) this.model._removeMarker(c.selectionStartMarkers[e]),
-          this.model._removeMarker(c.positionMarkers[e]);
-        return d
-      }, b.prototype._arrayIsEmpty = function(a) {
-        var b, c;
-        for (b = 0, c = a.length; b < c; b++)
-          if (a[b]) return !1;
-        return !0
-      }, b.prototype._innerExecuteCommands = function(a, b, c) {
-        var d = this;
-        if (this.configuration.editor.readOnly) return !1;
-        if (this._arrayIsEmpty(b)) return !1;
-        var e = this.cursors.getSelections(),
-          f = this._getEditOperations(a, b);
-        if (f.operations.length === 0 && !f.anyoneHadTrackedRange) return !1;
-        var g = f.operations,
-          h = this.model.getEditableRange(),
-          i = h.getStartPosition(),
-          j = h.getEndPosition();
-        for (var k = 0; k < g.length; k++) {
-          var l = g[k].range;
-          if (!i.isBeforeOrEqual(l.getStartPosition()) || !l.getEndPosition().isBeforeOrEqual(j)) return !1
-        }
-        var m = this._getLooserCursorMap(g);
-        if (m.hasOwnProperty("0")) return console.warn("Ignoring commands"), !1;
-        var n = [];
-        for (var k = 0; k < g.length; k++) m.hasOwnProperty(g[k].identifier.major.toString()) || n.push(g[k]);
-        var o = this.model.pushEditOperations(e, n, function(c) {
-          var g = [];
-          for (var h = 0; h < e.length; h++) g[h] = [];
-          for (var h = 0; h < c.length; h++) {
-            var i = c[h];
-            g[i.identifier.major].push(i)
-          }
-          var j = function(a, b) {
-            return a.identifier.minor - b.identifier.minor
-          }, k = [];
-          for (var h = 0; h < e.length; h++) g[h].length > 0 || f.hadTrackedRanges[h] ? (g[h].sort(j), k[h] = b[h].computeCursorState(
-            d.model, {
-              getInverseEditOperations: function() {
-                return g[h]
-              },
-              getTrackedSelection: function(b) {
-                var c = parseInt(b, 10),
-                  e = d.model._getMarker(a.selectionStartMarkers[c]),
-                  f = d.model._getMarker(a.positionMarkers[c]);
-                return new p.Selection(e.lineNumber, e.column, f.lineNumber, f.column)
-              }
-            })) : k[h] = e[h];
-          return k
-        }),
-          q, r = [];
-        for (q in m) m.hasOwnProperty(q) && r.push(parseInt(q, 10));
-        r.sort(function(a, b) {
-          return b - a
-        });
-        for (var k = 0; k < r.length; k++) o.splice(r[k], 1), c.splice(r[k], 1);
-        return this._interpretCommandResult(o)
-      }, b.prototype.emitCursorPositionChanged = function(a, b) {
-        var c = this.cursors.getPositions(),
-          d = c[0],
-          e = c.slice(1),
-          f = this.cursors.getViewPositions(),
-          g = f[0],
-          h = f.slice(1),
-          i = !0;
-        if (this.model.hasEditableRange()) {
-          var j = this.model.getEditableRange();
-          j.containsPosition(d) || (i = !1)
-        }
-        var k = {
-          position: d,
-          viewPosition: g,
-          secondaryPositions: e,
-          secondaryViewPositions: h,
-          reason: b,
-          source: a,
-          isInEditableRange: i
+          operations: [],
+          hadTrackedRange: !1
         };
-        this.emit(n.EventType.CursorPositionChanged, k)
-      }, b.prototype.emitCursorSelectionChanged = function(a, b) {
-        var c = this.cursors.getSelections(),
-          d = c[0],
-          e = c.slice(1),
-          f = {
-            selection: d,
-            secondarySelections: e,
-            source: a,
-            reason: b
-          };
-        this.emit(n.EventType.CursorSelectionChanged, f)
-      }, b.prototype.emitCursorRevealRange = function(a, b) {
-        var c = this.cursors.getPosition(0),
-          d = this.cursors.getViewPosition(0),
-          e = new o.Range(c.lineNumber, c.column, c.lineNumber, c.column),
-          f = new o.Range(d.lineNumber, d.column, d.lineNumber, d.column),
-          g = {
-            range: e,
-            viewRange: f,
-            revealVerticalInCenter: a,
-            revealHorizontal: b
-          };
-        this.emit(n.EventType.CursorRevealRange, g)
-      }, b.prototype._registerHandlers = function() {
-        var a = this,
-          b = n.Handler,
-          c = {};
-        c[b.JumpToBracket] = function(b) {
-          return a._jumpToBracket(b)
-        }, c[b.MoveTo] = function(b) {
-          return a._moveTo(!1, b)
-        }, c[b.MoveToSelect] = function(b) {
-          return a._moveTo(!0, b)
-        }, c[b.AddCursorUp] = function(b) {
-          return a._addCursorUp(b)
-        }, c[b.AddCursorDown] = function(b) {
-          return a._addCursorDown(b)
-        }, c[b.CreateCursor] = function(b) {
-          return a._createCursor(b)
-        }, c[b.LastCursorMoveToSelect] = function(b) {
-          return a._lastCursorMoveTo(b)
-        }, c[b.CursorLeft] = function(b) {
-          return a._moveLeft(!1, b)
-        }, c[b.CursorLeftSelect] = function(b) {
-          return a._moveLeft(!0, b)
-        }, c[b.CursorWordLeft] = function(b) {
-          return a._moveWordLeft(!1, b)
-        }, c[b.CursorWordLeftSelect] = function(b) {
-          return a._moveWordLeft(!0, b)
-        }, c[b.CursorRight] = function(b) {
-          return a._moveRight(!1, b)
-        }, c[b.CursorRightSelect] = function(b) {
-          return a._moveRight(!0, b)
-        }, c[b.CursorWordRight] = function(b) {
-          return a._moveWordRight(!1, b)
-        }, c[b.CursorWordRightSelect] = function(b) {
-          return a._moveWordRight(!0, b)
-        }, c[b.CursorUp] = function(b) {
-          return a._moveUp(!1, !1, b)
-        }, c[b.CursorUpSelect] = function(b) {
-          return a._moveUp(!0, !1, b)
-        }, c[b.CursorDown] = function(b) {
-          return a._moveDown(!1, !1, b)
-        }, c[b.CursorDownSelect] = function(b) {
-          return a._moveDown(!0, !1, b)
-        }, c[b.CursorPageUp] = function(b) {
-          return a._moveUp(!1, !0, b)
-        }, c[b.CursorPageUpSelect] = function(b) {
-          return a._moveUp(!0, !0, b)
-        }, c[b.CursorPageDown] = function(b) {
-          return a._moveDown(!1, !0, b)
-        }, c[b.CursorPageDownSelect] = function(b) {
-          return a._moveDown(!0, !0, b)
-        }, c[b.CursorHome] = function(b) {
-          return a._moveToBeginningOfLine(!1, b)
-        }, c[b.CursorHomeSelect] = function(b) {
-          return a._moveToBeginningOfLine(!0, b)
-        }, c[b.CursorEnd] = function(b) {
-          return a._moveToEndOfLine(!1, b)
-        }, c[b.CursorEndSelect] = function(b) {
-          return a._moveToEndOfLine(!0, b)
-        }, c[b.CursorTop] = function(b) {
-          return a._moveToBeginningOfBuffer(!1, b)
-        }, c[b.CursorTopSelect] = function(b) {
-          return a._moveToBeginningOfBuffer(!0, b)
-        }, c[b.CursorBottom] = function(b) {
-          return a._moveToEndOfBuffer(!1, b)
-        }, c[b.CursorBottomSelect] = function(b) {
-          return a._moveToEndOfBuffer(!0, b)
-        }, c[b.SelectAll] = function(b) {
-          return a._selectAll(b)
-        }, c[b.LineSelect] = function(b) {
-          return a._line(!1, b)
-        }, c[b.LineSelectDrag] = function(b) {
-          return a._line(!0, b)
-        }, c[b.LastCursorLineSelect] = function(b) {
-          return a._lastCursorLine(!1, b)
-        }, c[b.LastCursorLineSelectDrag] = function(b) {
-          return a._lastCursorLine(!0, b)
-        }, c[b.LineInsertBefore] = function(b) {
-          return a._lineInsertBefore(b)
-        }, c[b.LineInsertAfter] = function(b) {
-          return a._lineInsertAfter(b)
-        }, c[b.LineBreakInsert] = function(b) {
-          return a._lineBreakInsert(b)
-        }, c[b.WordSelect] = function(b) {
-          return a._word(!1, b)
-        }, c[b.WordSelectDrag] = function(b) {
-          return a._word(!0, b)
-        }, c[b.LastCursorWordSelect] = function(b) {
-          return a._lastCursorWord(b)
-        }, c[b.Escape] = function(b) {
-          return a._cancelSelection(b)
-        }, c[b.Type] = function(b) {
-          return a._type(b)
-        }, c[b.Tab] = function(b) {
-          return a._tab(b)
-        }, c[b.Indent] = function(b) {
-          return a._indent(b)
-        }, c[b.Outdent] = function(b) {
-          return a._outdent(b)
-        }, c[b.Paste] = function(b) {
-          return a._paste(b)
-        }, c[b.DeleteLeft] = function(b) {
-          return a._deleteLeft(b)
-        }, c[b.DeleteWordLeft] = function(b) {
-          return a._deleteWordLeft(b)
-        }, c[b.DeleteRight] = function(b) {
-          return a._deleteRight(b)
-        }, c[b.DeleteWordRight] = function(b) {
-          return a._deleteWordRight(b)
-        }, c[b.DeleteAllLeft] = function(b) {
-          return a._deleteAllLeft(b)
-        }, c[b.DeleteAllRight] = function(b) {
-          return a._deleteAllRight(b)
-        }, c[b.Cut] = function(b) {
-          return a._cut(b)
-        }, c[b.Undo] = function(b) {
-          return a._undo(b)
-        }, c[b.Redo] = function(b) {
-          return a._redo(b)
-        }, c[b.ExecuteCommand] = function(b) {
-          return a._externalExecuteCommand(b)
-        }, c[b.ExecuteCommands] = function(b) {
-          return a._externalExecuteCommands(b)
+      }
+      return {
+        operations: r,
+        hadTrackedRange: u
+      };
+    };
+
+    t.prototype._getEditOperations = function(e, t) {
+      for (var n, i, o = [], r = [], s = 0; s < t.length; s++) t[s] ? (n = this._getEditOperationsFromCommand(e, s, t[
+        s]), o = o.concat(n.operations), r[s] = n.hadTrackedRange, i = i || r[s]) : r[s] = !1;
+      return {
+        operations: o,
+        hadTrackedRanges: r,
+        anyoneHadTrackedRange: i
+      };
+    };
+
+    t.prototype._getLoserCursorMap = function(e) {
+      e = e.slice(0);
+
+      e.sort(function(e, t) {
+        return -r.compareRangesUsingEnds(e.range, t.range);
+      });
+      for (var t, n, i, o = {}, s = 1; s < e.length; s++)
+        if (t = e[s - 1], n = e[s], t.range.getStartPosition().isBeforeOrEqual(n.range.getEndPosition())) {
+          i = t.identifier.major > n.identifier.major ? t.identifier.major : n.identifier.major;
+
+          o[i.toString()] = !0;
+          for (var a = 0; a < e.length; a++) e[a].identifier.major === i && (e.splice(a, 1), s > a && s--, a--);
+          s > 0 && s--;
+        }
+      return o;
+    };
+
+    t.prototype._internalExecuteCommands = function(e, t) {
+      for (var n = {
+        selectionStartMarkers: [],
+        positionMarkers: []
+      }, i = this._innerExecuteCommands(n, e, t), o = 0; o < n.selectionStartMarkers.length; o++) this.model._removeMarker(
+        n.selectionStartMarkers[o]);
+
+      this.model._removeMarker(n.positionMarkers[o]);
+      return i;
+    };
+
+    t.prototype._arrayIsEmpty = function(e) {
+      var t;
+
+      var n;
+      for (t = 0, n = e.length; n > t; t++)
+        if (e[t]) return !1;
+      return !0;
+    };
+
+    t.prototype._innerExecuteCommands = function(e, t, n) {
+      var i = this;
+      if (this.configuration.editor.readOnly) return !1;
+      if (this._arrayIsEmpty(t)) return !1;
+      var o = this.cursors.getSelections();
+
+      var r = this._getEditOperations(e, t);
+      if (0 === r.operations.length && !r.anyoneHadTrackedRange) return !1;
+      for (var a = r.operations, u = this.model.getEditableRange(), l = u.getStartPosition(), c = u.getEndPosition(),
+          d = 0; d < a.length; d++) {
+        var h = a[d].range;
+        if (!l.isBeforeOrEqual(h.getStartPosition()) || !h.getEndPosition().isBeforeOrEqual(c)) return !1;
+      }
+      var p = this._getLoserCursorMap(a);
+      if (p.hasOwnProperty("0")) console.warn("Ignoring commands");
+
+      return !1;
+      for (var f = [], d = 0; d < a.length; d++) p.hasOwnProperty(a[d].identifier.major.toString()) || f.push(a[d]);
+      var g;
+
+      var m = this.model.pushEditOperations(o, f, function(n) {
+        for (var a = [], u = 0; u < o.length; u++) a[u] = [];
+        for (var u = 0; u < n.length; u++) {
+          var l = n[u];
+          a[l.identifier.major].push(l);
+        }
+        for (var c = function(e, t) {
+          return e.identifier.minor - t.identifier.minor;
+        }, d = [], u = 0; u < o.length; u++) a[u].length > 0 || r.hadTrackedRanges[u] ? (a[u].sort(c), d[u] = t[u].computeCursorState(
+          i.model, {
+            getInverseEditOperations: function() {
+              return a[u];
+            },
+            getTrackedSelection: function(t) {
+              var n = parseInt(t, 10);
+
+              var o = i.model._getMarker(e.selectionStartMarkers[n]);
+
+              var r = i.model._getMarker(e.positionMarkers[n]);
+              return new s.Selection(o.lineNumber, o.column, r.lineNumber, r.column);
+            }
+          })) : d[u] = o[u];
+        return d;
+      });
+
+      var v = [];
+      for (g in p) p.hasOwnProperty(g) && v.push(parseInt(g, 10));
+      v.sort(function(e, t) {
+        return t - e;
+      });
+      for (var d = 0; d < v.length; d++) m.splice(v[d], 1);
+
+      n.splice(v[d], 1);
+      return this._interpretCommandResult(m);
+    };
+
+    t.prototype.emitCursorPositionChanged = function(e, t) {
+      var n = this.cursors.getPositions();
+
+      var i = n[0];
+
+      var r = n.slice(1);
+
+      var s = this.cursors.getViewPositions();
+
+      var a = s[0];
+
+      var u = s.slice(1);
+
+      var l = !0;
+      if (this.model.hasEditableRange()) {
+        var c = this.model.getEditableRange();
+        c.containsPosition(i) || (l = !1);
+      }
+      var d = {
+        position: i,
+        viewPosition: a,
+        secondaryPositions: r,
+        secondaryViewPositions: u,
+        reason: t,
+        source: e,
+        isInEditableRange: l
+      };
+      this.emit(o.EventType.CursorPositionChanged, d);
+    };
+
+    t.prototype.emitCursorSelectionChanged = function(e, t) {
+      var n = this.cursors.getSelections();
+
+      var i = n[0];
+
+      var r = n.slice(1);
+
+      var s = {
+        selection: i,
+        secondarySelections: r,
+        source: e,
+        reason: t
+      };
+      this.emit(o.EventType.CursorSelectionChanged, s);
+    };
+
+    t.prototype.emitCursorRevealRange = function(e, t) {
+      var n = this.cursors.getPosition(0);
+
+      var i = this.cursors.getViewPosition(0);
+
+      var s = new r.Range(n.lineNumber, n.column, n.lineNumber, n.column);
+
+      var a = new r.Range(i.lineNumber, i.column, i.lineNumber, i.column);
+
+      var u = {
+        range: s,
+        viewRange: a,
+        revealVerticalInCenter: e,
+        revealHorizontal: t
+      };
+      this.emit(o.EventType.CursorRevealRange, u);
+    };
+
+    t.prototype._registerHandlers = function() {
+      var e = this;
+
+      var t = i.Handler;
+
+      var n = {};
+      n[t.JumpToBracket] = function(t) {
+        return e._jumpToBracket(t);
+      };
+
+      n[t.MoveTo] = function(t) {
+        return e._moveTo(!1, t);
+      };
+
+      n[t.MoveToSelect] = function(t) {
+        return e._moveTo(!0, t);
+      };
+
+      n[t.AddCursorUp] = function(t) {
+        return e._addCursorUp(t);
+      };
+
+      n[t.AddCursorDown] = function(t) {
+        return e._addCursorDown(t);
+      };
+
+      n[t.CreateCursor] = function(t) {
+        return e._createCursor(t);
+      };
+
+      n[t.LastCursorMoveToSelect] = function(t) {
+        return e._lastCursorMoveTo(t);
+      };
+
+      n[t.CursorLeft] = function(t) {
+        return e._moveLeft(!1, t);
+      };
+
+      n[t.CursorLeftSelect] = function(t) {
+        return e._moveLeft(!0, t);
+      };
+
+      n[t.CursorWordLeft] = function(t) {
+        return e._moveWordLeft(!1, t);
+      };
+
+      n[t.CursorWordLeftSelect] = function(t) {
+        return e._moveWordLeft(!0, t);
+      };
+
+      n[t.CursorRight] = function(t) {
+        return e._moveRight(!1, t);
+      };
+
+      n[t.CursorRightSelect] = function(t) {
+        return e._moveRight(!0, t);
+      };
+
+      n[t.CursorWordRight] = function(t) {
+        return e._moveWordRight(!1, t);
+      };
+
+      n[t.CursorWordRightSelect] = function(t) {
+        return e._moveWordRight(!0, t);
+      };
+
+      n[t.CursorUp] = function(t) {
+        return e._moveUp(!1, !1, t);
+      };
+
+      n[t.CursorUpSelect] = function(t) {
+        return e._moveUp(!0, !1, t);
+      };
+
+      n[t.CursorDown] = function(t) {
+        return e._moveDown(!1, !1, t);
+      };
+
+      n[t.CursorDownSelect] = function(t) {
+        return e._moveDown(!0, !1, t);
+      };
+
+      n[t.CursorPageUp] = function(t) {
+        return e._moveUp(!1, !0, t);
+      };
+
+      n[t.CursorPageUpSelect] = function(t) {
+        return e._moveUp(!0, !0, t);
+      };
+
+      n[t.CursorPageDown] = function(t) {
+        return e._moveDown(!1, !0, t);
+      };
+
+      n[t.CursorPageDownSelect] = function(t) {
+        return e._moveDown(!0, !0, t);
+      };
+
+      n[t.CursorHome] = function(t) {
+        return e._moveToBeginningOfLine(!1, t);
+      };
+
+      n[t.CursorHomeSelect] = function(t) {
+        return e._moveToBeginningOfLine(!0, t);
+      };
+
+      n[t.CursorEnd] = function(t) {
+        return e._moveToEndOfLine(!1, t);
+      };
+
+      n[t.CursorEndSelect] = function(t) {
+        return e._moveToEndOfLine(!0, t);
+      };
+
+      n[t.CursorTop] = function(t) {
+        return e._moveToBeginningOfBuffer(!1, t);
+      };
+
+      n[t.CursorTopSelect] = function(t) {
+        return e._moveToBeginningOfBuffer(!0, t);
+      };
+
+      n[t.CursorBottom] = function(t) {
+        return e._moveToEndOfBuffer(!1, t);
+      };
+
+      n[t.CursorBottomSelect] = function(t) {
+        return e._moveToEndOfBuffer(!0, t);
+      };
+
+      n[t.SelectAll] = function(t) {
+        return e._selectAll(t);
+      };
+
+      n[t.LineSelect] = function(t) {
+        return e._line(!1, t);
+      };
+
+      n[t.LineSelectDrag] = function(t) {
+        return e._line(!0, t);
+      };
+
+      n[t.LastCursorLineSelect] = function(t) {
+        return e._lastCursorLine(!1, t);
+      };
+
+      n[t.LastCursorLineSelectDrag] = function(t) {
+        return e._lastCursorLine(!0, t);
+      };
+
+      n[t.LineInsertBefore] = function(t) {
+        return e._lineInsertBefore(t);
+      };
+
+      n[t.LineInsertAfter] = function(t) {
+        return e._lineInsertAfter(t);
+      };
+
+      n[t.LineBreakInsert] = function(t) {
+        return e._lineBreakInsert(t);
+      };
+
+      n[t.WordSelect] = function(t) {
+        return e._word(!1, t);
+      };
+
+      n[t.WordSelectDrag] = function(t) {
+        return e._word(!0, t);
+      };
+
+      n[t.LastCursorWordSelect] = function(t) {
+        return e._lastCursorWord(t);
+      };
+
+      n[t.Escape] = function(t) {
+        return e._cancelSelection(t);
+      };
+
+      n[t.Type] = function(t) {
+        return e._type(t);
+      };
+
+      n[t.Tab] = function(t) {
+        return e._tab(t);
+      };
+
+      n[t.Indent] = function(t) {
+        return e._indent(t);
+      };
+
+      n[t.Outdent] = function(t) {
+        return e._outdent(t);
+      };
+
+      n[t.Paste] = function(t) {
+        return e._paste(t);
+      };
+
+      n[t.DeleteLeft] = function(t) {
+        return e._deleteLeft(t);
+      };
+
+      n[t.DeleteWordLeft] = function(t) {
+        return e._deleteWordLeft(t);
+      };
+
+      n[t.DeleteRight] = function(t) {
+        return e._deleteRight(t);
+      };
+
+      n[t.DeleteWordRight] = function(t) {
+        return e._deleteWordRight(t);
+      };
+
+      n[t.DeleteAllLeft] = function(t) {
+        return e._deleteAllLeft(t);
+      };
+
+      n[t.DeleteAllRight] = function(t) {
+        return e._deleteAllRight(t);
+      };
+
+      n[t.Cut] = function(t) {
+        return e._cut(t);
+      };
+
+      n[t.Undo] = function(t) {
+        return e._undo(t);
+      };
+
+      n[t.Redo] = function(t) {
+        return e._redo(t);
+      };
+
+      n[t.ExecuteCommand] = function(t) {
+        return e._externalExecuteCommand(t);
+      };
+
+      n[t.ExecuteCommands] = function(t) {
+        return e._externalExecuteCommands(t);
+      };
+      var o;
+
+      var r = function(t, n) {
+        return function(i) {
+          return e._onHandler(t, n, i);
         };
-        var d = function(b, c) {
-          return function(d) {
-            return a._onHandler(b, c, d)
-          }
-        }, e;
-        for (e in c) c.hasOwnProperty(e) && this.configuration.handlerDispatcher.setHandler(e, d(e, c[e]))
-      }, b.prototype._invokeForAll = function(a, b, c, d) {
-        typeof c == "undefined" && (c = !0), typeof d == "undefined" && (d = !0);
-        var e = !1,
-          f = this.cursors.getAll(),
-          g;
-        a.shouldPushStackElementBefore = c, a.shouldPushStackElementAfter = d;
-        for (var h = 0; h < f.length; h++) g = {
-          cursorPositionChangeReason: "",
-          cursorPositionChangeSource: "",
-          shouldReveal: !0,
-          shouldRevealVerticalInCenter: !1,
-          shouldRevealHorizontal: !0,
-          executeCommand: null,
-          postOperationRunnable: null,
-          shouldPushStackElementBefore: !1,
-          shouldPushStackElementAfter: !1
-        }, e = b(h, f[h], g) || e, h === 0 && (a.cursorPositionChangeReason = g.cursorPositionChangeReason, a.shouldRevealHorizontal =
-          g.shouldRevealHorizontal, a.shouldReveal = g.shouldReveal, a.shouldRevealVerticalInCenter = g.shouldRevealVerticalInCenter
-        ), a.shouldPushStackElementBefore = a.shouldPushStackElementBefore || g.shouldPushStackElementBefore, a.shouldPushStackElementAfter =
-          a.shouldPushStackElementAfter || g.shouldPushStackElementAfter, a.executeCommands[h] = g.executeCommand, a.postOperationRunnables[
-            h] = g.postOperationRunnable;
-        return e
-      }, b.prototype._jumpToBracket = function(a) {
-        return this.cursors.killSecondaryCursors(), this._invokeForAll(a, function(a, b, c) {
-          return b.jumpToBracket(c)
-        })
-      }, b.prototype._moveTo = function(a, b) {
-        return this.cursors.killSecondaryCursors(), this._invokeForAll(b, function(c, d, e) {
-          return d.moveTo(a, b.eventData.position, b.eventData.viewPosition, b.eventSource, e)
-        })
-      }, b.prototype._createCursor = function(a) {
-        if (this.configuration.editor.readOnly || this.model.hasEditableRange()) return !1;
-        this.cursors.addSecondaryCursor({
-          selectionStartLineNumber: 1,
-          selectionStartColumn: 1,
-          positionLineNumber: 1,
-          positionColumn: 1
+      };
+      for (o in n) n.hasOwnProperty(o) && this.configuration.handlerDispatcher.setHandler(o, r(o, n[o]));
+    };
+
+    t.prototype._invokeForAll = function(e, t, n, i) {
+      "undefined" == typeof n && (n = !0);
+
+      "undefined" == typeof i && (i = !0);
+      var o;
+
+      var r = !1;
+
+      var s = this.cursors.getAll();
+      e.shouldPushStackElementBefore = n;
+
+      e.shouldPushStackElementAfter = i;
+      for (var a = 0; a < s.length; a++) o = {
+        cursorPositionChangeReason: "",
+        cursorPositionChangeSource: "",
+        shouldReveal: !0,
+        shouldRevealVerticalInCenter: !1,
+        shouldRevealHorizontal: !0,
+        executeCommand: null,
+        postOperationRunnable: null,
+        shouldPushStackElementBefore: !1,
+        shouldPushStackElementAfter: !1
+      };
+
+      r = t(a, s[a], o) || r;
+
+      0 === a && (e.cursorPositionChangeReason = o.cursorPositionChangeReason, e.shouldRevealHorizontal = o.shouldRevealHorizontal,
+        e.shouldReveal = o.shouldReveal, e.shouldRevealVerticalInCenter = o.shouldRevealVerticalInCenter);
+
+      e.shouldPushStackElementBefore = e.shouldPushStackElementBefore || o.shouldPushStackElementBefore;
+
+      e.shouldPushStackElementAfter = e.shouldPushStackElementAfter || o.shouldPushStackElementAfter;
+
+      e.executeCommands[a] = o.executeCommand;
+
+      e.postOperationRunnables[a] = o.postOperationRunnable;
+      return r;
+    };
+
+    t.prototype._jumpToBracket = function(e) {
+      this.cursors.killSecondaryCursors();
+
+      return this._invokeForAll(e, function(e, t, n) {
+        return t.jumpToBracket(n);
+      });
+    };
+
+    t.prototype._moveTo = function(e, t) {
+      this.cursors.killSecondaryCursors();
+
+      return this._invokeForAll(t, function(n, i, o) {
+        return i.moveTo(e, t.eventData.position, t.eventData.viewPosition, t.eventSource, o);
+      });
+    };
+
+    t.prototype._createCursor = function(e) {
+      if (this.configuration.editor.readOnly || this.model.hasEditableRange()) return !1;
+      this.cursors.addSecondaryCursor({
+        selectionStartLineNumber: 1,
+        selectionStartColumn: 1,
+        positionLineNumber: 1,
+        positionColumn: 1
+      });
+      var t = this.cursors.getLastAddedCursor();
+      this._invokeForAll(e, function(n, i, o) {
+        return i === t ? e.eventData.wholeLine ? i.line(!1, e.eventData.position, e.eventData.viewPosition, o) : i.moveTo(!
+          1, e.eventData.position, e.eventData.viewPosition, e.eventSource, o) : !1;
+      });
+
+      e.shouldReveal = !1;
+
+      e.shouldRevealHorizontal = !1;
+
+      return !0;
+    };
+
+    t.prototype._lastCursorMoveTo = function(e) {
+      if (this.configuration.editor.readOnly || this.model.hasEditableRange()) return !1;
+      var t = this.cursors.getLastAddedCursor();
+      this._invokeForAll(e, function(n, i, o) {
+        return i === t ? i.moveTo(!0, e.eventData.position, e.eventData.viewPosition, e.eventSource, o) : !1;
+      });
+
+      e.shouldReveal = !1;
+
+      e.shouldRevealHorizontal = !1;
+
+      return !0;
+    };
+
+    t.prototype._addCursorUp = function(e) {
+      if (this.configuration.editor.readOnly) return !1;
+      var t = this.cursors.getSelections().length;
+      this.cursors.duplicateCursors();
+
+      return this._invokeForAll(e, function(e, n, i) {
+        return e >= t ? n.translateUp(i) : !1;
+      });
+    };
+
+    t.prototype._addCursorDown = function(e) {
+      if (this.configuration.editor.readOnly) return !1;
+      var t = this.cursors.getSelections().length;
+      this.cursors.duplicateCursors();
+
+      return this._invokeForAll(e, function(e, n, i) {
+        return e >= t ? n.translateDown(i) : !1;
+      });
+    };
+
+    t.prototype._moveLeft = function(e, t) {
+      return this._invokeForAll(t, function(t, n, i) {
+        return n.moveLeft(e, i);
+      });
+    };
+
+    t.prototype._moveWordLeft = function(e, t) {
+      return this._invokeForAll(t, function(t, n, i) {
+        return n.moveWordLeft(e, i);
+      });
+    };
+
+    t.prototype._moveRight = function(e, t) {
+      return this._invokeForAll(t, function(t, n, i) {
+        return n.moveRight(e, i);
+      });
+    };
+
+    t.prototype._moveWordRight = function(e, t) {
+      return this._invokeForAll(t, function(t, n, i) {
+        return n.moveWordRight(e, i);
+      });
+    };
+
+    t.prototype._moveDown = function(e, t, n) {
+      return this._invokeForAll(n, function(n, i, o) {
+        return i.moveDown(e, t, o);
+      });
+    };
+
+    t.prototype._moveUp = function(e, t, n) {
+      return this._invokeForAll(n, function(n, i, o) {
+        return i.moveUp(e, t, o);
+      });
+    };
+
+    t.prototype._moveToBeginningOfLine = function(e, t) {
+      return this._invokeForAll(t, function(t, n, i) {
+        return n.moveToBeginningOfLine(e, i);
+      });
+    };
+
+    t.prototype._moveToEndOfLine = function(e, t) {
+      return this._invokeForAll(t, function(t, n, i) {
+        return n.moveToEndOfLine(e, i);
+      });
+    };
+
+    t.prototype._moveToBeginningOfBuffer = function(e, t) {
+      return this._invokeForAll(t, function(t, n, i) {
+        return n.moveToBeginningOfBuffer(e, i);
+      });
+    };
+
+    t.prototype._moveToEndOfBuffer = function(e, t) {
+      return this._invokeForAll(t, function(t, n, i) {
+        return n.moveToEndOfBuffer(e, i);
+      });
+    };
+
+    t.prototype._selectAll = function(e) {
+      this.cursors.killSecondaryCursors();
+
+      return this._invokeForAll(e, function(e, t, n) {
+        return t.selectAll(n);
+      });
+    };
+
+    t.prototype._line = function(e, t) {
+      this.cursors.killSecondaryCursors();
+
+      return this._invokeForAll(t, function(n, i, o) {
+        return i.line(e, t.eventData.position, t.eventData.viewPosition, o);
+      });
+    };
+
+    t.prototype._lastCursorLine = function(e, t) {
+      if (this.configuration.editor.readOnly || this.model.hasEditableRange()) return !1;
+      var n = this.cursors.getLastAddedCursor();
+      this._invokeForAll(t, function(i, o, r) {
+        return o === n ? o.line(e, t.eventData.position, t.eventData.viewPosition, r) : !1;
+      });
+
+      t.shouldReveal = !1;
+
+      t.shouldRevealHorizontal = !1;
+
+      return !0;
+    };
+
+    t.prototype._lineInsertBefore = function(e) {
+      return this._invokeForAll(e, function(e, t, n) {
+        return t.lineInsertBefore(n);
+      });
+    };
+
+    t.prototype._lineInsertAfter = function(e) {
+      return this._invokeForAll(e, function(e, t, n) {
+        return t.lineInsertAfter(n);
+      });
+    };
+
+    t.prototype._lineBreakInsert = function(e) {
+      return this._invokeForAll(e, function(e, t, n) {
+        return t.lineBreakInsert(n);
+      });
+    };
+
+    t.prototype._word = function(e, t) {
+      this.cursors.killSecondaryCursors();
+
+      return this._invokeForAll(t, function(n, i, o) {
+        return i.word(e, t.eventData.position, t.eventData.preference || "none", o);
+      });
+    };
+
+    t.prototype._lastCursorWord = function(e) {
+      if (this.configuration.editor.readOnly || this.model.hasEditableRange()) return !1;
+      var t = this.cursors.getLastAddedCursor();
+      this._invokeForAll(e, function(n, i, o) {
+        return i === t ? i.word(!0, e.eventData.position, e.eventData.preference || "none", o) : !1;
+      });
+
+      e.shouldReveal = !1;
+
+      e.shouldRevealHorizontal = !1;
+
+      return !0;
+    };
+
+    t.prototype._cancelSelection = function(e) {
+      return this.cursors.killSecondaryCursors() ? !0 : this._invokeForAll(e, function(e, t, n) {
+        return t.cancelSelection(n);
+      });
+    };
+
+    t.prototype._type = function(e) {
+      var t = this;
+
+      var n = e.eventData.text;
+      if ("keyboard" === e.eventSource) {
+        var i;
+
+        var o;
+
+        var r;
+        for (i = 0, o = n.length; o > i; i++) r = n.charAt(i);
+
+        this.charactersTyped += r;
+
+        this._createAndInterpretHandlerCtx(e.eventSource, e.eventData, function(n) {
+          t._invokeForAll(n, function(e, t, n) {
+            return t.type(r, n);
+          }, !1, !1);
+
+          e.cursorPositionChangeReason = n.cursorPositionChangeReason;
+
+          e.shouldReveal = n.shouldReveal;
+
+          e.shouldRevealVerticalInCenter = n.shouldRevealVerticalInCenter;
+
+          e.shouldRevealHorizontal = n.shouldRevealHorizontal;
         });
-        var b = this.cursors.getLastAddedCursor();
-        return this._invokeForAll(a, function(c, d, e) {
-          return d === b ? a.eventData.wholeLine ? d.line(!1, a.eventData.position, a.eventData.viewPosition, e) :
-            d.moveTo(!1, a.eventData.position, a.eventData.viewPosition, a.eventSource, e) : !1
-        }), a.shouldReveal = !1, a.shouldRevealHorizontal = !1, !0
-      }, b.prototype._lastCursorMoveTo = function(a) {
-        if (this.configuration.editor.readOnly || this.model.hasEditableRange()) return !1;
-        var b = this.cursors.getLastAddedCursor();
-        return this._invokeForAll(a, function(c, d, e) {
-          return d === b ? d.moveTo(!0, a.eventData.position, a.eventData.viewPosition, a.eventSource, e) : !1
-        }), a.shouldReveal = !1, a.shouldRevealHorizontal = !1, !0
-      }, b.prototype._addCursorUp = function(a) {
-        if (this.configuration.editor.readOnly) return !1;
-        var b = this.cursors.getSelections(),
-          c = b.length;
-        for (var d = 0; d < c; d++) this.cursors.addSecondaryCursor(b[d]);
-        return this._invokeForAll(a, function(a, b, d) {
-          return a >= c ? b.moveUp(!1, !1, d) : !1
-        })
-      }, b.prototype._addCursorDown = function(a) {
-        if (this.configuration.editor.readOnly) return !1;
-        var b = this.cursors.getSelections(),
-          c = b.length;
-        for (var d = 0; d < c; d++) this.cursors.addSecondaryCursor(b[d]);
-        return this._invokeForAll(a, function(a, b, d) {
-          return a >= c ? b.moveDown(!1, !1, d) : !1
-        })
-      }, b.prototype._moveLeft = function(a, b) {
-        return this._invokeForAll(b, function(b, c, d) {
-          return c.moveLeft(a, d)
-        })
-      }, b.prototype._moveWordLeft = function(a, b) {
-        return this._invokeForAll(b, function(b, c, d) {
-          return c.moveWordLeft(a, d)
-        })
-      }, b.prototype._moveRight = function(a, b) {
-        return this._invokeForAll(b, function(b, c, d) {
-          return c.moveRight(a, d)
-        })
-      }, b.prototype._moveWordRight = function(a, b) {
-        return this._invokeForAll(b, function(b, c, d) {
-          return c.moveWordRight(a, d)
-        })
-      }, b.prototype._moveDown = function(a, b, c) {
-        return this._invokeForAll(c, function(c, d, e) {
-          return d.moveDown(a, b, e)
-        })
-      }, b.prototype._moveUp = function(a, b, c) {
-        return this._invokeForAll(c, function(c, d, e) {
-          return d.moveUp(a, b, e)
-        })
-      }, b.prototype._moveToBeginningOfLine = function(a, b) {
-        return this._invokeForAll(b, function(b, c, d) {
-          return c.moveToBeginningOfLine(a, d)
-        })
-      }, b.prototype._moveToEndOfLine = function(a, b) {
-        return this._invokeForAll(b, function(b, c, d) {
-          return c.moveToEndOfLine(a, d)
-        })
-      }, b.prototype._moveToBeginningOfBuffer = function(a, b) {
-        return this._invokeForAll(b, function(b, c, d) {
-          return c.moveToBeginningOfBuffer(a, d)
-        })
-      }, b.prototype._moveToEndOfBuffer = function(a, b) {
-        return this._invokeForAll(b, function(b, c, d) {
-          return c.moveToEndOfBuffer(a, d)
-        })
-      }, b.prototype._selectAll = function(a) {
-        return this.cursors.killSecondaryCursors(), this._invokeForAll(a, function(a, b, c) {
-          return b.selectAll(c)
-        })
-      }, b.prototype._line = function(a, b) {
-        return this.cursors.killSecondaryCursors(), this._invokeForAll(b, function(c, d, e) {
-          return d.line(a, b.eventData.position, b.eventData.viewPosition, e)
-        })
-      }, b.prototype._lastCursorLine = function(a, b) {
-        if (this.configuration.editor.readOnly || this.model.hasEditableRange()) return !1;
-        var c = this.cursors.getLastAddedCursor();
-        return this._invokeForAll(b, function(d, e, f) {
-          return e === c ? e.line(a, b.eventData.position, b.eventData.viewPosition, f) : !1
-        }), b.shouldReveal = !1, b.shouldRevealHorizontal = !1, !0
-      }, b.prototype._lineInsertBefore = function(a) {
-        return this._invokeForAll(a, function(a, b, c) {
-          return b.lineInsertBefore(c)
-        })
-      }, b.prototype._lineInsertAfter = function(a) {
-        return this._invokeForAll(a, function(a, b, c) {
-          return b.lineInsertAfter(c)
-        })
-      }, b.prototype._lineBreakInsert = function(a) {
-        return this._invokeForAll(a, function(a, b, c) {
-          return b.lineBreakInsert(c)
-        })
-      }, b.prototype._word = function(a, b) {
-        return this.cursors.killSecondaryCursors(), this._invokeForAll(b, function(c, d, e) {
-          return d.word(a, b.eventData.position, b.eventData.preference || "none", e)
-        })
-      }, b.prototype._lastCursorWord = function(a) {
-        if (this.configuration.editor.readOnly || this.model.hasEditableRange()) return !1;
-        var b = this.cursors.getLastAddedCursor();
-        return this._invokeForAll(a, function(c, d, e) {
-          return d === b ? d.word(!0, a.eventData.position, a.eventData.preference || "none", e) : !1
-        }), a.shouldReveal = !1, a.shouldRevealHorizontal = !1, !0
-      }, b.prototype._cancelSelection = function(a) {
-        return this.cursors.killSecondaryCursors() ? !0 : this._invokeForAll(a, function(a, b, c) {
-          return b.cancelSelection(c)
-        })
-      }, b.prototype._type = function(a) {
-        var b = this,
-          c = a.eventData.text;
-        if (a.eventSource === "keyboard") {
-          var d, e, f, g, h;
-          for (d = 0, f = c.length; d < f; d++) h = c.charAt(d), this.charactersTyped += h, this._createAndInterpretHandlerCtx(
-            a.eventSource, a.eventData, function(c) {
-              b._invokeForAll(c, function(a, b, c) {
-                return b.type(h, c)
-              }, !1, !1), a.cursorPositionChangeReason = c.cursorPositionChangeReason, a.shouldReveal = c.shouldReveal,
-                a.shouldRevealVerticalInCenter = c.shouldRevealVerticalInCenter, a.shouldRevealHorizontal = c.shouldRevealHorizontal
-            })
-        } else this._invokeForAll(a, function(a, b, d) {
-          return b.actualType(c, !1, d)
-        });
-        return !0
-      }, b.prototype._tab = function(a) {
-        return this._invokeForAll(a, function(a, b, c) {
-          return b.tab(c)
-        }, !1, !1)
-      }, b.prototype._indent = function(a) {
-        return this._invokeForAll(a, function(a, b, c) {
-          return b.indent(c)
-        })
-      }, b.prototype._outdent = function(a) {
-        return this._invokeForAll(a, function(a, b, c) {
-          return b.outdent(c)
-        })
-      }, b.prototype._paste = function(a) {
-        return this._invokeForAll(a, function(b, c, d) {
-          return c.paste(a.eventData.text, a.eventData.sameSource, d)
-        })
-      }, b.prototype._deleteLeft = function(a) {
-        return this._invokeForAll(a, function(a, b, c) {
-          return b.deleteLeft(c)
-        }, !1, !1)
-      }, b.prototype._deleteWordLeft = function(a) {
-        return this._invokeForAll(a, function(a, b, c) {
-          return b.deleteWordLeft(c)
-        }, !1, !1)
-      }, b.prototype._deleteRight = function(a) {
-        return this._invokeForAll(a, function(a, b, c) {
-          return b.deleteRight(c)
-        }, !1, !1)
-      }, b.prototype._deleteWordRight = function(a) {
-        return this._invokeForAll(a, function(a, b, c) {
-          return b.deleteWordRight(c)
-        }, !1, !1)
-      }, b.prototype._deleteAllLeft = function(a) {
-        return this._invokeForAll(a, function(a, b, c) {
-          return b.deleteAllLeft(c)
-        }, !1, !1)
-      }, b.prototype._deleteAllRight = function(a) {
-        return this._invokeForAll(a, function(a, b, c) {
-          return b.deleteAllRight(c)
-        }, !1, !1)
-      }, b.prototype._cut = function(a) {
-        return this._invokeForAll(a, function(a, b, c) {
-          return b.cut(c)
-        })
-      }, b.prototype._undo = function(a) {
-        return a.cursorPositionChangeReason = "undo", this._interpretCommandResult(this.model.undo()), !0
-      }, b.prototype._redo = function(a) {
-        return a.cursorPositionChangeReason = "redo", this._interpretCommandResult(this.model.redo()), !0
-      }, b.prototype._externalExecuteCommand = function(a) {
-        return this.cursors.killSecondaryCursors(), this._invokeForAll(a, function(b, c, d) {
-          return d.shouldPushStackElementBefore = !0, d.shouldPushStackElementAfter = !0, d.executeCommand = a.eventData, !
-            1
-        })
-      }, b.prototype._externalExecuteCommands = function(a) {
-        return this._invokeForAll(a, function(b, c, d) {
-          return d.shouldPushStackElementBefore = !0, d.shouldPushStackElementAfter = !0, d.executeCommand = a.eventData[
-            b], !1
-        })
-      }, b
-    }(q.EventEmitter);
-  b.Cursor = w
-})
+      } else this._invokeForAll(e, function(e, t, i) {
+        return t.actualType(n, !1, i);
+      });
+      return !0;
+    };
+
+    t.prototype._tab = function(e) {
+      return this._invokeForAll(e, function(e, t, n) {
+        return t.tab(n);
+      }, !1, !1);
+    };
+
+    t.prototype._indent = function(e) {
+      return this._invokeForAll(e, function(e, t, n) {
+        return t.indent(n);
+      });
+    };
+
+    t.prototype._outdent = function(e) {
+      return this._invokeForAll(e, function(e, t, n) {
+        return t.outdent(n);
+      });
+    };
+
+    t.prototype._paste = function(e) {
+      return this._invokeForAll(e, function(t, n, i) {
+        return n.paste(e.eventData.text, e.eventData.pasteOnNewLine, i);
+      });
+    };
+
+    t.prototype._deleteLeft = function(e) {
+      return this._invokeForAll(e, function(e, t, n) {
+        return t.deleteLeft(n);
+      }, !1, !1);
+    };
+
+    t.prototype._deleteWordLeft = function(e) {
+      return this._invokeForAll(e, function(e, t, n) {
+        return t.deleteWordLeft(n);
+      }, !1, !1);
+    };
+
+    t.prototype._deleteRight = function(e) {
+      return this._invokeForAll(e, function(e, t, n) {
+        return t.deleteRight(n);
+      }, !1, !1);
+    };
+
+    t.prototype._deleteWordRight = function(e) {
+      return this._invokeForAll(e, function(e, t, n) {
+        return t.deleteWordRight(n);
+      }, !1, !1);
+    };
+
+    t.prototype._deleteAllLeft = function(e) {
+      return this._invokeForAll(e, function(e, t, n) {
+        return t.deleteAllLeft(n);
+      }, !1, !1);
+    };
+
+    t.prototype._deleteAllRight = function(e) {
+      return this._invokeForAll(e, function(e, t, n) {
+        return t.deleteAllRight(n);
+      }, !1, !1);
+    };
+
+    t.prototype._cut = function(e) {
+      return this._invokeForAll(e, function(e, t, n) {
+        return t.cut(n);
+      });
+    };
+
+    t.prototype._undo = function(e) {
+      e.cursorPositionChangeReason = "undo";
+
+      this._interpretCommandResult(this.model.undo());
+
+      return !0;
+    };
+
+    t.prototype._redo = function(e) {
+      e.cursorPositionChangeReason = "redo";
+
+      this._interpretCommandResult(this.model.redo());
+
+      return !0;
+    };
+
+    t.prototype._externalExecuteCommand = function(e) {
+      this.cursors.killSecondaryCursors();
+
+      return this._invokeForAll(e, function(t, n, i) {
+        i.shouldPushStackElementBefore = !0;
+
+        i.shouldPushStackElementAfter = !0;
+
+        i.executeCommand = e.eventData;
+
+        return !1;
+      });
+    };
+
+    t.prototype._externalExecuteCommands = function(e) {
+      return this._invokeForAll(e, function(t, n, i) {
+        i.shouldPushStackElementBefore = !0;
+
+        i.shouldPushStackElementAfter = !0;
+
+        i.executeCommand = e.eventData[t];
+
+        return !1;
+      });
+    };
+
+    return t;
+  }(a.EventEmitter);
+  t.Cursor = p;
+});

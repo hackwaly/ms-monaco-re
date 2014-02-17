@@ -1,217 +1,269 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a
+define("vs/editor/core/view/lines/viewLines", ["require", "exports", "vs/editor/core/view/lines/viewLine",
+  "vs/editor/core/view/lines/viewLayer", "vs/editor/core/view/viewContext", "vs/editor/core/range",
+  "vs/base/time/schedulers"
+], function(e, t, n, i, o, r, s) {
+  var a = function(e) {
+    function t(t, n) {
+      var i = this;
+      e.call(this, t, n);
+
+      this.domNode.className = o.ClassNames.VIEW_LINES;
+
+      this._maxLineWidth = 0;
+
+      this._asyncUpdateLineWidths = new s.RunOnceScheduler(function() {
+        i._updateLineWidths();
+      }, 200);
+
+      this._currentVisibleRange = new r.Range(1, 1, 1, 1);
+
+      this._lastCursorRevealRangeHorizontallyEvent = null;
+
+      this._context.addEventHandler(this);
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
-    d.prototype = b.prototype, a.prototype = new d
-  };
-define(["require", "exports", "vs/editor/core/view/lines/viewLine", "vs/editor/core/view/lines/viewLayer",
-  "vs/editor/core/view/viewContext", "vs/editor/core/range", "vs/base/time/schedulers"
-], function(a, b, c, d, e, f, g) {
-  var h = c,
-    i = d,
-    j = e,
-    k = f,
-    l = g,
-    m = function() {
-      function a(a) {
-        this.visibleRanges = a, this.lastValidIndex = this.visibleRanges.length - 1, this.index = -1
+    __extends(t, e);
+
+    t.prototype.dispose = function() {
+      this._context.removeEventHandler(this);
+
+      this._asyncUpdateLineWidths.dispose();
+
+      e.prototype.dispose.call(this);
+    };
+
+    t.prototype.onConfigurationChanged = function(t) {
+      var n = e.prototype.onConfigurationChanged.call(this, t);
+      t.wrappingColumn && (this._maxLineWidth = 0);
+
+      return n;
+    };
+
+    t.prototype.onLayoutChanged = function(t) {
+      var n = e.prototype.onLayoutChanged.call(this, t);
+      this._maxLineWidth = 0;
+
+      return n;
+    };
+
+    t.prototype.onModelFlushed = function() {
+      var t = e.prototype.onModelFlushed.call(this);
+      this._maxLineWidth = 0;
+
+      return t;
+    };
+
+    t.prototype.onModelDecorationsChanged = function(t) {
+      for (var n = e.prototype.onModelDecorationsChanged.call(this, t), i = 0; i < this._lines.length; i++) this._lines[
+        i].onModelDecorationsChanged();
+      return n || !0;
+    };
+
+    t.prototype.onCursorRevealRange = function(e) {
+      var t = this._computeScrollTopToRevealRange(this._layoutProvider.getCurrentViewport(), e.range, e.revealVerticalInCenter);
+      e.revealHorizontal && (this._lastCursorRevealRangeHorizontallyEvent = e);
+
+      this._layoutProvider.setScrollTop(t);
+
+      return !0;
+    };
+
+    t.prototype.getPositionFromDOMInfo = function(e, t) {
+      var n = this._getLineNumberFromDOMInfo(e);
+      if (-1 === n) return null;
+      if (1 === this._context.model.getLineMaxColumn(n)) return {
+        lineNumber: n,
+        column: 1
+      };
+      var i = n - this._rendLineNumberStart;
+      if (0 > i || i >= this._lines.length) return null;
+      var o = this._lines[i].getColumnOfNodeOffset(n, e, t);
+      return {
+        lineNumber: n,
+        column: o
+      };
+    };
+
+    t.prototype._getLineNumberFromDOMInfo = function(e) {
+      for (; e && 1 === e.nodeType;) {
+        if (e.className === o.ClassNames.VIEW_LINE) return parseInt(e.getAttribute("lineNumber"), 10);
+        e = e.parentElement;
       }
-      return a.prototype.next = function() {
-        return this.index === this.lastValidIndex ? !1 : (this.index++, !0)
-      }, a.prototype.getTop = function() {
-        return this.visibleRanges[this.index].top
-      }, a.prototype.getLeft = function() {
-        return this.visibleRanges[this.index].left
-      }, a.prototype.getWidth = function() {
-        return this.visibleRanges[this.index].width
-      }, a.prototype.getHeight = function() {
-        return this.visibleRanges[this.index].height
-      }, a.prototype.toArray = function() {
-        return this.visibleRanges
-      }, a
-    }(),
-    n = function(a) {
-      function b(b, c) {
-        var d = this;
-        a.call(this, b, c), this.domNode.className = j.ClassNames.VIEW_LINES, this._maxLineWidth = 0, this._asyncUpdateLineWidths =
-          new l.RunOnceScheduler(function() {
-            d._updateLineWidths()
-          }, 200), this._currentVisibleRange = new k.Range(1, 1, 1, 1), this._lastCursorRevealRangeVerticallyEvent =
-          null, this._lastCursorRevealRangeHorizontallyEvent = null, this._context.addEventHandler(this)
+      return -1;
+    };
+
+    t.prototype.getLineWidth = function(e) {
+      var t = e - this._rendLineNumberStart;
+      return 0 > t || t >= this._lines.length ? -1 : this._lines[t].getWidth();
+    };
+
+    t.prototype.visibleRangesForRange2 = function(e, n, i) {
+      if (this.shouldRender) return null;
+      var o = e.endLineNumber;
+      if (e = r.intersectRanges(e, this._currentVisibleRange), !e) return null;
+      var s;
+
+      var a;
+
+      var u;
+
+      var l;
+
+      var c;
+
+      var d;
+
+      var h;
+
+      var p = [];
+
+      var f = this._context.configuration.editor.lineHeight;
+
+      var g = this.domNode.getBoundingClientRect();
+
+      var m = g.top;
+
+      var v = g.left;
+      for (i && (h = this._context.model.convertViewPositionToModelPosition(e.startLineNumber, 1).lineNumber), a = e.startLineNumber; a <=
+        e.endLineNumber; a++)
+        if (u = a - this._rendLineNumberStart, !(0 > u || u >= this._lines.length) && (l = a === e.startLineNumber ?
+          e.startColumn : 1, c = a === e.endLineNumber ? e.endColumn : this._context.model.getLineMaxColumn(a), s =
+          this._lines[u].getVisibleRangesForRange(a, l, c, m, v, this._guardElement), s && s.length > 0)) {
+          for (var y = 0, _ = s.length; _ > y; y++) s[y].top = (s[y].top / f + .5 | 0) * f + n;
+
+          s[y].height = f;
+          i && o > a && (d = h, h = this._context.model.convertViewPositionToModelPosition(a + 1, 1).lineNumber, d !==
+            h && (s[s.length - 1].width += t.LINE_FEED_WIDTH));
+
+          p = p.concat(s);
+        }
+      return 0 === p.length ? null : p;
+    };
+
+    t.prototype._createLine = function(e) {
+      return n.createLine(this._context, e);
+    };
+
+    t.prototype._renderAndUpdateLineHeights = function(t, n) {
+      e.prototype._renderLines.call(this, t, n);
+
+      this._currentVisibleRange = new r.Range(0 + this._rendLineNumberStart, 1, this._lines.length - 1 + this._rendLineNumberStart,
+        this._context.model.getLineMaxColumn(this._lines.length - 1 + this._rendLineNumberStart));
+      var i = t.visibleRangesDeltaTop + "px";
+      if (this.domNode.style.top !== i && (this.domNode.style.top = i), this._lastCursorRevealRangeHorizontallyEvent) {
+        var o = this._computeScrollLeftToRevealRange(this._lastCursorRevealRangeHorizontallyEvent.range);
+        this._lastCursorRevealRangeHorizontallyEvent = null;
+        var s = this._context.configuration.getWrappingColumn();
+
+        var a = 0 === s;
+        a || this._ensureMaxLineWidth(o.maxHorizontalOffset);
+
+        this._layoutProvider.setScrollLeft(o.scrollLeft);
       }
-      return __extends(b, a), b.prototype.dispose = function() {
-        this._context.removeEventHandler(this), this._asyncUpdateLineWidths.dispose(), a.prototype.dispose.call(this)
-      }, b.prototype.onConfigurationChanged = function(b) {
-        var c = a.prototype.onConfigurationChanged.call(this, b);
-        if (b.viewWordWrapChanged || b.wrappingColumnChanged) this._maxLineWidth = 0;
-        return c
-      }, b.prototype.onLayoutChanged = function(b) {
-        var c = a.prototype.onLayoutChanged.call(this, b);
-        return this._maxLineWidth = 0, c
-      }, b.prototype.onModelFlushed = function() {
-        var b = a.prototype.onModelFlushed.call(this);
-        return this._maxLineWidth = 0, b
-      }, b.prototype.onModelDecorationsChanged = function(b) {
-        var c = a.prototype.onModelDecorationsChanged.call(this, b);
-        for (var d = 0; d < this._lines.length; d++) this._lines[d].onModelDecorationsChanged();
-        return !0
-      }, b.prototype.onCursorRevealRange = function(a) {
-        this._lastCursorRevealRangeVerticallyEvent = a;
-        var b = this.computeScrollTopToRevealRange(this._layoutProvider.getCurrentViewport(), this._lastCursorRevealRangeVerticallyEvent
-          .range, this._lastCursorRevealRangeVerticallyEvent.revealVerticalInCenter);
-        return b.isAccurate && (this._lastCursorRevealRangeVerticallyEvent = null), a.revealHorizontal && (this._lastCursorRevealRangeHorizontallyEvent =
-          a), this._layoutProvider.setScrollTop(b.newScrollTop), !0
-      }, b.prototype.getPositionFromDOMInfo = function(a, b) {
-        var c = this._getLineNumberFromDOMInfo(a);
-        if (c === -1) return null;
-        if (this._context.model.getLineMaxColumn(c) === 1) return {
-          lineNumber: c,
-          column: 1
-        };
-        var d = c - this._rendLineNumberStart;
-        if (d < 0 || d >= this._lines.length) return null;
-        var e = this._lines[d].getColumnOfNodeOffset(c, a, b);
-        return {
-          lineNumber: c,
-          column: e
-        }
-      }, b.prototype._getLineNumberFromDOMInfo = function(a) {
-        while (a && a.nodeType === 1) {
-          if (a.className === j.ClassNames.VIEW_LINE) return parseInt(a.getAttribute("lineNumber"), 10);
-          a = a.parentElement
-        }
-        return -1
-      }, b.prototype.getLineWidth = function(a) {
-        var b = a - this._rendLineNumberStart;
-        return b < 0 || b >= this._lines.length ? -1 : this._lines[b].getWidth()
-      }, b.prototype.getInnerSpansTopOffset = function(a) {
-        var b = a - this._rendLineNumberStart;
-        return b < 0 || b >= this._lines.length ? 0 : this._lines[b].getInnerSpansTopOffset()
-      }, b.prototype.visibleRangesForRange2 = function(a, c, d, e) {
-        if (this.shouldRender) return null;
-        var f = a.endLineNumber;
-        a = k.RangeUtils.intersectRanges(a, this._currentVisibleRange);
-        if (!a) return null;
-        var g, h = [],
-          i, j, l, n, o = this.domNode.getBoundingClientRect(),
-          p = o.top - c,
-          q = o.left;
-        for (i = a.startLineNumber; i <= a.endLineNumber; i++) {
-          j = i - this._rendLineNumberStart;
-          if (j < 0 || j >= this._lines.length) continue;
-          l = i === a.startLineNumber ? a.startColumn : 1, n = i === a.endLineNumber ? a.endColumn : this._context.model
-            .getLineMaxColumn(i), g = this._lines[j].getVisibleRangesForRange(i, l, n, p, d, q, this._guardElement),
-            g && g.length > 0 && (e && i < f && (g[g.length - 1].width += b.LINE_FEED_WIDTH), h = h.concat(g))
-        }
-        return h.length === 0 ? null : new m(h)
-      }, b.prototype._createLine = function(a) {
-        return h.createLine(this._context, a)
-      }, b.prototype._renderAndUpdateLineHeights = function(b) {
-        a.prototype._renderLines.call(this, b);
-        var c = b.visibleRangesDeltaTop + "px";
-        this.domNode.style.top !== c && (this.domNode.style.top = c);
-        if (this._lastCursorRevealRangeHorizontallyEvent) {
-          var d = this.computeScrollLeftToRevealRange(this._lastCursorRevealRangeHorizontallyEvent.range);
-          this._lastCursorRevealRangeHorizontallyEvent = null;
-          var e = this._context.configuration.getWrappingColumn(),
-            f = e === 0;
-          !this._context.configuration.editor.viewWordWrap && !f && this._ensureMaxLineWidth(d.maxHorizontalOffset),
-            this._layoutProvider.setScrollLeft(d.scrollLeft)
-        }
-        var g = [],
-          h = this._context.configuration.editor.lineHeight,
-          i, j = !1,
-          k;
-        for (k = 0; k < this._lines.length; k++) b.shouldUpdateHeight[k] ? (j = !0, i = this._lines[k].getHeight(), g[
-          k] = Math.max(1, Math.round(i / h))) : g[k] = 0;
-        j && this._layoutProvider.updateLineHeights(this._rendLineNumberStart, g)
-      }, b.prototype._updateLineWidths = function() {
-        var a, b = 1,
-          c;
-        if (!this._context.configuration.editor.viewWordWrap)
-          for (a = 0; a < this._lines.length; a++) c = this._lines[a].getWidth(), b = Math.max(b, c);
-        this._ensureMaxLineWidth(b)
-      }, b.prototype.render = function() {
-        var a = 0;
-        this._lastCursorRevealRangeVerticallyEvent && (this._rendLineNumberStart > this._lastCursorRevealRangeVerticallyEvent
-          .range.endLineNumber ? a = this._lastCursorRevealRangeVerticallyEvent.range.endLineNumber : a = this._lastCursorRevealRangeVerticallyEvent
-          .range.startLineNumber);
-        var b = this._layoutProvider.getLinesViewportData(a);
-        if (!this.shouldRender) return b.visibleRange = this._currentVisibleRange, b;
-        this.shouldRender = !1, this._renderAndUpdateLineHeights(b);
-        if (this._lastCursorRevealRangeVerticallyEvent) {
-          var c = this.computeScrollTopToRevealRange(this._layoutProvider.getCurrentViewport(), this._lastCursorRevealRangeVerticallyEvent
-            .range, this._lastCursorRevealRangeVerticallyEvent.revealVerticalInCenter);
-          this._lastCursorRevealRangeVerticallyEvent = null;
-          var d = this._layoutProvider.getScrollTop();
-          d !== c.newScrollTop && (this._layoutProvider.setScrollTop(c.newScrollTop), b = this._layoutProvider.getLinesViewportData(
-            0), this.shouldRender = !1, this._renderAndUpdateLineHeights(b))
-        }
-        return this._asyncUpdateLineWidths.schedule(), this._currentVisibleRange = new k.Range(0 + this._rendLineNumberStart,
-          1, this._lines.length - 1 + this._rendLineNumberStart, this._context.model.getLineMaxColumn(this._lines.length -
-            1 + this._rendLineNumberStart)), b.visibleRange = this._currentVisibleRange, b
-      }, b.prototype._ensureMaxLineWidth = function(a) {
-        this._maxLineWidth < a && (this._maxLineWidth = a, this._layoutProvider.onMaxLineWidthChanged(this._maxLineWidth))
-      }, b.prototype.computeScrollTopToRevealRange = function(a, b, c) {
-        var d = a.top,
-          e = a.height,
-          f = d + e,
-          g, h, i;
-        g = this._layoutProvider.getVerticalOffsetForLineNumber(b.startLineNumber), h = this._layoutProvider.getVerticalOffsetForLineNumber(
-          b.endLineNumber) + this._layoutProvider.heightInPxForLine(b.endLineNumber) + this._context.configuration.editor
-          .lineHeight;
-        var j = h - g;
-        if (this._context.configuration.editor.viewWordWrap) {
-          i = !1;
-          if (this._currentVisibleRange.containsRange(b)) {
-            var k = this.visibleRangesForRange2(b, this._layoutProvider.getVerticalOffsetForLineNumber(this._rendLineNumberStart),
-              0, !1);
-            if (k) {
-              g = Number.MAX_VALUE, h = Number.MIN_VALUE;
-              while (k.next()) g = Math.min(g, k.getTop()), h = Math.max(h, k.getTop() + k.getHeight());
-              h += this._context.configuration.editor.lineHeight, i = !0
-            }
-          }
-        } else i = !0;
-        var l;
-        if (c) {
-          var m = (g + h) / 2;
-          l = Math.max(0, m - e / 2)
-        } else l = this.computeMinimumScrolling(d, f, g, h);
-        return {
-          newScrollTop: l,
-          isAccurate: i
-        }
-      }, b.prototype.computeScrollLeftToRevealRange = function(a) {
-        var c = 0;
-        if (a.startLineNumber !== a.endLineNumber) return {
-          scrollLeft: 0,
-          maxHorizontalOffset: c
-        };
-        var d = this._layoutProvider.getCurrentViewport(),
-          e = d.left,
-          f = e + d.width,
-          g = this.visibleRangesForRange2(a, 0, 0, !1),
-          h = Number.MAX_VALUE,
-          i = 0;
-        if (!g) return {
-          scrollLeft: e,
-          maxHorizontalOffset: c
-        };
-        while (g.next()) g.getLeft() < h && (h = g.getLeft()), g.getLeft() + g.getWidth() > i && (i = g.getLeft() + g
-          .getWidth());
-        c = i, h = Math.max(0, h - b.HORIZONTAL_EXTRA_PX), i += b.HORIZONTAL_EXTRA_PX;
-        var j = this.computeMinimumScrolling(e, f, h, i);
-        return {
-          scrollLeft: j,
-          maxHorizontalOffset: c
-        }
-      }, b.prototype.computeMinimumScrolling = function(a, b, c, d) {
-        var e = b - a,
-          f = d - c;
-        return f < e ? c < a ? c : d > b ? Math.max(0, d - e) : a : c
-      }, b.LINE_FEED_WIDTH = 10, b.HORIZONTAL_EXTRA_PX = 30, b
-    }(i.ViewLayer);
-  b.ViewLines = n
-})
+    };
+
+    t.prototype._updateLineWidths = function() {
+      var e;
+
+      var t;
+
+      var n = 1;
+      for (e = 0; e < this._lines.length; e++) t = this._lines[e].getWidth();
+
+      n = Math.max(n, t);
+      this._ensureMaxLineWidth(n);
+    };
+
+    t.prototype.render = function(e) {
+      var t = this._layoutProvider.getLinesViewportData();
+      this.shouldRender && (this.shouldRender = !1, this._renderAndUpdateLineHeights(t, e), this._asyncUpdateLineWidths
+        .schedule());
+
+      t.visibleRange = this._currentVisibleRange;
+
+      return t;
+    };
+
+    t.prototype._ensureMaxLineWidth = function(e) {
+      this._maxLineWidth < e && (this._maxLineWidth = e, this._layoutProvider.onMaxLineWidthChanged(this._maxLineWidth));
+    };
+
+    t.prototype._computeScrollTopToRevealRange = function(e, t, n) {
+      var i;
+
+      var o;
+
+      var r = e.top;
+
+      var s = e.height;
+
+      var a = r + s;
+      i = this._layoutProvider.getVerticalOffsetForLineNumber(t.startLineNumber);
+
+      o = this._layoutProvider.getVerticalOffsetForLineNumber(t.endLineNumber) + this._layoutProvider.heightInPxForLine(
+        t.endLineNumber);
+
+      n || (o += this._context.configuration.editor.lineHeight);
+      var u;
+      if (n) {
+        var l = (i + o) / 2;
+        u = Math.max(0, l - s / 2);
+      } else u = this._computeMinimumScrolling(r, a, i, o);
+      return u;
+    };
+
+    t.prototype._computeScrollLeftToRevealRange = function(e) {
+      var n = 0;
+      if (e.startLineNumber !== e.endLineNumber) return {
+        scrollLeft: 0,
+        maxHorizontalOffset: n
+      };
+      var i = this._layoutProvider.getCurrentViewport();
+
+      var o = i.left;
+
+      var r = o + i.width;
+
+      var s = this.visibleRangesForRange2(e, 0, !1);
+
+      var a = Number.MAX_VALUE;
+
+      var u = 0;
+      if (!s) return {
+        scrollLeft: o,
+        maxHorizontalOffset: n
+      };
+      var l;
+
+      var c;
+      for (l = 0; l < s.length; l++) c = s[l];
+
+      c.left < a && (a = c.left);
+
+      c.left + c.width > u && (u = c.left + c.width);
+      n = u;
+
+      a = Math.max(0, a - t.HORIZONTAL_EXTRA_PX);
+
+      u += this._context.configuration.editor.revealHorizontalRightPadding;
+      var d = this._computeMinimumScrolling(o, r, a, u);
+      return {
+        scrollLeft: d,
+        maxHorizontalOffset: n
+      };
+    };
+
+    t.prototype._computeMinimumScrolling = function(e, t, n, i) {
+      var o = t - e;
+
+      var r = i - n;
+      return o > r ? e > n ? n : i > t ? Math.max(0, i - o) : e : n;
+    };
+
+    t.LINE_FEED_WIDTH = 10;
+
+    t.HORIZONTAL_EXTRA_PX = 30;
+
+    return t;
+  }(i.ViewLayer);
+  t.ViewLines = a;
+});

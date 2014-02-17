@@ -1,43 +1,66 @@
-define('vs/base/ui/scrollbar/impl/domNodeScrollable', [
-  'require',
-  'exports',
-  'vs/base/dom/dom',
-  'vs/base/dom/touch',
-  'vs/base/eventEmitter'
+define("vs/base/ui/scrollbar/impl/domNodeScrollable", ["require", "exports", "vs/base/dom/dom", "vs/base/dom/touch",
+  "vs/base/eventEmitter"
 ], function(e, t, n, i, o) {
   var r = function() {
     function e(e) {
-      this.eventEmitterHelper = new o.EventEmitter(), this.domNode = e, this.gestureHandler = new i.Gesture(this.domNode);
+      this.eventEmitterHelper = new o.EventEmitter;
+
+      this.domNode = e;
+
+      this.gestureHandler = new i.Gesture(this.domNode);
     }
-    return e.prototype.getScrollHeight = function() {
+    e.prototype.getScrollHeight = function() {
       return this.domNode.scrollHeight;
-    }, e.prototype.getScrollWidth = function() {
+    };
+
+    e.prototype.getScrollWidth = function() {
       return this.domNode.scrollWidth;
-    }, e.prototype.getScrollLeft = function() {
+    };
+
+    e.prototype.getScrollLeft = function() {
       return this.domNode.scrollLeft;
-    }, e.prototype.setScrollLeft = function(e) {
+    };
+
+    e.prototype.setScrollLeft = function(e) {
       this.domNode.scrollLeft = e;
-    }, e.prototype.getScrollTop = function() {
+    };
+
+    e.prototype.getScrollTop = function() {
       return this.domNode.scrollTop;
-    }, e.prototype.setScrollTop = function(e) {
+    };
+
+    e.prototype.setScrollTop = function(e) {
       this.domNode.scrollTop = e;
-    }, e.prototype.addScrollListener = function(e) {
-      var t = this,
-        i = this.eventEmitterHelper.addListener2('scroll', e),
-        o = n.addDisposableListener(this.domNode, 'scroll', function(e) {
-          t.eventEmitterHelper.emit('scroll', {
-            browserEvent: e
-          });
+    };
+
+    e.prototype.addScrollListener = function(e) {
+      var t = this;
+
+      var i = this.eventEmitterHelper.addListener2("scroll", e);
+
+      var o = n.addDisposableListener(this.domNode, "scroll", function(e) {
+        t.eventEmitterHelper.emit("scroll", {
+          browserEvent: e
         });
+      });
       return {
         dispose: function() {
-          o.dispose(), i.dispose();
+          o.dispose();
+
+          i.dispose();
         }
       };
-    }, e.prototype.dispose = function() {
-      this.domNode = null, this.eventEmitterHelper.dispose(), this.gestureHandler && (this.gestureHandler.dispose(),
-        this.gestureHandler = null);
-    }, e;
+    };
+
+    e.prototype.dispose = function() {
+      this.domNode = null;
+
+      this.eventEmitterHelper.dispose();
+
+      this.gestureHandler && (this.gestureHandler.dispose(), this.gestureHandler = null);
+    };
+
+    return e;
   }();
   t.DomNodeScrollable = r;
-})
+});

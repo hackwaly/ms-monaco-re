@@ -170,6 +170,5 @@ define(["require", "exports"], function(a, b) {
         options: b.options
       }
     }, a
-  }();
-  b.ModelDecorations = c
+  }() b.ModelDecorations = c
 })

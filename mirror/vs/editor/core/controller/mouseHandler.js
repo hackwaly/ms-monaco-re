@@ -1,206 +1,294 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a
-    }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
-    d.prototype = b.prototype, a.prototype = new d
+define("vs/editor/core/controller/mouseHandler", ["require", "exports", "vs/base/env", "vs/editor/core/position",
+  "vs/base/dom/mouseEvent", "vs/base/dom/dom", "vs/editor/editor", "vs/editor/core/controller/mouseTarget",
+  "vs/editor/core/view/viewEventHandler", "vs/base/lifecycle", "vs/base/dom/globalMouseMoveMonitor"
+], function(e, t, n, i, o, r, s, a, u, l, c) {
+  var d = function(e, t) {
+    var n = new o.StandardMouseEvent(t);
+    n.preventDefault();
+
+    return n;
   };
-define(["require", "exports", "vs/base/env", "vs/editor/core/position", "vs/base/dom/mouseEvent", "vs/base/dom/dom",
-  "vs/editor/editor", "vs/editor/core/controller/mouseTarget", "vs/editor/core/view/viewEventHandler",
-  "vs/base/lifecycle"
-], function(a, b, c, d, e, f, g, h, i, j) {
-  var k = c,
-    l = d,
-    m = e,
-    n = f,
-    o = g,
-    p = h,
-    q = i,
-    r = j,
-    s = function(a, b) {
-      var c = null;
-      b.rangeParent && (c = {
-        rangeParent: b.rangeParent,
-        rangeOffset: b.rangeOffset
+
+  var h = function(e) {
+    function t(n, i, o) {
+      var s = this;
+      e.call(this);
+
+      this.context = n;
+
+      this.viewController = i;
+
+      this.viewHelper = o;
+
+      this.mouseTargetFactory = new a.MouseTargetFactory(this.context, o);
+
+      this.listenersToRemove = [];
+
+      this.hideTextAreaTimeout = -1;
+
+      this.toDispose = [];
+
+      this.mouseMoveMonitor = new c.GlobalMouseMoveMonitor;
+
+      this.toDispose.push(this.mouseMoveMonitor);
+
+      this.lastMouseEvent = null;
+
+      this.lastMouseDownPosition = null;
+
+      this.lastMouseDownPositionEqualCount = 0;
+
+      this.lastMouseDownCount = 0;
+
+      this.lastSetMouseDownCountTime = 0;
+
+      this.onScrollTimeout = -1;
+
+      this.layoutWidth = 0;
+
+      this.layoutHeight = 0;
+
+      this.listenersToRemove.push(r.addListener(this.viewHelper.viewDomNode, "contextmenu", function(e) {
+        return s._onContextMenu(e);
+      }));
+
+      this.listenersToRemove.push(r.addThrottledListener(this.viewHelper.viewDomNode, "mousemove", function(e) {
+        return s._onMouseMove(e);
+      }, d, t.MOUSE_MOVE_MINIMUM_TIME));
+
+      this.listenersToRemove.push(r.addListener(this.viewHelper.viewDomNode, "mouseup", function(e) {
+        return s._onMouseUp(e);
+      }));
+
+      this.listenersToRemove.push(r.addNonBubblingMouseOutListener(this.viewHelper.viewDomNode, function(e) {
+        return s._onMouseLeave(e);
+      }));
+
+      this.listenersToRemove.push(r.addListener(this.viewHelper.viewDomNode, "mousedown", function(e) {
+        return s._onMouseDown(e);
+      }));
+
+      this.context.addEventHandler(this);
+    }
+    __extends(t, e);
+
+    t.prototype.dispose = function() {
+      this.context.removeEventHandler(this);
+
+      this.listenersToRemove.forEach(function(e) {
+        e();
       });
-      var d = new m.MouseEvent(b, c);
-      return d.preventDefault(), d
-    }, t = function(a) {
-      function b(c, d, e) {
-        var f = this;
-        a.call(this), this.context = c, this.viewController = d, this.viewHelper = e, this.mouseTargetFactory = new p
-          .MouseTargetFactory(this.context, e), this.listenersToRemove = [], this.hideTextAreaTimeout = -1, this._hookUnbind = [],
-          this._hookDispose = [], this.lastMouseEvent = null, this.lastMouseDownPosition = null, this.lastMouseDownPositionEqualCount =
-          0, this.lastMouseDownCount = 0, this.lastSetMouseDownCountTime = 0, this.onScrollTimeout = -1, this.layoutWidth =
-          0, this.layoutHeight = 0, this.listenersToRemove.push(n.addListener(this.viewHelper.viewDomNode,
-            "contextmenu", function(a) {
-              return f._onContextMenu(a)
-            })), this.listenersToRemove.push(n.addThrottledListener(this.viewHelper.viewDomNode, "mousemove",
-            function(a) {
-              return f._onMouseMove(a)
-            }, s, b.MOUSE_MOVE_MINIMUM_TIME)), this.listenersToRemove.push(n.addListener(this.viewHelper.viewDomNode,
-            "mouseup", function(a) {
-              return f._onMouseUp(a)
-            })), this.listenersToRemove.push(n.addNonBubblingMouseOutListener(this.viewHelper.viewDomNode, function(a) {
-            return f._onMouseLeave(a)
-          })), this.listenersToRemove.push(n.addListener(this.viewHelper.viewDomNode, "mousedown", function(a) {
-            return f._onMouseDown(a)
-          })), this.context.addEventHandler(this)
+
+      this.listenersToRemove = [];
+
+      this.toDispose = l.disposeAll(this.toDispose);
+
+      this._unhook();
+
+      - 1 !== this.hideTextAreaTimeout && (window.clearTimeout(this.hideTextAreaTimeout), this.hideTextAreaTimeout = -
+        1);
+    };
+
+    t.prototype.onLayoutChanged = function() {
+      return !1;
+    };
+
+    t.prototype.onScrollChanged = function(e) {
+      this.mouseMoveMonitor.isMonitoring() && this._hookedOnScroll(e);
+
+      return !1;
+    };
+
+    t.prototype._onContextMenu = function(e) {
+      var t = new o.StandardMouseEvent(e);
+
+      var n = r.getDomNodePosition(this.viewHelper.linesContentDomNode);
+
+      var i = this.mouseTargetFactory.createMouseTarget(n, t, !0);
+
+      var s = {
+        event: t,
+        target: i
+      };
+      this.viewController.emitContextMenu(s);
+    };
+
+    t.prototype._onMouseMove = function(e) {
+      if (!this.mouseMoveMonitor.isMonitoring()) {
+        var t = r.getDomNodePosition(this.viewHelper.linesContentDomNode);
+
+        var n = this.mouseTargetFactory.createMouseTarget(t, e, !0);
+
+        var i = {
+          event: e,
+          target: n
+        };
+        this.viewController.emitMouseMove(i);
       }
-      return __extends(b, a), b.prototype.dispose = function() {
-        this.context.removeEventHandler(this), this.listenersToRemove.forEach(function(a) {
-          a()
-        }), this.listenersToRemove = [], this._unhook(), this.hideTextAreaTimeout !== -1 && (window.clearTimeout(this
-          .hideTextAreaTimeout), this.hideTextAreaTimeout = -1)
-      }, b.prototype.onLayoutChanged = function(a) {
-        return !1
-      }, b.prototype.onScrollChanged = function(a) {
-        return (this._hookUnbind.length > 0 || this._hookDispose.length > 0) && this._hookedOnScroll(a), !1
-      }, b.prototype._onContextMenu = function(a) {
-        var b = new m.MouseEvent(a),
-          c = n.getDomNodePosition(this.viewHelper.linesContentDomNode),
-          d = this.mouseTargetFactory.createMouseTarget(c, b, !0),
-          e = {
-            event: b,
-            target: d
-          };
-        this.viewController.emitContextMenu(e)
-      }, b.prototype._onMouseMove = function(a) {
-        if (this._hookUnbind.length !== 0 || this._hookDispose.length !== 0) return;
-        var b = n.getDomNodePosition(this.viewHelper.linesContentDomNode),
-          c = this.mouseTargetFactory.createMouseTarget(b, a, !0),
-          d = {
-            event: a,
-            target: c
-          };
-        this.viewController.emitMouseMove(d)
-      }, b.prototype._onMouseLeave = function(a) {
-        var b = {
-          event: new m.MouseEvent(a),
-          target: null
-        };
-        this.viewController.emitMouseLeave(b)
-      }, b.prototype._onMouseUp = function(a) {
-        var b = new m.MouseEvent(a),
-          c = n.getDomNodePosition(this.viewHelper.linesContentDomNode),
-          d = this.mouseTargetFactory.createMouseTarget(c, b, !0),
-          e = {
-            event: b,
-            target: d
-          };
-        this.viewController.emitMouseUp(e)
-      }, b.prototype._onMouseDown = function(a) {
-        var b = this,
-          c = new m.MouseEvent(a),
-          d = n.getDomNodePosition(this.viewHelper.linesContentDomNode),
-          e = this.mouseTargetFactory.createMouseTarget(d, c, !0),
-          f = e.type === o.MouseTargetType.CONTENT_TEXT || e.type === o.MouseTargetType.CONTENT_EMPTY,
-          g = e.type === o.MouseTargetType.GUTTER_GLYPH_MARGIN || e.type === o.MouseTargetType.GUTTER_LINE_NUMBERS ||
-            e.type === o.MouseTargetType.GUTTER_LINE_DECORATIONS,
-          h = e.type === o.MouseTargetType.GUTTER_LINE_NUMBERS,
-          i = this.context.configuration.editor.selectOnLineNumbers;
-        c.leftButton && (f || h && i) ? (k.browser.isIE10 ? c.browserEvent.fromElement ? (c.preventDefault(), this.viewHelper
-            .textArea.focus()) : setTimeout(function() {
-            b.viewHelper.textArea.focus()
-          }) : (c.preventDefault(), this.viewHelper.textArea.focus()), this._updateMouse(e.type, c, c.shiftKey, c.detail),
-          this._hook(e.type)) : g && c.preventDefault();
-        var j = {
-          event: c,
-          target: e
-        };
-        this.viewController.emitMouseDown(j)
-      }, b.prototype._onIE8DblClick = function(a) {
-        var b = new m.MouseEvent(a),
-          c = n.getDomNodePosition(this.viewHelper.linesContentDomNode),
-          d = this.mouseTargetFactory.createMouseTarget(c, b, !0);
-        if (d.type === o.MouseTargetType.CONTENT_TEXT || d.type === o.MouseTargetType.CONTENT_EMPTY) this._updateMouse(
-          d.type, b, b.shiftKey, b.detail), b.preventDefault(), this.viewHelper.textArea.focus()
-      }, b.prototype._hookedOnScroll = function(a) {
-        var b = this;
-        this.onScrollTimeout === -1 && (this.onScrollTimeout = window.setTimeout(function() {
-          b.onScrollTimeout = -1, b._updateMouse(b._hookStartTargetType, null, !0)
-        }, 10))
-      }, b.prototype._hookedOnDocumentMouseMove = function(a) {
-        this._updateMouse(this._hookStartTargetType, a, !0)
-      }, b.prototype._hookedOnDocumentMouseUp = function(a) {
-        var b = new m.MouseEvent(a);
-        b.leftButton && this._unhook()
-      }, b.prototype._hook = function(a) {
-        var b = this;
-        if (this._hookUnbind.length > 0 || this._hookDispose.length > 0) return;
-        this._hookStartTargetType = a, this._hookUnbind.push(n.addThrottledListener(document, "mousemove", function(a) {
-          return b._hookedOnDocumentMouseMove(a)
-        }, s)), this._hookUnbind.push(n.addListener(document, "mouseup", function(a) {
-          return b._hookedOnDocumentMouseUp(a)
-        })), k.isInIframe() && (this._hookUnbind.push(n.addListener(document, "mouseout", function(a) {
-          var c = new m.MouseEvent(a);
-          c.target.tagName.toLowerCase() === "html" && b._unhook()
-        })), this._hookUnbind.push(n.addListener(document, "mouseover", function(a) {
-          var c = new m.MouseEvent(a);
-          c.target.tagName.toLowerCase() === "html" && b._unhook()
-        })), this._hookUnbind.push(n.addListener(document.body, "mouseleave", function(a) {
-          b._unhook()
-        })))
-      }, b.prototype._unhook = function() {
-        this._hookUnbind.forEach(function(a) {
-          a()
-        }), this._hookUnbind = [], this._hookDispose = r.disposeAll(this._hookDispose), this.onScrollTimeout !== -1 &&
-          (window.clearTimeout(this.onScrollTimeout), this.onScrollTimeout = -1)
-      }, b.prototype._getPositionOutsideEditor = function(a, b) {
-        var c;
-        return b.posy < a.top ? (c = this.viewHelper.getLineNumberAtVerticalOffset(Math.max(this.viewHelper.getScrollTop() -
-          (a.top - b.posy), 0)), {
-          lineNumber: c,
+    };
+
+    t.prototype._onMouseLeave = function(e) {
+      var t = {
+        event: new o.StandardMouseEvent(e),
+        target: null
+      };
+      this.viewController.emitMouseLeave(t);
+    };
+
+    t.prototype._onMouseUp = function(e) {
+      var t = new o.StandardMouseEvent(e);
+
+      var n = r.getDomNodePosition(this.viewHelper.linesContentDomNode);
+
+      var i = this.mouseTargetFactory.createMouseTarget(n, t, !0);
+
+      var s = {
+        event: t,
+        target: i
+      };
+      this.viewController.emitMouseUp(s);
+    };
+
+    t.prototype._onMouseDown = function(e) {
+      var t = this;
+
+      var i = new o.StandardMouseEvent(e);
+
+      var s = r.getDomNodePosition(this.viewHelper.linesContentDomNode);
+
+      var a = this.mouseTargetFactory.createMouseTarget(s, i, !0);
+
+      var u = 6 === a.type || 7 === a.type;
+
+      var l = 2 === a.type || 3 === a.type || 4 === a.type;
+
+      var c = 3 === a.type;
+
+      var d = this.context.configuration.editor.selectOnLineNumbers;
+
+      var h = 8 === a.type || 5 === a.type;
+      i.leftButton && (u || c && d) ? (n.browser.isIE11orEarlier ? i.browserEvent.fromElement ? (i.preventDefault(),
+          this.viewHelper.focusTextArea()) : setTimeout(function() {
+          t.viewHelper.focusTextArea();
+        }) : (i.preventDefault(), this.viewHelper.focusTextArea()), this._updateMouse(a.type, i, i.shiftKey, i.detail),
+        this._hook(a.type)) : l ? i.preventDefault() : h && this.viewHelper.shouldSuppressMouseDownOnViewZone(a.detail) &&
+        i.preventDefault();
+      var p = {
+        event: i,
+        target: a
+      };
+      this.viewController.emitMouseDown(p);
+    };
+
+    t.prototype._hookedOnScroll = function() {
+      var e = this; - 1 === this.onScrollTimeout && (this.onScrollTimeout = window.setTimeout(function() {
+        e.onScrollTimeout = -1;
+
+        e._updateMouse(e.monitoringStartTargetType, null, !0);
+      }, 10));
+    };
+
+    t.prototype._hook = function(e) {
+      var t = this;
+      this.mouseMoveMonitor.isMonitoring() || (this.monitoringStartTargetType = e, this.mouseMoveMonitor.startMonitoring(
+        d, function(e) {
+          t._updateMouse(t.monitoringStartTargetType, e, !0);
+        }, function() {
+          t._unhook();
+        }));
+    };
+
+    t.prototype._unhook = function() {
+      -1 !== this.onScrollTimeout && (window.clearTimeout(this.onScrollTimeout), this.onScrollTimeout = -1);
+    };
+
+    t.prototype._getPositionOutsideEditor = function(e, t) {
+      var n;
+      return t.posy < e.top ? (n = this.viewHelper.getLineNumberAtVerticalOffset(Math.max(this.viewHelper.getScrollTop() -
+        (e.top - t.posy), 0)), {
+        lineNumber: n,
+        column: 1
+      }) : t.posy > e.top + e.height ? (n = this.viewHelper.getLineNumberAtVerticalOffset(this.viewHelper.getScrollTop() +
+        (t.posy - e.top)), {
+        lineNumber: n,
+        column: this.context.model.getLineMaxColumn(n)
+      }) : (n = this.viewHelper.getLineNumberAtVerticalOffset(this.viewHelper.getScrollTop() + (t.posy - e.top)), t.posx <
+        e.left ? {
+          lineNumber: n,
           column: 1
-        }) : b.posy > a.top + a.height ? (c = this.viewHelper.getLineNumberAtVerticalOffset(this.viewHelper.getScrollTop() +
-          (b.posy - a.top)), {
-          lineNumber: c,
-          column: this.context.model.getLineMaxColumn(c)
-        }) : (c = this.viewHelper.getLineNumberAtVerticalOffset(this.viewHelper.getScrollTop() + (b.posy - a.top)), b
-          .posx < a.left ? {
-            lineNumber: c,
-            column: 1
-          } : b.posx > a.left + a.width ? {
-            lineNumber: c,
-            column: this.context.model.getLineMaxColumn(c)
-          } : null)
-      }, b.prototype._updateMouse = function(a, c, d, e) {
-        typeof e == "undefined" && (e = 0), c = c || this.lastMouseEvent, this.lastMouseEvent = c;
-        var f = n.getDomNodePosition(this.viewHelper.viewDomNode),
-          g = this._getPositionOutsideEditor(f, c),
-          h, i;
-        if (g) h = g.lineNumber, i = g.column;
-        else {
-          var j = this.mouseTargetFactory.createMouseTarget(f, c, !0),
-            k = j.position;
-          if (!k) return;
-          h = k.lineNumber, i = k.column
-        } if (e) {
-          var m = (new Date).getTime();
-          m - this.lastSetMouseDownCountTime > b.CLEAR_MOUSE_DOWN_COUNT_TIME && (e = 1), this.lastSetMouseDownCountTime =
-            m, e > this.lastMouseDownCount + 1 && (e = this.lastMouseDownCount + 1);
-          var p = new l.Position(h, i);
-          this.lastMouseDownPosition && this.lastMouseDownPosition.equals(p) ? this.lastMouseDownPositionEqualCount++ :
-            this.lastMouseDownPositionEqualCount = 1, this.lastMouseDownPosition = p, this.lastMouseDownCount = Math.min(
-              e, this.lastMouseDownPositionEqualCount), c.detail = this.lastMouseDownCount
-        }
-        if (a === o.MouseTargetType.GUTTER_LINE_NUMBERS) c.altKey ? d ? this.viewController.lastCursorLineSelect(
-          "mouse", h, i) : this.viewController.createCursor("mouse", h, i, !0) : d ? this.viewController.lineSelectDrag(
-          "mouse", h, i) : this.viewController.lineSelect("mouse", h, i);
-        else if (this.lastMouseDownCount >= 4) this.viewController.selectAll("mouse");
-        else if (this.lastMouseDownCount === 3) c.altKey ? d ? this.viewController.lastCursorLineSelectDrag("mouse",
-          h, i) : this.viewController.lastCursorLineSelect("mouse", h, i) : d ? this.viewController.lineSelectDrag(
-          "mouse", h, i) : this.viewController.lineSelect("mouse", h, i);
-        else if (this.lastMouseDownCount === 2) {
-          var q = f.left + this.viewHelper.visibleRangeForPosition2(h, i).left,
-            r = "none";
-          c.posx > q ? r = "right" : c.posx < q && (r = "left"), c.altKey ? this.viewController.lastCursorWordSelect(
-            "mouse", h, i, r) : d ? this.viewController.wordSelectDrag("mouse", h, i, r) : this.viewController.wordSelect(
-            "mouse", h, i, r)
-        } else c.altKey ? d ? this.viewController.lastCursorMoveToSelect("mouse", h, i) : this.viewController.createCursor(
-          "mouse", h, i, !1) : d ? this.viewController.moveToSelect("mouse", h, i) : this.viewController.moveTo(
-          "mouse", h, i)
-      }, b.CLEAR_MOUSE_DOWN_COUNT_TIME = 400, b.MOUSE_MOVE_MINIMUM_TIME = 100, b
-    }(q.ViewEventHandler);
-  b.MouseHandler = t
-})
+        } : t.posx > e.left + e.width ? {
+          lineNumber: n,
+          column: this.context.model.getLineMaxColumn(n)
+        } : null);
+    };
+
+    t.prototype._updateMouse = function(e, n, o, s) {
+      "undefined" == typeof s && (s = 0);
+
+      n = n || this.lastMouseEvent;
+
+      this.lastMouseEvent = n;
+      var a;
+
+      var u;
+
+      var l = r.getDomNodePosition(this.viewHelper.viewDomNode);
+
+      var c = this._getPositionOutsideEditor(l, n);
+      if (c) a = c.lineNumber;
+
+      u = c.column;
+      else {
+        var d = this.mouseTargetFactory.createMouseTarget(l, n, !0);
+
+        var h = d.position;
+        if (!h) return;
+        a = h.lineNumber;
+
+        u = h.column;
+      }
+      if (s) {
+        var p = (new Date).getTime();
+        p - this.lastSetMouseDownCountTime > t.CLEAR_MOUSE_DOWN_COUNT_TIME && (s = 1);
+
+        this.lastSetMouseDownCountTime = p;
+
+        s > this.lastMouseDownCount + 1 && (s = this.lastMouseDownCount + 1);
+        var f = new i.Position(a, u);
+        this.lastMouseDownPosition && this.lastMouseDownPosition.equals(f) ? this.lastMouseDownPositionEqualCount++ :
+          this.lastMouseDownPositionEqualCount = 1;
+
+        this.lastMouseDownPosition = f;
+
+        this.lastMouseDownCount = Math.min(s, this.lastMouseDownPositionEqualCount);
+
+        n.detail = this.lastMouseDownCount;
+      }
+      if (3 === e) n.altKey ? o ? this.viewController.lastCursorLineSelect("mouse", a, u) : this.viewController.createCursor(
+        "mouse", a, u, !0) : o ? this.viewController.lineSelectDrag("mouse", a, u) : this.viewController.lineSelect(
+        "mouse", a, u);
+      else if (this.lastMouseDownCount >= 4) this.viewController.selectAll("mouse");
+      else if (3 === this.lastMouseDownCount) n.altKey ? o ? this.viewController.lastCursorLineSelectDrag("mouse", a,
+        u) : this.viewController.lastCursorLineSelect("mouse", a, u) : o ? this.viewController.lineSelectDrag("mouse",
+        a, u) : this.viewController.lineSelect("mouse", a, u);
+      else if (2 === this.lastMouseDownCount) {
+        var g = l.left + this.viewHelper.visibleRangeForPosition2(a, u).left;
+
+        var m = "none";
+        n.posx > g ? m = "right" : n.posx < g && (m = "left");
+
+        n.altKey ? this.viewController.lastCursorWordSelect("mouse", a, u, m) : o ? this.viewController.wordSelectDrag(
+          "mouse", a, u, m) : this.viewController.wordSelect("mouse", a, u, m);
+      } else n.altKey ? o ? this.viewController.lastCursorMoveToSelect("mouse", a, u) : this.viewController.createCursor(
+        "mouse", a, u, !1) : o ? this.viewController.moveToSelect("mouse", a, u) : this.viewController.moveTo("mouse",
+        a, u);
+    };
+
+    t.CLEAR_MOUSE_DOWN_COUNT_TIME = 400;
+
+    t.MOUSE_MOVE_MINIMUM_TIME = 100;
+
+    return t;
+  }(u.ViewEventHandler);
+  t.MouseHandler = h;
+});

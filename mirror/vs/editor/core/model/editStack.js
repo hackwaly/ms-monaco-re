@@ -1,44 +1,70 @@
-define(["require", "exports", "vs/editor/core/model/modelEditOperation"], function(a, b, c) {
-  var d = c,
-    e = function() {
-      function a(a) {
-        this.model = a, this.currentOpenStackElement = null, this.past = [], this.future = []
+define("vs/editor/core/model/editStack", ["require", "exports", "vs/editor/core/model/modelEditOperation"], function(e,
+  t, n) {
+  var i = function() {
+    function e(e) {
+      this.model = e;
+
+      this.currentOpenStackElement = null;
+
+      this.past = [];
+
+      this.future = [];
+    }
+    e.prototype.pushStackElement = function() {
+      null !== this.currentOpenStackElement && (this.past.push(this.currentOpenStackElement), this.currentOpenStackElement =
+        null);
+    };
+
+    e.prototype.clear = function() {
+      this.currentOpenStackElement = null;
+
+      this.past = [];
+
+      this.future = [];
+    };
+
+    e.prototype.pushEditOperation = function(e, t, i) {
+      this.future = [];
+
+      this.currentOpenStackElement || (this.currentOpenStackElement = {
+        beforeCursorState: e,
+        editOperations: [],
+        afterCursorState: null
+      });
+      var o = n.ModelEditOperation.execute(this.model, {
+        operations: t
+      });
+      this.currentOpenStackElement.editOperations.push(o);
+
+      this.currentOpenStackElement.afterCursorState = i ? i(o.operations) : null;
+
+      return this.currentOpenStackElement.afterCursorState;
+    };
+
+    e.prototype.undo = function() {
+      if (this.pushStackElement(), this.past.length > 0) {
+        for (var e = this.past.pop(), t = e.editOperations.length - 1; t >= 0; t--) e.editOperations[t] = n.ModelEditOperation
+          .execute(this.model, e.editOperations[t]);
+        this.future.push(e);
+
+        return e.beforeCursorState;
       }
-      return a.prototype.pushStackElement = function() {
-        this.currentOpenStackElement !== null && (this.past.push(this.currentOpenStackElement), this.currentOpenStackElement =
-          null)
-      }, a.prototype.clear = function() {
-        this.currentOpenStackElement = null, this.past = [], this.future = []
-      }, a.prototype.pushEditOperation = function(a, b, c) {
-        this.future = [], this.currentOpenStackElement || (this.currentOpenStackElement = {
-          beforeCursorState: a,
-          editOperations: [],
-          afterCursorState: null
-        });
-        var e = d.ModelEditOperation.execute(this.model, {
-          operations: b
-        });
-        return this.currentOpenStackElement.editOperations.push(e), this.currentOpenStackElement.afterCursorState = c ?
-          c(e.operations) : null, this.currentOpenStackElement.afterCursorState
-      }, a.prototype.undo = function() {
-        this.pushStackElement();
-        if (this.past.length > 0) {
-          var a = this.past.pop();
-          for (var b = a.editOperations.length - 1; b >= 0; b--) a.editOperations[b] = d.ModelEditOperation.execute(
-            this.model, a.editOperations[b]);
-          return this.future.push(a), a.beforeCursorState
-        }
-        return null
-      }, a.prototype.redo = function() {
-        if (this.future.length > 0) {
-          if (this.currentOpenStackElement) throw new Error("How is this possible?");
-          var a = this.future.pop();
-          for (var b = 0; b < a.editOperations.length; b++) a.editOperations[b] = d.ModelEditOperation.execute(this.model,
-            a.editOperations[b]);
-          return this.past.push(a), a.afterCursorState
-        }
-        return null
-      }, a
-    }();
-  b.EditStack = e
-})
+      return null;
+    };
+
+    e.prototype.redo = function() {
+      if (this.future.length > 0) {
+        if (this.currentOpenStackElement) throw new Error("How is this possible?");
+        for (var e = this.future.pop(), t = 0; t < e.editOperations.length; t++) e.editOperations[t] = n.ModelEditOperation
+          .execute(this.model, e.editOperations[t]);
+        this.past.push(e);
+
+        return e.afterCursorState;
+      }
+      return null;
+    };
+
+    return e;
+  }();
+  t.EditStack = i;
+});

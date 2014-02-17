@@ -1,279 +1,389 @@
-define(["require", "exports", "vs/base/lib/winjs.base", "vs/base/env", "vs/base/ui/events", "vs/base/types",
-  "vs/base/errors", "vs/base/strings", "vs/base/ui/widgets/quickopen/quickOpenViewer",
-  "vs/base/ui/widgets/quickopen/quickOpenModel", "vs/base/dom/builder", "vs/base/ui/widgets/tree/treeImpl",
+define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "vs/base/lib/winjs.base", "vs/base/env",
+  "vs/base/ui/events", "vs/base/types", "vs/base/errors", "vs/base/strings",
+  "vs/base/ui/widgets/quickopen/quickOpenViewer", "vs/base/ui/widgets/quickopen/quickOpenModel",
+  "vs/base/dom/builder", "vs/base/ui/widgets/inputBox", "vs/base/ui/widgets/tree/treeImpl",
   "vs/base/ui/widgets/progressbar", "vs/base/dom/keyboardEvent", "vs/base/dom/dom", "vs/css!./quickopen"
-], function(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o) {
-  var p = c,
-    q = d,
-    r = e,
-    s = f,
-    t = g,
-    u = h,
-    v = i,
-    w = j,
-    x = k,
-    y = l,
-    z = m,
-    A = n,
-    B = o,
-    C = 110,
-    D = x.$,
-    E = function() {
-      function a(a, b, c, d) {
-        this.toUnbind = [], this.container = a, this.callbacks = b, this.configuration = c, this.usageLogger = d
+], function(e, t, n, i, o, r, s, a, u, l, c, d, h, p, f, g) {
+  var m = 150;
+
+  var v = c.$;
+
+  var y = function() {
+    function e(e, t, n, i) {
+      this.toUnbind = [];
+
+      this.container = e;
+
+      this.callbacks = t;
+
+      this.configuration = n;
+
+      this.usageLogger = i;
+    }
+    e.prototype.create = function() {
+      var e = this;
+      this.builder = v().div(function(t) {
+        t.on(g.EventType.KEY_DOWN, function(t) {
+          var n = new f.KeyboardEvent(t);
+          "Escape" === n.key && (g.EventHelper.stop(t, !0), e.hide(!0));
+        }).on(g.EventType.FOCUS, function() {
+          return e.gainingFocus();
+        }, null, !0).on(g.EventType.CONTEXT_MENU, function(e) {
+          return g.EventHelper.stop(e, !0);
+        }).on(g.EventType.BLUR, function() {
+          return e.loosingFocus();
+        }, null, !0);
+
+        e.progressBar = new p.ProgressBar(t.clone());
+
+        e.progressBar.getContainer().hide();
+
+        t.div({
+          "class": "quick-open-input"
+        }, function(t) {
+          e.inputContainer = t;
+
+          e.inputBox = new d.InputBox(t.getHTMLElement(), null, {
+            placeholder: e.configuration.inputPlaceHolder || ""
+          });
+
+          e.inputBox.$input.on(g.EventType.KEY_DOWN, function(t) {
+            var n = new f.KeyboardEvent(t);
+            ("Tab" === n.key || "DownArrow" === n.key || "UpArrow" === n.key || "PageDown" === n.key ||
+              "PageUp" === n.key) && (g.EventHelper.stop(t, !0), e.navigateInTree(n.key, n.shiftKey));
+          }).on(g.EventType.KEY_UP, function(t) {
+            var n = new f.KeyboardEvent(t);
+            if ("Enter" === n.key) {
+              var o = e.tree.getFocus();
+              o && e.elementSelected(o, t);
+            } else !i.browser.isIE9 || "Backspace" !== n.key && "Delete" !== n.key || e.onType();
+          }).on(g.EventType.INPUT, function() {
+            e.onType();
+          }).attr({
+            wrap: "off",
+            autocorrect: "off",
+            autocapitalize: "off",
+            spellcheck: "false"
+          }).clone();
+        });
+        var n = new u.DataSource;
+        e.renderer = new u.Renderer(e.configuration.actionProvider);
+
+        e.treeContainer = t.div({
+          "class": "quick-open-tree"
+        }, function(t) {
+          e.tree = new h.Tree(t.getHTMLElement(), {
+            dataSource: n,
+            controller: new u.Controller,
+            renderer: e.renderer
+          }, {
+            twistiePixels: 11,
+            indentPixels: 0,
+            alwaysFocused: !0,
+            verticalScrollMode: "visible"
+          });
+
+          e.toUnbind.push(e.tree.addListener(o.EventType.FOCUS, function(t) {
+            e.elementFocused(t.focus, t);
+          }));
+
+          e.toUnbind.push(e.tree.addListener(o.EventType.SELECTION, function(t) {
+            t.selection && t.selection.length > 0 && e.elementSelected(t.selection[0], t);
+          }));
+        }).on(g.EventType.KEY_DOWN, function(t) {
+          var n = new f.KeyboardEvent(t);
+          e.quickNavigateConfiguration && (e.quickNavigateConfiguration.keybinding.keys.some(function(e) {
+            return e === n.key;
+          }) ? (g.EventHelper.stop(t, !0), e.navigateInTree(n.shiftKey ? "UpArrow" : "DownArrow")) : (
+            "DownArrow" === n.key || "UpArrow" === n.key || "PageDown" === n.key || "PageUp" === n.key) && (g.EventHelper
+            .stop(t, !0), e.navigateInTree(n.key)));
+        }).on(g.EventType.KEY_UP, function(t) {
+          var n = new f.KeyboardEvent(t);
+          if (e.quickNavigateConfiguration && ((e.quickNavigateConfiguration.keybinding.ctrlCmd || e.quickNavigateConfiguration
+            .keybinding.winCtrl) && "Ctrl" === n.key || "Enter" === n.key)) {
+            var i = e.tree.getFocus();
+            i && e.elementSelected(i, t);
+          }
+        }).clone();
+      }).addClass("quick-open-widget").addClass(i.browser.isIE10orEarlier ? " no-shadow" : "").build(this.container);
+    };
+
+    e.prototype.onType = function() {
+      var e = this.inputBox.value;
+      this.helpText && (e ? this.helpText.hide() : this.helpText.show());
+
+      this.callbacks.onType(e);
+    };
+
+    e.prototype.navigateInTree = function(e, t) {
+      var n = this.tree.getInput() ? this.tree.getInput().getEntries() : [];
+
+      var i = this.tree.getFocus();
+
+      var o = !1;
+
+      var r = !1;
+      if (n.length > 1 && ("UpArrow" !== e || i !== n[0] && i ? "DownArrow" === e && i === n[n.length - 1] && (this.tree
+        .setFocus(n[0]), o = !0) : (this.tree.setFocus(n[n.length - 1]), o = !0)), !o) switch (e) {
+        case "DownArrow":
+          this.tree.focusNext();
+          break;
+        case "UpArrow":
+          this.tree.focusPrevious();
+          break;
+        case "PageDown":
+          this.tree.focusNextPage();
+          break;
+        case "PageUp":
+          this.tree.focusPreviousPage();
+          break;
+        case "Tab":
+          this.cycleThroughEntryGroups(n, i, t);
+
+          r = !0;
       }
-      return a.prototype.create = function() {
-        var a = this,
-          b = D(window.document.body).getClientArea();
-        this.builder = D().div(function(b) {
-          b.on(B.EventType.KEY_DOWN, function(b) {
-            var c = new A.KeyboardEvent(b);
-            c.key === "Escape" && (B.EventHelper.stop(b, !0), a.hide(!0))
-          }).on(B.EventType.FOCUS, function(b) {
-            return a.gainingFocus()
-          }, null, !0).on(B.EventType.CONTEXT_MENU, function(a) {
-            return B.EventHelper.stop(a, !0)
-          }).on(B.EventType.BLUR, function(b) {
-            return a.loosingFocus()
-          }, null, !0), a.progressBar = new z.ProgressBar(b.clone()), a.progressBar.getContainer().hide(), a.inputField =
-            b.element("input", {
-              type: "text",
-              id: "monaco-workbench-quick-open-input"
-            }).attr("placeholder", q.browser.isIE10 ? "" : a.configuration.inputPlaceHolder || "").on(B.EventType.KEY_DOWN,
-              function(b) {
-                var c = new A.KeyboardEvent(b);
-                c.key === "Tab" || c.key === "DownArrow" || c.key === "UpArrow" || c.key === "PageDown" || c.key ===
-                  "PageUp" ? (B.EventHelper.stop(b, !0), a.navigateInTree(c.key, c.shiftKey)) : b.keyCode === A.KEYS
-                  .Ctrl && a.builder.addClass("transparent")
-              }).on(B.EventType.KEY_UP, function(b) {
-              var c = new A.KeyboardEvent(b);
-              if (c.key === "Enter") {
-                var d = a.tree.getFocus();
-                d && a.elementSelected(d)
-              } else !q.browser.isIE9 || c.key !== "Backspace" && c.key !== "Delete" ? b.keyCode === A.KEYS.Ctrl &&
-                a.builder.removeClass("transparent") : a.onType()
-            }).on(B.EventType.INPUT, function(b) {
-              a.onType()
-            }).attr({
-              wrap: "off",
-              autocorrect: "off",
-              autocapitalize: "off",
-              spellcheck: "false"
-            }).addClass("quick-open-input").clone(), a.configuration.inputPlaceHolder && q.browser.isIE10 && (a.helpText =
-              b.element("label", {
-                text: a.configuration.inputPlaceHolder,
-                "for": "monaco-workbench-quick-open-input"
-              }).on(B.EventType.CLICK, function(b) {
-                B.EventHelper.stop(b, !0), a.inputField.domFocus()
-              }).addClass("quick-open-help-shim").clone()), a.renderer = new v.Renderer, a.treeContainer = b.div({
-              "class": "quick-open-tree"
-            }, function(b) {
-              a.tree = new y.Tree(b.getHTMLElement(), {
-                dataSource: new v.DataSource,
-                controller: new v.Controller,
-                renderer: a.renderer
-              }, {
-                twistiePixels: 11,
-                indentPixels: 0,
-                alwaysFocused: !0,
-                verticalScrollMode: "visible"
-              }), a.toUnbind.push(a.tree.addListener(r.EventType.FOCUS, function(b) {
-                a.elementFocused(b.focus)
-              })), a.toUnbind.push(a.tree.addListener(r.EventType.SELECTION, function(b) {
-                b.selection && b.selection.length > 0 && a.elementSelected(b.selection[0])
-              }))
-            }).on(B.EventType.KEY_DOWN, function(b) {
-              var c = new A.KeyboardEvent(b);
-              if (!a.quickNavigateKey) return;
-              if (c.key === a.quickNavigateKey.key) B.EventHelper.stop(b, !0), a.navigateInTree(c.shiftKey ?
-                "UpArrow" : "DownArrow");
-              else if (c.key === "DownArrow" || c.key === "UpArrow" || c.key === "PageDown" || c.key === "PageUp")
-                B.EventHelper.stop(b, !0), a.navigateInTree(c.key)
-            }).on(B.EventType.KEY_UP, function(b) {
-              var c = new A.KeyboardEvent(b);
-              if (!a.quickNavigateKey) return;
-              if ((a.quickNavigateKey.ctrlCmd || a.quickNavigateKey.winCtrl) && c.key === "Ctrl" || c.key ===
-                "Enter") {
-                var d = a.tree.getFocus();
-                d && a.elementSelected(d)
-              }
-            }).clone()
-        }).addClass("quick-open-widget").build(this.container)
-      }, a.prototype.onType = function() {
-        var a = this.inputField.getHTMLElement().value;
-        this.helpText && (a ? this.helpText.hide() : this.helpText.show()), this.callbacks.onType(a)
-      }, a.prototype.navigateInTree = function(a, b) {
-        var c = this.tree.getInput() ? this.tree.getInput().getEntries() : [],
-          d = this.tree.getFocus(),
-          e = !1,
-          f = !1;
-        c.length > 1 && (a !== "UpArrow" || d !== c[0] && !! d ? a === "DownArrow" && d === c[c.length - 1] && (this.tree
-          .setFocus(c[0]), e = !0) : (this.tree.setFocus(c[c.length - 1]), e = !0));
-        if (!e) switch (a) {
-          case "DownArrow":
-            this.tree.focusNext();
-            break;
-          case "UpArrow":
-            this.tree.focusPrevious();
-            break;
-          case "PageDown":
-            this.tree.focusNextPage();
-            break;
-          case "PageUp":
-            this.tree.focusPreviousPage();
-            break;
-          case "Tab":
-            this.cycleThroughEntryGroups(c, d, b), f = !0
-        }
-        d = this.tree.getFocus(), d && (f ? this.tree.reveal(this.tree.getFocus(), 0) : this.tree.reveal(this.tree.getFocus()))
-      }, a.prototype.cycleThroughEntryGroups = function(a, b, c) {
-        if (a.length === 0) return;
-        var d = b ? a.indexOf(b) : -1;
-        if (d >= 0)
-          if (!c)
-            for (var e = d + 1; e < a.length; e++) {
-              var f = a[e];
-              if (f instanceof w.QuickOpenEntryGroup && f.getGroupLabel()) {
-                this.tree.setFocus(f);
-                return
-              }
+      i = this.tree.getFocus();
+
+      i && (r ? this.tree.reveal(this.tree.getFocus(), 0) : this.tree.reveal(this.tree.getFocus()));
+    };
+
+    e.prototype.cycleThroughEntryGroups = function(e, t, n) {
+      if (0 !== e.length) {
+        var i = t ? e.indexOf(t) : -1;
+        if (i >= 0)
+          if (n)
+            for (var o = i - 1; o >= 0; o--) {
+              var r = e[o];
+              if (r instanceof l.QuickOpenEntryGroup && r.getGroupLabel()) this.tree.setFocus(r);
+
+              return void 0;
             } else
-              for (var e = d - 1; e >= 0; e--) {
-                var g = a[e];
-                if (g instanceof w.QuickOpenEntryGroup && g.getGroupLabel()) {
-                  this.tree.setFocus(g);
-                  return
-                }
+              for (var o = i + 1; o < e.length; o++) {
+                var s = e[o];
+                if (s instanceof l.QuickOpenEntryGroup && s.getGroupLabel()) this.tree.setFocus(s);
+
+                return void 0;
               }
-          if (!c) {
-            this.tree.setFocus(a[0]);
-            return
-          }
-        for (var e = a.length - 1; e >= 0; e--) {
-          var g = a[e];
-          if (g instanceof w.QuickOpenEntryGroup && g.getGroupLabel()) {
-            this.tree.setFocus(g);
-            return
-          }
+        if (!n) this.tree.setFocus(e[0]);
+
+        return void 0;
+        for (var o = e.length - 1; o >= 0; o--) {
+          var r = e[o];
+          if (r instanceof l.QuickOpenEntryGroup && r.getGroupLabel()) this.tree.setFocus(r);
+
+          return void 0;
         }
-      }, a.prototype.elementFocused = function(a) {
-        if (a instanceof w.QuickOpenEntry && this.isVisible()) {
-          var b = a;
-          a.run(w.Mode.PREVIEW)
-        }
-      }, a.prototype.elementSelected = function(a) {
-        var b = !0;
-        if (a instanceof w.QuickOpenEntry && this.isVisible()) {
-          var c = a;
-          b = a.run(w.Mode.OPEN)
-        }
-        var d = this.tree.getInput().entries.indexOf(a),
-          e = this.tree.getInput().entries.length;
+      }
+    };
+
+    e.prototype.elementFocused = function(e, t) {
+      if (e instanceof l.QuickOpenEntry && this.isVisible()) {
+        var n = {
+          event: t,
+          quickNavigateConfiguration: this.quickNavigateConfiguration
+        };
+        e.run(0, n);
+      }
+    };
+
+    e.prototype.elementSelected = function(e, t) {
+      var n = !0;
+      if (e instanceof l.QuickOpenEntry && this.isVisible()) {
+        var i = {
+          event: t,
+          quickNavigateConfiguration: this.quickNavigateConfiguration
+        };
+        n = e.run(1, i);
+      }
+      if (this.usageLogger) {
+        var o = this.tree.getInput().entries.indexOf(e);
+
+        var r = this.tree.getInput().entries.length;
         this.usageLogger.publicLog("quickOpenWidgetItemAccepted", {
-          index: d,
-          count: e,
-          isQuickNavigate: this.quickNavigateKey ? !0 : !1
-        }), b && this.hide()
-      }, a.prototype.show = function(a, b, c) {
-        typeof b == "undefined" && (b = {}), this.visible = !0, this.isLoosingFocus = !1, this.quickNavigateKey = c,
-          this.builder.removeClass("transparent"), this.quickNavigateKey ? (this.inputField.hide(), this.treeContainer
-            .removeClass("transition"), this.builder.show(), this.tree.DOMFocus()) : (this.inputField.show(), this.treeContainer
-            .addClass("transition"), this.builder.show(), this.inputField.domFocus()), this.helpText && (this.quickNavigateKey ||
-            s.isString(a) ? this.helpText.hide() : this.helpText.show()), s.isString(a) ? this.doShowWithPrefix(a) :
-          this.doShowWithInput(a, b)
-      }, a.prototype.doShowWithPrefix = function(a) {
-        this.inputField.getHTMLElement().value = a, this.callbacks.onType(a)
-      }, a.prototype.doShowWithInput = function(a, b) {
-        this.setInput(a, b)
-      }, a.prototype.setInputAndLayout = function(a, b) {
-        var c = this,
-          d = u.generateUuid();
-        this.currentInputToken = d, this.treeContainer.style({
-          height: this.getHeight(a) + "px"
-        }), this.getAnimationPromise().then(function() {
-          c.currentInputToken === d && c.tree.setInput(a).done(function() {
-            c.tree.layout(), a && a.getEntries().length > 0 && c.autoFocus(a, b)
-          }, t.onUnexpectedError)
-        })
-      }, a.prototype.autoFocus = function(a, b) {
-        if (b.autoFocusPrefixMatch) {
-          var c = a.getEntries(),
-            d, e, f = b.autoFocusPrefixMatch,
-            g = f.toLowerCase();
-          for (var h = 0; h < c.length; h++) {
-            var i = c[h];
-            !d && i.getLabel().indexOf(f) === 0 ? d = i : !e && i.getLabel().toLowerCase().indexOf(g) === 0 && (e = i);
-            if (d && e) break
+          index: o,
+          count: r,
+          isQuickNavigate: this.quickNavigateConfiguration ? !0 : !1
+        });
+      }
+      n && this.hide();
+    };
+
+    e.prototype.show = function(e, t, n) {
+      r.isUndefined(t) && (t = {});
+
+      this.visible = !0;
+
+      this.isLoosingFocus = !1;
+
+      this.quickNavigateConfiguration = n;
+
+      this.quickNavigateConfiguration ? (this.inputContainer.hide(), this.treeContainer.removeClass("transition"),
+        this.builder.show(), this.tree.DOMFocus()) : (this.inputContainer.show(), this.treeContainer.addClass(
+        "transition"), this.builder.show(), this.inputBox.$input.domFocus());
+
+      this.helpText && (this.quickNavigateConfiguration || r.isString(e) ? this.helpText.hide() : this.helpText.show());
+
+      r.isString(e) ? this.doShowWithPrefix(e) : this.doShowWithInput(e, t);
+    };
+
+    e.prototype.doShowWithPrefix = function(e) {
+      this.inputBox.value = e;
+
+      this.callbacks.onType(e);
+    };
+
+    e.prototype.doShowWithInput = function(e, t) {
+      this.setInput(e, t);
+    };
+
+    e.prototype.setInputAndLayout = function(e, t) {
+      var n = this;
+
+      var i = a.generateUuid();
+      this.currentInputToken = i;
+
+      this.treeContainer.style({
+        height: this.getHeight(e) + "px"
+      });
+
+      this.getAnimationPromise().then(function() {
+        n.currentInputToken === i && n.tree.setInput(e).done(function() {
+          n.tree.layout();
+
+          e && e.getEntries().length > 0 && n.autoFocus(e, t);
+        }, s.onUnexpectedError);
+      });
+    };
+
+    e.prototype.autoFocus = function(e, t) {
+      if (t.autoFocusPrefixMatch) {
+        for (var n, i, o = e.getEntries(), r = t.autoFocusPrefixMatch, s = r.toLowerCase(), a = 0; a < o.length; a++) {
+          var u = o[a];
+          if (n || 0 !== u.getLabel().indexOf(r) ? i || 0 !== u.getLabel().toLowerCase().indexOf(s) || (i = u) : n =
+            u, n && i) break;
+        }
+        var l = n || i;
+        if (l) this.tree.setFocus(l);
+
+        this.tree.reveal(l, 0);
+
+        return void 0;
+      }
+      if (t.autoFocusFirstEntry) this.tree.focusNext();
+
+      this.tree.reveal(this.tree.getFocus(), 0);
+      else if (t.autoFocusSecondEntry) {
+        var o = e.getEntries();
+        o.length > 1 && this.tree.setFocus(o[1]);
+      }
+    };
+
+    e.prototype.refreshAndLayout = function(e, t) {
+      var n = this;
+      this.isVisible() && (this.treeContainer.style({
+        height: this.getHeight(e) + "px"
+      }), this.getAnimationPromise().then(function() {
+        n.tree.refresh().done(function() {
+          n.tree.layout();
+
+          !n.tree.getFocus() && e && e.getEntries().length > 0 && n.autoFocus(e, t);
+        }, s.onUnexpectedError);
+      }));
+    };
+
+    e.prototype.getAnimationPromise = function() {
+      return this.treeContainer.hasClass("transition") ? n.Promise.timeout(m) : n.Promise.as(null);
+    };
+
+    e.prototype.getHeight = function(e) {
+      var t = this.renderer.getHeight(this.tree, null);
+
+      var n = this.configuration.minItemsToShow;
+      if (e) {
+        var i = e.getEntries();
+        n = i.length;
+      }
+      return Math.min(this.configuration.maxItemsToShow * t, n * t);
+    };
+
+    e.prototype.hide = function(e) {
+      if ("undefined" == typeof e && (e = !1), this.isVisible()) {
+        if (this.visible = !1, this.builder.hide(), this.builder.domBlur(), e) {
+          var t = this.tree.getInput();
+          if (t) {
+            var n = t.entries.length;
+            this.usageLogger && this.usageLogger.publicLog("quickOpenWidgetCancelled", {
+              count: n,
+              isQuickNavigate: this.quickNavigateConfiguration ? !0 : !1
+            });
           }
-          var j = d || e;
-          if (j) {
-            this.tree.setFocus(j), this.tree.reveal(j, .5);
-            return
-          }
         }
-        b.autoFocusFirstEntry && (this.tree.focusNext(), this.tree.reveal(this.tree.getFocus(), 0))
-      }, a.prototype.refreshAndLayout = function(a, b) {
-        var c = this;
-        if (!this.isVisible()) return;
+        this.inputBox.value = "";
+
+        this.tree.setInput(null);
+        var i = this.renderer.getHeight(this.tree, null);
         this.treeContainer.style({
-          height: this.getHeight(a) + "px"
-        }), this.getAnimationPromise().then(function() {
-          c.tree.refresh().done(function() {
-            c.tree.layout(), !c.tree.getFocus() && a && a.getEntries().length > 0 && c.autoFocus(a, b)
-          }, t.onUnexpectedError)
-        })
-      }, a.prototype.getAnimationPromise = function() {
-        return this.treeContainer.hasClass("transition") ? p.Promise.timeout(C) : p.Promise.as(null)
-      }, a.prototype.getHeight = function(a) {
-        var b = this.renderer.getHeight(this.tree, null),
-          c = this.configuration.minItemsToShow;
-        if (a) {
-          var d = a.getEntries();
-          c = d.length
-        }
-        return Math.min(this.configuration.maxItemsToShow * b, c * b)
-      }, a.prototype.hide = function(a) {
-        typeof a == "undefined" && (a = !1);
-        if (!this.isVisible()) return;
-        this.visible = !1, this.builder.hide(), this.builder.domBlur();
-        if (a) {
-          var b = this.tree.getInput().entries.length;
-          this.usageLogger.publicLog("quickOpenWidgetCancelled", {
-            count: b,
-            isQuickNavigate: this.quickNavigateKey ? !0 : !1
-          })
-        }
-        this.inputField.getHTMLElement().value = "", this.tree.setInput(null);
-        var c = this.renderer.getHeight(this.tree, null);
-        this.treeContainer.style({
-          height: this.configuration.minItemsToShow * c + "px"
-        }), this.progressBar.stop().getContainer().hide(), this.tree.isDOMFocused() ? this.tree.DOMBlur() : this.inputField
-          .hasFocus() && this.inputField.domBlur(), a ? this.callbacks.onCancel() : this.callbacks.onOk()
-      }, a.prototype.setInput = function(a, b) {
-        if (!this.isVisible()) return;
-        this.setInputAndLayout(a, b)
-      }, a.prototype.getInput = function() {
-        return this.tree.getInput()
-      }, a.prototype.runFocus = function() {
-        var a = this.tree.getFocus();
-        return a ? (this.elementSelected(a), !0) : !1
-      }, a.prototype.getProgressBar = function() {
-        return this.progressBar
-      }, a.prototype.isVisible = function() {
-        return this.visible
-      }, a.prototype.gainingFocus = function() {
-        this.isLoosingFocus = !1
-      }, a.prototype.loosingFocus = function() {
-        var a = this;
-        if (!this.isVisible()) return;
-        this.isLoosingFocus = !0, p.Promise.timeout(0).then(function() {
-          if (!a.isLoosingFocus) return;
-          a.hide(!1)
-        })
-      }, a.prototype.dispose = function() {
-        while (this.toUnbind.length) this.toUnbind.pop()();
-        this.progressBar.dispose(), this.tree.dispose()
-      }, a
-    }();
-  b.QuickOpenWidget = E
-})
+          height: this.configuration.minItemsToShow * i + "px"
+        });
+
+        this.progressBar.stop().getContainer().hide();
+
+        this.tree.isDOMFocused() ? this.tree.DOMBlur() : this.inputBox.$input.hasFocus() && this.inputBox.$input.domBlur();
+
+        e ? this.callbacks.onCancel() : this.callbacks.onOk();
+      }
+    };
+
+    e.prototype.setInput = function(e, t) {
+      this.isVisible() && this.setInputAndLayout(e, t);
+    };
+
+    e.prototype.getInput = function() {
+      return this.tree.getInput();
+    };
+
+    e.prototype.runFocus = function() {
+      var e = this.tree.getFocus();
+      return e ? (this.elementSelected(e), !0) : !1;
+    };
+
+    e.prototype.getProgressBar = function() {
+      return this.progressBar;
+    };
+
+    e.prototype.setExtraClass = function(e) {
+      var t = this.builder.getProperty("extra-class");
+      t && this.builder.removeClass(t);
+
+      e ? (this.builder.addClass(e), this.builder.setProperty("extra-class", e)) : t && this.builder.removeProperty(
+        "extra-class");
+    };
+
+    e.prototype.isVisible = function() {
+      return this.visible;
+    };
+
+    e.prototype.gainingFocus = function() {
+      this.isLoosingFocus = !1;
+    };
+
+    e.prototype.loosingFocus = function() {
+      var e = this;
+      this.isVisible() && (this.isLoosingFocus = !0, n.Promise.timeout(0).then(function() {
+        e.isLoosingFocus && e.hide(!1);
+      }));
+    };
+
+    e.prototype.dispose = function() {
+      for (; this.toUnbind.length;) this.toUnbind.pop()();
+      this.progressBar.dispose();
+
+      this.inputBox.dispose();
+
+      this.tree.dispose();
+    };
+
+    return e;
+  }();
+  t.QuickOpenWidget = y;
+});

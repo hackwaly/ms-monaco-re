@@ -1,42 +1,58 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a
+define("vs/base/ui/events", ["require", "exports"], function(e, t) {
+  var n = function() {
+    function e(e) {
+      this.time = (new Date).getTime();
+
+      this.originalEvent = e;
+
+      this.source = null;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
-    d.prototype = b.prototype, a.prototype = new d
-  };
-define(["require", "exports"], function(a, b) {
-  var c = function() {
-    function a(a) {
-      this.time = (new Date).getTime(), this.originalEvent = a, this.source = null
-    }
-    return a
+    return e;
   }();
-  b.Event = c;
-  var d = function(a) {
-    function b(b, c) {
-      a.call(this, c), this.message = b
+  t.Event = n;
+  var i = function(e) {
+    function t(t, n) {
+      e.call(this, n);
+
+      this.message = t;
     }
-    return __extends(b, a), b
-  }(c);
-  b.MessageEvent = d;
-  var e = function(a) {
-    function b(b, c, d, e) {
-      a.call(this, e), this.key = b, this.oldValue = c, this.newValue = d
+    __extends(t, e);
+
+    return t;
+  }(n);
+  t.MessageEvent = i;
+  var o = function(e) {
+    function t(t, n, i, o) {
+      e.call(this, o);
+
+      this.key = t;
+
+      this.oldValue = n;
+
+      this.newValue = i;
     }
-    return __extends(b, a), b
-  }(c);
-  b.PropertyChangeEvent = e;
-  var f = function(a) {
-    function b(b, c) {
-      a.call(this, c), this.element = b
+    __extends(t, e);
+
+    return t;
+  }(n);
+  t.PropertyChangeEvent = o;
+  var r = function(e) {
+    function t(t, n) {
+      e.call(this, n);
+
+      this.element = t;
     }
-    return __extends(b, a), b
-  }(c);
-  b.ViewerEvent = f, b.EventType = {
+    __extends(t, e);
+
+    return t;
+  }(n);
+  t.ViewerEvent = r;
+
+  t.EventType = {
     PROPERTY_CHANGED: "propertyChanged",
     SELECTION: "selection",
     FOCUS: "focus",
+    BLUR: "blur",
     HIGHLIGHT: "highlight",
     EXPAND: "expand",
     COLLAPSE: "collapse",
@@ -52,5 +68,5 @@ define(["require", "exports"], function(a, b) {
     ERROR: "error",
     CHANGE: "change",
     DISPOSE: "dispose"
-  }
-})
+  };
+});

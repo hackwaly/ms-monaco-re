@@ -1,104 +1,187 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a
+define("vs/editor/contrib/hover/modesContentHover", ["require", "exports", "vs/editor/core/range",
+  "vs/base/lib/winjs.base", "vs/editor/contrib/hover/hoverOperation", "vs/editor/contrib/hover/hoverWidgets",
+  "vs/base/dom/htmlContent"
+], function(e, t, n, i, o, r, s) {
+  var a = function() {
+    function e(e) {
+      this._editor = e;
+
+      this._range = null;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
-    d.prototype = b.prototype, a.prototype = new d
-  };
-define(["require", "exports", "vs/editor/core/range", "vs/base/lib/winjs.base",
-  "vs/editor/contrib/hover/hoverOperation", "vs/editor/contrib/hover/hoverWidgets", "vs/base/dom/htmlContent"
-], function(a, b, c, d, e, f, g) {
-  var h = c,
-    i = d,
-    j = e,
-    k = f,
-    l = g,
-    m = function() {
-      function a(a) {
-        this._editor = a, this._range = null
-      }
-      return a.prototype.setRange = function(a) {
-        this._range = a, this._result = []
-      }, a.prototype.computeAsync = function() {
-        var a = this._editor.getModel().getMode(),
-          b = a.extraInfoSupport;
-        return b ? b.computeInfo(this._editor.getModel().getAssociatedResource(), {
-          lineNumber: this._range.startLineNumber,
-          column: this._range.startColumn
-        }).then(function(a) {
-          return a ? [a] : null
-        }) : i.Promise.as(null)
-      }, a.prototype.computeSync = function() {
-        var a = this,
-          b = this._range.startLineNumber,
-          c = this._editor.getLineDecorations(b),
-          d = this._editor.getModel().getLineMaxColumn(b),
-          e = [];
-        return c.forEach(function(c) {
-          var f = c.range.startLineNumber === b ? c.range.startColumn : 1,
-            g = c.range.endLineNumber === b ? c.range.endColumn : d;
-          if (f <= a._range.startColumn && a._range.endColumn <= g && (c.options.hoverMessage || c.options.htmlMessage &&
-            c.options.htmlMessage.length > 0)) {
-            var i = {
-              value: c.options.hoverMessage,
-              range: new h.Range(a._range.startLineNumber, f, a._range.startLineNumber, g)
-            };
-            c.options.htmlMessage && (i.htmlContent = c.options.htmlMessage), e.push(i)
-          }
-        }), e
-      }, a.prototype.onResult = function(a, b) {
-        b ? this._result = a.concat(this._result) : this._result = this._result.concat(a)
-      }, a.prototype.getResult = function() {
-        return this._result.slice(0)
-      }, a
-    }(),
-    n = function(a) {
-      function b(c) {
-        var d = this;
-        a.call(this, b.ID, c), this._computer = new m(this._editor), this._hoverOperation = new j.HoverOperation(this
-          ._computer, function(a) {
-            return d._withResult(a)
-          }, null, function(a) {
-            return d._withResult(a)
-          })
-      }
-      return __extends(b, a), b.prototype.startShowingAt = function(a) {
-        if (this._lastRange && this._lastRange.equalsRange(a)) return;
-        this._hoverOperation.cancel();
-        if (this._isVisible)
-          if (this._showAtPosition.lineNumber !== a.startLineNumber) this.hide();
+    e.prototype.setRange = function(e) {
+      this._range = e;
+
+      this._result = [];
+    };
+
+    e.prototype.clearResult = function() {
+      this._result = [];
+    };
+
+    e.prototype.computeAsync = function() {
+      var e = this._editor.getModel().getMode();
+
+      var t = e.extraInfoSupport;
+      return t ? t.computeInfo(this._editor.getModel().getAssociatedResource(), {
+        lineNumber: this._range.startLineNumber,
+        column: this._range.startColumn
+      }).then(function(e) {
+        if (e) {
+          var t = "undefined" != typeof e.range;
+
+          var n = "undefined" != typeof e.value;
+
+          var i = "undefined" != typeof e.htmlContent && e.htmlContent && e.htmlContent.length > 0;
+          if (t && (n || i)) return [e];
+        }
+        return null;
+      }) : i.TPromise.as(null);
+    };
+
+    e.prototype.computeSync = function() {
+      var e = this;
+
+      var t = this._range.startLineNumber;
+
+      var i = this._editor.getLineDecorations(t);
+
+      var o = this._editor.getModel().getLineMaxColumn(t);
+
+      var r = [];
+      i.forEach(function(i) {
+        var s = i.range.startLineNumber === t ? i.range.startColumn : 1;
+
+        var a = i.range.endLineNumber === t ? i.range.endColumn : o;
+        if (s <= e._range.startColumn && e._range.endColumn <= a && (i.options.hoverMessage || i.options.htmlMessage &&
+          i.options.htmlMessage.length > 0)) {
+          var u = {
+            value: i.options.hoverMessage,
+            range: new n.Range(e._range.startLineNumber, s, e._range.startLineNumber, a)
+          };
+          i.options.htmlMessage && (u.htmlContent = i.options.htmlMessage);
+
+          r.push(u);
+        }
+      });
+
+      return r;
+    };
+
+    e.prototype.onResult = function(e, t) {
+      this._result = t ? e.concat(this._result) : this._result.concat(e);
+    };
+
+    e.prototype.getResult = function() {
+      return this._result.slice(0);
+    };
+
+    return e;
+  }();
+
+  var u = function(e) {
+    function t(n) {
+      var i = this;
+      e.call(this, t.ID, n);
+
+      this._computer = new a(this._editor);
+
+      this._highlightDecorations = [];
+
+      this._hoverOperation = new o.HoverOperation(this._computer, function(e) {
+        return i._withResult(e, !0);
+      }, null, function(e) {
+        return i._withResult(e, !1);
+      });
+    }
+    __extends(t, e);
+
+    t.prototype.onModelDecorationsChanged = function() {
+      this._isVisible && (this._hoverOperation.cancel(), this._computer.clearResult(), this._hoverOperation.start());
+    };
+
+    t.prototype.startShowingAt = function(e) {
+      if (!this._lastRange || !this._lastRange.equalsRange(e)) {
+        if (this._hoverOperation.cancel(), this._isVisible)
+          if (this._showAtPosition.lineNumber !== e.startLineNumber) this.hide();
           else {
-            var b = [];
-            for (var c = 0, d = this._messages.length; c < d; c++) {
-              var e = this._messages[c],
-                f = e.range;
-              f.startColumn <= a.startColumn && f.endColumn >= a.endColumn && b.push(e)
+            for (var t = [], n = 0, i = this._messages.length; i > n; n++) {
+              var o = this._messages[n];
+
+              var r = o.range;
+              r.startColumn <= e.startColumn && r.endColumn >= e.endColumn && t.push(o);
             }
-            b.length > 0 ? this._renderMessages(a, b) : this.hide()
+            t.length > 0 ? this._renderMessages(e, t) : this.hide();
           }
-        this._lastRange = a, this._computer.setRange(a), this._hoverOperation.start()
-      }, b.prototype.hide = function() {
-        this._lastRange = null, this._hoverOperation.cancel(), a.prototype.hide.call(this)
-      }, b.prototype._withResult = function(a) {
-        this._messages = a, this._messages.length > 0 ? this._renderMessages(this._lastRange, this._messages) : this.hide()
-      }, b.prototype._renderMessages = function(a, b) {
-        var c, d, e, f = Number.MAX_VALUE,
-          g = [],
-          h = document.createDocumentFragment();
-        b.forEach(function(a) {
-          f = Math.min(f, a.range.startColumn);
-          var b = document.createElement("div"),
-            c = null,
-            d = b;
-          a.className && (c = document.createElement("span"), c.className = a.className, d = c, b.appendChild(c)),
-            a.htmlContent && a.htmlContent.length > 0 ? a.htmlContent.forEach(function(a) {
-              d.appendChild(l.renderHtml(a))
-            }) : d.textContent = a.value, h.appendChild(b)
-        }), this._domNode.textContent = "", this._domNode.appendChild(h), this.showAt({
-          lineNumber: a.startLineNumber,
-          column: f
-        })
-      }, b.ID = "editor.contrib.modesContentHoverWidget", b
-    }(k.ContentHoverWidget);
-  b.ModesContentHoverWidget = n
-})
+        this._lastRange = e;
+
+        this._computer.setRange(e);
+
+        this._hoverOperation.start();
+      }
+    };
+
+    t.prototype.hide = function() {
+      this._lastRange = null;
+
+      this._hoverOperation.cancel();
+
+      e.prototype.hide.call(this);
+
+      this._highlightDecorations = this._editor.deltaDecorations(this._highlightDecorations, []);
+    };
+
+    t.prototype._withResult = function(e, t) {
+      this._messages = e;
+
+      this._messages.length > 0 ? this._renderMessages(this._lastRange, this._messages) : t && this.hide();
+    };
+
+    t.prototype._renderMessages = function(e, t) {
+      var i = Number.MAX_VALUE;
+
+      var o = t[0].range;
+
+      var r = document.createDocumentFragment();
+      t.forEach(function(e) {
+        if (e.range) {
+          i = Math.min(i, e.range.startColumn);
+
+          o = n.plusRange(o, e.range);
+          var t = document.createElement("div");
+
+          var a = null;
+
+          var u = t;
+          e.className && (a = document.createElement("span"), a.className = e.className, u = a, t.appendChild(a));
+
+          e.htmlContent && e.htmlContent.length > 0 ? e.htmlContent.forEach(function(e) {
+            u.appendChild(s.renderHtml(e));
+          }) : u.textContent = e.value;
+
+          r.appendChild(t);
+        }
+      });
+
+      this._domNode.textContent = "";
+
+      this._domNode.appendChild(r);
+
+      this.showAt({
+        lineNumber: e.startLineNumber,
+        column: i
+      });
+
+      this._highlightDecorations = this._editor.deltaDecorations(this._highlightDecorations, [{
+        range: o,
+        options: {
+          className: "hoverHighlight"
+        }
+      }]);
+    };
+
+    t.ID = "editor.contrib.modesContentHoverWidget";
+
+    return t;
+  }(r.ContentHoverWidget);
+  t.ModesContentHoverWidget = u;
+});

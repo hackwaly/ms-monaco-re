@@ -48,6 +48,5 @@ define(["require", "exports"], function(a, b) {
     }, a.prototype.heightIsAccurate = function(a) {
       return !!this.isAccurate[a]
     }, a
-  }();
-  b.LineHeightComputer = c
+  }() b.LineHeightComputer = c
 })

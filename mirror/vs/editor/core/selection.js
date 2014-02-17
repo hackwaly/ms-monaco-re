@@ -1,42 +1,54 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a
-    }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
-    d.prototype = b.prototype, a.prototype = new d
-  };
-define(["require", "exports", "vs/editor/core/range", "vs/editor/editor"], function(a, b, c, d) {
-  function g(a) {
-    return a && typeof a.selectionStartLineNumber == "number" && typeof a.selectionStartColumn == "number" && typeof a
-      .positionLineNumber == "number" && typeof a.positionColumn == "number"
+define("vs/editor/core/selection", ["require", "exports", "vs/editor/core/range", "vs/editor/editor"], function(e, t, n) {
+  function i(e) {
+    return e && "number" == typeof e.selectionStartLineNumber && "number" == typeof e.selectionStartColumn &&
+      "number" == typeof e.positionLineNumber && "number" == typeof e.positionColumn;
   }
 
-  function h(a, b, c, d, e) {
-    return e === f.SelectionDirection.LTR ? new i(a, b, c, d) : new i(c, d, a, b)
+  function o(e, t, n, i, o) {
+    return 0 === o ? new r(e, t, n, i) : new r(n, i, e, t);
   }
-  var e = c,
-    f = d;
-  b.isISelection = g, b.createWithDirection = h;
-  var i = function(a) {
-    function b(b, c, d, e) {
-      this.selectionStartLineNumber = b, this.selectionStartColumn = c, this.positionLineNumber = d, this.positionColumn =
-        e, a.call(this, b, c, d, e)
+  t.isISelection = i;
+
+  t.createWithDirection = o;
+  var r = function(e) {
+    function t(t, n, i, o) {
+      this.selectionStartLineNumber = t;
+
+      this.selectionStartColumn = n;
+
+      this.positionLineNumber = i;
+
+      this.positionColumn = o;
+
+      e.call(this, t, n, i, o);
     }
-    return __extends(b, a), b.prototype.clone = function() {
-      return new b(this.selectionStartLineNumber, this.selectionStartColumn, this.positionLineNumber, this.positionColumn)
-    }, b.prototype.equalsSelection = function(a) {
-      return this.selectionStartLineNumber === a.selectionStartLineNumber && this.selectionStartColumn === a.selectionStartColumn &&
-        this.positionLineNumber === a.positionLineNumber && this.positionColumn === a.positionColumn
-    }, b.prototype.getDirection = function() {
+    __extends(t, e);
+
+    t.prototype.clone = function() {
+      return new t(this.selectionStartLineNumber, this.selectionStartColumn, this.positionLineNumber, this.positionColumn);
+    };
+
+    t.prototype.equalsSelection = function(e) {
+      return this.selectionStartLineNumber === e.selectionStartLineNumber && this.selectionStartColumn === e.selectionStartColumn &&
+        this.positionLineNumber === e.positionLineNumber && this.positionColumn === e.positionColumn;
+    };
+
+    t.prototype.getDirection = function() {
       return this.selectionStartLineNumber === this.startLineNumber && this.selectionStartColumn === this.startColumn ?
-        f.SelectionDirection.LTR : f.SelectionDirection.RTL
-    }, b.prototype.setEndPosition = function(a, c) {
-      return this.getDirection() === f.SelectionDirection.LTR ? new b(this.startLineNumber, this.startColumn, a, c) :
-        new b(a, c, this.startLineNumber, this.startColumn)
-    }, b.prototype.setStartPosition = function(a, c) {
-      return this.getDirection() === f.SelectionDirection.LTR ? new b(a, c, this.endLineNumber, this.endColumn) : new b(
-        this.endLineNumber, this.endColumn, a, c)
-    }, b
-  }(e.Range);
-  b.Selection = i
-})
+        0 : 1;
+    };
+
+    t.prototype.setEndPosition = function(e, n) {
+      return 0 === this.getDirection() ? new t(this.startLineNumber, this.startColumn, e, n) : new t(e, n, this.startLineNumber,
+        this.startColumn);
+    };
+
+    t.prototype.setStartPosition = function(e, n) {
+      return 0 === this.getDirection() ? new t(e, n, this.endLineNumber, this.endColumn) : new t(this.endLineNumber,
+        this.endColumn, e, n);
+    };
+
+    return t;
+  }(n.Range);
+  t.Selection = r;
+});

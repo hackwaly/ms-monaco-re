@@ -1,308 +1,522 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a
-    }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
-    d.prototype = b.prototype, a.prototype = new d
-  };
-define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/dom/builder", "vs/base/ui/actions",
-  "vs/base/lifecycle", "vs/base/dom/dom", "vs/base/ui/events", "vs/base/types", "vs/base/eventEmitter",
-  "vs/base/dom/keyboardEvent", "vs/css!./actionbar"
-], function(a, b, c, d, e, f, g, h, i, j, k, l) {
-  function E(a, b) {
-    if (a.button !== 0) return;
-    a.type === r.EventType.MOUSE_DOWN ? b.addClass("active") : b.removeClass("active")
-  }
-  var m = c,
-    n = d,
-    o = e,
-    p = f,
-    q = g,
-    r = h,
-    s = i,
-    t = j,
-    u = k,
-    v = l,
-    w = o.$,
-    x = function(a) {
-      function b(b, c) {
-        var d = this;
-        a.call(this), this._callOnDispose = [], this._context = b || this, this.action = c;
-        if (c instanceof p.Action) {
-          var e = c.addBulkListener(function(a) {
-            a.forEach(function(a) {
-              switch (a.getType()) {
-                case p.Action.ENABLED:
-                  d._updateEnabled();
-                  break;
-                case p.Action.LABEL:
-                  d._updateLabel();
-                  break;
-                case p.Action.CLASS:
-                  d._updateClass();
-                  break;
-                case p.Action.CHECKED:
-                  d._updateChecked();
-                  break;
-                default:
-                  d._updateUnknown(a)
-              }
-            })
-          });
-          this._callOnDispose.push(e)
-        }
-      }
-      return __extends(b, a), b.prototype.getAction = function() {
-        return this.action
-      }, b.prototype.setActionContext = function(a) {
-        this._context = a
-      }, b.prototype.render = function(a) {
-        var b = this;
-        this.builder = o.Build.withElement(a), this.builder.on(r.EventType.CLICK, function(a) {
-          b.onClick(a)
-        }), this.builder.on("mousedown", function(a) {
-          a.button === 0 && b.action.enabled && b.builder.addClass("active")
-        }), this.builder.on(["mouseup", "mouseout"], function(a) {
-          a.button === 0 && b.action.enabled && b.builder.removeClass("active")
-        })
-      }, b.prototype.onClick = function(a) {
-        r.EventHelper.stop(a, !0), this.runAction(a)
-      }, b.prototype.runAction = function(a) {
-        var b = this;
-        if (!this.action.enabled) return;
-        this.emit(s.EventType.BEFORE_RUN, {
-          action: this.action
-        }), n.Promise.as(this.action.run(this._context || a)).then(function(a) {
-          b.emit(s.EventType.RUN, {
-            action: b.action,
-            result: a
-          })
-        }, function(a) {
-          b.emit(s.EventType.RUN, {
-            action: b.action,
-            error: a
-          })
-        }).done()
-      }, b.prototype.focus = function() {
-        this.builder.domFocus()
-      }, b.prototype._updateEnabled = function() {}, b.prototype._updateLabel = function() {}, b.prototype._updateClass =
-        function() {}, b.prototype._updateChecked = function() {}, b.prototype._updateUnknown = function(a) {}, b.prototype
-        .dispose = function() {
-          a.prototype.dispose.call(this), q.cAll(this._callOnDispose)
-      }, b
-    }(u.EventEmitter);
-  b.BaseActionItem = x, b.Separator = {
-    id: "actions.monaco.separator",
-    "class": "separator",
-    label: "",
-    checked: !1,
-    enabled: !1,
-    run: function() {
-      return null
-    }
-  };
-  var y = function(a) {
-    function b(b, c, d) {
-      typeof d == "undefined" && (d = {}), a.call(this, b, c), this.options = d, this.options.icon = d.icon !==
-        undefined ? d.icon : !1, this.options.label = d.label !== undefined ? d.label : !0, this.cssClass = ""
-    }
-    return __extends(b, a), b.prototype.render = function(b) {
-      a.prototype.render.call(this, b), this.$e = w("a.action-label").attr("tabIndex", "-1").appendTo(this.builder),
-        this.$e.attr({
-          role: "menuitem"
-        }), !this.options.label && this.getAction().label && this.options.icon && this.$e.attr({
-          title: this.getAction().label
-        }), this._updateClass(), this._updateLabel(), this._updateEnabled(), this._updateChecked()
-    }, b.prototype.focus = function() {
-      this.$e.domFocus()
-    }, b.prototype._updateLabel = function() {
-      this.options.label && this.$e.text(this.getAction().label)
-    }, b.prototype._updateClass = function() {
-      this.cssClass && this.$e.removeClass(this.cssClass), this.options.icon ? (this.cssClass = this.getAction().class,
-        this.$e.addClass("icon"), this.$e.addClass(this.cssClass), this._updateEnabled()) : this.$e.removeClass(
-        "icon")
-    }, b.prototype._updateEnabled = function() {
-      this.getAction().enabled ? (this.builder.removeClass("disabled"), this.$e.removeClass("disabled")) : (this.builder
-        .addClass("disabled"), this.$e.addClass("disabled"))
-    }, b.prototype._updateChecked = function() {
-      this.getAction().checked ? this.$e.addClass("checked") : this.$e.removeClass("checked")
-    }, b
-  }(x);
-  b.ActionItem = y;
-  var z = function(a) {
-    function b(b) {
-      a.call(this, null, b), this.callOnDispose = []
-    }
-    return __extends(b, a), b.prototype.render = function(b) {
-      var c = document.createElement("div");
-      o.Build.withElement(c).addClass("progress-item");
-      var d = document.createElement("div");
-      o.Build.withElement(d).addClass("label"), d.textContent = this.getAction().label, d.title = this.getAction().label,
-        a.prototype.render.call(this, d);
-      var e = document.createElement("div");
-      e.textContent = "…", o.Build.withElement(e).addClass("tag", "progress");
-      var f = document.createElement("div");
-      f.textContent = "✓", o.Build.withElement(f).addClass("tag", "done");
-      var g = document.createElement("div");
-      g.textContent = "!", o.Build.withElement(g).addClass("tag", "error"), this.callOnDispose.push(this.addListener(
-        s.EventType.BEFORE_RUN, function() {
-          o.Build.withElement(e).addClass("active"), o.Build.withElement(f).removeClass("active"), o.Build.withElement(
-            g).removeClass("active")
-        })), this.callOnDispose.push(this.addListener(s.EventType.RUN, function(a) {
-        o.Build.withElement(e).removeClass("active"), a.error ? (o.Build.withElement(f).removeClass("active"), o.Build
-          .withElement(g).addClass("active")) : (o.Build.withElement(g).removeClass("active"), o.Build.withElement(
-          f).addClass("active"))
-      })), c.appendChild(d), c.appendChild(e), c.appendChild(f), c.appendChild(g), b.appendChild(c)
-    }, b.prototype.dispose = function() {
-      q.cAll(this.callOnDispose), a.prototype.dispose.call(this)
-    }, b
-  }(x);
-  b.ProgressItem = z,
-  function(a) {
-    a[a.HORIZONTAL = 1] = "HORIZONTAL", a[a.VERTICAL = 2] = "VERTICAL"
-  }(b.ActionsOrientation || (b.ActionsOrientation = {}));
-  var A = b.ActionsOrientation,
-    B = {
-      orientation: A.HORIZONTAL,
-      context: null
-    }, C = function(a) {
-      function b(b, c) {
-        typeof c == "undefined" && (c = B);
-        var d = this;
-        a.call(this), this.builder = b, this.options = c, this.items = [], this.focusedItem = undefined, this.domNode =
-          document.createElement("div"), this.domNode.className = "monaco-action-bar", this.options.orientation === A
-          .VERTICAL && (this.domNode.className += " vertical"), o.Build.withElement(this.domNode).on(r.EventType.KEY_DOWN,
-            function(a) {
-              var b = new v.KeyboardEvent(a),
-                c = !0;
-              switch (b.asString()) {
-                case "UpArrow":
-                case "LeftArrow":
-                  d.doFocus(!1);
-                  break;
-                case "DownArrow":
-                case "RightArrow":
-                  d.doFocus(!0);
-                  break;
-                default:
-                  c = !1
-              }
-              c && (b.preventDefault(), b.stopPropagation())
-            }), o.Build.withElement(this.domNode).on(r.EventType.KEY_UP, function(a) {
-            var b = new v.KeyboardEvent(a);
-            switch (b.asString()) {
-              case "Enter":
-                d.doTrigger(a), b.preventDefault(), b.stopPropagation()
+define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/editor.main", "vs/base/lifecycle",
+  "vs/base/dom/builder", "vs/base/ui/actions", "vs/base/dom/dom", "vs/base/ui/events", "vs/base/types",
+  "vs/base/eventEmitter", "vs/base/dom/keyboardEvent", "vs/css!./actionbar"
+], function(e, t, n, i, o, r, s, a, u, l, c) {
+  var d = o.$;
+
+  var h = function(e) {
+    function t(t, n) {
+      var i = this;
+      if (e.call(this), this._callOnDispose = [], this._context = t || this, this._action = n, n instanceof r.Action) {
+        var o = n.addBulkListener(function(e) {
+          e.forEach(function(e) {
+            switch (e.getType()) {
+              case r.Action.ENABLED:
+                i._updateEnabled();
+                break;
+              case r.Action.LABEL:
+                i._updateLabel();
+
+                i._updateTitle();
+                break;
+              case r.Action.CLASS:
+                i._updateClass();
+                break;
+              case r.Action.CHECKED:
+                i._updateChecked();
+                break;
+              default:
+                i._updateUnknown(e);
             }
-          }), this.actionsList = document.createElement("ul"), this.actionsList.className = "actions-container", this
-          .actionsList.setAttribute("role", "menu"), this.actionsList.setAttribute("aria-label", m.localize(
-            "actionBarAccessibleLabel", "Action Bar")), this.domNode.appendChild(this.actionsList), b && b.getHTMLElement()
-          .appendChild(this.domNode)
+          });
+        });
+        this._callOnDispose.push(o);
       }
-      return __extends(b, a), b.prototype.getContainer = function() {
-        return o.Build.withElement(this.domNode)
-      }, b.prototype.push = function(a, b) {
-        typeof b == "undefined" && (b = {});
-        var c = this;
-        t.isArray(a) || (a = [a]);
-        var d = t.isNumber(b.index) ? b.index : null;
-        a.forEach(function(a) {
-          var e = document.createElement("li");
-          e.className = "action-item", e.setAttribute("role", "presentation");
-          var f = null;
-          c.options.actionItemProvider && (f = c.options.actionItemProvider(a)), f || (f = new y(c.options.context,
-            a, b)), f.setActionContext(c.options.context), c.addEmitter(f), f.render(e), d === null || d < 0 || d >=
-            c.actionsList.children.length ? c.actionsList.appendChild(e) : c.actionsList.insertBefore(e, c.actionsList
-              .children[d++]), c.items.push(f)
-        })
-      }, b.prototype.clear = function() {
-        var a;
-        while (a = this.items.pop()) a.dispose();
-        w(this.actionsList).empty()
-      }, b.prototype.isEmpty = function() {
-        return this.items.length === 0
-      }, b.prototype.onContentsChange = function() {
-        this.emit(s.EventType.CONTENTS_CHANGED)
-      }, b.prototype.focus = function() {
-        this.doFocus()
-      }, b.prototype.doFocus = function(a) {
-        var b = this.items.length;
-        if (b === 0) return;
-        typeof a == "undefined" ? typeof this.focusedItem == "undefined" && (this.focusedItem = 0) : typeof this.focusedItem ==
-          "undefined" ? this.focusedItem = 0 : a ? (this.focusedItem += 1, this.focusedItem >= b && (this.focusedItem =
-            0)) : (this.focusedItem -= 1, this.focusedItem < 0 && (this.focusedItem = b - 1));
-        for (var c = 0; c < this.items.length; c++) {
-          var d = this.items[c];
-          if (!(d instanceof x)) continue;
-          var e = d;
-          c === this.focusedItem ? (e.focus(), e.builder.addClass("focused")) : e.builder.removeClass("focused")
-        }
-      }, b.prototype.doTrigger = function(a) {
-        if (typeof this.focusedItem == "undefined") return;
-        this.items[this.focusedItem].runAction(a)
-      }, b.prototype.dispose = function() {
-        this.items !== null && this.clear(), this.items = null, this.getContainer().destroy(), a.prototype.dispose.call(
-          this)
-      }, b.DEFAULT_OPTIONS = {
-        orientation: A.HORIZONTAL
-      }, b
-    }(u.EventEmitter);
-  b.ActionBar = C;
-  var D = function(a) {
-    function b(b, c) {
-      typeof c == "undefined" && (c = {});
-      var d = this;
-      a.call(this), this.builder = b, this.options = c, this.listeners = [], this.domNodeBuilder = b.div({
-        "class": "monaco-actions-widget"
-      }, function(a) {
-        d.primaryActionBar = new C(a), d.secondaryActionBar = new C(a, {
-          orientation: A.VERTICAL
-        }), d.primaryActionBar.getContainer().addClass("primary"), d.secondaryActionBar.getContainer().addClass(
-          "secondary"), a.div({
-          "class": "more",
-          text: m.localize("more", "…")
-        }).on([r.EventType.CLICK], function(a, b) {
-          r.EventHelper.stop(a, !0), d.toggleMore()
-        }).on([r.EventType.MOUSE_DOWN, r.EventType.MOUSE_UP, r.EventType.MOUSE_OUT], E)
-      }), this.listeners.push(this.primaryActionBar.addListener(s.EventType.BEFORE_RUN, function(a) {
-        a.actionType = "primary", d.emit(s.EventType.BEFORE_RUN, a)
-      })), this.listeners.push(this.primaryActionBar.addListener(s.EventType.RUN, function(a) {
-        a.actionType = "primary", d.emit(s.EventType.RUN, a)
-      })), this.listeners.push(this.secondaryActionBar.addListener(s.EventType.BEFORE_RUN, function(a) {
-        a.actionType = "secondary", d.emit(s.EventType.BEFORE_RUN, a)
-      })), this.listeners.push(this.secondaryActionBar.addListener(s.EventType.RUN, function(a) {
-        a.actionType = "secondary", d.emit(s.EventType.RUN, a)
-      })), this.updateView()
     }
-    return __extends(b, a), b.prototype.updateView = function() {
-      this.primaryActionBar.items.length === 0 ? this.domNodeBuilder.removeClass("hasPrimary") : this.domNodeBuilder.addClass(
-        "hasPrimary"), this.secondaryActionBar.items.length === 0 ? this.domNodeBuilder.removeClass("hasSecondary") :
-        this.domNodeBuilder.addClass("hasSecondary")
-    }, b.prototype.getContainer = function() {
-      return o.Build.withBuilder(this.domNodeBuilder)
-    }, b.prototype.toggleMore = function(a, b) {
-      var c = "more";
-      typeof a == "undefined" && (a = !this.domNodeBuilder.hasClass(c)), a ? this.domNodeBuilder.addClass("more") :
-        this.domNodeBuilder.removeClass("more"), b !== !0 && this.emit(s.EventType.TOGGLE, {
-          expanded: a
-        })
-    }, b.prototype.push = function(a, b) {
-      typeof b == "undefined" && (b = {});
-      var c = this,
-        d = [];
-      return t.isArray(a) || (a = [a]), a.forEach(function(a) {
-        b.secondary ? c.secondaryActionBar.push(a, b) : c.primaryActionBar.push(a, b)
-      }), this.updateView(), d.length === 1 ? d[0] : d
-    }, b.prototype.clear = function() {
-      this.primaryActionBar.clear(), this.secondaryActionBar.clear(), this.toggleMore(!1)
-    }, b.prototype.update = function() {
-      this.updateView()
-    }, b.prototype.dispose = function() {
-      var b;
-      while (b = this.listeners.pop()) b();
-      this.primaryActionBar.dispose(), this.secondaryActionBar.dispose(), this.domNodeBuilder.empty(), a.prototype.dispose
-        .call(this)
-    }, b
-  }(u.EventEmitter);
-  b.ActionsWidget = D
-})
+    __extends(t, e);
+
+    Object.defineProperty(t.prototype, "callOnDispose", {
+      get: function() {
+        return this._callOnDispose;
+      },
+      enumerable: !0,
+      configurable: !0
+    });
+
+    Object.defineProperty(t.prototype, "actionRunner", {
+      set: function(e) {
+        this._actionRunner = e;
+      },
+      enumerable: !0,
+      configurable: !0
+    });
+
+    t.prototype.getAction = function() {
+      return this._action;
+    };
+
+    t.prototype.isEnabled = function() {
+      return this._action.enabled;
+    };
+
+    t.prototype.setActionContext = function(e) {
+      this._context = e;
+    };
+
+    t.prototype.render = function(e) {
+      var t = this;
+      this.builder = d(e);
+
+      this.builder.on(s.EventType.CLICK, function(e) {
+        t.onClick(e);
+      });
+
+      this.builder.on("mousedown", function(e) {
+        0 === e.button && t._action.enabled && t.builder.addClass("active");
+      });
+
+      this.builder.on(["mouseup", "mouseout"], function(e) {
+        0 === e.button && t._action.enabled && t.builder.removeClass("active");
+      });
+    };
+
+    t.prototype.onClick = function(e) {
+      s.EventHelper.stop(e, !0);
+
+      this._actionRunner.run(this._action, this._context || e);
+    };
+
+    t.prototype.focus = function() {
+      this.builder.domFocus();
+
+      this.builder.addClass("focused");
+    };
+
+    t.prototype.blur = function() {
+      this.builder.removeClass("focused");
+    };
+
+    t.prototype._updateEnabled = function() {};
+
+    t.prototype._updateLabel = function() {};
+
+    t.prototype._updateTitle = function() {};
+
+    t.prototype._updateClass = function() {};
+
+    t.prototype._updateChecked = function() {};
+
+    t.prototype._updateUnknown = function() {};
+
+    t.prototype.dispose = function() {
+      e.prototype.dispose.call(this);
+
+      i.cAll(this._callOnDispose);
+    };
+
+    return t;
+  }(l.EventEmitter);
+  t.BaseActionItem = h;
+  var p = function(e) {
+    function t(n, i) {
+      e.call(this, t.ID, n, n ? "separator text" : "separator");
+
+      this.checked = !1;
+
+      this.enabled = !1;
+
+      this.order = i;
+    }
+    __extends(t, e);
+
+    t.ID = "actions.monaco.separator";
+
+    return t;
+  }(r.Action);
+  t.Separator = p;
+  var f = function(e) {
+    function t(t, n, i) {
+      "undefined" == typeof i && (i = {});
+
+      e.call(this, t, n);
+
+      this.options = i;
+
+      this.options.icon = void 0 !== i.icon ? i.icon : !1;
+
+      this.options.label = void 0 !== i.label ? i.label : !0;
+
+      this.cssClass = "";
+    }
+    __extends(t, e);
+
+    t.prototype.render = function(t) {
+      e.prototype.render.call(this, t);
+
+      this.$e = d("a.action-label").attr("tabIndex", "-1").appendTo(this.builder);
+
+      this.$e.attr({
+        role: "menuitem"
+      });
+
+      this.options.label && this.options.keybinding && d("span.keybinding").text(this.options.keybinding).appendTo(
+        this.builder);
+
+      this._updateClass();
+
+      this._updateLabel();
+
+      this._updateTitle();
+
+      this._updateEnabled();
+
+      this._updateChecked();
+    };
+
+    t.prototype.focus = function() {
+      e.prototype.focus.call(this);
+
+      this.$e.domFocus();
+    };
+
+    t.prototype._updateLabel = function() {
+      this.options.label && this.$e.text(this.getAction().label);
+    };
+
+    t.prototype._updateTitle = function() {
+      if (!this.options.label && this.getAction().label && this.options.icon) {
+        var e = this.getAction().label;
+        this.options.keybinding && (e = n.localize("vs_base_ui_widgets_actionbar", 0, e, this.options.keybinding));
+
+        this.$e.attr({
+          title: e
+        });
+      }
+    };
+
+    t.prototype._updateClass = function() {
+      this.cssClass && this.$e.removeClass(this.cssClass);
+
+      this.options.icon ? (this.cssClass = this.getAction().class, this.$e.addClass("icon"), this.cssClass && this.$e
+        .addClass(this.cssClass), this._updateEnabled()) : this.$e.removeClass("icon");
+    };
+
+    t.prototype._updateEnabled = function() {
+      this.getAction().enabled ? (this.builder.removeClass("disabled"), this.$e.removeClass("disabled")) : (this.builder
+        .addClass("disabled"), this.$e.addClass("disabled"));
+    };
+
+    t.prototype._updateChecked = function() {
+      this.getAction().checked ? this.$e.addClass("checked") : this.$e.removeClass("checked");
+    };
+
+    return t;
+  }(h);
+  t.ActionItem = f;
+  var g = function(e) {
+    function t() {
+      e.apply(this, arguments);
+    }
+    __extends(t, e);
+
+    t.prototype.render = function(t) {
+      var n = document.createElement("div");
+      d(n).addClass("progress-item");
+      var i = document.createElement("div");
+      d(i).addClass("label");
+
+      i.textContent = this.getAction().label;
+
+      i.title = this.getAction().label;
+
+      e.prototype.render.call(this, i);
+      var o = document.createElement("div");
+      o.textContent = "…";
+
+      d(o).addClass("tag", "progress");
+      var r = document.createElement("div");
+      r.textContent = "✓";
+
+      d(r).addClass("tag", "done");
+      var s = document.createElement("div");
+      s.textContent = "!";
+
+      d(s).addClass("tag", "error");
+
+      this.callOnDispose.push(this.addListener(a.EventType.BEFORE_RUN, function() {
+        d(o).addClass("active");
+
+        d(r).removeClass("active");
+
+        d(s).removeClass("active");
+      }));
+
+      this.callOnDispose.push(this.addListener(a.EventType.RUN, function(e) {
+        d(o).removeClass("active");
+
+        e.error ? (d(r).removeClass("active"), d(s).addClass("active")) : (d(s).removeClass("active"), d(r).addClass(
+          "active"));
+      }));
+
+      n.appendChild(i);
+
+      n.appendChild(o);
+
+      n.appendChild(r);
+
+      n.appendChild(s);
+
+      t.appendChild(n);
+    };
+
+    t.prototype.dispose = function() {
+      i.cAll(this.callOnDispose);
+
+      e.prototype.dispose.call(this);
+    };
+
+    return t;
+  }(h);
+  t.ProgressItem = g;
+
+  (function(e) {
+    e[e.HORIZONTAL = 1] = "HORIZONTAL";
+
+    e[e.VERTICAL = 2] = "VERTICAL";
+  })(t.ActionsOrientation || (t.ActionsOrientation = {}));
+  var m = (t.ActionsOrientation, {
+    orientation: 1,
+    context: null
+  });
+
+  var v = function(e) {
+    function t(t, i) {
+      "undefined" == typeof i && (i = m);
+      var o = this;
+      e.call(this);
+
+      this.builder = t;
+
+      this.options = i;
+
+      this.toDispose = [];
+
+      this._actionRunner = this.options.actionRunner;
+
+      this._actionRunner || (this._actionRunner = new r.ActionRunner, this.toDispose.push(this._actionRunner));
+
+      this.toDispose.push(this.addEmitter2(this._actionRunner));
+
+      this.items = [];
+
+      this.focusedItem = void 0;
+
+      this.domNode = document.createElement("div");
+
+      this.domNode.className = "monaco-action-bar";
+
+      this.domNode.tabIndex = 0;
+
+      2 === this.options.orientation && (this.domNode.className += " vertical");
+
+      d(this.domNode).on(s.EventType.KEY_DOWN, function(e) {
+        var t = new c.KeyboardEvent(e);
+
+        var n = !0;
+        switch (t.asString()) {
+          case "UpArrow":
+          case "LeftArrow":
+            o.focusPrevious();
+            break;
+          case "DownArrow":
+          case "RightArrow":
+            o.focusNext();
+            break;
+          case "Escape":
+            o.cancel();
+            break;
+          case "Enter":
+            break;
+          default:
+            n = !1;
+        }
+        n && (t.preventDefault(), t.stopPropagation());
+      });
+
+      d(this.domNode).on(s.EventType.KEY_UP, function(e) {
+        var t = new c.KeyboardEvent(e);
+        switch (t.asString()) {
+          case "Enter":
+            o.doTrigger(t);
+
+            t.preventDefault();
+
+            t.stopPropagation();
+        }
+      });
+      var a = s.trackFocus(this.domNode);
+      a.addBlurListener(function(e) {
+        document.activeElement !== o.domNode && s.isAncestor(document.activeElement, o.domNode) || o.emit("blur", e);
+      });
+
+      this.actionsList = document.createElement("ul");
+
+      this.actionsList.className = "actions-container";
+
+      this.actionsList.setAttribute("role", "menu");
+
+      this.actionsList.setAttribute("aria-label", n.localize("vs_base_ui_widgets_actionbar", 1));
+
+      this.domNode.appendChild(this.actionsList);
+
+      t && t.getHTMLElement().appendChild(this.domNode);
+    }
+    __extends(t, e);
+
+    Object.defineProperty(t.prototype, "actionRunner", {
+      get: function() {
+        return this._actionRunner;
+      },
+      set: function(e) {
+        e && (this._actionRunner = e, this.items.forEach(function(t) {
+          return t.actionRunner = e;
+        }));
+      },
+      enumerable: !0,
+      configurable: !0
+    });
+
+    t.prototype.getContainer = function() {
+      return d(this.domNode);
+    };
+
+    t.prototype.push = function(e, t) {
+      "undefined" == typeof t && (t = {});
+      var n = this;
+      Array.isArray(e) || (e = [e]);
+      var i = u.isNumber(t.index) ? t.index : null;
+      e.forEach(function(e) {
+        var o = document.createElement("li");
+        o.className = "action-item";
+
+        o.setAttribute("role", "presentation");
+        var r = null;
+        n.options.actionItemProvider && (r = n.options.actionItemProvider(e));
+
+        r || (r = new f(n.options.context, e, t));
+
+        r.actionRunner = n._actionRunner;
+
+        r.setActionContext(n.options.context);
+
+        n.addEmitter(r);
+
+        r.render(o);
+
+        null === i || 0 > i || i >= n.actionsList.children.length ? n.actionsList.appendChild(o) : n.actionsList.insertBefore(
+          o, n.actionsList.children[i++]);
+
+        n.items.push(r);
+      });
+    };
+
+    t.prototype.clear = function() {
+      for (var e; e = this.items.pop();) e.dispose();
+      d(this.actionsList).empty();
+    };
+
+    t.prototype.length = function() {
+      return this.items.length;
+    };
+
+    t.prototype.isEmpty = function() {
+      return 0 === this.items.length;
+    };
+
+    t.prototype.onContentsChange = function() {
+      this.emit(a.EventType.CONTENTS_CHANGED);
+    };
+
+    t.prototype.focus = function(e) {
+      e && "undefined" == typeof this.focusedItem && (this.focusedItem = 0);
+
+      this.updateFocus();
+    };
+
+    t.prototype.focusNext = function() {
+      "undefined" == typeof this.focusedItem && (this.focusedItem = this.items.length - 1);
+      var e;
+
+      var t = this.focusedItem;
+      do this.focusedItem = (this.focusedItem + 1) % this.items.length;
+
+      e = this.items[this.focusedItem];
+      while (this.focusedItem !== t && !e.isEnabled());
+      this.focusedItem !== t || e.isEnabled() || (this.focusedItem = void 0);
+
+      this.updateFocus();
+    };
+
+    t.prototype.focusPrevious = function() {
+      "undefined" == typeof this.focusedItem && (this.focusedItem = 0);
+      var e;
+
+      var t = this.focusedItem;
+      do this.focusedItem = this.focusedItem - 1;
+
+      this.focusedItem < 0 && (this.focusedItem = this.items.length - 1);
+
+      e = this.items[this.focusedItem];
+      while (this.focusedItem !== t && !e.isEnabled());
+      this.focusedItem !== t || e.isEnabled() || (this.focusedItem = void 0);
+
+      this.updateFocus();
+    };
+
+    t.prototype.updateFocus = function() {
+      if ("undefined" == typeof this.focusedItem) this.domNode.focus();
+
+      return void 0;
+      for (var e = 0; e < this.items.length; e++) {
+        var t = this.items[e];
+
+        var n = t;
+        e === this.focusedItem ? u.isFunction(n.focus) && n.focus() : u.isFunction(n.blur) && n.blur();
+      }
+    };
+
+    t.prototype.doTrigger = function(e) {
+      if ("undefined" != typeof this.focusedItem) {
+        var t = this.items[this.focusedItem];
+        this.run(t._action, t._context || e).done();
+      }
+    };
+
+    t.prototype.cancel = function() {
+      this.emit(a.EventType.CANCEL);
+    };
+
+    t.prototype.run = function(e, t) {
+      return this._actionRunner.run(e, t);
+    };
+
+    t.prototype.dispose = function() {
+      null !== this.items && this.clear();
+
+      this.items = null;
+
+      this.toDispose = i.disposeAll(this.toDispose);
+
+      this.getContainer().destroy();
+
+      e.prototype.dispose.call(this);
+    };
+
+    t.DEFAULT_OPTIONS = {
+      orientation: 1
+    };
+
+    return t;
+  }(l.EventEmitter);
+  t.ActionBar = v;
+});

@@ -1,62 +1,120 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a
+define("vs/editor/core/view/layout/scroll/editorScrollable", ["require", "exports", "vs/base/eventEmitter"], function(e,
+  t, n) {
+  var i = function(e) {
+    function t(n) {
+      e.call(this, [t._SCROLL_EVENT, t._INTERNAL_SIZE_CHANGED_EVENT]);
+
+      this.linesContent = n;
+
+      this.scrollTop = 0;
+
+      this.scrollLeft = 0;
+
+      this.scrollWidth = 0;
+
+      this.scrollHeight = 0;
+
+      this.width = 0;
+
+      this.height = 0;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
-    d.prototype = b.prototype, a.prototype = new d
-  };
-define(["require", "exports", "vs/base/eventEmitter"], function(a, b, c) {
-  var d = c,
-    e = function(a) {
-      function b(b) {
-        a.call(this), this.linesContent = b, this.scrollTop = 0, this.scrollLeft = 0, this.scrollWidth = 0, this.scrollHeight =
-          0, this.width = 0, this.height = 0, this.useNativeScrollTop = !0
-      }
-      return __extends(b, a), b.prototype.dispose = function() {
-        a.prototype.dispose.call(this)
-      }, b.prototype.getWidth = function() {
-        return this.width
-      }, b.prototype.setWidth = function(a) {
-        a < 0 && (a = 0), this.width !== a && (this.width = a, this.setScrollWidth(this.scrollWidth), this.setScrollLeft(
-          this.scrollLeft))
-      }, b.prototype.getScrollWidth = function() {
-        return this.scrollWidth
-      }, b.prototype.setScrollWidth = function(a) {
-        a < this.width && (a = this.width), this.scrollWidth !== a && (this.scrollWidth = a, this.setScrollLeft(this.scrollLeft),
-          this._emitInternalSizeEvent())
-      }, b.prototype.getScrollLeft = function() {
-        return this.scrollLeft
-      }, b.prototype.setScrollLeft = function(a) {
-        a < 0 && (a = 0), a + this.width > this.scrollWidth && (a = this.scrollWidth - this.width), this.scrollLeft !==
-          a && (this.scrollLeft = a, this.linesContent.scrollLeft = a, this._emitScrollEvent(!1, !0))
-      }, b.prototype.getHeight = function() {
-        return this.height
-      }, b.prototype.setHeight = function(a) {
-        a < 0 && (a = 0), this.height !== a && (this.height = a, this.setScrollHeight(this.scrollHeight), this.setScrollTop(
-          this.scrollTop))
-      }, b.prototype.getScrollHeight = function() {
-        return this.scrollHeight
-      }, b.prototype.setScrollHeight = function(a) {
-        a < this.height && (a = this.height), this.scrollHeight !== a && (this.scrollHeight = a, this.setScrollTop(
-          this.scrollTop), this._emitInternalSizeEvent())
-      }, b.prototype.getScrollTop = function() {
-        return this.scrollTop
-      }, b.prototype.setScrollTop = function(a) {
-        a < 0 && (a = 0), a + this.height > this.scrollHeight && (a = this.scrollHeight - this.height), this.scrollTop !==
-          a && (this.scrollTop = a, this._emitScrollEvent(!0, !1))
-      }, b.prototype._emitScrollEvent = function(a, c) {
-        var d = {
-          vertical: a,
-          horizontal: c
-        };
-        this.emit(b._SCROLL_EVENT, d)
-      }, b.prototype.addScrollListener = function(a) {
-        return this.addListener2(b._SCROLL_EVENT, a)
-      }, b.prototype._emitInternalSizeEvent = function() {
-        this.emit(b._INTERNAL_SIZE_CHANGED_EVENT)
-      }, b.prototype.addInternalSizeChangeListener = function(a) {
-        return this.addListener2(b._INTERNAL_SIZE_CHANGED_EVENT, a)
-      }, b._SCROLL_EVENT = "scroll", b._INTERNAL_SIZE_CHANGED_EVENT = "internalSizeChanged", b
-    }(d.EventEmitter);
-  b.EditorScrollable = e
-})
+    __extends(t, e);
+
+    t.prototype.dispose = function() {
+      e.prototype.dispose.call(this);
+    };
+
+    t.prototype.getWidth = function() {
+      return this.width;
+    };
+
+    t.prototype.setWidth = function(e) {
+      0 > e && (e = 0);
+
+      this.width !== e && (this.width = e, this.setScrollWidth(this.scrollWidth), this.setScrollLeft(this.scrollLeft));
+    };
+
+    t.prototype.getScrollWidth = function() {
+      return this.scrollWidth;
+    };
+
+    t.prototype.setScrollWidth = function(e) {
+      e < this.width && (e = this.width);
+
+      this.scrollWidth !== e && (this.scrollWidth = e, this.setScrollLeft(this.scrollLeft), this._emitInternalSizeEvent());
+    };
+
+    t.prototype.getScrollLeft = function() {
+      return this.scrollLeft;
+    };
+
+    t.prototype.setScrollLeft = function(e) {
+      0 > e && (e = 0);
+
+      e + this.width > this.scrollWidth && (e = this.scrollWidth - this.width);
+
+      this.scrollLeft !== e && (this.scrollLeft = e, this.linesContent.scrollLeft = e, this._emitScrollEvent(!1, !0));
+    };
+
+    t.prototype.getHeight = function() {
+      return this.height;
+    };
+
+    t.prototype.setHeight = function(e) {
+      0 > e && (e = 0);
+
+      this.height !== e && (this.height = e, this.setScrollHeight(this.scrollHeight), this.setScrollTop(this.scrollTop));
+    };
+
+    t.prototype.getScrollHeight = function() {
+      return this.scrollHeight;
+    };
+
+    t.prototype.setScrollHeight = function(e) {
+      e < this.height && (e = this.height);
+
+      this.scrollHeight !== e && (this.scrollHeight = e, this.setScrollTop(this.scrollTop), this._emitInternalSizeEvent());
+    };
+
+    t.prototype.getScrollTop = function() {
+      return this.scrollTop;
+    };
+
+    t.prototype.setScrollTop = function(e) {
+      0 > e && (e = 0);
+
+      e + this.height > this.scrollHeight && (e = this.scrollHeight - this.height);
+
+      this.scrollTop !== e && (this.scrollTop = e, this._emitScrollEvent(!0, !1));
+    };
+
+    t.prototype._emitScrollEvent = function(e, n) {
+      var i = {
+        vertical: e,
+        horizontal: n,
+        scrollTop: this.scrollTop,
+        scrollLeft: this.scrollLeft
+      };
+      this.emit(t._SCROLL_EVENT, i);
+    };
+
+    t.prototype.addScrollListener = function(e) {
+      return this.addListener2(t._SCROLL_EVENT, e);
+    };
+
+    t.prototype._emitInternalSizeEvent = function() {
+      this.emit(t._INTERNAL_SIZE_CHANGED_EVENT);
+    };
+
+    t.prototype.addInternalSizeChangeListener = function(e) {
+      return this.addListener2(t._INTERNAL_SIZE_CHANGED_EVENT, e);
+    };
+
+    t._SCROLL_EVENT = "scroll";
+
+    t._INTERNAL_SIZE_CHANGED_EVENT = "internalSizeChanged";
+
+    return t;
+  }(n.EventEmitter);
+  t.EditorScrollable = i;
+});

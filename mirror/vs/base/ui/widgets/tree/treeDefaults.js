@@ -1,18 +1,22 @@
-define(["require", "exports", "./tree", "vs/base/env", "vs/base/errors"], function(a, b, c, d, e) {
-  var f = c,
-    g = d,
-    h = e,
-    i = function() {
-      function a() {}
-      return a.prototype.getHeight = function(a, b) {
-        return 20
-      }, a.prototype.render = function(a, b, c) {
-        return c.textContent = "" + b, null
-      }, a
-    }();
-  b.DefaultRenderer = i;
-  var j = function() {
-    function a() {
+define("vs/base/ui/widgets/tree/treeDefaults", ["require", "exports", "vs/base/env", "vs/base/errors"], function(e, t,
+  n, i) {
+  var o = function() {
+    function e() {}
+    e.prototype.getHeight = function() {
+      return 20;
+    };
+
+    e.prototype.render = function(e, t, n) {
+      n.textContent = "" + t;
+
+      return null;
+    };
+
+    return e;
+  }();
+  t.DefaultRenderer = o;
+  var r = function() {
+    function e() {
       this.downKeyBindings = {
         Space: this.onSpace.bind(this),
         UpArrow: this.onUp.bind(this),
@@ -22,118 +26,189 @@ define(["require", "exports", "./tree", "vs/base/env", "vs/base/errors"], functi
         LeftArrow: this.onLeft.bind(this),
         RightArrow: this.onRight.bind(this),
         Escape: this.onEscape.bind(this)
-      }, this.upKeyBindings = {
+      };
+
+      this.upKeyBindings = {
         Enter: this.onEnter.bind(this)
-      }
+      };
+
+      n.browser.isMacintosh ? this.upKeyBindings["Meta-Enter"] = this.onEnter.bind(this) : this.upKeyBindings[
+        "Ctrl-Enter"] = this.onEnter.bind(this);
     }
-    return a.prototype.onClick = function(a, b, c) {
-      var d = g.browser.isMacintosh,
-        e = d ? c.metaKey : c.ctrlKey;
-      return c.middleButton || e ? !1 : c.target && c.target.tagName && c.target.tagName.toLowerCase() === "input" ? !
-        1 : this.onLeftClick(a, b, c)
-    }, a.prototype.onLeftClick = function(a, b, c) {
-      var d = {
-        origin: "mouse"
+    e.prototype.onClick = function(e, t, i) {
+      var o = n.browser.isMacintosh;
+      return o && i.ctrlKey ? (i.preventDefault(), i.stopPropagation(), !1) : i.middleButton ? !1 : i.target && i.target
+        .tagName && "input" === i.target.tagName.toLowerCase() ? !1 : this.onLeftClick(e, t, i);
+    };
+
+    e.prototype.onLeftClick = function(e, t, n, o) {
+      "undefined" == typeof o && (o = "mouse");
+      var r = {
+        origin: o,
+        originalEvent: n
       };
-      return a.getInput() === b ? (a.clearFocus(d), a.clearSelection(d)) : (c.preventDefault(), c.stopPropagation(),
-        a.setSelection([b], d), a.setFocus(b, d), a.isExpanded(b) ? a.collapse(b).done(null, h.onUnexpectedError) : a
-        .expand(b).done(null, h.onUnexpectedError)), !0
-    }, a.prototype.onContextMenu = function(a, b, c) {
-      return !1
-    }, a.prototype.onKeyDown = function(a, b) {
-      return this.onKey(this.downKeyBindings, a, b)
-    }, a.prototype.onKeyUp = function(a, b) {
-      return this.onKey(this.upKeyBindings, a, b)
-    }, a.prototype.onKey = function(a, b, c) {
-      var d = a[c.asString()];
-      return d && d(b, c) ? (c.preventDefault(), c.stopPropagation(), !0) : !1
-    }, a.prototype.onUp = function(a, b) {
-      var c = {
-        origin: "keyboard"
+      e.getInput() === t ? (e.clearFocus(r), e.clearSelection(r)) : (n.preventDefault(), n.stopPropagation(), e.DOMFocus(),
+        e.setSelection([t], r), e.setFocus(t, r), e.isExpanded(t) ? e.collapse(t).done(null, i.onUnexpectedError) : e
+        .expand(t).done(null, i.onUnexpectedError));
+
+      return !0;
+    };
+
+    e.prototype.onContextMenu = function() {
+      return !1;
+    };
+
+    e.prototype.onTap = function(e, t, n) {
+      var i = n.initialTarget;
+      return i && i.tagName && "input" === i.tagName.toLowerCase() ? !1 : this.onLeftClick(e, t, n, "touch");
+    };
+
+    e.prototype.onKeyDown = function(e, t) {
+      return this.onKey(this.downKeyBindings, e, t);
+    };
+
+    e.prototype.onKeyUp = function(e, t) {
+      return this.onKey(this.upKeyBindings, e, t);
+    };
+
+    e.prototype.onKey = function(e, t, n) {
+      var i = e[n.asString()];
+      return i && i(t, n) ? (n.preventDefault(), n.stopPropagation(), !0) : !1;
+    };
+
+    e.prototype.onUp = function(e, t) {
+      var n = {
+        origin: "keyboard",
+        originalEvent: t
       };
-      return a.getHighlight() ? a.clearHighlight(c) : (a.focusPrevious(1, c), a.reveal(a.getFocus())), !0
-    }, a.prototype.onPageUp = function(a, b) {
-      var c = {
-        origin: "keyboard"
+      e.getHighlight() ? e.clearHighlight(n) : (e.focusPrevious(1, n), e.reveal(e.getFocus()));
+
+      return !0;
+    };
+
+    e.prototype.onPageUp = function(e, t) {
+      var n = {
+        origin: "keyboard",
+        originalEvent: t
       };
-      return a.getHighlight() ? a.clearHighlight(c) : (a.focusPreviousPage(c), a.reveal(a.getFocus())), !0
-    }, a.prototype.onDown = function(a, b) {
-      var c = {
-        origin: "keyboard"
+      e.getHighlight() ? e.clearHighlight(n) : (e.focusPreviousPage(n), e.reveal(e.getFocus()));
+
+      return !0;
+    };
+
+    e.prototype.onDown = function(e, t) {
+      var n = {
+        origin: "keyboard",
+        originalEvent: t
       };
-      return a.getHighlight() ? a.clearHighlight(c) : (a.focusNext(1, c), a.reveal(a.getFocus())), !0
-    }, a.prototype.onPageDown = function(a, b) {
-      var c = {
-        origin: "keyboard"
+      e.getHighlight() ? e.clearHighlight(n) : (e.focusNext(1, n), e.reveal(e.getFocus()));
+
+      return !0;
+    };
+
+    e.prototype.onPageDown = function(e, t) {
+      var n = {
+        origin: "keyboard",
+        originalEvent: t
       };
-      return a.getHighlight() ? a.clearHighlight(c) : (a.focusNextPage(c), a.reveal(a.getFocus())), !0
-    }, a.prototype.onLeft = function(a, b) {
-      var c = {
-        origin: "keyboard"
+      e.getHighlight() ? e.clearHighlight(n) : (e.focusNextPage(n), e.reveal(e.getFocus()));
+
+      return !0;
+    };
+
+    e.prototype.onLeft = function(e, t) {
+      var n = {
+        origin: "keyboard",
+        originalEvent: t
       };
-      if (a.getHighlight()) a.clearHighlight(c);
+      if (e.getHighlight()) e.clearHighlight(n);
       else {
-        var d = a.getFocus();
-        a.collapse(d).done(function(b) {
-          d && !b && a.focusParent(c)
-        })
+        var i = e.getFocus();
+        e.collapse(i).done(function(t) {
+          i && !t && e.focusParent(n);
+        });
       }
-      return !0
-    }, a.prototype.onRight = function(a, b) {
-      var c = {
-        origin: "keyboard"
+      return !0;
+    };
+
+    e.prototype.onRight = function(e, t) {
+      var n = {
+        origin: "keyboard",
+        originalEvent: t
       };
-      if (a.getHighlight()) a.clearHighlight(c);
+      if (e.getHighlight()) e.clearHighlight(n);
       else {
-        var d = a.getFocus();
-        a.expand(d).done(null, h.onUnexpectedError)
+        var o = e.getFocus();
+        e.expand(o).done(null, i.onUnexpectedError);
       }
-      return !0
-    }, a.prototype.onEnter = function(a, b) {
-      var c = {
-        origin: "keyboard"
+      return !0;
+    };
+
+    e.prototype.onEnter = function(e, t) {
+      var n = {
+        origin: "keyboard",
+        originalEvent: t
       };
-      if (a.getHighlight()) return !1;
-      var d = a.getFocus();
-      return d && a.setSelection([d], c), !0
-    }, a.prototype.onSpace = function(a, b) {
-      if (a.getHighlight()) return !1;
-      var c = a.getFocus();
-      return c && a.toggleExpansion(c), !0
-    }, a.prototype.onEscape = function(a, b) {
-      var c = {
-        origin: "keyboard"
+      if (e.getHighlight()) return !1;
+      var i = e.getFocus();
+      i && e.setSelection([i], n);
+
+      return !0;
+    };
+
+    e.prototype.onSpace = function(e) {
+      if (e.getHighlight()) return !1;
+      var t = e.getFocus();
+      t && e.toggleExpansion(t);
+
+      return !0;
+    };
+
+    e.prototype.onEscape = function(e, t) {
+      var n = {
+        origin: "keyboard",
+        originalEvent: t
       };
-      return a.getHighlight() ? (a.clearHighlight(c), !0) : a.getFocus() || a.getSelection().length ? (a.clearFocus(c),
-        a.clearSelection(c), !0) : !1
-    }, a
+      return e.getHighlight() ? (e.clearHighlight(n), !0) : e.getFocus() || e.getSelection().length ? (e.clearFocus(n),
+        e.clearSelection(n), !0) : !1;
+    };
+
+    return e;
   }();
-  b.DefaultController = j;
-  var k = function() {
-    function a() {}
-    return a.prototype.getDragURI = function(a, b) {
-      return null
-    }, a.prototype.onDragStart = function(a, b, c) {
-      return
-    }, a.prototype.onDragOver = function(a, b, c, d) {
-      return null
-    }, a.prototype.drop = function(a, b, c, d) {
-      return
-    }, a
+  t.DefaultController = r;
+  var s = function() {
+    function e() {}
+    e.prototype.getDragURI = function() {
+      return null;
+    };
+
+    e.prototype.onDragStart = function() {};
+
+    e.prototype.onDragOver = function() {
+      return null;
+    };
+
+    e.prototype.drop = function() {};
+
+    return e;
   }();
-  b.DefaultDragAndDrop = k;
-  var l = function() {
-    function a() {}
-    return a.prototype.isVisible = function(a, b) {
-      return !0
-    }, a
+  t.DefaultDragAndDrop = s;
+  var a = function() {
+    function e() {}
+    e.prototype.isVisible = function() {
+      return !0;
+    };
+
+    return e;
   }();
-  b.DefaultFilter = l;
-  var m = function() {
-    function a() {}
-    return a.prototype.compare = function(a, b, c) {
-      return 0
-    }, a
+  t.DefaultFilter = a;
+  var u = function() {
+    function e() {}
+    e.prototype.compare = function() {
+      return 0;
+    };
+
+    return e;
   }();
-  b.DefaultSorter = m
-})
+  t.DefaultSorter = u;
+});

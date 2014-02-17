@@ -1,59 +1,88 @@
-define(["require", "exports", "vs/editor/modes/modes"], function(a, b, c) {
-  function g(a, b, c, e, f) {
-    typeof e == "undefined" && (e = 0);
-    var g = [{
-      startIndex: e,
+define("vs/editor/modes/nullMode", ["require", "exports", "vs/editor/modes/modes"], function(e, t) {
+  function n(e, t, n, i) {
+    "undefined" == typeof i && (i = 0);
+    var o = [{
+      startIndex: i,
       type: "",
-      bracket: d.Bracket.None
-    }],
-      h = [{
-        startIndex: e,
-        mode: a
-      }];
+      bracket: 0
+    }];
+
+    var r = [{
+      startIndex: i,
+      mode: e
+    }];
     return {
-      tokens: g,
-      actualStopOffset: e + b.length,
-      endState: c,
-      modeTransitions: h
-    }
+      tokens: o,
+      actualStopOffset: i + t.length,
+      endState: n,
+      modeTransitions: r
+    };
   }
-  var d = c,
-    e = function() {
-      function a(a, b) {
-        this.mode = a, this.stateData = b
-      }
-      return a.prototype.clone = function() {
-        var b = this.stateData ? this.stateData.clone() : null;
-        return new a(this.mode, b)
-      }, a.prototype.equals = function(a) {
-        if (this.mode !== a.getMode()) return !1;
-        var b = a.getStateData();
-        return !this.stateData && !b ? !0 : this.stateData && b ? this.stateData.equals(b) : !1
-      }, a.prototype.getMode = function() {
-        return this.mode
-      }, a.prototype.tokenize = function(a) {
-        return a.advanceToEOS(), {
-          type: ""
-        }
-      }, a.prototype.getStateData = function() {
-        return this.stateData
-      }, a.prototype.setStateData = function(a) {
-        this.stateData = a
-      }, a
-    }();
-  b.NullState = e;
-  var f = function() {
-    function a() {
-      this.tokenTypeClassificationSupport = this
+  var i = function() {
+    function e(e, t) {
+      this.mode = e;
+
+      this.stateData = t;
     }
-    return a.prototype.getId = function() {
-      return "vs.editor.modes.nullMode"
-    }, a.prototype.bindModel = function(a) {}, a.prototype.unbindModel = function(a) {}, a.prototype.getNonWordTokenTypes =
-      function() {
-        return []
-    }, a.prototype.getWordDefinition = function() {
-      return a.DEFAULT_WORD_REGEXP
-    }, a.DEFAULT_WORD_REGEXP = /(-?\d*\.\d\w*)|(\w+)/g, a
+    e.prototype.clone = function() {
+      var t = this.stateData ? this.stateData.clone() : null;
+      return new e(this.mode, t);
+    };
+
+    e.prototype.equals = function(e) {
+      if (this.mode !== e.getMode()) return !1;
+      var t = e.getStateData();
+      return this.stateData || t ? this.stateData && t ? this.stateData.equals(t) : !1 : !0;
+    };
+
+    e.prototype.getMode = function() {
+      return this.mode;
+    };
+
+    e.prototype.tokenize = function(e) {
+      e.advanceToEOS();
+
+      return {
+        type: ""
+      };
+    };
+
+    e.prototype.getStateData = function() {
+      return this.stateData;
+    };
+
+    e.prototype.setStateData = function(e) {
+      this.stateData = e;
+    };
+
+    return e;
   }();
-  b.NullMode = f, b.nullTokenize = g
-})
+  t.NullState = i;
+  var o = function() {
+    function e() {
+      this.tokenTypeClassificationSupport = this;
+    }
+    e.prototype.getId = function() {
+      return "vs.editor.modes.nullMode";
+    };
+
+    e.prototype.bindModel = function() {};
+
+    e.prototype.unbindModel = function() {};
+
+    e.prototype.getNonWordTokenTypes = function() {
+      return [];
+    };
+
+    e.prototype.getWordDefinition = function() {
+      return e.DEFAULT_WORD_REGEXP;
+    };
+
+    e.DEFAULT_WORD_REGEXP = /(-?\d*\.\d\w*)|(\w+)/g;
+
+    return e;
+  }();
+  t.NullMode = o;
+
+  t.nullTokenize = n;
+});

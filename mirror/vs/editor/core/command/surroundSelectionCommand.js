@@ -1,20 +1,32 @@
-define(["require", "exports", "vs/editor/core/range", "vs/editor/core/selection"], function(a, b, c, d) {
-  var e = c,
-    f = d,
-    g = function() {
-      function a(a, b, c) {
-        this._range = a, this._charBeforeSelection = b, this._charAfterSelection = c
-      }
-      return a.prototype.getEditOperations = function(a, b) {
-        b.addEditOperation(new e.Range(this._range.startLineNumber, this._range.startColumn, this._range.startLineNumber,
-          this._range.startColumn), this._charBeforeSelection), b.addEditOperation(new e.Range(this._range.endLineNumber,
-          this._range.endColumn, this._range.endLineNumber, this._range.endColumn), this._charAfterSelection)
-      }, a.prototype.computeCursorState = function(a, b) {
-        var c = b.getInverseEditOperations(),
-          d = c[0].range,
-          e = c[1].range;
-        return new f.Selection(d.endLineNumber, d.endColumn, e.endLineNumber, e.endColumn - this._charAfterSelection.length)
-      }, a
-    }();
-  b.SurroundSelectionCommand = g
-})
+define("vs/editor/core/command/surroundSelectionCommand", ["require", "exports", "vs/editor/core/range",
+  "vs/editor/core/selection"
+], function(e, t, n, i) {
+  var o = function() {
+    function e(e, t, n) {
+      this._range = e;
+
+      this._charBeforeSelection = t;
+
+      this._charAfterSelection = n;
+    }
+    e.prototype.getEditOperations = function(e, t) {
+      t.addEditOperation(new n.Range(this._range.startLineNumber, this._range.startColumn, this._range.startLineNumber,
+        this._range.startColumn), this._charBeforeSelection);
+
+      t.addEditOperation(new n.Range(this._range.endLineNumber, this._range.endColumn, this._range.endLineNumber,
+        this._range.endColumn), this._charAfterSelection);
+    };
+
+    e.prototype.computeCursorState = function(e, t) {
+      var n = t.getInverseEditOperations();
+
+      var o = n[0].range;
+
+      var r = n[1].range;
+      return new i.Selection(o.endLineNumber, o.endColumn, r.endLineNumber, r.endColumn - this._charAfterSelection.length);
+    };
+
+    return e;
+  }();
+  t.SurroundSelectionCommand = o;
+});

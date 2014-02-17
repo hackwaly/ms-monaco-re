@@ -1,9 +1,6 @@
-define('vs/editor/modes/monarch/monarchCommon', [
-  'require',
-  'exports'
-], function(e, t) {
+define("vs/editor/modes/monarch/monarchCommon", ["require", "exports"], function(e, t) {
   function n() {
-    return '0.96  (2013.01.22)';
+    return "0.96  (2013.01.22)";
   }
 
   function i(e) {
@@ -17,12 +14,12 @@ define('vs/editor/modes/monarch/monarchCommon', [
   function r(e) {
     return e.replace(g, function(e) {
       var t = f[e];
-      return t ? t : '';
+      return t ? t : "";
     });
   }
 
   function s(e) {
-    return e.replace(/[&<>'"]/g, '_');
+    return e.replace(/[&<>'"]/g, "_");
   }
 
   function a(e, t) {
@@ -32,7 +29,7 @@ define('vs/editor/modes/monarch/monarchCommon', [
   function u(e, t) {
     if (e) {
       var n = document.getElementById(e);
-      n && (a(n, t + '\n'), n.scrollTop && (n.scrollTop = n.scrollHeight));
+      n && (a(n, t + "\n"), n.scrollTop && (n.scrollTop = n.scrollHeight));
     }
     console && console.log(t);
   }
@@ -42,33 +39,31 @@ define('vs/editor/modes/monarch/monarchCommon', [
   }
 
   function c(e, t) {
-    if (!e)
-      throw new Error(t);
-    if (t = e.displayName + ' highlighter: ' + t, e.logConsole) {
+    if (!e) throw new Error(t);
+    if (t = e.displayName + " highlighter: " + t, e.logConsole) {
       var n = document.getElementById(e.logConsole);
-      n && a(n, t + '\n');
+      n && a(n, t + "\n");
     }
-    if (!e.noThrow)
-      throw new Error(t);
+    if (!e.noThrow) throw new Error(t);
     console && console.log(t);
   }
 
   function d(e, n, i, o, r) {
-    var s = /\$((\$)|(#)|(\d\d?)|[sS](\d\d?)|@(\w+))/g,
-      a = null;
+    var s = /\$((\$)|(#)|(\d\d?)|[sS](\d\d?)|@(\w+))/g;
+
+    var a = null;
     return n.replace(s, function(n, s, u, l, c, d, h) {
       return t.empty(u) ? t.empty(l) ? !t.empty(c) && c < o.length ? t.fixCase(e, o[c]) : !t.empty(h) && e &&
-        'string' == typeof e[h] ? e[h] : (null === a && (a = r.split('.'), a.unshift(r)), !t.empty(d) && d < a.length ?
-          t.fixCase(e, a[d]) : '') : t.fixCase(e, i) : '$';
+        "string" == typeof e[h] ? e[h] : (null === a && (a = r.split("."), a.unshift(r)), !t.empty(d) && d < a.length ?
+          t.fixCase(e, a[d]) : "") : t.fixCase(e, i) : "$";
     });
   }
 
   function h(e, t) {
     for (; t && t.length > 0;) {
       var n = e.tokenizer[t];
-      if (n)
-        return n;
-      var i = t.lastIndexOf('.');
+      if (n) return n;
+      var i = t.lastIndexOf(".");
       t = 0 > i ? null : t.substr(0, i);
     }
     return null;
@@ -77,21 +72,39 @@ define('vs/editor/modes/monarch/monarchCommon', [
   function p(e, t) {
     for (; t && t.length > 0;) {
       var n = e.stateNames[t];
-      if (n)
-        return !0;
-      var i = t.lastIndexOf('.');
+      if (n) return !0;
+      var i = t.lastIndexOf(".");
       t = 0 > i ? null : t.substr(0, i);
     }
     return !1;
   }
-  t.monarchPath = 'vs/editor/modes/monarch/monarch', t.version = n, t.empty = i, t.fixCase = o;
+  t.monarchPath = "vs/editor/modes/monarch/monarch";
+
+  t.version = n;
+
+  t.empty = i;
+
+  t.fixCase = o;
   var f = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '\'': '&apos;',
-    '"': '&quot;'
-  }, g = new RegExp('[' + Object.keys(f).join('') + ']', 'g');
-  t.htmlEscape = r, t.sanitize = s, t.log = l, t.throwError = c, t.substituteMatches = d, t.findRules = h, t.stateExists =
-    p;
-})
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "'": "&apos;",
+    '"': "&quot;"
+  };
+
+  var g = new RegExp("[" + Object.keys(f).join("") + "]", "g");
+  t.htmlEscape = r;
+
+  t.sanitize = s;
+
+  t.log = l;
+
+  t.throwError = c;
+
+  t.substituteMatches = d;
+
+  t.findRules = h;
+
+  t.stateExists = p;
+});

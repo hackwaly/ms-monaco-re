@@ -1,98 +1,163 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a
-    }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
-    d.prototype = b.prototype, a.prototype = new d
-  };
-define(["require", "exports", "vs/base/ui/actions", "vs/editor/core/constants", "vs/base/lib/winjs.base",
-  "vs/editor/editor", "vs/platform/platform", "vs/platform/services"
-], function(a, b, c, d, e, f, g, h) {
-  var i = c,
-    j = d,
-    k = e,
-    l = f,
-    m = g,
-    n = h;
-  (function(a) {
-    a[a.TextFocus = 1] = "TextFocus", a[a.WidgetFocus = 2] = "WidgetFocus", a[a.Writeable = 4] = "Writeable", a[a.UpdateOnModelChange =
-      8] = "UpdateOnModelChange", a[a.UpdateOnConfigurationChange = 16] = "UpdateOnConfigurationChange"
-  })(b.Precondition || (b.Precondition = {}));
-  var o = b.Precondition;
-  b.defaultPrecondition = o.TextFocus | o.Writeable | o.UpdateOnModelChange;
-  var p = function(a) {
-    function c(c, d, e) {
-      typeof e == "undefined" && (e = b.defaultPrecondition);
-      var f = this;
-      a.call(this, d.id), this.descriptor = d, this.editor = c, this.needsTextFocus = !! (e & o.TextFocus), this.needsWidgetFocus = !!
-        (e & o.WidgetFocus), this.needsWritable = !! (e & o.Writeable), this.toUnhook = [], this.bindings = [], d.label &&
-        (this.label = d.label), this.hasFocus = !1, this.needsTextFocus && (this.toUnhook.push(this.editor.addListener(
-        "focus", function() {
-          return f.onFocusChanged(!0)
-        })), this.toUnhook.push(this.editor.addListener("blur", function() {
-        return f.onFocusChanged(!1)
-      }))), this.hasWidgetFocus = !1, this.needsWidgetFocus && (this.toUnhook.push(this.editor.addListener(
-        "widgetFocus", function() {
-          return f.onWidgetFocusChanges(!0)
-        })), this.toUnhook.push(this.editor.addListener("widgetBlur", function() {
-        return f.onWidgetFocusChanges(!1)
-      }))), this.isReadOnly = this.editor.getConfiguration().readOnly, this.needsWritable && this.toUnhook.push(this.editor
-        .addListener(j.EventType.ConfigurationChanged, function(a) {
-          return f.onConfigurationChanged(a)
-        })), !(e & o.UpdateOnModelChange) || this.toUnhook.push(this.editor.addListener(j.EventType.ModelChanged,
+define("vs/editor/editorExtensions", ["require", "exports", "vs/base/ui/actions", "vs/editor/core/constants",
+  "vs/base/lib/winjs.base", "vs/platform/platform"
+], function(e, t, n, i, o, r) {
+  ! function(e) {
+    e[e.TextFocus = 1] = "TextFocus";
+
+    e[e.WidgetFocus = 2] = "WidgetFocus";
+
+    e[e.Writeable = 4] = "Writeable";
+
+    e[e.UpdateOnModelChange = 8] = "UpdateOnModelChange";
+
+    e[e.UpdateOnConfigurationChange = 16] = "UpdateOnConfigurationChange";
+
+    e[e.ShowInContextMenu = 32] = "ShowInContextMenu";
+  }(t.Precondition || (t.Precondition = {}));
+  var s = t.Precondition;
+  t.defaultPrecondition = s.TextFocus | s.Writeable | s.UpdateOnModelChange;
+  var a = function(e) {
+    function n(n, o, r) {
+      "undefined" == typeof r && (r = t.defaultPrecondition);
+      var a = this;
+      e.call(this, o.id);
+
+      this.descriptor = o;
+
+      this.editor = n;
+
+      this.needsTextFocus = !! (r & s.TextFocus);
+
+      this.needsWidgetFocus = !! (r & s.WidgetFocus);
+
+      this.needsWritable = !! (r & s.Writeable);
+
+      this._shouldShowInContextMenu = !! (r & s.ShowInContextMenu);
+
+      this.toUnhook = [];
+
+      this.bindings = [];
+
+      o.label && (this.label = o.label);
+
+      this.hasFocus = !1;
+
+      this.needsTextFocus && (this.toUnhook.push(this.editor.addListener("focus", function() {
+        return a.onFocusChanged(!0);
+      })), this.toUnhook.push(this.editor.addListener("blur", function() {
+        return a.onFocusChanged(!1);
+      })));
+
+      this.hasWidgetFocus = !1;
+
+      this.needsWidgetFocus && (this.toUnhook.push(this.editor.addListener("widgetFocus", function() {
+        return a.onWidgetFocusChanges(!0);
+      })), this.toUnhook.push(this.editor.addListener("widgetBlur", function() {
+        return a.onWidgetFocusChanges(!1);
+      })));
+
+      this.isReadOnly = this.editor.getConfiguration().readOnly;
+
+      this.needsWritable && this.toUnhook.push(this.editor.addListener(i.EventType.ConfigurationChanged, function(e) {
+        return a.onConfigurationChanged(e);
+      }));
+
+      r & s.UpdateOnModelChange && this.toUnhook.push(this.editor.addListener(i.EventType.ModelChanged, function() {
+        return a.updateEnablementState();
+      }));
+
+      r & s.UpdateOnConfigurationChange && this.toUnhook.push(this.editor.addListener(i.EventType.ConfigurationChanged,
         function() {
-          return f.updateEnablementState()
-        })), !(e & o.UpdateOnConfigurationChange) || this.toUnhook.push(this.editor.addListener(j.EventType.ConfigurationChanged,
-        function() {
-          return f.updateEnablementState()
-        })), this.enabled = this.getEnablementState()
+          return a.updateEnablementState();
+        }));
+
+      this.enabled = this.getEnablementState();
     }
-    return __extends(c, a), c.prototype.getId = function() {
-      return this.id
-    }, c.prototype.injectTelemetryService = function(a) {
-      this.telemetryService = a
-    }, c.prototype.injectHandlerService = function(a) {
-      var b = this;
-      this.handlerService = a;
-      var c = function() {
-        return b.enabled ? (b.telemetryService.publicLog("editorActionInvoked", {
-          name: b.label
-        }), k.Promise.as(b.run()).done(), !0) : !1
-      };
-      for (var d = 0; d < this.descriptor.keybindings.length; d++) this.bindings.push(this.handlerService.bind(this.descriptor
-        .keybindings[d], c));
-      this.updateEnablementState()
-    }, c.prototype.getDescriptor = function() {
-      return this.descriptor
-    }, c.prototype.onFocusChanged = function(a) {
-      this.hasFocus = a, this.enabled = this.getEnablementState()
-    }, c.prototype.onWidgetFocusChanges = function(a) {
-      this.hasWidgetFocus = a, this.enabled = this.getEnablementState()
-    }, c.prototype.onConfigurationChanged = function(a) {
-      this.isReadOnly = this.editor.getConfiguration().readOnly, this.enabled = this.getEnablementState()
-    }, c.prototype.getEnablementState = function() {
+    __extends(n, e);
+
+    n.prototype.getId = function() {
+      return this.id;
+    };
+
+    n.prototype.injectTelemetryService = function(e) {
+      this.telemetryService = e;
+    };
+
+    n.prototype.injectHandlerService = function(e) {
+      var t = this;
+      this.handlerService = e;
+      for (var n = function() {
+        return t.enabled ? (t.telemetryService.publicLog("editorActionInvoked", {
+          name: t.label
+        }), o.Promise.as(t.run()).done(), !0) : !1;
+      }, i = 0; i < this.descriptor.keybindings.length; i++) this.bindings.push(this.handlerService.bind(this.descriptor
+        .keybindings[i], n));
+      this.updateEnablementState();
+    };
+
+    n.prototype.shouldShowInContextMenu = function() {
+      return this._shouldShowInContextMenu;
+    };
+
+    n.prototype.getDescriptor = function() {
+      return this.descriptor;
+    };
+
+    n.prototype.onFocusChanged = function(e) {
+      this.hasFocus = e;
+
+      this.enabled = this.getEnablementState();
+    };
+
+    n.prototype.onWidgetFocusChanges = function(e) {
+      this.hasWidgetFocus = e;
+
+      this.enabled = this.getEnablementState();
+    };
+
+    n.prototype.onConfigurationChanged = function() {
+      this.isReadOnly = this.editor.getConfiguration().readOnly;
+
+      this.enabled = this.getEnablementState();
+    };
+
+    n.prototype.getEnablementState = function() {
       return this.editor.getModel() ? this.needsTextFocus && !this.hasFocus ? !1 : this.needsWidgetFocus && !this.hasWidgetFocus ? !
-        1 : this.needsWritable && this.isReadOnly ? !1 : !! this.handlerService && !! this.telemetryService : !1
-    }, c.prototype.updateEnablementState = function() {
-      this.enabled = this.getEnablementState()
-    }, c.prototype.dispose = function() {
-      while (this.toUnhook.length > 0) this.toUnhook.pop()();
-      for (var b = 0; b < this.bindings.length; b++) this.bindings[b].dispose();
-      this.bindings = [], a.prototype.dispose.call(this)
-    }, c
-  }(i.Action);
-  b.EditorAction = p, b.Extensions = {
+        1 : this.needsWritable && this.isReadOnly ? !1 : !! this.handlerService && !! this.telemetryService : !1;
+    };
+
+    n.prototype.updateEnablementState = function() {
+      this.enabled = this.getEnablementState();
+    };
+
+    n.prototype.dispose = function() {
+      for (; this.toUnhook.length > 0;) this.toUnhook.pop()();
+      for (var t = 0; t < this.bindings.length; t++) this.bindings[t].dispose();
+      this.bindings = [];
+
+      e.prototype.dispose.call(this);
+    };
+
+    return n;
+  }(n.Action);
+  t.EditorAction = a;
+
+  t.Extensions = {
     EditorContributions: "editor.contributions"
   };
-  var q = function() {
-    function a() {
-      this.editorContributions = []
+  var u = function() {
+    function e() {
+      this.editorContributions = [];
     }
-    return a.prototype.registerEditorContribution = function(a) {
-      this.editorContributions.push(a)
-    }, a.prototype.getEditorContributions = function() {
-      return this.editorContributions.slice(0)
-    }, a
+    e.prototype.registerEditorContribution = function(e) {
+      this.editorContributions.push(e);
+    };
+
+    e.prototype.getEditorContributions = function() {
+      return this.editorContributions.slice(0);
+    };
+
+    return e;
   }();
-  m.Registry.mixin(b.Extensions.EditorContributions, new q)
-})
+  r.Registry.add(t.Extensions.EditorContributions, new u);
+});

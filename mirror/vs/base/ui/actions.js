@@ -1,170 +1,279 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a
-    }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
-    d.prototype = b.prototype, a.prototype = new d
-  };
-define(["require", "exports", "vs/base/lib/winjs.base", "vs/base/eventEmitter"], function(a, b, c, d) {
-  function g(a) {
-    return a ? a instanceof h ? !0 : typeof a.id != "string" ? !1 : typeof a.label != "string" ? !1 : typeof a.class !=
-      "string" ? !1 : typeof a.enabled != "boolean" ? !1 : typeof a.checked != "boolean" ? !1 : typeof a.run !=
-      "function" ? !1 : !0 : !1
+define("vs/base/ui/actions", ["require", "exports", "vs/base/lib/winjs.base", "vs/base/eventEmitter",
+  "vs/base/ui/events"
+], function(e, t, n, i, o) {
+  function r(e) {
+    return e ? e instanceof a ? !0 : "string" != typeof e.id ? !1 : "string" != typeof e.label ? !1 : "string" !=
+      typeof e.class ? !1 : "boolean" != typeof e.enabled ? !1 : "boolean" != typeof e.checked ? !1 : "function" !=
+      typeof e.run ? !1 : !0 : !1;
   }
 
-  function j(a) {
-    function b(b) {
+  function s(e) {
+    function t(t) {
       return function() {
-        a.forEach(function(a) {
-          a.checked = a === b
-        })
-      }
+        e.forEach(function(e) {
+          e.checked = e === t;
+        });
+      };
     }
-    return a.map(function(a) {
-      return new i(a, b(a))
-    })
+    return e.map(function(e) {
+      return new u(e, t(e));
+    });
   }
-  var e = c,
-    f = d;
-  b.isAction = g;
-  var h = function(a) {
-    function b(b, c, d, e, f) {
-      typeof c == "undefined" && (c = ""), typeof d == "undefined" && (d = ""), typeof e == "undefined" && (e = !0),
-        typeof f == "undefined" && (f = null), a.call(this), this._id = b, this._label = c, this._cssClass = d, this._enabled =
-        e, this._actionCallback = f
+  t.isAction = r;
+  var a = function(e) {
+    function t(t, n, i, o, r) {
+      "undefined" == typeof n && (n = "");
+
+      "undefined" == typeof i && (i = "");
+
+      "undefined" == typeof o && (o = !0);
+
+      "undefined" == typeof r && (r = null);
+
+      e.call(this);
+
+      this._id = t;
+
+      this._label = n;
+
+      this._cssClass = i;
+
+      this._enabled = o;
+
+      this._actionCallback = r;
     }
-    return __extends(b, a), Object.defineProperty(b.prototype, "id", {
+    __extends(t, e);
+
+    Object.defineProperty(t.prototype, "id", {
       get: function() {
-        return this._id
+        return this._id;
       },
       enumerable: !0,
       configurable: !0
-    }), Object.defineProperty(b.prototype, "label", {
+    });
+
+    Object.defineProperty(t.prototype, "label", {
       get: function() {
-        return this._label
+        return this._label;
       },
-      set: function(a) {
-        name !== a && (this._label = a, this.emit(b.LABEL, {
-          source: this
-        }))
+      set: function(e) {
+        this._setLabel(e);
       },
       enumerable: !0,
       configurable: !0
-    }), Object.defineProperty(b.prototype, "class", {
+    });
+
+    t.prototype._setLabel = function(e) {
+      this._label !== e && (this._label = e, this.emit(t.LABEL, {
+        source: this
+      }));
+    };
+
+    Object.defineProperty(t.prototype, "class", {
       get: function() {
-        return this._cssClass
+        return this._cssClass;
       },
-      set: function(a) {
-        this._cssClass !== a && (this._cssClass = a, this.emit(b.CLASS, {
-          source: this
-        }))
+      set: function(e) {
+        this._setClass(e);
       },
       enumerable: !0,
       configurable: !0
-    }), Object.defineProperty(b.prototype, "enabled", {
+    });
+
+    t.prototype._setClass = function(e) {
+      this._cssClass !== e && (this._cssClass = e, this.emit(t.CLASS, {
+        source: this
+      }));
+    };
+
+    Object.defineProperty(t.prototype, "enabled", {
       get: function() {
-        return this._enabled
+        return this._enabled;
       },
-      set: function(a) {
-        this._enabled !== a && (this._enabled = a, this.emit(b.ENABLED, {
-          source: this
-        }))
+      set: function(e) {
+        this._setEnabled(e);
       },
       enumerable: !0,
       configurable: !0
-    }), Object.defineProperty(b.prototype, "checked", {
+    });
+
+    t.prototype._setEnabled = function(e) {
+      this._enabled !== e && (this._enabled = e, this.emit(t.ENABLED, {
+        source: this
+      }));
+    };
+
+    Object.defineProperty(t.prototype, "checked", {
       get: function() {
-        return this._checked
+        return this._checked;
       },
-      set: function(a) {
-        this._checked !== a && (this._checked = a, this.emit(b.CHECKED, {
-          source: this
-        }))
+      set: function(e) {
+        this._setChecked(e);
       },
       enumerable: !0,
       configurable: !0
-    }), Object.defineProperty(b.prototype, "order", {
+    });
+
+    t.prototype._setChecked = function(e) {
+      this._checked !== e && (this._checked = e, this.emit(t.CHECKED, {
+        source: this
+      }));
+    };
+
+    Object.defineProperty(t.prototype, "order", {
       get: function() {
-        return this._order
+        return this._order;
       },
-      set: function(a) {
-        this._order = a
+      set: function(e) {
+        this._order = e;
       },
       enumerable: !0,
       configurable: !0
-    }), Object.defineProperty(b.prototype, "actionCallback", {
+    });
+
+    Object.defineProperty(t.prototype, "actionCallback", {
       get: function() {
-        return this._actionCallback
+        return this._actionCallback;
       },
-      set: function(a) {
-        this._actionCallback = a
+      set: function(e) {
+        this._actionCallback = e;
       },
       enumerable: !0,
       configurable: !0
-    }), b.prototype.run = function(a) {
-      return this._actionCallback !== null ? this._actionCallback(a) : e.Promise.as(!0)
-    }, b.LABEL = "label", b.CLASS = "class", b.ENABLED = "enabled", b.CHECKED = "checked", b
-  }(f.EventEmitter);
-  b.Action = h;
-  var i = function(a) {
-    function b(b, c) {
-      a.call(this, b.id, b.label, b.class, b.enabled, null), this.delegate = b, this.runHandler = c
+    });
+
+    t.prototype.run = function(e) {
+      return null !== this._actionCallback ? this._actionCallback(e) : n.Promise.as(!0);
+    };
+
+    t.LABEL = "label";
+
+    t.CLASS = "class";
+
+    t.ENABLED = "enabled";
+
+    t.CHECKED = "checked";
+
+    return t;
+  }(i.EventEmitter);
+  t.Action = a;
+  var u = function(e) {
+    function t(t, n) {
+      e.call(this, t.id, t.label, t.class, t.enabled, null);
+
+      this.delegate = t;
+
+      this.runHandler = n;
     }
-    return __extends(b, a), Object.defineProperty(b.prototype, "id", {
+    __extends(t, e);
+
+    Object.defineProperty(t.prototype, "id", {
       get: function() {
-        return this.delegate.id
+        return this.delegate.id;
       },
       enumerable: !0,
       configurable: !0
-    }), Object.defineProperty(b.prototype, "label", {
+    });
+
+    Object.defineProperty(t.prototype, "label", {
       get: function() {
-        return this.delegate.label
+        return this.delegate.label;
       },
-      set: function(a) {
-        this.delegate.label = a
+      set: function(e) {
+        this.delegate.label = e;
       },
       enumerable: !0,
       configurable: !0
-    }), Object.defineProperty(b.prototype, "class", {
+    });
+
+    Object.defineProperty(t.prototype, "class", {
       get: function() {
-        return this.delegate.class
+        return this.delegate.class;
       },
-      set: function(a) {
-        this.delegate.class = a
+      set: function(e) {
+        this.delegate.class = e;
       },
       enumerable: !0,
       configurable: !0
-    }), Object.defineProperty(b.prototype, "enabled", {
+    });
+
+    Object.defineProperty(t.prototype, "enabled", {
       get: function() {
-        return this.delegate.enabled
+        return this.delegate.enabled;
       },
-      set: function(a) {
-        this.delegate.enabled = a
+      set: function(e) {
+        this.delegate.enabled = e;
       },
       enumerable: !0,
       configurable: !0
-    }), Object.defineProperty(b.prototype, "checked", {
+    });
+
+    Object.defineProperty(t.prototype, "checked", {
       get: function() {
-        return this.delegate.checked
+        return this.delegate.checked;
       },
-      set: function(a) {
-        this.delegate.checked = a
+      set: function(e) {
+        this.delegate.checked = e;
       },
       enumerable: !0,
       configurable: !0
-    }), b.prototype.run = function(a) {
-      return this.runHandler(a), this.delegate.run(a)
-    }, b.prototype.addListener = function(a, b) {
-      return this.delegate.addListener(a, b)
-    }, b.prototype.addBulkListener = function(a) {
-      return this.delegate.addBulkListener(a)
-    }, b.prototype.addEmitter = function(a, b) {
-      return this.delegate.addEmitter(a, b)
-    }, b.prototype.addEmitterTypeListener = function(a, b, c) {
-      return this.delegate.addEmitterTypeListener(a, b, c)
-    }, b.prototype.emit = function(a, b) {
-      this.delegate.emit(a, b)
-    }, b
-  }(h);
-  b.radioGroup = j
-})
+    });
+
+    t.prototype.run = function(e) {
+      this.runHandler(e);
+
+      return this.delegate.run(e);
+    };
+
+    t.prototype.addListener = function(e, t) {
+      return this.delegate.addListener(e, t);
+    };
+
+    t.prototype.addBulkListener = function(e) {
+      return this.delegate.addBulkListener(e);
+    };
+
+    t.prototype.addEmitter = function(e, t) {
+      return this.delegate.addEmitter(e, t);
+    };
+
+    t.prototype.addEmitterTypeListener = function(e, t, n) {
+      return this.delegate.addEmitterTypeListener(e, t, n);
+    };
+
+    t.prototype.emit = function(e, t) {
+      this.delegate.emit(e, t);
+    };
+
+    return t;
+  }(a);
+  t.radioGroup = s;
+  var l = function(e) {
+    function t() {
+      e.apply(this, arguments);
+    }
+    __extends(t, e);
+
+    t.prototype.run = function(e, t) {
+      var i = this;
+      if (e.enabled) this.emit(o.EventType.BEFORE_RUN, {
+        action: e
+      });
+
+      return n.Promise.as(e.run(t)).then(function(t) {
+        i.emit(o.EventType.RUN, {
+          action: e,
+          result: t
+        });
+      }, function(t) {
+        i.emit(o.EventType.RUN, {
+          action: e,
+          error: t
+        });
+      });
+    };
+
+    return t;
+  }(i.EventEmitter);
+  t.ActionRunner = l;
+});

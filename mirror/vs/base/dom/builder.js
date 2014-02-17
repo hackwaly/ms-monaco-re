@@ -1,662 +1,1140 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a
+define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "vs/base/types", "vs/base/strings",
+  "vs/base/assert", "vs/base/dom/dom", "vs/base/dom/browserService", "vs/css!./builder"
+], function(e, t, n, i, o, r, s, a) {
+  function u(e, t) {
+    r.ok(i.isString(e), "Expected String as parameter");
+    var n = a.getService().document.getElementById(e);
+    return n ? new T(n, t) : null;
+  }
+
+  function l(e) {
+    e[b] || (e[b] = {});
+
+    return e[b];
+  }
+
+  function c(e) {
+    return !!e[b];
+  }
+
+  function d(e, t) {
+    return e instanceof N ? new N(e) : new T(e.getHTMLElement(), t);
+  }
+
+  function h(e, t) {
+    return new T(e, t);
+  }
+
+  function p() {
+    return new T(null, !0);
+  }
+
+  function f(e, t, n) {
+    l(e)[t] = n;
+  }
+
+  function g(e, t, n) {
+    if (c(e)) {
+      var o = l(e)[t];
+      if (!i.isUndefined(o)) return o;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
-    d.prototype = b.prototype, a.prototype = new d
+    return n;
+  }
+
+  function m(e, t) {
+    c(e) && delete l(e)[t];
+  }
+
+  function v(e, n) {
+    t.setPropertyOnElement(e, C, n);
+  }
+
+  function y(e) {
+    t.removePropertyFromElement(e, C);
+  }
+
+  function _(e) {
+    return t.getPropertyFromElement(e, C);
+  }
+  t.withElementById = u;
+
+  t.Build = {
+    withElementById: t.withElementById
   };
-define(["require", "exports", "vs/base/lib/winjs.base", "vs/base/types", "vs/base/strings", "vs/base/assert",
-  "vs/base/dom/dom", "vs/base/dom/browserService", "vs/css!./builder"
-], function(a, b, c, d, e, f, g, h) {
-  function v(a, b) {
-    return l.ok(!(a instanceof J), "Expected HTMLElement as parameter"), new J(a, b)
-  }
+  var b = "_msDataKey";
 
-  function w(a) {
-    return new K(a)
-  }
+  var C = "__$binding";
 
-  function x(a, b) {
-    return l.ok(a instanceof J || a instanceof K, "Expected Builder as parameter"), a instanceof K ? new K(a) : new J(
-      a.getHTMLElement(), b)
-  }
+  var w = "__$listeners";
 
-  function y(a) {
-    return new K(a)
-  }
+  var E = "__$visibility";
 
-  function z() {
-    return new J(null, !0)
-  }
+  var S = function() {
+    function e(e, t) {
+      this.x = e;
 
-  function A(a, b) {
-    l.ok(j.isString(a), "Expected String as parameter");
-    var c = n.getService().document.getElementById(a);
-    return c ? new J(c, b) : null
-  }
-
-  function B(a, c) {
-    l.ok(j.isString(a), "Expected String as parameter");
-    var d = n.getService().document.querySelectorAll(a),
-      e = [];
-    for (var f = 0; f < d.length; f++) e.push(b.withElement(d.item(f), c));
-    return new K(e)
-  }
-
-  function C(a) {
-    return a[o] || (a[o] = {}), a[o]
-  }
-
-  function D(a, b, c) {
-    C(a)[b] = c
-  }
-
-  function E(a, b, c) {
-    var d = C(a)[b];
-    return j.isUndefined(d) ? c : d
-  }
-
-  function F(a, b) {
-    delete C(a)[b]
-  }
-
-  function G(a, c) {
-    b.setPropertyOnElement(a, p, c)
-  }
-
-  function H(a) {
-    b.removePropertyFromElement(a, p)
-  }
-
-  function I(a) {
-    return b.getPropertyFromElement(a, p)
-  }
-  var i = c,
-    j = d,
-    k = e,
-    l = f,
-    m = g,
-    n = h,
-    o = "_msDataKey",
-    p = "__$binding",
-    q = "__$listeners",
-    r = "__$visibility",
-    s = function() {
-      function a(a, b) {
-        this.x = a, this.y = b
-      }
-      return a
-    }();
-  b.Position = s;
-  var t = function() {
-    function a(a, b, c, d) {
-      this.top = a, this.right = b, this.bottom = c, this.left = d
+      this.y = t;
     }
-    return a
+    return e;
   }();
-  b.Box = t;
-  var u = function() {
-    function a(a, b) {
-      this.width = a, this.height = b
+  t.Position = S;
+  var x = function() {
+    function e(e, t, n, i) {
+      this.top = e;
+
+      this.right = t;
+
+      this.bottom = n;
+
+      this.left = i;
     }
-    return a.prototype.substract = function(b) {
-      return new a(this.width - b.left - b.right, this.height - b.top - b.bottom)
-    }, a
+    return e;
   }();
-  b.Dimension = u, b.withElement = v, b.withElements = w, b.withBuilder = x, b.withBuilders = y, b.offDOM = z, b.withElementById =
-    A, b.withElementsBySelector = B, b.Select = function(a, c) {
-      return b.withElementsBySelector(a, c)
-  }, b.Build = {
-    withElement: b.withElement,
-    withBuilder: b.withBuilder,
-    offDOM: b.offDOM,
-    withElementById: b.withElementById,
-    withElementsBySelector: b.withElementsBySelector
-  }, b.setPropertyOnElement = D, b.getPropertyFromElement = E, b.removePropertyFromElement = F, b.bindElement = G, b.unbindElement =
-    H, b.getBindingFromElement = I, b.Binding = {
-      setPropertyOnElement: b.setPropertyOnElement,
-      getPropertyFromElement: b.getPropertyFromElement,
-      removePropertyFromElement: b.removePropertyFromElement,
-      bindElement: b.bindElement,
-      unbindElement: b.unbindElement,
-      getBindingFromElement: b.getBindingFromElement
-  };
-  var J = function() {
-    function a(a, b) {
-      this.offdom = b, this.container = a, this.currentElement = a, this.createdElements = [], this.toUnbind = {},
-        this.captureToUnbind = {}, this.browserService = n.getService()
+  t.Box = x;
+  var L = function() {
+    function e(e, t) {
+      this.width = e;
+
+      this.height = t;
     }
-    return a.prototype.asContainer = function() {
-      return b.withBuilder(this, this.offdom)
-    }, a.prototype.clone = function() {
-      var b = new a(this.container, this.offdom);
-      return b.currentElement = this.currentElement, b.createdElements = this.createdElements, b.captureToUnbind =
-        this.captureToUnbind, b.toUnbind = this.toUnbind, b
-    }, a.prototype.and = function(b) {
-      !(b instanceof a) && !(b instanceof K) && (b = new a(b, this.offdom));
-      var c = [this];
-      if (b instanceof K)
-        for (var d = 0; d < b.length; d++) c.push(b.item(d));
-      else c.push(b);
-      return new K(c)
-    }, a.prototype.build = function(b, c) {
-      l.ok(this.offdom, "This builder was not created off-dom, so build() can not be called."), b ? b instanceof a &&
-        (b = b.getHTMLElement()) : b = this.container, l.ok(b,
-        "Builder can only be build() with a container provided."), l.ok(m.isHTMLElement(b),
-        "The container must either be a HTMLElement or a Builder.");
-      var d = b,
-        e, f, g = d.childNodes;
-      if (j.isNumber(c) && c < g.length)
-        for (e = 0, f = this.createdElements.length; e < f; e++) d.insertBefore(this.createdElements[e], g[c++]);
+    e.prototype.substract = function(t) {
+      return new e(this.width - t.left - t.right, this.height - t.top - t.bottom);
+    };
+
+    return e;
+  }();
+  t.Dimension = L;
+  var T = function() {
+    function e(e, t) {
+      this.offdom = t;
+
+      this.container = e;
+
+      this.currentElement = e;
+
+      this.createdElements = [];
+
+      this.toUnbind = {};
+
+      this.captureToUnbind = {};
+
+      this.browserService = a.getService();
+    }
+    e.prototype.asContainer = function() {
+      return d(this, this.offdom);
+    };
+
+    e.prototype.clone = function() {
+      var t = new e(this.container, this.offdom);
+      t.currentElement = this.currentElement;
+
+      t.createdElements = this.createdElements;
+
+      t.captureToUnbind = this.captureToUnbind;
+
+      t.toUnbind = this.toUnbind;
+
+      return t;
+    };
+
+    e.prototype.and = function(t) {
+      t instanceof e || t instanceof N || (t = new e(t, this.offdom));
+      var n = [this];
+      if (t instanceof N)
+        for (var i = 0; i < t.length; i++) n.push(t.item(i));
+      else n.push(t);
+      return new N(n);
+    };
+
+    e.prototype.build = function(t, n) {
+      r.ok(this.offdom, "This builder was not created off-dom, so build() can not be called.");
+
+      t ? t instanceof e && (t = t.getHTMLElement()) : t = this.container;
+
+      r.ok(t, "Builder can only be build() with a container provided.");
+
+      r.ok(s.isHTMLElement(t), "The container must either be a HTMLElement or a Builder.");
+      var o;
+
+      var a;
+
+      var u = t;
+
+      var l = u.childNodes;
+      if (i.isNumber(n) && n < l.length)
+        for (o = 0, a = this.createdElements.length; a > o; o++) u.insertBefore(this.createdElements[o], l[n++]);
       else
-        for (e = 0, f = this.createdElements.length; e < f; e++) d.appendChild(this.createdElements[e]);
-      return this
-    }, a.prototype.appendTo = function(b, c) {
-      b ? b instanceof a && (b = b.getHTMLElement()) : b = this.container, l.ok(b,
-        "Builder can only be build() with a container provided."), l.ok(m.isHTMLElement(b),
-        "The container must either be a HTMLElement or a Builder.");
-      var d = b;
+        for (o = 0, a = this.createdElements.length; a > o; o++) u.appendChild(this.createdElements[o]);
+      return this;
+    };
+
+    e.prototype.appendTo = function(t, n) {
+      t ? t instanceof e && (t = t.getHTMLElement()) : t = this.container;
+
+      r.ok(t, "Builder can only be build() with a container provided.");
+
+      r.ok(s.isHTMLElement(t), "The container must either be a HTMLElement or a Builder.");
+      var o = t;
       this.currentElement.parentNode && this.currentElement.parentNode.removeChild(this.currentElement);
-      var e = d.childNodes;
-      return j.isNumber(c) && c < e.length ? d.insertBefore(this.currentElement, e[c]) : d.appendChild(this.currentElement),
-        this
-    }, a.prototype.append = function(c, d) {
-      return l.ok(c, "Need a child to append"), m.isHTMLElement(c) && (c = b.withElement(c)), l.ok(c instanceof a ||
-        c instanceof K, "Need a child to append"), c.appendTo(this, d), this
-    }, a.prototype.offDOM = function() {
-      return this.currentElement.parentNode && this.currentElement.parentNode.removeChild(this.currentElement), this
-    }, a.prototype.getHTMLElement = function() {
-      return this.currentElement
-    }, a.prototype.getContainer = function() {
-      return this.container
-    }, a.prototype.div = function(a, b) {
-      return this.doElement("div", a, b)
-    }, a.prototype.p = function(a, b) {
-      return this.doElement("p", a, b)
-    }, a.prototype.ul = function(a, b) {
-      return this.doElement("ul", a, b)
-    }, a.prototype.ol = function(a, b) {
-      return this.doElement("ol", a, b)
-    }, a.prototype.li = function(a, b) {
-      return this.doElement("li", a, b)
-    }, a.prototype.span = function(a, b) {
-      return this.doElement("span", a, b)
-    }, a.prototype.img = function(a, b) {
-      return this.doElement("img", a, b)
-    }, a.prototype.a = function(a, b) {
-      return this.doElement("a", a, b)
-    }, a.prototype.header = function(a, b) {
-      return this.doElement("header", a, b)
-    }, a.prototype.section = function(a, b) {
-      return this.doElement("section", a, b)
-    }, a.prototype.footer = function(a, b) {
-      return this.doElement("footer", a, b)
-    }, a.prototype.element = function(a, b, c) {
-      return this.doElement(a, b, c)
-    }, a.prototype.doElement = function(b, c, d) {
-      var e = this.browserService.document.createElement(b);
-      this.currentElement = e, this.offdom && this.createdElements.push(e), j.isObject(c) && this.attr(c), j.isFunction(
-        c) && (d = c);
-      if (j.isFunction(d)) {
-        var f = new a(e);
-        d.call(f, f)
+      var a = o.childNodes;
+      i.isNumber(n) && n < a.length ? o.insertBefore(this.currentElement, a[n]) : o.appendChild(this.currentElement);
+
+      return this;
+    };
+
+    e.prototype.append = function(t, n) {
+      r.ok(t, "Need a child to append");
+
+      s.isHTMLElement(t) && (t = h(t));
+
+      r.ok(t instanceof e || t instanceof N, "Need a child to append");
+
+      t.appendTo(this, n);
+
+      return this;
+    };
+
+    e.prototype.offDOM = function() {
+      this.currentElement.parentNode && this.currentElement.parentNode.removeChild(this.currentElement);
+
+      return this;
+    };
+
+    e.prototype.getHTMLElement = function() {
+      return this.currentElement;
+    };
+
+    e.prototype.getContainer = function() {
+      return this.container;
+    };
+
+    e.prototype.div = function(e, t) {
+      return this.doElement("div", e, t);
+    };
+
+    e.prototype.p = function(e, t) {
+      return this.doElement("p", e, t);
+    };
+
+    e.prototype.ul = function(e, t) {
+      return this.doElement("ul", e, t);
+    };
+
+    e.prototype.ol = function(e, t) {
+      return this.doElement("ol", e, t);
+    };
+
+    e.prototype.li = function(e, t) {
+      return this.doElement("li", e, t);
+    };
+
+    e.prototype.span = function(e, t) {
+      return this.doElement("span", e, t);
+    };
+
+    e.prototype.img = function(e, t) {
+      return this.doElement("img", e, t);
+    };
+
+    e.prototype.a = function(e, t) {
+      return this.doElement("a", e, t);
+    };
+
+    e.prototype.header = function(e, t) {
+      return this.doElement("header", e, t);
+    };
+
+    e.prototype.section = function(e, t) {
+      return this.doElement("section", e, t);
+    };
+
+    e.prototype.footer = function(e, t) {
+      return this.doElement("footer", e, t);
+    };
+
+    e.prototype.element = function(e, t, n) {
+      return this.doElement(e, t, n);
+    };
+
+    e.prototype.doElement = function(t, n, o) {
+      var r = this.browserService.document.createElement(t);
+      if (this.currentElement = r, this.offdom && this.createdElements.push(r), i.isObject(n) && this.attr(n), i.isFunction(
+        n) && (o = n), i.isFunction(o)) {
+        var s = new e(r);
+        o.call(s, s);
       }
-      return this.offdom || this.container.appendChild(e), this
-    }, a.prototype.domFocus = function() {
-      return this.currentElement.focus(), this
-    }, a.prototype.hasFocus = function() {
-      var a = this.browserService.document.activeElement;
-      return a === this.currentElement
-    }, a.prototype.domSelect = function() {
-      return this.currentElement.select(), this
-    }, a.prototype.domBlur = function() {
-      return this.currentElement.blur(), this
-    }, a.prototype.domClick = function() {
-      return this.currentElement.click(), this
-    }, a.prototype.on = function(a, b, c, d) {
-      var e = this;
-      if (j.isArray(a)) a.forEach(function(a) {
-        e.on(a, b, c, d)
+      this.offdom || this.container.appendChild(r);
+
+      return this;
+    };
+
+    e.prototype.domFocus = function() {
+      this.currentElement.focus();
+
+      return this;
+    };
+
+    e.prototype.hasFocus = function() {
+      var e = this.browserService.document.activeElement;
+      return e === this.currentElement;
+    };
+
+    e.prototype.domSelect = function(e) {
+      "undefined" == typeof e && (e = null);
+      var t = this.currentElement;
+      t.select();
+
+      e && t.setSelectionRange(e.start, e.end);
+
+      return this;
+    };
+
+    e.prototype.domBlur = function() {
+      this.currentElement.blur();
+
+      return this;
+    };
+
+    e.prototype.domClick = function() {
+      this.currentElement.click();
+
+      return this;
+    };
+
+    e.prototype.on = function(e, t, n, o) {
+      var r = this;
+      if (i.isArray(e)) e.forEach(function(e) {
+        r.on(e, t, n, o);
       });
       else {
-        var f = a,
-          g = m.addListener(this.currentElement, f, function(a) {
-            b(a, e, g)
-          }, d || !1);
-        d ? (this.captureToUnbind[f] || (this.captureToUnbind[f] = []), this.captureToUnbind[f].push(g)) : (this.toUnbind[
-          f] || (this.toUnbind[f] = []), this.toUnbind[f].push(g));
-        var h = this.getProperty(q, []);
-        h.push(g), this.setProperty(q, h), c && j.isArray(c) && c.push(g)
+        var a = e;
+
+        var u = s.addListener(this.currentElement, a, function(e) {
+          t(e, r, u);
+        }, o || !1);
+        o ? (this.captureToUnbind[a] || (this.captureToUnbind[a] = []), this.captureToUnbind[a].push(u)) : (this.toUnbind[
+          a] || (this.toUnbind[a] = []), this.toUnbind[a].push(u));
+        var l = this.getProperty(w, []);
+        l.push(u);
+
+        this.setProperty(w, l);
+
+        n && i.isArray(n) && n.push(u);
       }
-      return this
-    }, a.prototype.off = function(a, b) {
-      var c = this;
-      if (j.isArray(a)) a.forEach(function(a) {
-        c.off(a)
+      return this;
+    };
+
+    e.prototype.off = function(e, t) {
+      var n = this;
+      if (i.isArray(e)) e.forEach(function(e) {
+        n.off(e);
       });
       else {
-        var d = a;
-        if (b) {
-          if (this.captureToUnbind[d])
-            while (this.captureToUnbind[d].length) this.captureToUnbind[d].pop()()
-        } else if (this.toUnbind[d])
-          while (this.toUnbind[d].length) this.toUnbind[d].pop()()
+        var o = e;
+        if (t) {
+          if (this.captureToUnbind[o])
+            for (; this.captureToUnbind[o].length;) this.captureToUnbind[o].pop()();
+        } else if (this.toUnbind[o])
+          for (; this.toUnbind[o].length;) this.toUnbind[o].pop()();
       }
-      return this
-    }, a.prototype.once = function(a, b, c, d) {
-      var e = this;
-      if (j.isArray(a)) a.forEach(function(a) {
-        e.once(a, b)
+      return this;
+    };
+
+    e.prototype.once = function(e, t, n, o) {
+      var r = this;
+      if (i.isArray(e)) e.forEach(function(e) {
+        r.once(e, t);
       });
-      else var f = a,
-      g = m.addListener(this.currentElement, f, function(a) {
-        b(a, e, g), g()
-      }, d || !1);
-      return this
-    }, a.prototype.preventDefault = function(a, b, c, d) {
-      var e = function(a) {
-        a.preventDefault(), b && (a.stopPropagation ? a.stopPropagation() : a.cancelBubble = !0)
+      else var a = e;
+
+      var u = s.addListener(this.currentElement, a, function(e) {
+        t(e, r, u);
+
+        u();
+      }, o || !1);
+      return this;
+    };
+
+    e.prototype.preventDefault = function(e, t, n) {
+      var i = function(e) {
+        e.preventDefault();
+
+        t && (e.stopPropagation ? e.stopPropagation() : e.cancelBubble = !0);
       };
-      return this.on(a, e, c)
-    }, a.prototype.attr = function(a, b) {
-      if (j.isObject(a)) {
-        for (var c in a)
-          if (a.hasOwnProperty(c)) {
-            var d = a[c];
-            this.doSetAttr(c, d)
+      return this.on(e, i, n);
+    };
+
+    e.prototype.attr = function(e, t) {
+      if (i.isObject(e)) {
+        for (var n in e)
+          if (e.hasOwnProperty(n)) {
+            var o = e[n];
+            this.doSetAttr(n, o);
           }
-        return this
+        return this;
       }
-      return j.isString(a) && !j.isString(b) ? this.currentElement.getAttribute(a) : (j.isString(a) && (j.isString(b) ||
-        (b = String(b)), this.doSetAttr(a, b)), this)
-    }, a.prototype.doSetAttr = function(a, b) {
-      a === "class" && (a = "addClass"), this[a] ? j.isArray(b) ? this[a].apply(this, b) : this[a].call(this, b) :
-        this.currentElement.setAttribute(a, b)
-    }, a.prototype.id = function(a) {
-      return this.currentElement.setAttribute("id", a), this
-    }, a.prototype.src = function(a) {
-      return this.currentElement.setAttribute("src", a), this
-    }, a.prototype.href = function(a) {
-      return this.currentElement.setAttribute("href", a), this
-    }, a.prototype.title = function(a) {
-      return this.currentElement.setAttribute("title", a), this
-    }, a.prototype.name = function(a) {
-      return this.currentElement.setAttribute("name", a), this
-    }, a.prototype.type = function(a) {
-      return this.currentElement.setAttribute("type", a), this
-    }, a.prototype.value = function(a) {
-      return this.currentElement.setAttribute("value", a), this
-    }, a.prototype.alt = function(a) {
-      return this.currentElement.setAttribute("alt", a), this
-    }, a.prototype.draggable = function(a) {
-      return this.currentElement.setAttribute("draggable", a ? "true" : "false"), this
-    }, a.prototype.tabindex = function(a) {
-      return this.currentElement.setAttribute("tabindex", a.toString()), this
-    }, a.prototype.style = function(a, b) {
-      if (j.isObject(a)) {
-        for (var c in a)
-          if (a.hasOwnProperty(c)) {
-            var d = a[c];
-            this.doSetStyle(c, d)
+      return i.isString(e) && !i.isString(t) ? this.currentElement.getAttribute(e) : (i.isString(e) && (i.isString(t) ||
+        (t = String(t)), this.doSetAttr(e, t)), this);
+    };
+
+    e.prototype.doSetAttr = function(e, t) {
+      "class" === e && (e = "addClass");
+
+      this[e] ? i.isArray(t) ? this[e].apply(this, t) : this[e].call(this, t) : this.currentElement.setAttribute(e, t);
+    };
+
+    e.prototype.id = function(e) {
+      this.currentElement.setAttribute("id", e);
+
+      return this;
+    };
+
+    e.prototype.src = function(e) {
+      this.currentElement.setAttribute("src", e);
+
+      return this;
+    };
+
+    e.prototype.href = function(e) {
+      this.currentElement.setAttribute("href", e);
+
+      return this;
+    };
+
+    e.prototype.title = function(e) {
+      this.currentElement.setAttribute("title", e);
+
+      return this;
+    };
+
+    e.prototype.name = function(e) {
+      this.currentElement.setAttribute("name", e);
+
+      return this;
+    };
+
+    e.prototype.type = function(e) {
+      this.currentElement.setAttribute("type", e);
+
+      return this;
+    };
+
+    e.prototype.value = function(e) {
+      this.currentElement.setAttribute("value", e);
+
+      return this;
+    };
+
+    e.prototype.alt = function(e) {
+      this.currentElement.setAttribute("alt", e);
+
+      return this;
+    };
+
+    e.prototype.draggable = function(e) {
+      this.currentElement.setAttribute("draggable", e ? "true" : "false");
+
+      return this;
+    };
+
+    e.prototype.tabindex = function(e) {
+      this.currentElement.setAttribute("tabindex", e.toString());
+
+      return this;
+    };
+
+    e.prototype.style = function(e, t) {
+      if (i.isObject(e)) {
+        for (var n in e)
+          if (e.hasOwnProperty(n)) {
+            var o = e[n];
+            this.doSetStyle(n, o);
           }
       } else {
-        if (j.isString(a) && !j.isString(b)) return this.currentElement.style[this.cssKeyToJavaScriptProperty(a)];
-        j.isString(a) && j.isString(b) && this.doSetStyle(a, b)
+        if (i.isString(e) && !i.isString(t)) return this.currentElement.style[this.cssKeyToJavaScriptProperty(e)];
+        i.isString(e) && i.isString(t) && this.doSetStyle(e, t);
       }
-      return this
-    }, a.prototype.doSetStyle = function(a, b) {
-      if (a.indexOf("-") >= 0) {
-        var c = a.split("-");
-        a = c[0];
-        for (var d = 1; d < c.length; d++) {
-          var e = c[d];
-          a = a + e.charAt(0).toUpperCase() + e.substr(1)
+      return this;
+    };
+
+    e.prototype.doSetStyle = function(e, t) {
+      if (e.indexOf("-") >= 0) {
+        var n = e.split("-");
+        e = n[0];
+        for (var i = 1; i < n.length; i++) {
+          var o = n[i];
+          e = e + o.charAt(0).toUpperCase() + o.substr(1);
         }
       }
-      this.currentElement.style[this.cssKeyToJavaScriptProperty(a)] = b
-    }, a.prototype.cssKeyToJavaScriptProperty = function(a) {
-      if (a.indexOf("-") >= 0) {
-        var b = a.split("-");
-        a = b[0];
-        for (var c = 1; c < b.length; c++) {
-          var d = b[c];
-          a = a + d.charAt(0).toUpperCase() + d.substr(1)
+      this.currentElement.style[this.cssKeyToJavaScriptProperty(e)] = t;
+    };
+
+    e.prototype.cssKeyToJavaScriptProperty = function(e) {
+      if (e.indexOf("-") >= 0) {
+        var t = e.split("-");
+        e = t[0];
+        for (var n = 1; n < t.length; n++) {
+          var i = t[n];
+          e = e + i.charAt(0).toUpperCase() + i.substr(1);
         }
-      } else a === "float" && (a = "cssFloat");
-      return a
-    }, a.prototype.getComputedStyle = function() {
-      return m.getComputedStyle(this.currentElement)
-    }, a.prototype.addClass = function() {
-      var a = [];
-      for (var b = 0; b < arguments.length - 0; b++) a[b] = arguments[b + 0];
-      var c = this;
-      return a.forEach(function(a) {
-        var b = a.split(" ");
-        b.forEach(function(a) {
-          m.addClass(c.currentElement, a)
-        })
-      }), this
-    }, a.prototype.setClass = function(a, b) {
-      return typeof b == "undefined" && (b = null), b === null ? this.currentElement.className = a : b ? this.addClass(
-        a) : this.removeClass(a), this
-    }, a.prototype.hasClass = function(a) {
-      return m.hasClass(this.currentElement, a)
-    }, a.prototype.removeClass = function() {
-      var a = [];
-      for (var b = 0; b < arguments.length - 0; b++) a[b] = arguments[b + 0];
-      var c = this;
-      return a.forEach(function(a) {
-        var b = a.split(" ");
-        b.forEach(function(a) {
-          m.removeClass(c.currentElement, a)
-        })
-      }), this
-    }, a.prototype.swapClass = function(a, b) {
-      return this.hasClass(a) ? (this.removeClass(a), this.addClass(b)) : (this.removeClass(b), this.addClass(a)),
-        this
-    }, a.prototype.toggleClass = function(a) {
-      return this.hasClass(a) ? this.removeClass(a) : this.addClass(a), this
-    }, a.prototype.color = function(a) {
-      return this.currentElement.style.color = a, this
-    }, a.prototype.background = function(a) {
-      return this.currentElement.style.backgroundColor = a, this
-    }, a.prototype.padding = function(a, b, c, d) {
-      return j.isString(a) && a.indexOf(" ") >= 0 ? this.padding.apply(this, a.split(" ")) : (a !== null && (this.currentElement
-        .style.paddingTop = this.toPixel(a)), b !== null && (this.currentElement.style.paddingRight = this.toPixel(
-        b)), c !== null && (this.currentElement.style.paddingBottom = this.toPixel(c)), d !== null && (this.currentElement
-        .style.paddingLeft = this.toPixel(d)), this)
-    }, a.prototype.margin = function(a, b, c, d) {
-      return j.isString(a) && a.indexOf(" ") >= 0 ? this.margin.apply(this, a.split(" ")) : (a !== null && (this.currentElement
-          .style.marginTop = this.toPixel(a)), b !== null && (this.currentElement.style.marginRight = this.toPixel(b)),
-        c !== null && (this.currentElement.style.marginBottom = this.toPixel(c)), d !== null && (this.currentElement.style
-          .marginLeft = this.toPixel(d)), this)
-    }, a.prototype.position = function(a, b, c, d, e) {
-      return j.isString(a) && a.indexOf(" ") >= 0 ? this.position.apply(this, a.split(" ")) : (a !== null && (this.currentElement
-          .style.top = this.toPixel(a)), b !== null && (this.currentElement.style.right = this.toPixel(b)), c !==
-        null && (this.currentElement.style.bottom = this.toPixel(c)), d !== null && (this.currentElement.style.left =
-          this.toPixel(d)), e || (e = "absolute"), this.currentElement.style.position = e, this)
-    }, a.prototype.size = function(a, b) {
-      return j.isString(a) && a.indexOf(" ") >= 0 ? this.size.apply(this, a.split(" ")) : (a !== null && (this.currentElement
-        .style.width = this.toPixel(a)), b !== null && (this.currentElement.style.height = this.toPixel(b)), this)
-    }, a.prototype.minSize = function(a, b) {
-      return j.isString(a) && a.indexOf(" ") >= 0 ? this.minSize.apply(this, a.split(" ")) : (a !== null && (this.currentElement
-          .style.minWidth = this.toPixel(a)), b !== null && (this.currentElement.style.minHeight = this.toPixel(b)),
-        this)
-    }, a.prototype.maxSize = function(a, b) {
-      return j.isString(a) && a.indexOf(" ") >= 0 ? this.maxSize.apply(this, a.split(" ")) : (a !== null && (this.currentElement
-          .style.maxWidth = this.toPixel(a)), b !== null && (this.currentElement.style.maxHeight = this.toPixel(b)),
-        this)
-    }, a.prototype.float = function(a) {
-      return this.currentElement.style.cssFloat = a, this.currentElement.style.styleFloat = a, this
-    }, a.prototype.clear = function(a) {
-      return this.currentElement.style.clear = a, this
-    }, a.prototype.normal = function() {
-      return this.currentElement.style.fontStyle = "normal", this.currentElement.style.fontWeight = "normal", this.currentElement
-        .style.textDecoration = "none", this
-    }, a.prototype.italic = function() {
-      return this.currentElement.style.fontStyle = "italic", this
-    }, a.prototype.bold = function() {
-      return this.currentElement.style.fontWeight = "bold", this
-    }, a.prototype.underline = function() {
-      return this.currentElement.style.textDecoration = "underline", this
-    }, a.prototype.overflow = function(a) {
-      return this.currentElement.style.overflow = a, this
-    }, a.prototype.display = function(a) {
-      return this.currentElement.style.display = a, this
-    }, a.prototype.show = function() {
-      return this.hasClass("hidden") && this.removeClass("hidden"), this.attr("aria-hidden", "false"), this.cancelVisibilityPromise(),
-        this
-    }, a.prototype.showDelayed = function(a) {
-      var b = this;
+      } else "float" === e && (e = "cssFloat");
+      return e;
+    };
+
+    e.prototype.getComputedStyle = function() {
+      return s.getComputedStyle(this.currentElement);
+    };
+
+    e.prototype.addClass = function() {
+      for (var e = [], t = 0; t < arguments.length - 0; t++) e[t] = arguments[t + 0];
+      var n = this;
+      e.forEach(function(e) {
+        var t = e.split(" ");
+        t.forEach(function(e) {
+          s.addClass(n.currentElement, e);
+        });
+      });
+
+      return this;
+    };
+
+    e.prototype.setClass = function(e, t) {
+      "undefined" == typeof t && (t = null);
+
+      null === t ? this.currentElement.className = e : t ? this.addClass(e) : this.removeClass(e);
+
+      return this;
+    };
+
+    e.prototype.hasClass = function(e) {
+      return s.hasClass(this.currentElement, e);
+    };
+
+    e.prototype.removeClass = function() {
+      for (var e = [], t = 0; t < arguments.length - 0; t++) e[t] = arguments[t + 0];
+      var n = this;
+      e.forEach(function(e) {
+        var t = e.split(" ");
+        t.forEach(function(e) {
+          s.removeClass(n.currentElement, e);
+        });
+      });
+
+      return this;
+    };
+
+    e.prototype.swapClass = function(e, t) {
+      this.hasClass(e) ? (this.removeClass(e), this.addClass(t)) : (this.removeClass(t), this.addClass(e));
+
+      return this;
+    };
+
+    e.prototype.toggleClass = function(e) {
+      this.hasClass(e) ? this.removeClass(e) : this.addClass(e);
+
+      return this;
+    };
+
+    e.prototype.color = function(e) {
+      this.currentElement.style.color = e;
+
+      return this;
+    };
+
+    e.prototype.background = function(e) {
+      this.currentElement.style.backgroundColor = e;
+
+      return this;
+    };
+
+    e.prototype.padding = function(e, t, n, o) {
+      return i.isString(e) && e.indexOf(" ") >= 0 ? this.padding.apply(this, e.split(" ")) : (i.isUndefinedOrNull(e) ||
+        (this.currentElement.style.paddingTop = this.toPixel(e)), i.isUndefinedOrNull(t) || (this.currentElement.style
+          .paddingRight = this.toPixel(t)), i.isUndefinedOrNull(n) || (this.currentElement.style.paddingBottom = this
+          .toPixel(n)), i.isUndefinedOrNull(o) || (this.currentElement.style.paddingLeft = this.toPixel(o)), this);
+    };
+
+    e.prototype.margin = function(e, t, n, o) {
+      return i.isString(e) && e.indexOf(" ") >= 0 ? this.margin.apply(this, e.split(" ")) : (i.isUndefinedOrNull(e) ||
+        (this.currentElement.style.marginTop = this.toPixel(e)), i.isUndefinedOrNull(t) || (this.currentElement.style
+          .marginRight = this.toPixel(t)), i.isUndefinedOrNull(n) || (this.currentElement.style.marginBottom = this.toPixel(
+          n)), i.isUndefinedOrNull(o) || (this.currentElement.style.marginLeft = this.toPixel(o)), this);
+    };
+
+    e.prototype.position = function(e, t, n, o, r) {
+      return i.isString(e) && e.indexOf(" ") >= 0 ? this.position.apply(this, e.split(" ")) : (i.isUndefinedOrNull(e) ||
+        (this.currentElement.style.top = this.toPixel(e)), i.isUndefinedOrNull(t) || (this.currentElement.style.right =
+          this.toPixel(t)), i.isUndefinedOrNull(n) || (this.currentElement.style.bottom = this.toPixel(n)), i.isUndefinedOrNull(
+          o) || (this.currentElement.style.left = this.toPixel(o)), r || (r = "absolute"), this.currentElement.style.position =
+        r, this);
+    };
+
+    e.prototype.size = function(e, t) {
+      return i.isString(e) && e.indexOf(" ") >= 0 ? this.size.apply(this, e.split(" ")) : (i.isUndefinedOrNull(e) ||
+        (this.currentElement.style.width = this.toPixel(e)), i.isUndefinedOrNull(t) || (this.currentElement.style.height =
+          this.toPixel(t)), this);
+    };
+
+    e.prototype.minSize = function(e, t) {
+      return i.isString(e) && e.indexOf(" ") >= 0 ? this.minSize.apply(this, e.split(" ")) : (i.isUndefinedOrNull(e) ||
+        (this.currentElement.style.minWidth = this.toPixel(e)), i.isUndefinedOrNull(t) || (this.currentElement.style.minHeight =
+          this.toPixel(t)), this);
+    };
+
+    e.prototype.maxSize = function(e, t) {
+      return i.isString(e) && e.indexOf(" ") >= 0 ? this.maxSize.apply(this, e.split(" ")) : (i.isUndefinedOrNull(e) ||
+        (this.currentElement.style.maxWidth = this.toPixel(e)), i.isUndefinedOrNull(t) || (this.currentElement.style.maxHeight =
+          this.toPixel(t)), this);
+    };
+
+    e.prototype.float = function(e) {
+      this.currentElement.style.cssFloat = e;
+
+      this.currentElement.style.styleFloat = e;
+
+      return this;
+    };
+
+    e.prototype.clear = function(e) {
+      this.currentElement.style.clear = e;
+
+      return this;
+    };
+
+    e.prototype.normal = function() {
+      this.currentElement.style.fontStyle = "normal";
+
+      this.currentElement.style.fontWeight = "normal";
+
+      this.currentElement.style.textDecoration = "none";
+
+      return this;
+    };
+
+    e.prototype.italic = function() {
+      this.currentElement.style.fontStyle = "italic";
+
+      return this;
+    };
+
+    e.prototype.bold = function() {
+      this.currentElement.style.fontWeight = "bold";
+
+      return this;
+    };
+
+    e.prototype.underline = function() {
+      this.currentElement.style.textDecoration = "underline";
+
+      return this;
+    };
+
+    e.prototype.overflow = function(e) {
+      this.currentElement.style.overflow = e;
+
+      return this;
+    };
+
+    e.prototype.display = function(e) {
+      this.currentElement.style.display = e;
+
+      return this;
+    };
+
+    e.prototype.show = function() {
+      this.hasClass("hidden") && this.removeClass("hidden");
+
+      this.attr("aria-hidden", "false");
+
       this.cancelVisibilityPromise();
-      var c = i.Promise.timeout(a);
-      return this.setProperty(r, c), c.done(function() {
-        b.removeProperty(r), b.show()
-      }), this
-    }, a.prototype.hide = function() {
-      return this.hasClass("hidden") || this.addClass("hidden"), this.attr("aria-hidden", "true"), this.cancelVisibilityPromise(),
-        this
-    }, a.prototype.isHidden = function() {
-      return this.hasClass("hidden") || this.currentElement.style.display === "none"
-    }, a.prototype.toggleVisibility = function() {
-      return this.cancelVisibilityPromise(), this.swapClass("builder-visible", "hidden"), this.isHidden() ? this.attr(
-        "aria-hidden", "true") : this.attr("aria-hidden", "false"), this
-    }, a.prototype.cancelVisibilityPromise = function() {
-      var a = this.getProperty(r);
-      a && (a.cancel(), this.removeProperty(r))
-    }, a.prototype.border = function(a, b, c) {
-      return j.isString(a) && a.indexOf(" ") >= 0 ? this.border.apply(this, a.split(" ")) : (this.currentElement.style
-        .borderWidth = this.toPixel(a), c && (this.currentElement.style.borderColor = c), b && (this.currentElement.style
-          .borderStyle = b), this)
-    }, a.prototype.borderTop = function(a, b, c) {
-      return j.isString(a) && a.indexOf(" ") >= 0 ? this.borderTop.apply(this, a.split(" ")) : (this.currentElement.style
-        .borderTopWidth = this.toPixel(a), c && (this.currentElement.style.borderTopColor = c), b && (this.currentElement
-          .style.borderTopStyle = b), this)
-    }, a.prototype.borderBottom = function(a, b, c) {
-      return j.isString(a) && a.indexOf(" ") >= 0 ? this.borderBottom.apply(this, a.split(" ")) : (this.currentElement
-        .style.borderBottomWidth = this.toPixel(a), c && (this.currentElement.style.borderBottomColor = c), b && (
-          this.currentElement.style.borderBottomStyle = b), this)
-    }, a.prototype.borderLeft = function(a, b, c) {
-      return j.isString(a) && a.indexOf(" ") >= 0 ? this.borderLeft.apply(this, a.split(" ")) : (this.currentElement.style
-        .borderLeftWidth = this.toPixel(a), c && (this.currentElement.style.borderLeftColor = c), b && (this.currentElement
-          .style.borderLeftStyle = b), this)
-    }, a.prototype.borderRight = function(a, b, c) {
-      return j.isString(a) && a.indexOf(" ") >= 0 ? this.borderRight.apply(this, a.split(" ")) : (this.currentElement
-        .style.borderRightWidth = this.toPixel(a), c && (this.currentElement.style.borderRightColor = c), b && (this.currentElement
-          .style.borderRightStyle = b), this)
-    }, a.prototype.textAlign = function(a) {
-      return this.currentElement.style.textAlign = a, this
-    }, a.prototype.verticalAlign = function(a) {
-      return this.currentElement.style.verticalAlign = a, this
-    }, a.prototype.toPixel = function(a) {
-      return a.toString().indexOf("px") === -1 ? a.toString() + "px" : a
-    }, a.prototype.innerHtml = function(a, b) {
-      return b ? this.currentElement.innerHTML += a : this.currentElement.innerHTML = a, this
-    }, a.prototype.text = function(a, b) {
-      return b ? this.currentElement.children.length === 0 ? this.currentElement.textContent += a : this.currentElement
-        .appendChild(this.browserService.document.createTextNode(a)) : this.currentElement.textContent = a, this
-    }, a.prototype.safeInnerHtml = function(a, b) {
-      return this.innerHtml(k.escape(a), b)
-    }, a.prototype.insertHtmlBeforeBegin = function(a) {
-      return this.currentElement.insertAdjacentHTML("beforeBegin", a), this
-    }, a.prototype.insertHtmlAfterBegin = function(a) {
-      return this.currentElement.insertAdjacentHTML("afterBegin", a), this
-    }, a.prototype.insertHtmlBeforeEnd = function(a) {
-      return this.currentElement.insertAdjacentHTML("beforeEnd", a), this
-    }, a.prototype.insertHtmlAfterEnd = function(a) {
-      return this.currentElement.insertAdjacentHTML("afterEnd", a), this
-    }, a.prototype.bind = function(a) {
-      return b.bindElement(this.currentElement, a), this
-    }, a.prototype.unbind = function() {
-      return b.unbindElement(this.currentElement), this
-    }, a.prototype.getBinding = function() {
-      return b.getBindingFromElement(this.currentElement)
-    }, a.prototype.setProperty = function(a, c) {
-      return b.setPropertyOnElement(this.currentElement, a, c), this
-    }, a.prototype.getProperty = function(a, c) {
-      return b.getPropertyFromElement(this.currentElement, a, c)
-    }, a.prototype.removeProperty = function(a) {
-      return delete C(this.currentElement)[a], this
-    }, a.prototype.parent = function(a) {
-      return l.ok(!this.offdom, "Builder was created with offdom = true and thus has no parent set"), b.withElement(
-        this.currentElement.parentNode, a)
-    }, a.prototype.children = function(a) {
-      var c = this.currentElement.children,
-        d = [];
-      for (var e = 0; e < c.length; e++) d.push(b.withElement(c.item(e), a));
-      return new K(d)
-    }, a.prototype.removeChild = function(a) {
-      return this.currentElement === a.parent().getHTMLElement() && this.currentElement.removeChild(a.getHTMLElement()),
-        this
-    }, a.prototype.select = function(a, c) {
-      l.ok(j.isString(a), "Expected String as parameter");
-      var d = this.currentElement.querySelectorAll(a),
-        e = [];
-      for (var f = 0; f < d.length; f++) e.push(b.withElement(d.item(f), c));
-      return new K(e)
-    }, a.prototype.matches = function(a) {
-      var b = this.currentElement,
-        c = b.webkitMatchesSelector || b.mozMatchesSelector || b.msMatchesSelector || b.oMatchesSelector;
-      return c && c.call(b, a)
-    }, a.prototype.isEmpty = function() {
-      return !this.currentElement.childNodes || this.currentElement.childNodes.length === 0
-    }, a.prototype.unbindDescendants = function(a) {
-      for (var b = 0, c = a.children.length; b < c; b++) {
-        var d = a.children.item(b);
-        if (C(d)) {
-          var e = C(d)[q];
-          if (j.isArray(e))
-            while (e.length) e.pop()();
-          delete d[o]
+
+      return this;
+    };
+
+    e.prototype.showDelayed = function(e) {
+      var t = this;
+      this.cancelVisibilityPromise();
+      var i = n.Promise.timeout(e);
+      this.setProperty(E, i);
+
+      i.done(function() {
+        t.removeProperty(E);
+
+        t.show();
+      });
+
+      return this;
+    };
+
+    e.prototype.hide = function() {
+      this.hasClass("hidden") || this.addClass("hidden");
+
+      this.attr("aria-hidden", "true");
+
+      this.cancelVisibilityPromise();
+
+      return this;
+    };
+
+    e.prototype.isHidden = function() {
+      return this.hasClass("hidden") || "none" === this.currentElement.style.display;
+    };
+
+    e.prototype.toggleVisibility = function() {
+      this.cancelVisibilityPromise();
+
+      this.swapClass("builder-visible", "hidden");
+
+      this.isHidden() ? this.attr("aria-hidden", "true") : this.attr("aria-hidden", "false");
+
+      return this;
+    };
+
+    e.prototype.cancelVisibilityPromise = function() {
+      var e = this.getProperty(E);
+      e && (e.cancel(), this.removeProperty(E));
+    };
+
+    e.prototype.border = function(e, t, n) {
+      return i.isString(e) && e.indexOf(" ") >= 0 ? this.border.apply(this, e.split(" ")) : (this.currentElement.style
+        .borderWidth = this.toPixel(e), n && (this.currentElement.style.borderColor = n), t && (this.currentElement.style
+          .borderStyle = t), this);
+    };
+
+    e.prototype.borderTop = function(e, t, n) {
+      return i.isString(e) && e.indexOf(" ") >= 0 ? this.borderTop.apply(this, e.split(" ")) : (this.currentElement.style
+        .borderTopWidth = this.toPixel(e), n && (this.currentElement.style.borderTopColor = n), t && (this.currentElement
+          .style.borderTopStyle = t), this);
+    };
+
+    e.prototype.borderBottom = function(e, t, n) {
+      return i.isString(e) && e.indexOf(" ") >= 0 ? this.borderBottom.apply(this, e.split(" ")) : (this.currentElement
+        .style.borderBottomWidth = this.toPixel(e), n && (this.currentElement.style.borderBottomColor = n), t && (
+          this.currentElement.style.borderBottomStyle = t), this);
+    };
+
+    e.prototype.borderLeft = function(e, t, n) {
+      return i.isString(e) && e.indexOf(" ") >= 0 ? this.borderLeft.apply(this, e.split(" ")) : (this.currentElement.style
+        .borderLeftWidth = this.toPixel(e), n && (this.currentElement.style.borderLeftColor = n), t && (this.currentElement
+          .style.borderLeftStyle = t), this);
+    };
+
+    e.prototype.borderRight = function(e, t, n) {
+      return i.isString(e) && e.indexOf(" ") >= 0 ? this.borderRight.apply(this, e.split(" ")) : (this.currentElement
+        .style.borderRightWidth = this.toPixel(e), n && (this.currentElement.style.borderRightColor = n), t && (this.currentElement
+          .style.borderRightStyle = t), this);
+    };
+
+    e.prototype.textAlign = function(e) {
+      this.currentElement.style.textAlign = e;
+
+      return this;
+    };
+
+    e.prototype.verticalAlign = function(e) {
+      this.currentElement.style.verticalAlign = e;
+
+      return this;
+    };
+
+    e.prototype.toPixel = function(e) {
+      return -1 === e.toString().indexOf("px") ? e.toString() + "px" : e;
+    };
+
+    e.prototype.innerHtml = function(e, t) {
+      t ? this.currentElement.innerHTML += e : this.currentElement.innerHTML = e;
+
+      return this;
+    };
+
+    e.prototype.text = function(e, t) {
+      t ? 0 === this.currentElement.children.length ? this.currentElement.textContent += e : this.currentElement.appendChild(
+        this.browserService.document.createTextNode(e)) : this.currentElement.textContent = e;
+
+      return this;
+    };
+
+    e.prototype.safeInnerHtml = function(e, t) {
+      return this.innerHtml(o.escape(e), t);
+    };
+
+    e.prototype.insertHtmlBeforeBegin = function(e) {
+      this.currentElement.insertAdjacentHTML("beforeBegin", e);
+
+      return this;
+    };
+
+    e.prototype.insertHtmlAfterBegin = function(e) {
+      this.currentElement.insertAdjacentHTML("afterBegin", e);
+
+      return this;
+    };
+
+    e.prototype.insertHtmlBeforeEnd = function(e) {
+      this.currentElement.insertAdjacentHTML("beforeEnd", e);
+
+      return this;
+    };
+
+    e.prototype.insertHtmlAfterEnd = function(e) {
+      this.currentElement.insertAdjacentHTML("afterEnd", e);
+
+      return this;
+    };
+
+    e.prototype.bind = function(e) {
+      t.bindElement(this.currentElement, e);
+
+      return this;
+    };
+
+    e.prototype.unbind = function() {
+      t.unbindElement(this.currentElement);
+
+      return this;
+    };
+
+    e.prototype.getBinding = function() {
+      return t.getBindingFromElement(this.currentElement);
+    };
+
+    e.prototype.setProperty = function(e, n) {
+      t.setPropertyOnElement(this.currentElement, e, n);
+
+      return this;
+    };
+
+    e.prototype.getProperty = function(e, n) {
+      return t.getPropertyFromElement(this.currentElement, e, n);
+    };
+
+    e.prototype.removeProperty = function(e) {
+      c(this.currentElement) && delete l(this.currentElement)[e];
+
+      return this;
+    };
+
+    e.prototype.parent = function(e) {
+      r.ok(!this.offdom, "Builder was created with offdom = true and thus has no parent set");
+
+      return h(this.currentElement.parentNode, e);
+    };
+
+    e.prototype.children = function(e) {
+      for (var t = this.currentElement.children, n = [], i = 0; i < t.length; i++) n.push(h(t.item(i), e));
+      return new N(n);
+    };
+
+    e.prototype.removeChild = function(e) {
+      this.currentElement === e.parent().getHTMLElement() && this.currentElement.removeChild(e.getHTMLElement());
+
+      return this;
+    };
+
+    e.prototype.select = function(e, t) {
+      r.ok(i.isString(e), "Expected String as parameter");
+      for (var n = this.currentElement.querySelectorAll(e), o = [], s = 0; s < n.length; s++) o.push(h(n.item(s), t));
+      return new N(o);
+    };
+
+    e.prototype.matches = function(e) {
+      var t = this.currentElement;
+
+      var n = t.webkitMatchesSelector || t.mozMatchesSelector || t.msMatchesSelector || t.oMatchesSelector;
+      return n && n.call(t, e);
+    };
+
+    e.prototype.isEmpty = function() {
+      return !this.currentElement.childNodes || 0 === this.currentElement.childNodes.length;
+    };
+
+    e.prototype.unbindDescendants = function(e) {
+      if (e.children)
+        for (var t = 0, n = e.children.length; n > t; t++) {
+          var o = e.children.item(t);
+          if (c(o)) {
+            var r = l(o)[w];
+            if (i.isArray(r))
+              for (; r.length;) r.pop()();
+            delete o[b];
+          }
+          this.unbindDescendants(o);
         }
-        this.unbindDescendants(d)
+    };
+
+    e.prototype.empty = function() {
+      this.unbindDescendants(this.currentElement);
+
+      this.clearChildren();
+
+      this.offdom && (this.createdElements = []);
+
+      return this;
+    };
+
+    e.prototype.clearChildren = function() {
+      s.clearNode(this.currentElement);
+
+      return this;
+    };
+
+    e.prototype.destroy = function() {
+      if (this.currentElement.parentNode && this.currentElement.parentNode.removeChild(this.currentElement), this.empty(),
+        c(this.currentElement)) {
+        var e = l(this.currentElement)[w];
+        if (i.isArray(e))
+          for (; e.length;) e.pop()();
+        delete this.currentElement[b];
       }
-    }, a.prototype.empty = function() {
-      return this.unbindDescendants(this.currentElement), m.clearNode(this.currentElement), this.offdom && (this.createdElements = []),
-        this
-    }, a.prototype.destroy = function() {
-      this.currentElement.parentNode && this.currentElement.parentNode.removeChild(this.currentElement), this.empty();
-      if (C(this.currentElement)) {
-        var a = C(this.currentElement)[q];
-        if (j.isArray(a))
-          while (a.length) a.pop()();
-        delete this.currentElement[o]
-      }
-      var b;
-      for (b in this.toUnbind)
-        if (this.toUnbind.hasOwnProperty(b) && j.isArray(this.toUnbind[b]))
-          while (this.toUnbind[b].length) this.toUnbind[b].pop()();
-      for (b in this.captureToUnbind)
-        if (this.captureToUnbind.hasOwnProperty(b) && j.isArray(this.captureToUnbind[b]))
-          while (this.captureToUnbind[b].length) this.captureToUnbind[b].pop()();
-      this.currentElement = null, this.container = null, this.offdom = null, this.createdElements = null, this.captureToUnbind =
-        null, this.toUnbind = null
-    }, a.prototype.getPositionRelativeTo = function(b) {
-      b instanceof a && (b = b.getHTMLElement());
-      var c = m.getRelativeLeft(this.currentElement, b),
-        d = m.getRelativeTop(this.currentElement, b);
-      return new t(d, -1, -1, c)
-    }, a.prototype.getPosition = function() {
-      var a = m.getTopLeftOffset(this.currentElement);
-      return new t(a.top, -1, -1, a.left)
-    }, a.prototype.getTotalSize = function() {
-      var a = m.getTotalWidth(this.currentElement),
-        b = m.getTotalHeight(this.currentElement);
-      return new u(a, b)
-    }, a.prototype.getContentSize = function() {
-      var a = m.getContentWidth(this.currentElement),
-        b = m.getContentHeight(this.currentElement);
-      return new u(a, b)
-    }, a.prototype.getClientArea = function() {
+      var t;
+      for (t in this.toUnbind)
+        if (this.toUnbind.hasOwnProperty(t) && i.isArray(this.toUnbind[t]))
+          for (; this.toUnbind[t].length;) this.toUnbind[t].pop()();
+      for (t in this.captureToUnbind)
+        if (this.captureToUnbind.hasOwnProperty(t) && i.isArray(this.captureToUnbind[t]))
+          for (; this.captureToUnbind[t].length;) this.captureToUnbind[t].pop()();
+      this.currentElement = null;
+
+      this.container = null;
+
+      this.offdom = null;
+
+      this.createdElements = null;
+
+      this.captureToUnbind = null;
+
+      this.toUnbind = null;
+    };
+
+    e.prototype.dispose = function() {
+      this.destroy();
+    };
+
+    e.prototype.getPositionRelativeTo = function(t) {
+      t instanceof e && (t = t.getHTMLElement());
+      var n = s.getRelativeLeft(this.currentElement, t);
+
+      var i = s.getRelativeTop(this.currentElement, t);
+      return new x(i, -1, -1, n);
+    };
+
+    e.prototype.getPosition = function() {
+      var e = s.getTopLeftOffset(this.currentElement);
+      return new x(e.top, -1, -1, e.left);
+    };
+
+    e.prototype.getTotalSize = function() {
+      var e = s.getTotalWidth(this.currentElement);
+
+      var t = s.getTotalHeight(this.currentElement);
+      return new L(e, t);
+    };
+
+    e.prototype.getContentSize = function() {
+      var e = s.getContentWidth(this.currentElement);
+
+      var t = s.getContentHeight(this.currentElement);
+      return new L(e, t);
+    };
+
+    e.prototype.getClientArea = function() {
       if (this.currentElement !== this.browserService.document.body) {
-        var a = m.getDomNodePosition(this.currentElement);
-        return new u(a.width, a.height)
+        var e = s.getDomNodePosition(this.currentElement);
+        return new L(e.width, e.height);
       }
-      if (this.browserService.window.innerWidth && this.browserService.window.innerHeight) return new u(this.browserService
+      if (this.browserService.window.innerWidth && this.browserService.window.innerHeight) return new L(this.browserService
         .window.innerWidth, this.browserService.window.innerHeight);
       if (this.browserService.document.body && this.browserService.document.body.clientWidth && this.browserService.document
-        .body.clientWidth) return new u(this.browserService.document.body.clientWidth, this.browserService.document.body
+        .body.clientWidth) return new L(this.browserService.document.body.clientWidth, this.browserService.document.body
         .clientHeight);
       if (this.browserService.document.documentElement && this.browserService.document.documentElement.clientWidth &&
-        this.browserService.document.documentElement.clientHeight) return new u(this.browserService.document.documentElement
+        this.browserService.document.documentElement.clientHeight) return new L(this.browserService.document.documentElement
         .clientWidth, this.browserService.document.documentElement.clientHeight);
-      throw new Error("Unable to figure out browser width and height")
-    }, a
+      throw new Error("Unable to figure out browser width and height");
+    };
+
+    return e;
   }();
-  b.Builder = J;
-  var K = function(a) {
-    function c(d) {
-      l.ok(j.isArray(d) || d instanceof c, "Expected Array or MultiBuilder as parameter"), a.call(this), this.length =
-        0, this.builders = [];
-      if (j.isArray(d))
-        for (var e = 0; e < d.length; e++) d[e] instanceof HTMLElement ? this.push(b.withElement(d[e])) : this.push(d[
-          e]);
+  t.Builder = T;
+  var N = function(e) {
+    function t(n) {
+      if (r.ok(i.isArray(n) || n instanceof t, "Expected Array or MultiBuilder as parameter"), e.call(this), this.length =
+        0, this.builders = [], i.isArray(n))
+        for (var o = 0; o < n.length; o++) n[o] instanceof HTMLElement ? this.push(h(n[o])) : this.push(n[o]);
       else
-        for (var e = 0; e < d.length; e++) this.push(d.item(e));
-      var f = this,
-        g = function(a) {
-          f[a] = function() {
-            var b = Array.prototype.slice.call(arguments),
-              d, e = !1;
-            for (var g = 0; g < f.length; g++) {
-              var h = f.item(g)[a].apply(f.item(g), b);
-              if (h instanceof c) {
-                d || (d = []), e = !0;
-                for (var i = 0; i < h.length; i++) d.push(h.item(i))
-              } else !j.isUndefined(h) && !(h instanceof J) && (d || (d = []), d.push(h))
-            }
-            return d && e ? new c(d) : d || f
+        for (var o = 0; o < n.length; o++) this.push(n.item(o));
+      var s = this;
+
+      var a = function(e) {
+        s[e] = function() {
+          for (var n, o = Array.prototype.slice.call(arguments), r = !1, a = 0; a < s.length; a++) {
+            var u = s.item(a)[e].apply(s.item(a), o);
+            if (u instanceof t) {
+              n || (n = []);
+
+              r = !0;
+              for (var l = 0; l < u.length; l++) n.push(u.item(l));
+            } else i.isUndefined(u) || u instanceof T || (n || (n = []), n.push(u));
           }
+          return n && r ? new t(n) : n || s;
         };
-      for (var h in J.prototype) h !== "clone" && h !== "and" && J.prototype.hasOwnProperty(h) && j.isFunction(J.prototype[
-        h]) && g(h)
+      };
+      for (var u in T.prototype) "clone" !== u && "and" !== u && T.prototype.hasOwnProperty(u) && i.isFunction(T.prototype[
+        u]) && a(u);
     }
-    return __extends(c, a), c.prototype.item = function(a) {
-      return this.builders[a]
-    }, c.prototype.push = function() {
-      var a = [];
-      for (var b = 0; b < arguments.length - 0; b++) a[b] = arguments[b + 0];
-      for (var c = 0; c < a.length; c++) this.builders.push(a[c]);
-      this.length = this.builders.length
-    }, c.prototype.pop = function() {
-      var a = this.builders.pop();
-      return this.length = this.builders.length, a
-    }, c.prototype.concat = function(a) {
-      var b = this.builders.concat(a);
-      return this.length = this.builders.length, b
-    }, c.prototype.shift = function() {
-      var a = this.builders.shift();
-      return this.length = this.builders.length, a
-    }, c.prototype.unshift = function(a) {
-      var b = this.builders.unshift(a);
-      return this.length = this.builders.length, b
-    }, c.prototype.slice = function(a, b) {
-      var c = this.builders.slice(a, b);
-      return this.length = this.builders.length, c
-    }, c.prototype.splice = function(a, b) {
-      var c = this.builders.splice(a, b);
-      return this.length = this.builders.length, c
-    }, c.prototype.clone = function() {
-      return new c(this)
-    }, c.prototype.and = function(a) {
-      !(a instanceof J) && !(a instanceof c) && (a = new J(a));
-      var b = [];
-      if (a instanceof c)
-        for (var d = 0; d < a.length; d++) b.push(a.item(d));
-      else b.push(a);
-      return this.push.apply(this, b), this
-    }, c
-  }(J);
-  b.MultiBuilder = K;
-  var L = /([\w\-]+)?(#([\w\-]+))?((.([\w\-]+))*)/;
-  b.$ = function(a) {
-    if (j.isUndefined(a)) return b.offDOM();
-    if (!a) throw new Error("Bad use of $");
-    if (m.isHTMLElement(a) || a === window) return b.withElement(a);
-    if (a instanceof J) return b.withBuilder(a);
-    if (j.isString(a)) {
-      if (a[0] === "<") {
-        var c, d = n.getService().document.createElement("div");
-        d.innerHTML = k.format.apply(k, arguments);
-        if (d.children.length === 0) throw new Error("Bad use of $");
-        if (d.children.length === 1) return c = d.firstChild, d.removeChild(c), b.withElement(c);
-        var e = [];
-        while (d.firstChild) c = d.firstChild, d.removeChild(c), e.push(b.withElement(c));
-        return new K(e)
+    __extends(t, e);
+
+    t.prototype.item = function(e) {
+      return this.builders[e];
+    };
+
+    t.prototype.push = function() {
+      for (var e = [], t = 0; t < arguments.length - 0; t++) e[t] = arguments[t + 0];
+      for (var n = 0; n < e.length; n++) this.builders.push(e[n]);
+      this.length = this.builders.length;
+    };
+
+    t.prototype.pop = function() {
+      var e = this.builders.pop();
+      this.length = this.builders.length;
+
+      return e;
+    };
+
+    t.prototype.concat = function(e) {
+      var t = this.builders.concat(e);
+      this.length = this.builders.length;
+
+      return t;
+    };
+
+    t.prototype.shift = function() {
+      var e = this.builders.shift();
+      this.length = this.builders.length;
+
+      return e;
+    };
+
+    t.prototype.unshift = function(e) {
+      var t = this.builders.unshift(e);
+      this.length = this.builders.length;
+
+      return t;
+    };
+
+    t.prototype.slice = function(e, t) {
+      var n = this.builders.slice(e, t);
+      this.length = this.builders.length;
+
+      return n;
+    };
+
+    t.prototype.splice = function(e, t) {
+      var n = this.builders.splice(e, t);
+      this.length = this.builders.length;
+
+      return n;
+    };
+
+    t.prototype.clone = function() {
+      return new t(this);
+    };
+
+    t.prototype.and = function(e) {
+      e instanceof T || e instanceof t || (e = new T(e));
+      var n = [];
+      if (e instanceof t)
+        for (var i = 0; i < e.length; i++) n.push(e.item(i));
+      else n.push(e);
+      this.push.apply(this, n);
+
+      return this;
+    };
+
+    return t;
+  }(T);
+  t.MultiBuilder = N;
+
+  t.setPropertyOnElement = f;
+
+  t.getPropertyFromElement = g;
+
+  t.removePropertyFromElement = m;
+
+  t.bindElement = v;
+
+  t.unbindElement = y;
+
+  t.getBindingFromElement = _;
+
+  t.Binding = {
+    setPropertyOnElement: t.setPropertyOnElement,
+    getPropertyFromElement: t.getPropertyFromElement,
+    removePropertyFromElement: t.removePropertyFromElement,
+    bindElement: t.bindElement,
+    unbindElement: t.unbindElement,
+    getBindingFromElement: t.getBindingFromElement
+  };
+  var M = /([\w\-]+)?(#([\w\-]+))?((.([\w\-]+))*)/;
+  t.$ = function(e) {
+    if (i.isUndefined(e)) return p();
+    if (!e) throw new Error("Bad use of $");
+    if (s.isHTMLElement(e) || e === window) return h(e);
+    if (i.isArray(e)) return new N(e);
+    if (e instanceof T) return d(e);
+    if (i.isString(e)) {
+      if ("<" === e[0]) {
+        var t;
+
+        var n = a.getService().document.createElement("div");
+        if (n.innerHTML = o.format.apply(o, arguments), 0 === n.children.length) throw new Error("Bad use of $");
+        if (1 === n.children.length) t = n.firstChild;
+
+        n.removeChild(t);
+
+        return h(t);
+        for (var r = []; n.firstChild;) t = n.firstChild;
+
+        n.removeChild(t);
+
+        r.push(h(t));
+        return new N(r);
       }
-      if (arguments.length === 1) {
-        var f = L.exec(a);
-        if (!f) throw new Error("Bad use of $");
-        var g = f[1] || "div",
-          h = f[3] || undefined,
-          i = (f[4] || "").replace(/\./g, " "),
-          l = {};
-        return h && (l.id = h), i && (l["class"] = i), b.offDOM().element(g, l)
+      if (1 === arguments.length) {
+        var u = M.exec(e);
+        if (!u) throw new Error("Bad use of $");
+        var l = u[1] || "div";
+
+        var c = u[3] || void 0;
+
+        var f = (u[4] || "").replace(/\./g, " ");
+
+        var g = {};
+        c && (g.id = c);
+
+        f && (g["class"] = f);
+
+        return p().element(l, g);
       }
-      var o = b.offDOM();
-      return o.element.apply(o, arguments), o
+      var m = p();
+      m.element.apply(m, arguments);
+
+      return m;
     }
-    throw new Error("Bad use of $")
-  }, b.$.Box = t, b.$.Dimension = u, b.$.Position = s, b.$.Builder = J, b.$.MultiBuilder = K, b.$.Select = b.Select,
-    b.$.Build = b.Build, b.$.Binding = b.Binding
-})
+    throw new Error("Bad use of $");
+  };
+
+  t.$.Box = x;
+
+  t.$.Dimension = L;
+
+  t.$.Position = S;
+
+  t.$.Builder = T;
+
+  t.$.MultiBuilder = N;
+
+  t.$.Build = t.Build;
+
+  t.$.Binding = t.Binding;
+});

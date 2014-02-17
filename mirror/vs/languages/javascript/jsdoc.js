@@ -1,37 +1,41 @@
-define(["require", "exports", "vs/editor/modes/modes", "vs/base/strings", "vs/base/arrays"], function(a, b, c, d, e) {
-  function i(a, b, c) {
-    var d = a[c];
-    if (d !== "*") return null;
-    if (a.indexOf("*/", c) > -1) return null;
-    var e = null;
-    for (var f = 0; f < b.length; f++) {
-      var h = b[f];
-      if (h.startIndex > c) break;
-      e = h
+define("vs/languages/javascript/jsdoc", ["require", "exports", "vs/editor/modes/modes", "vs/base/strings",
+  "vs/base/arrays"
+], function(e, t, n, i, r) {
+  function o(e, t, n) {
+    var r = e[n];
+    if ("*" !== r) return null;
+    if (e.indexOf("*/", n) > -1) return null;
+    for (var o = null, s = 0; s < t.length; s++) {
+      var a = t[s];
+      if (a.startIndex > n) break;
+      o = a;
     }
-    return e ? g.startsWith(h.type, "comment.doc") ? a.substring(e.startIndex, c) !== "/*" ? null : {
+    return o ? i.startsWith(a.type, "comment.doc") ? "/*" !== e.substring(o.startIndex, n) ? null : {
       appendText: "*/"
-    } : null : null
+    } : null : null;
   }
 
-  function j(a, b, c) {
-    var d = h.findIndexInSegmentsArray(b, c),
-      e = b[d],
-      i, j;
-    return e ? g.startsWith(e.type, "comment.doc") ? (i = a.indexOf("/**"), j = a.indexOf("*/"), i === -1 && j === -1 ? {
-      indentAction: f.IndentAction.None,
+  function s(e, t, n) {
+    var o;
+
+    var s;
+
+    var a = r.findIndexInSegmentsArray(t, n);
+
+    var u = t[a];
+    return u ? i.startsWith(u.type, "comment.doc") ? (o = e.indexOf("/**"), s = e.indexOf("*/"), -1 === o && -1 === s ? {
+      indentAction: 0,
       appendText: "* "
-    } : i !== -1 && i + 3 <= c && j !== -1 && c <= j ? {
-      indentAction: f.IndentAction.IndentOutdent,
+    } : -1 !== o && n >= o + 3 && -1 !== s && s >= n ? {
+      indentAction: 2,
       appendText: " * ",
       indentOutdentAppendText: " "
-    } : i !== -1 && i + 3 <= c ? {
-      indentAction: f.IndentAction.None,
+    } : -1 !== o && n >= o + 3 ? {
+      indentAction: 0,
       appendText: " * "
-    } : null) : null : null
+    } : null) : null : null;
   }
-  var f = c,
-    g = d,
-    h = e;
-  b.onElectricCharacter = i, b.onEnter = j
-})
+  t.onElectricCharacter = o;
+
+  t.onEnter = s;
+});

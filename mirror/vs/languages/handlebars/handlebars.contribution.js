@@ -1,10 +1,7 @@
-define('vs/languages/handlebars/handlebars.contribution', [
-  'require',
-  'exports',
-  'vs/platform/platform',
-  'vs/editor/modes/modesExtensions'
+define("vs/languages/handlebars/handlebars.contribution", ["require", "exports", "vs/platform/platform",
+  "vs/editor/modes/modesExtensions"
 ], function(e, t, n, i) {
   var o = n.Registry.as(i.Extensions.EditorModes);
-  o.registerMode(['text/x-handlebars-template'], new n.DeferredDescriptor('vs/languages/handlebars/handlebars',
-    'HandlebarsMode'));
-})
+  o.registerMode(["text/x-handlebars-template"], new n.DeferredDescriptor("vs/languages/handlebars/handlebars",
+    "HandlebarsMode"));
+});

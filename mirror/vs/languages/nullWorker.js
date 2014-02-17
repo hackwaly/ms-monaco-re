@@ -1,20 +1,23 @@
-/*---------------------------------------------------------
- * Copyright (C) Microsoft Corporation. All rights reserved.
- *--------------------------------------------------------*/
 "use strict";
+
 var __extends = this.__extends || function(e, t) {
     function r() {
-      this.constructor = e
+      this.constructor = e;
     }
     for (var n in t) t.hasOwnProperty(n) && (e[n] = t[n]);
-    r.prototype = t.prototype, e.prototype = new r
+    r.prototype = t.prototype;
+
+    e.prototype = new r;
   };
+
 define("vs/languages/nullWorker", ["require", "exports", "vs/editor/worker/modesWorker"], function(e, t, r) {
   var n = function(e) {
     function t() {
-      e.apply(this, arguments)
+      e.apply(this, arguments);
     }
-    return __extends(t, e), t
+    __extends(t, e);
+
+    return t;
   }(r.AbstractWorkerMode);
-  t.value = new n
+  t.value = new n;
 });

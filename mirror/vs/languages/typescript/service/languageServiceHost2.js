@@ -1,172 +1,208 @@
-var __extends = this.__extends || function(d, b) {
-    for (var p in b)
-      if (b.hasOwnProperty(p)) d[p] = b[p];
-
-    function __() {
-      this.constructor = d;
-    }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-  };
-define(["require", "exports", 'vs/languages/typescript/lib/typescriptServices'], function(require, exports,
-  __typeScriptServices__) {
-  /*---------------------------------------------------------
-   * Copyright (C) Microsoft Corporation. All rights reserved.
-   *--------------------------------------------------------*/
-  'use strict';
-
-
-
-
-  var typeScriptServices = __typeScriptServices__;
-
-  var ConsoleLogger = (function() {
-    function ConsoleLogger() {
+define("vs/languages/typescript/service/languageServiceHost2", ["require", "exports", "vs/base/collections",
+  "vs/base/errors", "vs/languages/typescript/lib/typescriptServices",
+  "vs/languages/typescript/resources/remoteModels"
+], function(e, t, n, r, i, o) {
+  var s = function() {
+    function e() {
       this.logger = console.warn;
     }
-    ConsoleLogger.prototype.information = function() {
+    e.prototype.information = function() {
       this.logger = console.log;
-      return false;
+
+      return !0;
     };
-    ConsoleLogger.prototype.debug = function() {
+
+    e.prototype.debug = function() {
       this.logger = console.log;
-      return false;
+
+      return !0;
     };
-    ConsoleLogger.prototype.warning = function() {
+
+    e.prototype.warning = function() {
       this.logger = console.warn;
-      return true;
+
+      return !0;
     };
-    ConsoleLogger.prototype.error = function() {
+
+    e.prototype.error = function() {
       this.logger = console.error;
-      return true;
+
+      return !0;
     };
-    ConsoleLogger.prototype.fatal = function() {
+
+    e.prototype.fatal = function() {
       this.logger = console.error;
-      return true;
+
+      return !0;
     };
-    ConsoleLogger.prototype.log = function(s) {};
-    return ConsoleLogger;
-  })();
-  exports.ConsoleLogger = ConsoleLogger;
 
-  var MirrorModelSnapshot = (function() {
-    function MirrorModelSnapshot(model) {
-      this.model = model;
+    e.prototype.log = function() {};
 
-      this.versionId = model.versionId;
-      this.open = false;
-
-      this.value = model.getValue();
-      this.length = this.value.length;
-      this.changeRange = new typeScriptServices.TypeScript.TextChangeRange(new typeScriptServices.TypeScript.TextSpan(
-        0, this.length), this.length);
+    return e;
+  }();
+  t.ConsoleLogger = s;
+  var a = function(e) {
+    function t() {
+      e.apply(this, arguments);
     }
-    MirrorModelSnapshot.prototype.getText = function(start, end) {
-      return this.value.substring(start, end);
+    __extends(t, e);
+
+    t.prototype.getDiagnosticsObject = function() {
+      return this;
     };
 
-    MirrorModelSnapshot.prototype.getLength = function() {
-      return this.length;
+    t.prototype.getLocalizedDiagnosticMessages = function() {
+      return null;
     };
 
-    MirrorModelSnapshot.prototype.getLineStartPositions = function() {
-      if (!this.lineStarts) {
-        this.lineStarts = [];
-        for (var i = 0, len = this.model.getLineCount(); i < len; i++) {
-          this.lineStarts.push(this.model.getLineStart(i + 1));
-        }
+    t.prototype.getScriptSnapshot = function() {
+      throw r.notImplemented();
+    };
+
+    t.prototype.resolveRelativePath = function() {
+      throw r.notImplemented();
+    };
+
+    t.prototype.fileExists = function() {
+      throw r.notImplemented();
+    };
+
+    t.prototype.directoryExists = function() {
+      throw r.notImplemented();
+    };
+
+    t.prototype.getParentDirectory = function() {
+      throw r.notImplemented();
+    };
+
+    return t;
+  }(s);
+  t.AbstractLanguageServiceHost = a;
+  var l = function() {
+    function e(e) {
+      this._model = e;
+
+      this._versionId = e.getVersionId();
+
+      this._open = !(e instanceof o.RemoteModel);
+
+      this._value = e.getValue();
+
+      this._length = this._value.length;
+    }
+    Object.defineProperty(e.prototype, "model", {
+      get: function() {
+        return this._model;
+      },
+      enumerable: !0,
+      configurable: !0
+    });
+
+    Object.defineProperty(e.prototype, "versionId", {
+      get: function() {
+        return this._versionId;
+      },
+      enumerable: !0,
+      configurable: !0
+    });
+
+    Object.defineProperty(e.prototype, "open", {
+      get: function() {
+        return this._open;
+      },
+      enumerable: !0,
+      configurable: !0
+    });
+
+    e.prototype.getText = function(e, t) {
+      return this._value.substring(e, t);
+    };
+
+    e.prototype.getLength = function() {
+      return this._length;
+    };
+
+    e.prototype.getLineStartPositions = function() {
+      if (!this._lineStarts) {
+        this._lineStarts = [];
+        for (var e = 0, t = this._model.getLineCount(); t > e; e++) this._lineStarts.push(this._model.getLineStart(e +
+          1));
       }
-      return this.lineStarts;
+      return this._lineStarts;
     };
 
-    MirrorModelSnapshot.prototype.getTextChangeRangeSinceVersion = function(scriptVersion) {
-      return this.changeRange;
+    e.prototype.getTextChangeRangeSinceVersion = function() {
+      return null;
     };
-    return MirrorModelSnapshot;
-  })();
 
-  var LanguageServiceHost = (function(_super) {
-    __extends(LanguageServiceHost, _super);
+    return e;
+  }();
+  t.MirrorModelSnapshot = l;
+  var c = function(e) {
+    function t(t) {
+      e.call(this);
 
-    function LanguageServiceHost() {
-      _super.call(this);
-      this._compilationSettings = new typeScriptServices.TypeScript.CompilationSettings();
+      this._resourceService = t;
+
       this._resourceSet = {};
+
+      this._compilationSettings = new i.CompilationSettings;
     }
-    Object.defineProperty(LanguageServiceHost.prototype, "resourceService", {
-      set: function(service) {
-        this._resourceService = service;
-      },
-      enumerable: true,
-      configurable: true
-    });
+    __extends(t, e);
 
-    Object.defineProperty(LanguageServiceHost.prototype, "resources", {
-      set: function(resources) {
-        var copyResourceSet = {};
-
-        for (var i = 0, len = resources.length; i < len; i++) {
-          var element = resources[i],
-            model = this._resourceService.get(element);
-
-          if (!model) {
-            console.warn(element.toExternal() + ' NOT found');
-            continue;
-          }
-
-          var url = element.toExternal(),
-            versionId = (model).versionId,
-            currentSnapshot = this._resourceSet[url];
-
-          if (currentSnapshot && currentSnapshot.versionId === versionId) {
-            copyResourceSet[url] = currentSnapshot;
-          } else {
-            copyResourceSet[url] = new MirrorModelSnapshot(model);
-          }
-        }
-
-        this._resourceSet = copyResourceSet;
-      },
-      enumerable: true,
-      configurable: true
-    });
-
-    Object.defineProperty(LanguageServiceHost.prototype, "compilationSettings", {
-      set: function(settings) {
-        this._compilationSettings = settings;
-      },
-      enumerable: true,
-      configurable: true
-    });
-
-    LanguageServiceHost.prototype.isScriptFileName = function(fileName) {
-      return this._resourceSet.hasOwnProperty(fileName);
+    t.prototype.updateResources = function(e) {
+      var t = this;
+      e.forEach(function(e) {
+        return t._updateResource(e);
+      });
     };
 
-    LanguageServiceHost.prototype.getCompilationSettings = function() {
+    t.prototype._updateResource = function(e) {
+      var t = e.toExternal();
+
+      var r = this._resourceService.get(e);
+      if (r) {
+        var i = r.getVersionId();
+        n.contains(this._resourceSet, t) && n.lookup(this._resourceSet, t).versionId === i || (this._resourceSet[t] =
+          new l(r));
+      } else console.warn(e.toExternal() + " NOT found");
+
+      delete this._resourceService[t];
+    };
+
+    t.prototype.isScriptFileName = function(e) {
+      return n.contains(this._resourceSet, e);
+    };
+
+    t.prototype.getCompilationSettings = function() {
       return this._compilationSettings;
     };
 
-    LanguageServiceHost.prototype.getScriptFileNames = function() {
-      return Object.keys(this._resourceSet);
+    t.prototype.getScriptFileNames = function() {
+      return n.keys(this._resourceSet);
     };
 
-    LanguageServiceHost.prototype.getScriptVersion = function(fileName) {
-      return this._resourceSet[fileName].versionId;
+    t.prototype.getScriptByteOrderMark = function() {
+      return 1;
     };
 
-    LanguageServiceHost.prototype.getScriptIsOpen = function(fileName) {
-      return this._resourceSet[fileName].open;
+    t.prototype.getScriptVersion = function(e) {
+      return n.lookup(this._resourceSet, e).versionId;
     };
 
-    LanguageServiceHost.prototype.getScriptSnapshot = function(fileName) {
-      return this._resourceSet[fileName];
+    t.prototype.getScriptIsOpen = function(e) {
+      return n.lookup(this._resourceSet, e).open;
     };
 
-    LanguageServiceHost.prototype.getDiagnosticsObject = function() {
-      return this;
+    t.prototype.getScriptSnapshot = function(e) {
+      return n.lookup(this._resourceSet, e);
     };
-    return LanguageServiceHost;
-  })(ConsoleLogger);
-  exports.LanguageServiceHost = LanguageServiceHost;
+
+    t.prototype.getScriptSnapshotByUrl = function(e) {
+      return n.lookup(this._resourceSet, e.toExternal());
+    };
+
+    return t;
+  }(a);
+  t.LanguageServiceHost = c;
 });

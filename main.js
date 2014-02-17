@@ -9,6 +9,8 @@ var gencode = require('escodegen').generate;
 var fs = require('fs');
 var js_beautify = require('js-beautify').js_beautify;
 
+var uglify_js = require('uglify-js');
+
 var PARALLEL_LIMIT = 4;
 var PREFIX = 'http://www.typescriptlang.org/Script/';
 
@@ -37,6 +39,7 @@ function _parseModuleId(moduleId) {
     }
     ret.path = mirrorDir + '/' + moduleId + '.js';
     ret.url = PREFIX + moduleId + '.js';
+    ret.id = moduleId;
     k = ret.path.lastIndexOf('/');
     if (k >= 0) {
         ret.dirs = ret.path.slice(0, k);
@@ -44,6 +47,65 @@ function _parseModuleId(moduleId) {
         ret.dirs = '';
     }
     return ret;
+}
+
+function deobsecure(code) {
+    var ast = uglify_js.parser.parse(code);
+    var w = uglify_js.uglify.ast_walker();
+    var walk = w.walk;
+
+    function exprToStmts(expr, stmts, addReturn) {
+        switch (expr[0]) {
+            case 'seq':
+                expr.slice(1).forEach(function (iExpr, k) {
+                    exprToStmts(walk(iExpr), stmts, addReturn && (k === expr.length - 2));
+                });
+                break;
+            default:
+                stmts.push([addReturn ? 'return' : 'stat', walk(expr)]);
+                break;
+        }
+    }
+
+    ast = w.with_walkers({
+        "var": function (defs) {
+            var p = w.parent();
+            if (p != null && p[0] == 'for') {
+                return ['var', defs];
+            }
+            var stmts = defs.map(function (def) {
+                if (def[1] == null) {
+                    return ['var', [[def[0]]]];
+                }
+                return ['var', [[def[0], walk(def[1])]]];
+            });
+            return ['toplevel', stmts];
+        },
+        "stat": function (expr) {
+            if (expr == null) {
+                return ['stmt'];
+            }
+            var stmts = [];
+            exprToStmts(expr, stmts, false);
+            return ['toplevel', stmts];
+        },
+        "return": function (expr) {
+            if (expr == null) {
+                return ['return'];
+            }
+            var stmts = [];
+            exprToStmts(expr, stmts, true);
+            return ['toplevel', stmts];
+        }
+    }, function () {
+        return walk(ast);
+    });
+    return js_beautify(uglify_js.uglify.gen_code(ast, {
+        beautify: true
+    }), {
+        "indent_size": 2,
+        "wrap_line_length": 120
+    });
 }
 
 var _parseModule = (function () {
@@ -115,12 +177,15 @@ var _parseModule = (function () {
     function extract(moduleId, node) {
         var r = _parseModuleId(moduleId);
         if (r) {
+            var k = moduleSeeds.indexOf(moduleId);
+            if (k >= 0) {
+                moduleSeeds.splice(k, 1);
+            }
+            moduleHash[moduleId] = true;
+
             mkdirpSync(r.dirs);
-            fs.writeFileSync(r.path, js_beautify(gencode(node), {
-                "indent_size": 2,
-                "wrap_line_length": 120
-            }), 'utf-8');
             console.log('extract module: ' + moduleId);
+            fs.writeFileSync(r.path, deobsecure(gencode(node)), 'utf-8');
         }
     }
     return function (text, moduleId) {
@@ -219,11 +284,13 @@ function processModule(moduleId, callback) {
             if (contentType === 'application/x-javascript' ||
                 contentType === 'text/javascript') {
                 _parseModule(body, moduleId);
-                fs.writeFile(result.path, js_beautify(body, {
-                    "indent_size": 2,
-                    "wrap_line_length": 120
-                }), 'utf-8', callback);
                 console.log('found new module: ' + moduleId);
+                // big js cause memery out problem, skip it.
+                if (body.length > 1000000) {
+                    fs.writeFile(result.path, body, 'utf-8', callback);
+                } else {
+                    fs.writeFile(result.path, deobsecure(body), 'utf-8', callback);
+                }
             } else {
                 fs.writeFile(result.path, body, 'utf-8', callback);
             }
@@ -250,3 +317,7 @@ function loop() {
     'vs/languages/javascript/javascript'
 ].forEach(foundModule);
 loop();
+//
+//console.log(
+//    deobsecure(fs.readFileSync(path.join(__dirname, 'mirror', 'vs/languages/typescript/lib/typescriptServices.js'), 'utf-8'))
+//);

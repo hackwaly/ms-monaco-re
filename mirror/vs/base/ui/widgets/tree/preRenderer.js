@@ -1,41 +1,79 @@
-define(["require", "exports", "vs/base/dom/builder"], function(a, b, c) {
-  var d = c,
-    e = d.$,
-    f = function() {
-      function a(a) {
-        this.dataSource = a, this.cache = {}
-      }
-      return a.prototype.getHeight = function(a, b) {
-        var c = this.getKey(a, b),
-          d = this.cache[c] || {}, e = document.createElement("div");
-        e.className = "pre-render", d.cleanupFn = this.renderContents(a, b, e, d.cleanupFn || null);
-        var f = a.withFakeRow(function(a) {
-          a.appendChild(e);
-          var b = a.clientHeight;
-          return a.removeChild(e), b
-        });
-        return d.tree = a, d.element = b, d.container = e, this.cache[c] = d, f
-      }, a.prototype.render = function(a, b, c) {
-        var d = this.getKey(a, b),
-          e = this.cache[d];
-        if (!e) throw new Error("Binding not found.");
-        return c.appendChild(e.container), this.cleanup.bind(this, a, b)
-      }, a.prototype.cleanup = function(a, b) {
-        var c = this.getKey(a, b);
-        this.cleanupBinding(this.cache[c]), delete this.cache[c]
-      }, a.prototype.cleanupBinding = function(a) {
-        a && (a.cleanupFn && (a.cleanupFn(a.tree, a.element), delete a.cleanupFn), a.container && delete a.container,
-          delete a.tree, delete a.element)
-      }, a.prototype.renderContents = function(a, b, c, d) {
-        throw new Error("Implement me.")
-      }, a.prototype.getKey = function(a, b) {
-        return this.dataSource.getId(a, b)
-      }, a.prototype.dispose = function() {
-        var a = this;
-        this.cache && (Object.keys(this.cache).forEach(function(b) {
-          a.cleanupBinding(a.cache[b]), delete a.cache[b]
-        }), delete this.cache)
-      }, a.BINDING = "monaco-tree-actionsRenderer", a
-    }();
-  b.PreRenderer = f
-})
+define("vs/base/ui/widgets/tree/preRenderer", ["require", "exports", "vs/base/dom/builder"], function(e, t, n) {
+  var i = (n.$, function() {
+    function e(e) {
+      this.dataSource = e;
+
+      this.cache = {};
+    }
+    e.prototype.getHeight = function(e, t) {
+      var n = this.getKey(e, t);
+
+      var i = this.cache[n] || {};
+
+      var o = document.createElement("div");
+      o.className = "pre-render";
+
+      i.cleanupFn = this.renderContents(e, t, o, i.cleanupFn || null);
+      var r = e.withFakeRow(function(e) {
+        e.appendChild(o);
+        var t = e.clientHeight;
+        e.removeChild(o);
+
+        return t;
+      });
+      i.tree = e;
+
+      i.element = t;
+
+      i.container = o;
+
+      this.cache[n] = i;
+
+      return r;
+    };
+
+    e.prototype.render = function(e, t, n) {
+      var i = this.getKey(e, t);
+
+      var o = this.cache[i];
+      if (!o) throw new Error("Binding not found.");
+      n.appendChild(o.container);
+
+      return this.cleanup.bind(this, e, t);
+    };
+
+    e.prototype.cleanup = function(e, t) {
+      var n = this.getKey(e, t);
+      this.cleanupBinding(this.cache[n]);
+
+      delete this.cache[n];
+    };
+
+    e.prototype.cleanupBinding = function(e) {
+      e && (e.cleanupFn && (e.cleanupFn(e.tree, e.element), delete e.cleanupFn), e.container && delete e.container,
+        delete e.tree, delete e.element);
+    };
+
+    e.prototype.renderContents = function() {
+      throw new Error("Implement me.");
+    };
+
+    e.prototype.getKey = function(e, t) {
+      return this.dataSource.getId(e, t);
+    };
+
+    e.prototype.dispose = function() {
+      var e = this;
+      this.cache && (Object.keys(this.cache).forEach(function(t) {
+        e.cleanupBinding(e.cache[t]);
+
+        delete e.cache[t];
+      }), delete this.cache);
+    };
+
+    e.BINDING = "monaco-tree-actionsRenderer";
+
+    return e;
+  }());
+  t.PreRenderer = i;
+});

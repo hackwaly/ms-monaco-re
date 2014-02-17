@@ -1,9 +1,5 @@
-define('vs/base/dom/keyboardEvent', [
-  'require',
-  'vs/base/lib/winjs.base',
-  'vs/base/env'
-], function(e, t, n) {
-  'use strict';
+define("vs/base/dom/keyboardEvent", ["require", "vs/base/lib/winjs.base", "vs/base/env"], function(e, t, n) {
+  "use strict";
   var i = function() {
     var e = {
       Backspace: 8,
@@ -77,85 +73,101 @@ define('vs/base/dom/keyboardEvent', [
       F12: 123,
       NumLock: 144,
       ScrollLock: 145,
-      ';': 186,
-      '=': 187,
-      ',': 188,
-      '-': 189,
-      '.': 190,
-      '/': 191,
-      '`': 192,
-      '[': 219,
-      '\\': 220,
-      ']': 221,
-      '\'': 222
+      ";": 186,
+      "=": 187,
+      ",": 188,
+      "-": 189,
+      ".": 190,
+      "/": 191,
+      "`": 192,
+      "[": 219,
+      "\\": 220,
+      "]": 221,
+      "'": 222
     };
-    n.browser.isIE11orEarlier ? e.Meta = 91 : n.browser.isFirefox ? (e['-'] = 109, e['='] = 107, e[';'] = 59, n.browser
-      .isMacintosh && (e.Meta = 224)) : n.browser.isOpera ? (e['-'] = 109, e['='] = 61, e[';'] = 59, n.browser.isMacintosh &&
+    n.browser.isIE11orEarlier ? e.Meta = 91 : n.browser.isFirefox ? (e["-"] = 109, e["="] = 107, e[";"] = 59, n.browser
+      .isMacintosh && (e.Meta = 224)) : n.browser.isOpera ? (e["-"] = 109, e["="] = 61, e[";"] = 59, n.browser.isMacintosh &&
       (e.Meta = 57392)) : n.browser.isWebKit && n.browser.isMacintosh && (e.Meta = 91);
     var t = {};
     ! function() {
-      for (var n in e)
-        e.hasOwnProperty(n) && (t[e[n]] = n);
-    }(), n.browser.isOpera ? (t[189] = '-', t[187] = '=', t[186] = ';') : n.browser.isWebKit && n.browser.isMacintosh &&
-      (t[93] = 'Meta');
+      for (var n in e) e.hasOwnProperty(n) && (t[e[n]] = n);
+    }();
+
+    n.browser.isOpera ? (t[189] = "-", t[187] = "=", t[186] = ";") : n.browser.isWebKit && n.browser.isMacintosh && (
+      t[93] = "Meta");
     var i = function(e, n) {
       return t.hasOwnProperty(e) ? t[e] : n;
-    }, o = null;
-    return o = n.browser.isOpera ? function(e) {
-      return 'keypress' === e.type ? e.which <= 32 ? i(e.keyCode, String.fromCharCode(e.keyCode).toUpperCase()) :
-        String.fromCharCode(e.which).toUpperCase() : i(e.keyCode, 'unknown');
+    };
+
+    var o = null;
+    o = n.browser.isOpera ? function(e) {
+      return "keypress" === e.type ? e.which <= 32 ? i(e.keyCode, String.fromCharCode(e.keyCode).toUpperCase()) :
+        String.fromCharCode(e.which).toUpperCase() : i(e.keyCode, "unknown");
     } : function(e) {
-      return e.charCode ? String.fromCharCode(e.charCode).toUpperCase() : i(e.keyCode, 'unknown');
-    }, {
+      return e.charCode ? String.fromCharCode(e.charCode).toUpperCase() : i(e.keyCode, "unknown");
+    };
+
+    return {
       CHAR_TO_CODE: e,
       CODE_TO_CHAR: t,
       extractKey: o
     };
-  }(),
-    o = t.Class.define(function(e) {
-      if (this.browserEvent = e, this.ctrlKey = e.ctrlKey, this.shiftKey = e.shiftKey, this.altKey = e.altKey, this
-        .metaKey = e.metaKey, this.target = e.target || e.targetNode, this.key = i.extractKey(e), this.ctrlKey =
-        this.ctrlKey || 'Ctrl' === this.key, this.altKey = this.altKey || 'Alt' === this.key, this.shiftKey = this.shiftKey ||
-        'Shift' === this.key, this.metaKey = this.metaKey || 'Meta' === this.key, n.browser.isOpera && n.browser.isMacintosh
-      ) {
-        var t = this.metaKey;
-        this.metaKey = this.ctrlKey, this.ctrlKey = t, 'Ctrl' === this.key ? this.key = 'Meta' : 'Meta' === this.key &&
-          (this.key = 'Ctrl');
-      }
-    }, {
-      preventDefault: function() {
-        this.browserEvent.preventDefault ? this.browserEvent.preventDefault() : this.browserEvent.returnValue = !1;
-      },
-      stopPropagation: function() {
-        this.browserEvent.stopPropagation ? this.browserEvent.stopPropagation() : this.browserEvent.cancelBubble = !
-          0;
-      },
-      clone: function() {
-        var e = this.asString();
-        return {
-          ctrlKey: this.ctrlKey,
-          shiftKey: this.shiftKey,
-          altKey: this.altKey,
-          metaKey: this.metaKey,
-          target: this.target,
-          key: this.key,
-          preventDefault: function() {},
-          stopPropagation: function() {},
-          asString: function() {
-            return e;
-          }
-        };
-      },
-      asString: function() {
-        var e = '';
-        return this.ctrlKey && (e += 'Ctrl'), this.shiftKey && (e += ('' === e ? '' : '-') + 'Shift'), this.altKey &&
-          (e += ('' === e ? '' : '-') + 'Alt'), this.metaKey && (e += ('' === e ? '' : '-') + 'Meta'), this.key &&
-          'Ctrl' !== this.key && 'Shift' !== this.key && 'Alt' !== this.key && 'Meta' !== this.key && (e += ('' ===
-            e ? '' : '-') + this.key), e;
-      }
-    });
+  }();
+
+  var o = t.Class.define(function(e) {
+    if (this.browserEvent = e, this.ctrlKey = e.ctrlKey, this.shiftKey = e.shiftKey, this.altKey = e.altKey, this.metaKey =
+      e.metaKey, this.target = e.target || e.targetNode, this.key = i.extractKey(e), this.ctrlKey = this.ctrlKey ||
+      "Ctrl" === this.key, this.altKey = this.altKey || "Alt" === this.key, this.shiftKey = this.shiftKey ||
+      "Shift" === this.key, this.metaKey = this.metaKey || "Meta" === this.key, n.browser.isOpera && n.browser.isMacintosh
+    ) {
+      var t = this.metaKey;
+      this.metaKey = this.ctrlKey;
+
+      this.ctrlKey = t;
+
+      "Ctrl" === this.key ? this.key = "Meta" : "Meta" === this.key && (this.key = "Ctrl");
+    }
+  }, {
+    preventDefault: function() {
+      this.browserEvent.preventDefault ? this.browserEvent.preventDefault() : this.browserEvent.returnValue = !1;
+    },
+    stopPropagation: function() {
+      this.browserEvent.stopPropagation ? this.browserEvent.stopPropagation() : this.browserEvent.cancelBubble = !0;
+    },
+    clone: function() {
+      var e = this.asString();
+      return {
+        ctrlKey: this.ctrlKey,
+        shiftKey: this.shiftKey,
+        altKey: this.altKey,
+        metaKey: this.metaKey,
+        target: this.target,
+        key: this.key,
+        preventDefault: function() {},
+        stopPropagation: function() {},
+        asString: function() {
+          return e;
+        }
+      };
+    },
+    asString: function() {
+      var e = "";
+      this.ctrlKey && (e += "Ctrl");
+
+      this.shiftKey && (e += ("" === e ? "" : "-") + "Shift");
+
+      this.altKey && (e += ("" === e ? "" : "-") + "Alt");
+
+      this.metaKey && (e += ("" === e ? "" : "-") + "Meta");
+
+      this.key && "Ctrl" !== this.key && "Shift" !== this.key && "Alt" !== this.key && "Meta" !== this.key && (e +=
+        ("" === e ? "" : "-") + this.key);
+
+      return e;
+    }
+  });
   return {
     KEYS: i.CHAR_TO_CODE,
     KeyboardEvent: o
   };
-})
+});

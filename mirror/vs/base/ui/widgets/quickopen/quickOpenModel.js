@@ -1,97 +1,168 @@
-var __extends = this.__extends || function(a, b) {
-    function d() {
-      this.constructor = a
+define("vs/base/ui/widgets/quickopen/quickOpenModel", ["require", "exports", "vs/base/types"], function(e, t, n) {
+  ! function(e) {
+    e[e.PREVIEW = 0] = "PREVIEW";
+
+    e[e.OPEN = 1] = "OPEN";
+  }(t.Mode || (t.Mode = {}));
+  var i = (t.Mode, 0);
+
+  var o = function() {
+    function e() {
+      this.id = (i++).toString();
+
+      this.highlights = [];
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
-    d.prototype = b.prototype, a.prototype = new d
-  };
-define(["require", "exports", "vs/base/types"], function(a, b, c) {
-  var d = c;
-  (function(a) {
-    a[a.PREVIEW = 0] = "PREVIEW", a[a.OPEN = 1] = "OPEN"
-  })(b.Mode || (b.Mode = {}));
-  var e = b.Mode,
-    f = 0,
-    g = function() {
-      function a() {
-        this.id = (f++).toString(), this.highlights = []
-      }
-      return a.prototype.getId = function() {
-        return this.id
-      }, a.prototype.getLabel = function() {
-        return null
-      }, a.prototype.getIcon = function() {
-        return null
-      }, a.prototype.getDescription = function() {
-        return null
-      }, a.prototype.getPath = function() {
-        return null
-      }, a.prototype.setHighlights = function(a) {
-        this.highlights = a
-      }, a.prototype.getHighlights = function() {
-        return this.highlights
-      }, a.prototype.run = function(a) {
-        return !1
-      }, a
-    }();
-  b.QuickOpenEntry = g;
-  var h = function(a) {
-    function b() {
-      a.apply(this, arguments)
+    e.prototype.getId = function() {
+      return this.id;
+    };
+
+    e.prototype.getLabel = function() {
+      return null;
+    };
+
+    e.prototype.getMeta = function() {
+      return null;
+    };
+
+    e.prototype.getIcon = function() {
+      return null;
+    };
+
+    e.prototype.getDescription = function() {
+      return null;
+    };
+
+    e.prototype.getPath = function() {
+      return null;
+    };
+
+    e.prototype.setHighlights = function(e) {
+      this.highlights = e;
+    };
+
+    e.prototype.getHighlights = function() {
+      return this.highlights;
+    };
+
+    e.prototype.run = function() {
+      return !1;
+    };
+
+    return e;
+  }();
+  t.QuickOpenEntry = o;
+  var r = function(e) {
+    function t() {
+      e.apply(this, arguments);
     }
-    return __extends(b, a), b.prototype.getHeight = function() {
-      return 0
-    }, b.prototype.render = function(a, b, c) {
-      return null
-    }, b
-  }(g);
-  b.QuickOpenEntryItem = h;
-  var i = function(a) {
-    function b(b, c, d) {
-      a.call(this), this.entry = b, this.groupLabel = c, this.withBorder = d
+    __extends(t, e);
+
+    t.prototype.getHeight = function() {
+      return 0;
+    };
+
+    t.prototype.render = function() {
+      return null;
+    };
+
+    return t;
+  }(o);
+  t.QuickOpenEntryItem = r;
+  var s = function(e) {
+    function t(t, n, i) {
+      e.call(this);
+
+      this.entry = t;
+
+      this.groupLabel = n;
+
+      this.withBorder = i;
     }
-    return __extends(b, a), b.prototype.getGroupLabel = function() {
-      return this.groupLabel
-    }, b.prototype.setGroupLabel = function(a) {
-      this.groupLabel = a
-    }, b.prototype.showBorder = function() {
-      return this.withBorder
-    }, b.prototype.setShowBorder = function(a) {
-      this.withBorder = a
-    }, b.prototype.getLabel = function() {
-      return this.entry ? this.entry.getLabel() : a.prototype.getLabel.call(this)
-    }, b.prototype.getPath = function() {
-      return this.entry ? this.entry.getPath() : a.prototype.getPath.call(this)
-    }, b.prototype.getIcon = function() {
-      return this.entry ? this.entry.getIcon() : a.prototype.getIcon.call(this)
-    }, b.prototype.getDescription = function() {
-      return this.entry ? this.entry.getDescription() : a.prototype.getDescription.call(this)
-    }, b.prototype.getHighlights = function() {
-      return this.entry ? this.entry.getHighlights() : a.prototype.getHighlights.call(this)
-    }, b.prototype.setHighlights = function(b) {
-      this.entry ? this.entry.setHighlights(b) : a.prototype.setHighlights.call(this, b)
-    }, b.prototype.run = function(b) {
-      return this.entry ? this.entry.run(b) : a.prototype.run.call(this, b)
-    }, b
-  }(g);
-  b.QuickOpenEntryGroup = i;
-  var j = function() {
-    function a() {
-      this._entries = []
+    __extends(t, e);
+
+    t.prototype.getGroupLabel = function() {
+      return this.groupLabel;
+    };
+
+    t.prototype.setGroupLabel = function(e) {
+      this.groupLabel = e;
+    };
+
+    t.prototype.showBorder = function() {
+      return this.withBorder;
+    };
+
+    t.prototype.setShowBorder = function(e) {
+      this.withBorder = e;
+    };
+
+    t.prototype.getLabel = function() {
+      return this.entry ? this.entry.getLabel() : e.prototype.getLabel.call(this);
+    };
+
+    t.prototype.getMeta = function() {
+      return this.entry ? this.entry.getMeta() : e.prototype.getMeta.call(this);
+    };
+
+    t.prototype.getPath = function() {
+      return this.entry ? this.entry.getPath() : e.prototype.getPath.call(this);
+    };
+
+    t.prototype.getIcon = function() {
+      return this.entry ? this.entry.getIcon() : e.prototype.getIcon.call(this);
+    };
+
+    t.prototype.getDescription = function() {
+      return this.entry ? this.entry.getDescription() : e.prototype.getDescription.call(this);
+    };
+
+    t.prototype.getEntry = function() {
+      return this.entry;
+    };
+
+    t.prototype.getHighlights = function() {
+      return this.entry ? this.entry.getHighlights() : e.prototype.getHighlights.call(this);
+    };
+
+    t.prototype.setHighlights = function(t) {
+      this.entry ? this.entry.setHighlights(t) : e.prototype.setHighlights.call(this, t);
+    };
+
+    t.prototype.run = function(t, n) {
+      return this.entry ? this.entry.run(t, n) : e.prototype.run.call(this, t, n);
+    };
+
+    return t;
+  }(o);
+  t.QuickOpenEntryGroup = s;
+  var a = function() {
+    function e() {
+      this._entries = [];
     }
-    return Object.defineProperty(a.prototype, "entries", {
+    Object.defineProperty(e.prototype, "entries", {
       get: function() {
-        return this._entries
+        return this._entries;
+      },
+      set: function(e) {
+        this._entries = e;
       },
       enumerable: !0,
       configurable: !0
-    }), a.prototype.addEntries = function(a) {
-      d.isArray(a) && (this._entries = this._entries.concat(a))
-    }, a.prototype.setEntries = function(a) {
-      d.isArray(a) && (this._entries = a)
-    }, a.prototype.getEntries = function() {
-      return this._entries
-    }, a
+    });
+
+    e.prototype.addEntries = function(e) {
+      n.isArray(e) && (this._entries = this._entries.concat(e));
+    };
+
+    e.prototype.setEntries = function(e) {
+      n.isArray(e) && (this._entries = e);
+    };
+
+    e.prototype.getEntries = function() {
+      return this._entries;
+    };
+
+    return e;
   }();
-  b.QuickOpenModel = j
-})
+  t.QuickOpenModel = a;
+});

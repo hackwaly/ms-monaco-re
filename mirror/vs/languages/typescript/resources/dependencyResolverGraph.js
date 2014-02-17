@@ -1,285 +1,159 @@
-var __extends = this.__extends || function(d, b) {
-    for (var p in b)
-      if (b.hasOwnProperty(p)) d[p] = b[p];
+define("vs/languages/typescript/resources/dependencyResolverGraph", ["require", "exports", "vs/base/lib/winjs.base",
+  "vs/base/strings", "vs/base/env", "vs/base/collections", "vs/base/network", "./remoteModels",
+  "../service/references", "./dependencyResolverFiles", "./dependencyResolver"
+], function(e, t, n, r, i, o, s, a, l, c, u) {
+  var p;
+  ! function(e) {
+    function t(e) {
+      for (var t, n, r = 0, i = {};;) {
+        if (t = e.indexOf(":", r), n = e.indexOf("\n", t + 1), 0 > t || 0 > n) break;
+        i[e.substring(r, t).trim()] = e.substring(t + 1, n).trim();
 
-    function __() {
-      this.constructor = d;
-    }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-  };
-define(["require", "exports", 'vs/base/lib/winjs.base', 'vs/base/strings', 'vs/base/env', 'vs/base/network',
-  'vs/editor/core/model/mirrorModel', './remoteModels', './referenceCollection', '../service/references',
-  './dependencyResolverFiles', 'vs/platform/markers/markers'
-], function(require, exports, __winjs__, __strings__, __env__, __network__, __mirrorModel__, __remoteModels__,
-  __modelListener__, __references__, __dependencyResolverFiles__, __markers__) {
-  /*---------------------------------------------------------
-   * Copyright (C) Microsoft Corporation. All rights reserved.
-   *--------------------------------------------------------*/
-  'use strict';
-
-  var winjs = __winjs__;
-  var strings = __strings__;
-  var env = __env__;
-  var network = __network__;
-  var mirrorModel = __mirrorModel__;
-  var remoteModels = __remoteModels__;
-  var modelListener = __modelListener__;
-  var references = __references__;
-
-  var dependencyResolverFiles = __dependencyResolverFiles__;
-
-  var markers = __markers__;
-
-  var xhr;
-  (function(xhr) {
-    function parseHeader(raw) {
-      var idx1, idx2, offset = 0,
-        result = {};
-
-      while (true) {
-        idx1 = raw.indexOf(':', offset);
-        idx2 = raw.indexOf('\n', idx1 + 1);
-        if (idx1 < 0 || idx2 < 0) {
-          break;
-        }
-
-        result[raw.substring(offset, idx1).trim()] = raw.substring(idx1 + 1, idx2).trim();
-        offset = idx2 + 1;
+        r = n + 1;
       }
-
-      return result;
+      return i;
     }
-    xhr.parseHeader = parseHeader;
 
-    function fetchChunkedData(service, options) {
-      var from = 0,
-        to = -1,
-        c, e, p, elements = [],
-        canceled = false;
+    function r(e, r) {
+      function o(e) {
+        if (p) a("canceled");
 
-      function onData(text) {
-        if (canceled) {
-          e('canceled');
-          return;
+        return void 0;
+        var n = e.indexOf("\r\n\r\n", c);
+        if (-1 !== n) {
+          var r = t(e.substring(c, n));
+
+          var i = Number(r["Content-Length"]);
+          n + 4 + i > e.length || (u.push({
+            header: r,
+            body: e.substr(n + 4, i)
+          }), l(u[u.length - 1]), c = n + 4 + i, o(e));
         }
+      }
+      var s;
 
-        var idx = text.indexOf('\r\n\r\n', from);
+      var a;
 
-        if (idx === -1) {
-          //Not enough data yet
-          return;
-        }
+      var l;
 
-        var header = parseHeader(text.substring(from, idx)),
-          length = Number(header['Content-Length']);
+      var c = 0;
 
-        if (idx + 4 + length > text.length) {
-          //Not enough data yet
-          return;
-        }
+      var u = [];
 
-        elements.push({
-          header: header,
-          body: text.substr(idx + 4, length)
-        });
+      var p = !1;
 
-        // Tell progress listeners
-        p(elements[elements.length - 1]);
+      var h = new n.Promise(function(e, t, n) {
+        s = e;
 
-        from = idx + 4 + length;
+        a = t;
 
-        // Keep going
-        onData(text);
-      };
-
-      var promise = new winjs.Promise(function(_c, _e, _p) {
-        c = _c;
-        e = _e, p = _p;
+        l = n;
       }, function() {
-        canceled = true;
+        p = !0;
+      });
+      e.makeRequest(r).then(function(e) {
+        o(e.responseText);
+
+        s(u);
+      }, function(e) {
+        a(e);
+      }, function(e) {
+        i.browser.isIE10orEarlier || 3 === e.readyState && o(e.responseText);
+      }).done(null, function(e) {
+        a(e);
       });
 
-      service.makeRequest(options).then(function(request) {
-        onData(request.responseText);
-        c(elements);
-      }, function(error) {
-        e(error);
-      }, function(request) {
-        if (env.browser.isIE10) {
-          // IE fails with b i g request
-          return;
-        }
-        if (request.readyState === 3) {
-          onData(request.responseText);
-        }
-      }).done(null, function(error) {
-        // error process data
-        e(error);
-      });
-
-      return promise;
+      return h;
     }
-    xhr.fetchChunkedData = fetchChunkedData;
-  })(xhr || (xhr = {}));
+    e.parseHeader = t;
 
-  var GraphBasedResolver = (function(_super) {
-    __extends(GraphBasedResolver, _super);
+    e.fetchChunkedData = r;
+  }(p || (p = {}));
+  var h = function(e) {
+    function t(t, n, i, o, s) {
+      e.call(this, o, s);
 
-    function GraphBasedResolver() {
-      _super.apply(this, arguments);
+      this._moduleType = t;
+
+      this._basePath = n;
+
+      this._markerService = i;
+
+      this._moduleType = this._moduleType || r.empty;
+
+      this._basePath = this._basePath || r.empty;
     }
-    GraphBasedResolver.prototype.setModuleSystems = function(modules) {
-      this.modules = modules;
-    };
+    __extends(t, e);
 
-    GraphBasedResolver.prototype.onReferenceStateChanged = function(e) {
-      var _this = this;
-      if (typeof this.delayHandle !== 'undefined') {
-        clearTimeout(this.delayHandle);
-      }
-      this.delayHandle = setTimeout(function() {
-        _this.superOnReferenceStateChanged(e);
-      }, 1000);
-    };
-    GraphBasedResolver.prototype.superOnReferenceStateChanged = function(e) {
-      _super.prototype.onReferenceStateChanged.call(this, e);
-    };
+    t.prototype._doFetchDependencies = function(e) {
+      var t;
 
-    // END workaround
-    GraphBasedResolver.prototype.fetchDependencies = function(resource) {
-      var _this = this;
-      if (!resource) {
-        return winjs.Promise.as([]);
-      }
+      var r = this;
 
-      var path = this.requestService.getPath('root', resource);
-      if (!path) {
-        return _super.prototype.fetchDependencies.call(this, resource);
-      }
+      var i = this._requestUrl(e, "typeScriptDependencyGraph");
+      return this._requestService.makeRequest({
+        url: i
+      }).then(function(t) {
+        var n = r._parseGraph(JSON.parse(t.responseText));
 
-      var element = this.resourceService.get(resource);
-      if (!(element instanceof mirrorModel.MirrorModel)) {
-        return winjs.Promise.as([]);
-      }
+        var i = c.collectDependenciesAndErrors(n, e);
 
-      var model = element,
-        cachedResult = this.resourcesFromReferenceState(model);
-
-      if (cachedResult) {
-        return winjs.Promise.as(cachedResult);
-      }
-
-      var url = this.builtRequestUrl(resource, 'typeScriptDependencyGraph'),
-        versionId = model.versionId,
-        referenceState = this.resourceService.getLinked(resource, modelListener.ReferencesState.NAME);
-
-      return this.requestService.makeRequest({
-        url: url
-      }).then(function(request) {
-        // parse graph data
-        var data = JSON.parse(request.responseText),
-          errors = [],
-          graph = _this.parseGraph(data, errors);
-
-        _this.markerService.createPublisher().changeMarkers(resource, GraphBasedResolver.ID, function(accessor) {
-          for (var i = 0, len = errors.length; i < len; i++) {
-            var error = errors[i];
-
-            if (error.referenceType !== 1 << 0) {
-              continue;
-            }
-
-            var url = new network.URL(_this.requestService.getRequestUrl('root', error.path, true)),
-              marker = markers.createTextMarker(markers.Severity.Error, 1, error.message, error.offset, error.length);
-
-            accessor.addMarker(marker);
-          }
+        var s = r._requestService.getPath("root", e);
+        r._markerService.createPublisher().changeMarkers(e, function(e) {
+          o.lookup(i.errors, s, []).forEach(function(t) {
+            return e.addMarker(t);
+          });
         });
 
-        referenceState.setGraph(graph, versionId);
-
-        return _this.resourcesFromGraph(graph, resource);
-      }).then(function(resources) {
-        // fetch missing files
-        var missing = [];
-        for (var i = 0; i < resources.length; i++) {
-          if (!_this.resourceService.contains(resources[i])) {
-            missing.push(_this.requestService.getPath('root', resources[i]));
-          }
-        }
-
-        if (missing.length === 0) {
-          return winjs.Promise.as(resources);
-        }
-
-        return xhr.fetchChunkedData(_this.requestService, {
-          type: 'POST',
-          url: _this.requestService.getRequestUrl('typeScriptFiles'),
+        return i.resources;
+      }).then(function(e) {
+        t = e;
+        for (var i = [], o = 0; o < e.length; o++) r._resourceService.contains(e[o]) || i.push(r._requestService.getPath(
+          "root", e[o]));
+        return 0 === i.length ? n.Promise.as(e) : p.fetchChunkedData(r._requestService, {
+          type: "POST",
+          url: r._requestService.getRequestUrl("typeScriptFiles"),
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json"
           },
-          data: JSON.stringify(missing)
-        }).then(function() {
-          return resources;
-        }, function(err) {
-          return resources;
-        }, function(chunk) {
-          if (typeof chunk.header['IsError'] !== 'undefined') {
-            //TODO - handle error
-            return;
-          }
-
-          var path = chunk.header['Path'],
-            url = new network.URL(_this.requestService.getRequestUrl('root', path, true)),
-            model = new remoteModels.RemoteModel(url, chunk.body);
-
-          if (!_this.resourceService.contains(url)) {
-            _this.resourceService.insert(url, model);
-          }
+          data: JSON.stringify(i)
         });
+      }).then(function() {
+        return t;
+      }, function() {
+        return t;
+      }, function(e) {
+        if ("undefined" == typeof e.header.IsError) {
+          var t = e.header.Path;
+
+          var n = s.URL.fromEncoded(r._requestService.getRequestUrl("root", t, !0));
+
+          var i = new a.RemoteModel(n, e.body);
+          r._resourceService.contains(n) || r._resourceService.insert(n, i);
+        }
       });
     };
 
-    GraphBasedResolver.prototype.builtRequestUrl = function(resource, service) {
-      var path = this.requestService.getPath('root', resource),
-        config = this.modules.getModuleConfiguration(resource);
+    t.prototype._requestUrl = function(e, t) {
+      var n = this._requestService.getPath("root", e);
 
-      var url = strings.format('{0}?type={1}&baseurl={2}', this.requestService.getRequestUrl(service, path),
-        encodeURIComponent(config.moduleType), encodeURIComponent(config.baseurl));
+      var i = [];
+      i.push(this._requestService.getRequestUrl(t, n));
 
-      if (!this.loadRecursively()) {
-        url += '&flat';
-      }
+      i.push(r.format("?type={0}", encodeURIComponent(this._moduleType)));
 
-      return url;
+      i.push(r.format("&baseurl={0}", encodeURIComponent(this._basePath)));
+
+      return i.join(r.empty);
     };
 
-    GraphBasedResolver.prototype.parseGraph = function(data, errorsOut) {
-      var rootRequestUrl = this.requestService.getRequestUrl('root', '', true),
-        indexKeys = Object.keys(data.i);
-
-      for (var i = 0; i < indexKeys.length; i++) {
-        if (data.i[indexKeys[i]].indexOf('error:') !== 0) {
-          data.i[indexKeys[i]] = rootRequestUrl + data.i[indexKeys[i]].substring(1);
-        }
-      }
-
-      var graph = references.Graph.fromJSON(data),
-        nodes = graph.nodes();
-
-      for (var i = 0; i < nodes.length; i++) {
-        var node = nodes[i];
-        if (node.getName().indexOf('error:') === 0) {
-          graph.removeNode(node.getName());
-          errorsOut.push(JSON.parse(node.getName().substring(6)));
-        }
-      }
-
-      return graph;
+    t.prototype._parseGraph = function(e) {
+      for (var t = this._requestService.getRequestUrl("root", "", !0), n = Object.keys(e.i), r = 0; r < n.length; r++)
+        0 !== e.i[n[r]].indexOf("error:") && (e.i[n[r]] = t + e.i[n[r]].substring(1));
+      return l.Graph.fromJSON(e);
     };
-    GraphBasedResolver.ID = 'typescript.graphResolver';
-    return GraphBasedResolver;
-  })(dependencyResolverFiles.FileBasedResolver);
-  exports.GraphBasedResolver = GraphBasedResolver;
+
+    return t;
+  }(u.AbstractDependencyResolver);
+  t.GraphBasedResolver = h;
 });
