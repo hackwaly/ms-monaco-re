@@ -54,15 +54,26 @@ function deobsecure(code) {
     var w = uglify_js.uglify.ast_walker();
     var walk = w.walk;
 
-    function exprToStmts(expr, stmts, addReturn) {
+    function exprToStmts(expr, stmts, addReturn, notExpr) {
         switch (expr[0]) {
             case 'seq':
                 expr.slice(1).forEach(function (iExpr, k) {
-                    exprToStmts(walk(iExpr), stmts, addReturn && (k === expr.length - 2));
+                    exprToStmts(iExpr, stmts, addReturn && (k === expr.length - 2), notExpr);
                 });
                 break;
             default:
-                stmts.push([addReturn ? 'return' : 'stat', walk(expr)]);
+                if (notExpr && expr[0] == 'binary' && (
+                    expr[1] == '&&' || expr[1] == '||')) {
+                    var testExpr = expr[2];
+                    if (expr[1] == '||') {
+                        testExpr = ['unary-prefix', '!', testExpr];
+                    }
+                    var ifBlockStmts = [];
+                    exprToStmts(expr[3], ifBlockStmts, false, true);
+                    stmts.push(['if', testExpr, ['block', ifBlockStmts]]);
+                } else {
+                    stmts.push([addReturn ? 'return' : 'stat', walk(expr)]);
+                }
                 break;
         }
     }
@@ -86,7 +97,7 @@ function deobsecure(code) {
                 return ['stmt'];
             }
             var stmts = [];
-            exprToStmts(expr, stmts, false);
+            exprToStmts(expr, stmts, false, true);
             var p = w.parent();
             var needBlock = p != null && (
                 p[0] == 'if' ||
@@ -101,7 +112,7 @@ function deobsecure(code) {
                 return ['return'];
             }
             var stmts = [];
-            exprToStmts(expr, stmts, true);
+            exprToStmts(expr, stmts, true, false);
             var p = w.parent();
             var needBlock = p != null && (
                 p[0] == 'if' ||
@@ -330,8 +341,8 @@ function loop() {
     'vs/languages/typescript/typescript',
     'vs/languages/javascript/javascript'
 ].forEach(foundModule);
-loop();
-//
-//console.log(
-//    deobsecure(fs.readFileSync(path.join(__dirname, 'mirror', 'vs/base/collections.js'), 'utf-8'))
-//);
+//loop();
+
+console.log(
+    deobsecure(fs.readFileSync(path.join(__dirname, 'mirror', 'vs/base/ui/scrollbar/abstractScrollbar.js'), 'utf-8'))
+);
