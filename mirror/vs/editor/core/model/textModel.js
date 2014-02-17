@@ -71,9 +71,12 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
     t.prototype.getValueInRange = function(e, t) {
       "undefined" == typeof t && (t = 0);
       var n = this.validateRange(e);
-      if (n.isEmpty()) return "";
-      if (n.startLineNumber === n.endLineNumber) return this._lines[n.startLineNumber - 1].text.substring(n.startColumn -
-        1, n.endColumn - 1);
+      if (n.isEmpty()) {
+        return "";
+      }
+      if (n.startLineNumber === n.endLineNumber) {
+        return this._lines[n.startLineNumber - 1].text.substring(n.startColumn - 1, n.endColumn - 1);
+      }
       var i = this._getEndOfLine(t);
 
       var o = n.startLineNumber - 1;
@@ -82,7 +85,9 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
 
       var s = [];
       s.push(this._lines[o].text.substring(n.startColumn - 1));
-      for (var a = o + 1; r > a; a++) s.push(this._lines[a].text);
+      for (var a = o + 1; r > a; a++) {
+        s.push(this._lines[a].text);
+      }
       s.push(this._lines[r].text.substring(0, n.endColumn - 1));
 
       return s.join(i);
@@ -100,9 +105,10 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
       var r = 0;
 
       var s = this._lines;
-      for (t = 0, n = this._lines.length; n > t; t++) i = s[t].text.length;
-
-      i >= e ? r += i : o += i;
+      for (t = 0, n = this._lines.length; n > t; t++) {
+        i = s[t].text.length;
+        i >= e ? r += i : o += i;
+      }
       return r > o;
     };
 
@@ -144,8 +150,9 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
       var _ = [];
       for (e = 0, t = p.length; t > e; e++) {
         for (s = p[e].text, a = !1, u = 0, h = 0, l = 0, n = 0, i = s.length; i > n; n++)
-          if (o = s.charCodeAt(n), o === d) l++;
-          else {
+          if (o = s.charCodeAt(n), o === d) {
+            l++;
+          } else {
             if (o !== c) {
               a = !0;
 
@@ -157,19 +164,20 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
         if (1 === h && (h = 0), (l > 0 || h > 0) && (f++, l > 0 && y++, h > 0 && (_[h] = (_[h] || 0) + 1)), a) {
           h = 0;
           var b = !0;
-          for (n = 0; m > n && u > n; n++) r = g.charCodeAt(n);
-
-          o = s.charCodeAt(n);
-
-          b && r !== o && (b = !1);
-
-          b || (r === c && h++, o === c && h++);
-          for (; m > n; n++) r = g.charCodeAt(n);
-
-          r === c && h++;
-          for (; u > n; n++) o = s.charCodeAt(n);
-
-          o === c && h++;
+          for (n = 0; m > n && u > n; n++) {
+            r = g.charCodeAt(n);
+            o = s.charCodeAt(n);
+            b && r !== o && (b = !1);
+            b || (r === c && h++, o === c && h++);
+          }
+          for (; m > n; n++) {
+            r = g.charCodeAt(n);
+            r === c && h++;
+          }
+          for (; u > n; n++) {
+            o = s.charCodeAt(n);
+            o === c && h++;
+          }
           1 === h && (h = 0);
 
           h > 0 && (v[h] = (v[h] || 0) + 1);
@@ -203,15 +211,21 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
       var a = i.relativeSpaceCounts;
 
       var u = 0;
-      for (t = 1, n = s.length; n > t; t++) u += s[t] || 0;
-      if (r >= u) return {
-        insertSpaces: !1,
-        tabSize: e
-      };
-      if (6 > o && r > 0) return {
-        insertSpaces: !1,
-        tabSize: e
-      };
+      for (t = 1, n = s.length; n > t; t++) {
+        u += s[t] || 0;
+      }
+      if (r >= u) {
+        return {
+          insertSpaces: !1,
+          tabSize: e
+        };
+      }
+      if (6 > o && r > 0) {
+        return {
+          insertSpaces: !1,
+          tabSize: e
+        };
+      }
       var l;
 
       var c;
@@ -223,15 +237,18 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
       var p = [];
       for (l = 2, n = s.length; n > l; l++)
         if (s[l]) {
-          for (c = 0, d = 0, h = l; n > h; h += l) s[h] ? c += s[h] : d += l / h;
+          for (c = 0, d = 0, h = l; n > h; h += l) {
+            s[h] ? c += s[h] : d += l / h;
+          }
           p[l] = c / (1 + d);
         }
       var f = 1;
 
       var g = 0;
-      for (l = Math.max(a.length, p.length); l >= 2; l--) c = (p[l] || 0) + (a[l] || 0);
-
-      c > g && (f = l, g = c);
+      for (l = Math.max(a.length, p.length); l >= 2; l--) {
+        c = (p[l] || 0) + (a[l] || 0);
+        c > g && (f = l, g = c);
+      }
       return {
         insertSpaces: !0,
         tabSize: f
@@ -304,7 +321,9 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
     };
 
     t._splitText = function(e) {
-      for (var t = 0, n = -1; - 1 !== (n = e.indexOf("\r\n", n + 1));) t++;
+      for (var t = 0, n = -1; - 1 !== (n = e.indexOf("\r\n", n + 1));) {
+        t++;
+      }
       var i = e.split(/\r?\n/);
 
       var r = "";
@@ -314,7 +333,9 @@ define("vs/editor/core/model/textModel", ["require", "exports", "vs/base/eventEm
       var a;
 
       var u = [];
-      for (s = 0, a = i.length; a > s; s++) u.push(new o.ModelLine(s + 1, i[s]));
+      for (s = 0, a = i.length; a > s; s++) {
+        u.push(new o.ModelLine(s + 1, i[s]));
+      }
       var c = u.length - 1;
 
       var d = "";

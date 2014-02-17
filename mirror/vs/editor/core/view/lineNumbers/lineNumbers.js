@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -109,7 +111,9 @@ define(["require", "exports", "vs/editor/core/view/viewContext", "vs/editor/core
 
     b.prototype.actualRender = function(a) {
       var b = [];
-      if (!this.context.configuration.editor.lineNumbers) return b;
+      if (!this.context.configuration.editor.lineNumbers) {
+        return b;
+      }
       var c;
 
       var d;
@@ -130,18 +134,14 @@ define(["require", "exports", "vs/editor/core/view/viewContext", "vs/editor/core
       b.push(a.scrollHeight.toString());
 
       b.push('px;">');
-      for (d = a.visibleRange.startLineNumber; d <= a.visibleRange.endLineNumber; d++) c = a.getViewportVerticalOffsetForLineNumber(
-        d);
-
-      b.push('<div style="top:');
-
-      b.push(c.toString());
-
-      b.push('px;">');
-
-      b.push(this.context.model.getLineRenderLineNumber(d));
-
-      b.push("</div>");
+      for (d = a.visibleRange.startLineNumber; d <= a.visibleRange.endLineNumber; d++) {
+        c = a.getViewportVerticalOffsetForLineNumber(d);
+        b.push('<div style="top:');
+        b.push(c.toString());
+        b.push('px;">');
+        b.push(this.context.model.getLineRenderLineNumber(d));
+        b.push("</div>");
+      }
       b.push("</div>");
 
       return b;

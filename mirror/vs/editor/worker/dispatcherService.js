@@ -10,8 +10,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/base/types", "vs/bas
       this.table = {};
     }
     a.prototype.register = function(a) {
-      if (g.isString(a)) this.table[a] = arguments[1];
-      else
+      if (g.isString(a)) {
+        this.table[a] = arguments[1];
+      } else
         for (var b in a) {
           var c = a[b];
           g.isFunction(c) && (this.table[b] = c.bind(a));
@@ -19,7 +20,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/base/types", "vs/bas
     };
 
     a.prototype.dispatch = function(a) {
-      if (!this.table[a.type]) return f.Promise.wrapError(new Error("no handler/route for: " + a.type));
+      if (!this.table[a.type]) {
+        return f.Promise.wrapError(new Error("no handler/route for: " + a.type));
+      }
       try {
         var b = this.deserialize(a.payload);
 

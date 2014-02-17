@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -269,7 +271,9 @@ define(["require", "exports", "vs/nls", "vs/base/env", "vs/base/network", "vs/ba
         column: d.column
       };
       return c.findDeclaration(b.getAssociatedResource(), e).then(function(b) {
-        if (!b || !b.preview) return z.Promise.as(null);
+        if (!b || !b.preview) {
+          return z.Promise.as(null);
+        }
         var c = {
           path: a.requestService.getPath("root", new v.URL(b.resourceUrl))
         };
@@ -437,9 +441,13 @@ define(["require", "exports", "vs/nls", "vs/base/env", "vs/base/network", "vs/ba
               endLineNumber: e.lineNumber,
               endColumn: f.endColumn
             }, g);
-          } else d.removeDecorations();
+          } else {
+            d.removeDecorations();
+          }
         }, y.onUnexpectedError);
-      } else this.removeDecorations();
+      } else {
+        this.removeDecorations();
+      }
     };
 
     a.prototype.addDecoration = function(a, b) {
@@ -464,7 +472,9 @@ define(["require", "exports", "vs/nls", "vs/base/env", "vs/base/network", "vs/ba
     a.prototype.removeDecorations = function() {
       var a = this;
       this.decorations.length > 0 && (this.editor.changeDecorations(function(b) {
-        for (var c = 0, d = a.decorations.length; c < d; c++) b.removeDecoration(a.decorations[c]);
+        for (var c = 0, d = a.decorations.length; c < d; c++) {
+          b.removeDecoration(a.decorations[c]);
+        }
       }), this.decorations = []);
 
       this.currentWordUnderMouse = null;
@@ -515,7 +525,7 @@ define(["require", "exports", "vs/nls", "vs/base/env", "vs/base/network", "vs/ba
         var d = a.position;
 
         var e = b.editor.getModel().getWordAtPosition(d, !1);
-        if (c && c.range && (c.range.startColumn !== e.startColumn || c.range.startLineNumber !== a.position.lineNumber))
+        if (c && c.range && (c.range.startColumn !== e.startColumn || c.range.startLineNumber !== a.position.lineNumber)) {
           return b.editorService.openEditor({
             path: b.requestService.getPath("root", new v.URL(c.resourceUrl)),
             options: {
@@ -527,6 +537,7 @@ define(["require", "exports", "vs/nls", "vs/base/env", "vs/base/network", "vs/ba
               }
             }
           });
+        }
       });
     };
 
@@ -535,7 +546,9 @@ define(["require", "exports", "vs/nls", "vs/base/env", "vs/base/network", "vs/ba
     };
 
     a.prototype.dispose = function() {
-      while (this.toUnhook.length > 0) this.toUnhook.pop()();
+      while (this.toUnhook.length > 0) {
+        this.toUnhook.pop()();
+      }
     };
 
     a.ID = "editor.contrib.gotodefinitionwithmouse";

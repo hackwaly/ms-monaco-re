@@ -81,14 +81,20 @@ function deobsecure(code) {
             });
             return ['toplevel', stmts];
         },
-        // FIXME: handle case of `if (x) expr_stmt`;
         "stat": function (expr) {
             if (expr == null) {
                 return ['stmt'];
             }
             var stmts = [];
             exprToStmts(expr, stmts, false);
-            return ['toplevel', stmts];
+            var p = w.parent();
+            var needBlock = p != null && (
+                p[0] == 'if' ||
+                p[0] == 'while' ||
+                p[0] == 'do' ||
+                p[0] == 'for' ||
+                p[0] == 'for-in');
+            return [needBlock ? 'block' : 'toplevel', stmts];
         },
         "return": function (expr) {
             if (expr == null) {
@@ -96,7 +102,14 @@ function deobsecure(code) {
             }
             var stmts = [];
             exprToStmts(expr, stmts, true);
-            return ['toplevel', stmts];
+            var p = w.parent();
+            var needBlock = p != null && (
+                p[0] == 'if' ||
+                p[0] == 'while' ||
+                p[0] == 'do' ||
+                p[0] == 'for' ||
+                p[0] == 'for-in');
+            return [needBlock ? 'block' : 'toplevel', stmts];
         }
     }, function () {
         return walk(ast);
@@ -320,5 +333,5 @@ function loop() {
 loop();
 //
 //console.log(
-//    deobsecure(fs.readFileSync(path.join(__dirname, 'mirror', 'vs/languages/typescript/lib/typescriptServices.js'), 'utf-8'))
+//    deobsecure(fs.readFileSync(path.join(__dirname, 'mirror', 'vs/base/collections.js'), 'utf-8'))
 //);

@@ -41,15 +41,17 @@ define("vs/languages/typescript/lint/rules/typescript", ["require", "exports", "
 
     e.prototype._couldMeanTripleSlash = function(t) {
       var r = t.fullText();
-      if (e._TripleSlashReference.test(r)) return !1;
+      if (e._TripleSlashReference.test(r)) {
+        return !1;
+      }
       var i = r.split(/[\s=]/);
       if (!(i.length > 5)) {
-        for (var o = 0, s = 0, a = 0, l = 0, c = i.length; c > l; l++) o = Math.max(o, n.difference("reference", i[l]));
-
-        s = Math.max(s, n.difference("path", i[l]));
-
-        a = Math.max(a, (n.startsWith(i[l], '"') || n.startsWith(i[l], "'") ? 1 : 0) + (n.endsWith(i[l], '"') || n.endsWith(
-          i[l], "'") ? 1 : 0));
+        for (var o = 0, s = 0, a = 0, l = 0, c = i.length; c > l; l++) {
+          o = Math.max(o, n.difference("reference", i[l]));
+          s = Math.max(s, n.difference("path", i[l]));
+          a = Math.max(a, (n.startsWith(i[l], '"') || n.startsWith(i[l], "'") ? 1 : 0) + (n.endsWith(i[l], '"') || n.endsWith(
+            i[l], "'") ? 1 : 0));
+        }
         return (a > 0 || s > 5) && o > 5 ? !0 : !1;
       }
     };

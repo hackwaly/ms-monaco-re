@@ -41,10 +41,10 @@ define("vs/editor/contrib/referenceSearch/referenceSearchWidget", ["require", "e
       var e = this.editor.getModel();
       if (e)
         for (var t = 0, n = this.model.children.length; n > t; t++)
-          if (this.model.children[t].resource.equals(e.getAssociatedResource())) this.addDecorations(this.model.children[
-            t]);
-
-      return void 0;
+          if (this.model.children[t].resource.equals(e.getAssociatedResource())) {
+            this.addDecorations(this.model.children[t]);
+            return void 0;
+          }
     };
 
     e.prototype.addDecorations = function(t) {
@@ -72,8 +72,9 @@ define("vs/editor/contrib/referenceSearch/referenceSearchWidget", ["require", "e
 
           var l = !1;
           if (!g.equalsRange(u, a.range)) {
-            if (g.spansMultipleLines(u)) l = !0;
-            else {
+            if (g.spansMultipleLines(u)) {
+              l = !0;
+            } else {
               var c = a.range.endColumn - a.range.startColumn;
 
               var d = u.endColumn - u.startColumn;
@@ -96,7 +97,9 @@ define("vs/editor/contrib/referenceSearch/referenceSearchWidget", ["require", "e
     e.prototype.removeDecorations = function() {
       var e = this;
       this.editor.changeDecorations(function(t) {
-        for (var n = Object.keys(e.decorationSet); n.length > 0;) t.removeDecoration(n.pop());
+        for (var n = Object.keys(e.decorationSet); n.length > 0;) {
+          t.removeDecoration(n.pop());
+        }
       });
 
       this.decorationSet = {};
@@ -145,11 +148,11 @@ define("vs/editor/contrib/referenceSearch/referenceSearchWidget", ["require", "e
     __extends(t, e);
 
     t.prototype.onClick = function(n, i, o) {
-      if (i instanceof w.FileReferences) o.preventDefault();
-
-      o.stopPropagation();
-
-      return this.expandCollapse(n, i);
+      if (i instanceof w.FileReferences) {
+        o.preventDefault();
+        o.stopPropagation();
+        return this.expandCollapse(n, i);
+      }
       var r = e.prototype.onClick.call(this, n, i, o);
       o.ctrlKey || o.metaKey ? n.emit(t.Events.OPEN_TO_SIDE, i) : n.emit(2 === o.detail ? t.Events.SELECTED : t.Events
         .FOCUSED, i);
@@ -169,7 +172,9 @@ define("vs/editor/contrib/referenceSearch/referenceSearchWidget", ["require", "e
 
     t.prototype.onEnter = function(n, i) {
       var o = n.getFocus();
-      if (o instanceof w.FileReferences) return this.expandCollapse(n, o);
+      if (o instanceof w.FileReferences) {
+        return this.expandCollapse(n, o);
+      }
       var r = e.prototype.onEnter.call(this, n, i);
       i.ctrlKey || i.metaKey ? n.emit(t.Events.OPEN_TO_SIDE, o) : n.emit(t.Events.SELECTED, o);
 
@@ -466,10 +471,14 @@ define("vs/editor/contrib/referenceSearch/referenceSearchWidget", ["require", "e
 
     t.prototype.getFocusedReference = function() {
       var e = this.tree.getFocus();
-      if (e instanceof w.OneReference) return e.resource;
+      if (e instanceof w.OneReference) {
+        return e.resource;
+      }
       if (e instanceof w.FileReferences) {
         var t = e;
-        if (t.children.length > 0) return t.children[0].resource;
+        if (t.children.length > 0) {
+          return t.children[0].resource;
+        }
       }
       return null;
     };

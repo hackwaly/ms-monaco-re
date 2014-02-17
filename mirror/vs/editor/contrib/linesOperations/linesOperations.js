@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -39,7 +41,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
       var a = [];
 
       var b = this.editor.getSelections();
-      for (var c = 0; c < b.length; c++) a.push(new p.CopyLinesCommand(b[c], this.down));
+      for (var c = 0; c < b.length; c++) {
+        a.push(new p.CopyLinesCommand(b[c], this.down));
+      }
       this.editor.executeCommands(this.id, a);
 
       return l.Promise.as(null);
@@ -82,7 +86,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
       var a = [];
 
       var b = this.editor.getSelections();
-      for (var c = 0; c < b.length; c++) a.push(new r.MoveLinesCommand(b[c], this.down));
+      for (var c = 0; c < b.length; c++) {
+        a.push(new r.MoveLinesCommand(b[c], this.down));
+      }
       this.editor.executeCommands(this.id, a);
 
       return l.Promise.as(null);
@@ -123,7 +129,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
       var a = [];
 
       var b = this.editor.getSelections();
-      for (var c = 0; c < b.length; c++) a.push(new q.DeleteLinesCommand(b[c]));
+      for (var c = 0; c < b.length; c++) {
+        a.push(new q.DeleteLinesCommand(b[c]));
+      }
       this.editor.executeCommands(this.id, a);
 
       return l.Promise.as(null);

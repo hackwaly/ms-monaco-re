@@ -119,8 +119,9 @@ define("vs/languages/typescript/resources/dependencyResolver", ["require", "expo
     };
 
     e.prototype._computeState = function(e) {
-      for (var t = l.collect(e.getValue()), n = 11, r = 0, o = t.length; o > r; r++) n = i.combine(i.computeMurmur2StringHashCode(
-        t[r].path) + 59 * t[r].offset + 61 * t[r].length, n);
+      for (var t = l.collect(e.getValue()), n = 11, r = 0, o = t.length; o > r; r++) {
+        n = i.combine(i.computeMurmur2StringHashCode(t[r].path) + 59 * t[r].offset + 61 * t[r].length, n);
+      }
       return n;
     };
 

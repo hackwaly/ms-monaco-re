@@ -63,7 +63,9 @@ define(["require", "exports", "vs/platform/platform", "vs/editor/core/constants"
     a.prototype._removeDecorations = function() {
       var a = this;
       this._decorationIds.length > 0 && (this.editor.changeDecorations(function(b) {
-        for (var c = 0, d = a._decorationIds.length; c < d; c++) b.removeDecoration(a._decorationIds[c]);
+        for (var c = 0, d = a._decorationIds.length; c < d; c++) {
+          b.removeDecoration(a._decorationIds[c]);
+        }
       }), this._decorationIds = []);
     };
 
@@ -121,9 +123,10 @@ define(["require", "exports", "vs/platform/platform", "vs/editor/core/constants"
         m && m.startLineNumber === d && m.startColumn <= e && m.endColumn >= f && (j = !0);
       }
       this.lastCursorPositionChangeTime = (new Date).getTime();
-      if (j) this.workerRequestCompleted && this.renderDecorationsTimer !== -1 && (window.clearTimeout(this.renderDecorationsTimer),
-        this.renderDecorationsTimer = -1, this._beginRenderDecorations());
-      else {
+      if (j) {
+        this.workerRequestCompleted && this.renderDecorationsTimer !== -1 && (window.clearTimeout(this.renderDecorationsTimer),
+          this.renderDecorationsTimer = -1, this._beginRenderDecorations());
+      } else {
         this._stopAll();
         var n = ++this.workerRequestTokenId;
         this.workerRequestCompleted = !1;
@@ -175,7 +178,9 @@ define(["require", "exports", "vs/platform/platform", "vs/editor/core/constants"
 
     a.prototype.destroy = function() {
       this._stopAll();
-      while (this.toUnhook.length > 0) this.toUnhook.pop()();
+      while (this.toUnhook.length > 0) {
+        this.toUnhook.pop()();
+      }
     };
 
     return a;

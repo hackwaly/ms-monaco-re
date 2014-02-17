@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -67,16 +69,15 @@ define(["require", "exports", "vs/editor/core/position", "vs/editor/core/constan
       this.wholeWord = !1;
 
       this.listenersToRemove.push(this.editor.addListener(j.EventType.CursorPositionChanged, function(a) {
-        if (a.reason === "explicit" || a.reason === "undo" || a.reason === "redo") c.highlightedDecorationId !==
-          null && c.editor.changeDecorations(function(a) {
+        if (a.reason === "explicit" || a.reason === "undo" || a.reason === "redo") {
+          c.highlightedDecorationId !== null && c.editor.changeDecorations(function(a) {
             a.changeDecorationOptions(c.highlightedDecorationId, c.createFindMatchDecorationOptions(!1));
 
             c.highlightedDecorationId = null;
           });
-
-        c.startPosition = c.editor.getPosition();
-
-        c.decorationIndex = -1;
+          c.startPosition = c.editor.getPosition();
+          c.decorationIndex = -1;
+        }
       }));
 
       this.listenersToRemove.push(this.editor.getModel().addListener(j.EventType.ModelContentChanged, function(a) {
@@ -107,7 +108,9 @@ define(["require", "exports", "vs/editor/core/position", "vs/editor/core/constan
       var b;
 
       var c;
-      for (b = 0, c = this.decorations.length; b < c; b++) a.removeDecoration(this.decorations[b]);
+      for (b = 0, c = this.decorations.length; b < c; b++) {
+        a.removeDecoration(this.decorations[b]);
+      }
       this.decorations = [];
     };
 
@@ -123,8 +126,9 @@ define(["require", "exports", "vs/editor/core/position", "vs/editor/core/constan
       var c;
 
       var d;
-      for (c = 0, d = b.length; c < d; c++) this.decorations[c] = a.addDecoration(b[c], this.createFindMatchDecorationOptions(!
-        1));
+      for (c = 0, d = b.length; c < d; c++) {
+        this.decorations[c] = a.addDecoration(b[c], this.createFindMatchDecorationOptions(!1));
+      }
     };
 
     b.prototype.updateDecorations = function(a) {
@@ -223,7 +227,9 @@ define(["require", "exports", "vs/editor/core/position", "vs/editor/core/constan
     };
 
     b.prototype.getReplaceString = function(a) {
-      if (!this.isRegex) return this.replaceString;
+      if (!this.isRegex) {
+        return this.replaceString;
+      }
       var b = k.createRegExp(this.searchString, this.isRegex, this.matchCase, this.wholeWord);
       return a.replace(b, this.replaceString);
     };
@@ -249,7 +255,9 @@ define(["require", "exports", "vs/editor/core/position", "vs/editor/core/constan
         this.decorationIndex = -1;
 
         this.didReplace = !0;
-      } else this.next();
+      } else {
+        this.next();
+      }
     };
 
     b.prototype.replaceAll = function() {
@@ -258,12 +266,16 @@ define(["require", "exports", "vs/editor/core/position", "vs/editor/core/constan
       var b = this.editor.getModel();
 
       var c = [];
-      for (var d = 0, e = this.decorations.length; d < e; d++) c.push(b.getDecorationRange(this.decorations[d]));
+      for (var d = 0, e = this.decorations.length; d < e; d++) {
+        c.push(b.getDecorationRange(this.decorations[d]));
+      }
       this.editor.changeDecorations(function(b) {
         a.removeOldDecorations(b);
       });
       var f = [];
-      for (var d = 0, e = c.length; d < e; d++) f.push(this.getReplaceString(b.getValueInRange(c[d])));
+      for (var d = 0, e = c.length; d < e; d++) {
+        f.push(this.getReplaceString(b.getValueInRange(c[d])));
+      }
       var g = new m.ReplaceAllCommand(c, f);
       this.editor.executeCommand("replaceAll", g);
     };
@@ -292,13 +304,17 @@ define(["require", "exports", "vs/editor/core/position", "vs/editor/core/constan
     };
 
     b.prototype.indexAfterPosition = function(a) {
-      if (this.decorations.length === 0) return 0;
+      if (this.decorations.length === 0) {
+        return 0;
+      }
       for (var b = 0, c = this.decorations.length; b < c; b++) {
         var d = this.decorations[b];
 
         var e = this.editor.getModel().getDecorationRange(d);
         if (e.startLineNumber < a.lineNumber) continue;
-        if (e.startLineNumber > a.lineNumber) return b;
+        if (e.startLineNumber > a.lineNumber) {
+          return b;
+        }
         if (e.startColumn < a.column) continue;
         return b;
       }

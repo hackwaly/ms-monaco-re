@@ -15,8 +15,10 @@ define("vs/editor/core/view/model/viewModelCursors", ["require", "exports", "vs/
       if (this.lastCursorSelectionChangedEvent) {
         var e = [];
         e.push(this.converter.convertModelSelectionToViewSelection(this.lastCursorSelectionChangedEvent.selection));
-        for (var t = 0, n = this.lastCursorSelectionChangedEvent.secondarySelections.length; n > t; t++) e.push(this.converter
-          .convertModelSelectionToViewSelection(this.lastCursorSelectionChangedEvent.secondarySelections[t]));
+        for (var t = 0, n = this.lastCursorSelectionChangedEvent.secondarySelections.length; n > t; t++) {
+          e.push(this.converter.convertModelSelectionToViewSelection(this.lastCursorSelectionChangedEvent.secondarySelections[
+            t]));
+        }
         return e;
       }
       return [new i.Selection(1, 1, 1, 1)];
@@ -28,10 +30,10 @@ define("vs/editor/core/view/model/viewModelCursors", ["require", "exports", "vs/
 
       var i = this.configuration.editor.stopRenderingLineAfter; - 1 !== i && n.column > i && (n = n.clone(), n.column =
         i);
-      for (var r = [], s = 0, a = e.secondaryPositions.length; a > s; s++) r[s] = this.converter.validateViewPosition(
-        e.secondaryViewPositions[s].lineNumber, e.secondaryViewPositions[s].column, e.secondaryPositions[s]);
-
-      - 1 !== i && r[s].column > i && (r[s] = r[s].clone(), r[s].column = i);
+      for (var r = [], s = 0, a = e.secondaryPositions.length; a > s; s++) {
+        r[s] = this.converter.validateViewPosition(e.secondaryViewPositions[s].lineNumber, e.secondaryViewPositions[s]
+          .column, e.secondaryPositions[s]); - 1 !== i && r[s].column > i && (r[s] = r[s].clone(), r[s].column = i);
+      }
       var u = {
         position: n,
         secondaryPositions: r,
@@ -43,7 +45,9 @@ define("vs/editor/core/view/model/viewModelCursors", ["require", "exports", "vs/
     e.prototype.onCursorSelectionChanged = function(e, t) {
       this.lastCursorSelectionChangedEvent = e;
       for (var n = this.converter.convertModelSelectionToViewSelection(e.selection), i = [], r = 0, s = e.secondarySelections
-          .length; s > r; r++) i[r] = this.converter.convertModelSelectionToViewSelection(e.secondarySelections[r]);
+          .length; s > r; r++) {
+        i[r] = this.converter.convertModelSelectionToViewSelection(e.secondarySelections[r]);
+      }
       var a = {
         selection: n,
         secondarySelections: i
@@ -58,7 +62,9 @@ define("vs/editor/core/view/model/viewModelCursors", ["require", "exports", "vs/
 
         var s = this.converter.validateViewPosition(e.viewRange.endLineNumber, e.viewRange.endColumn, e.range.getEndPosition());
         i = new n.Range(r.lineNumber, r.column, s.lineNumber, s.column);
-      } else i = this.converter.convertModelRangeToViewRange(e.range);
+      } else {
+        i = this.converter.convertModelRangeToViewRange(e.range);
+      }
       var a = {
         range: i,
         revealVerticalInCenter: e.revealVerticalInCenter,

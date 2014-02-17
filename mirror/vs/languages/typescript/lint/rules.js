@@ -2,9 +2,13 @@ define("vs/languages/typescript/lint/rules", ["require", "exports", "vs/language
   function(e, t) {
     ! function(e) {
       function t(e) {
-        for (var t = [], n = 0; n < arguments.length - 1; n++) t[n] = arguments[n + 1];
+        for (var t = [], n = 0; n < arguments.length - 1; n++) {
+          t[n] = arguments[n + 1];
+        }
         for (var r = e.kind(), i = 0, o = t.length; o > i; i++)
-          if (r === t[i]) return !0;
+          if (r === t[i]) {
+            return !0;
+          }
         return !1;
       }
 

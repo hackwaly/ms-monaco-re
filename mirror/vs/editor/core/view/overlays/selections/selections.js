@@ -102,7 +102,9 @@ define("vs/editor/core/view/overlays/selections/selections", ["require", "export
     };
 
     t.prototype._visibleRangesHaveGaps = function(e) {
-      if (e.length <= 1) return !1;
+      if (e.length <= 1) {
+        return !1;
+      }
       var t;
 
       var n;
@@ -111,7 +113,9 @@ define("vs/editor/core/view/overlays/selections/selections", ["require", "export
 
       var o;
       for (t = e[0].top, i = 1, o = e.length; o > i; i++) {
-        if (n = e[i].top, n === t) return !0;
+        if (n = e[i].top, n === t) {
+          return !0;
+        }
         t = n;
       }
       return !1;
@@ -139,31 +143,25 @@ define("vs/editor/core/view/overlays/selections/selections", ["require", "export
       var c;
 
       var d;
-      for (c = 0, d = e.length; d > c; c++) t = e[c];
-
-      n = t.left;
-
-      i = t.left + t.width;
-
-      u = {
-        top: 0,
-        bottom: 0
-      };
-
-      l = {
-        top: 0,
-        bottom: 0
-      };
-
-      c > 0 && (o = e[c - 1].left, r = e[c - 1].left + e[c - 1].width, n === o ? u.top = 2 : n > o && (u.top = 1), i ===
-        r ? l.top = 2 : i > o && r > i && (l.top = 1));
-
-      d > c + 1 && (s = e[c + 1].left, a = e[c + 1].left + e[c + 1].width, n === s ? u.bottom = 2 : n > s && a > n &&
-        (u.bottom = 1), i === a ? l.bottom = 2 : a > i && (l.bottom = 1));
-
-      t.startStyle = u;
-
-      t.endStyle = l;
+      for (c = 0, d = e.length; d > c; c++) {
+        t = e[c];
+        n = t.left;
+        i = t.left + t.width;
+        u = {
+          top: 0,
+          bottom: 0
+        };
+        l = {
+          top: 0,
+          bottom: 0
+        };
+        c > 0 && (o = e[c - 1].left, r = e[c - 1].left + e[c - 1].width, n === o ? u.top = 2 : n > o && (u.top = 1),
+          i === r ? l.top = 2 : i > o && r > i && (l.top = 1));
+        d > c + 1 && (s = e[c + 1].left, a = e[c + 1].left + e[c + 1].width, n === s ? u.bottom = 2 : n > s && a > n &&
+          (u.bottom = 1), i === a ? l.bottom = 2 : a > i && (l.bottom = 1));
+        t.startStyle = u;
+        t.endStyle = l;
+      }
     };
 
     t.prototype._getVisibleRangesWithStyle = function(e, t) {
@@ -217,26 +215,23 @@ define("vs/editor/core/view/overlays/selections/selections", ["require", "export
       var c = this._context.configuration.editor.lineHeight.toString();
 
       var d = 0;
-      for (a = 0; a < e.length; a++) u = e[a];
-
-      l && ((1 === u.startStyle.top || 1 === u.startStyle.bottom) && (d++, this._createSelectionPiece(t.SELECTION_CLASS_NAME,
-          u.top, u.left - t.ROUNDED_PIECE_WIDTH, t.ROUNDED_PIECE_WIDTH, c, n, i, o, r), s = t.EDITOR_BACKGROUND_CLASS_NAME,
-        1 === u.startStyle.top && (s += " " + t.SELECTION_TOP_RIGHT), 1 === u.startStyle.bottom && (s += " " + t.SELECTION_BOTTOM_RIGHT),
-        d++, this._createSelectionPiece(s, u.top, u.left - t.ROUNDED_PIECE_WIDTH, t.ROUNDED_PIECE_WIDTH, c, n, i, o,
-          r)), (1 === u.endStyle.top || 1 === u.endStyle.bottom) && (d++, this._createSelectionPiece(t.SELECTION_CLASS_NAME,
-          u.top, u.left + u.width, t.ROUNDED_PIECE_WIDTH, c, n, i, o, r), s = t.EDITOR_BACKGROUND_CLASS_NAME, 1 ===
-        u.endStyle.top && (s += " " + t.SELECTION_TOP_LEFT), 1 === u.endStyle.bottom && (s += " " + t.SELECTION_BOTTOM_LEFT),
-        d++, this._createSelectionPiece(s, u.top, u.left + u.width, t.ROUNDED_PIECE_WIDTH, c, n, i, o, r)));
-
-      s = t.SELECTION_CLASS_NAME;
-
-      l && (0 === u.startStyle.top && (s += " " + t.SELECTION_TOP_LEFT), 0 === u.startStyle.bottom && (s += " " + t.SELECTION_BOTTOM_LEFT),
-        0 === u.endStyle.top && (s += " " + t.SELECTION_TOP_RIGHT), 0 === u.endStyle.bottom && (s += " " + t.SELECTION_BOTTOM_RIGHT)
-      );
-
-      d++;
-
-      this._createSelectionPiece(s, u.top, u.left, u.width, c, n, i, o, r);
+      for (a = 0; a < e.length; a++) {
+        u = e[a];
+        l && ((1 === u.startStyle.top || 1 === u.startStyle.bottom) && (d++, this._createSelectionPiece(t.SELECTION_CLASS_NAME,
+            u.top, u.left - t.ROUNDED_PIECE_WIDTH, t.ROUNDED_PIECE_WIDTH, c, n, i, o, r), s = t.EDITOR_BACKGROUND_CLASS_NAME,
+          1 === u.startStyle.top && (s += " " + t.SELECTION_TOP_RIGHT), 1 === u.startStyle.bottom && (s += " " + t.SELECTION_BOTTOM_RIGHT),
+          d++, this._createSelectionPiece(s, u.top, u.left - t.ROUNDED_PIECE_WIDTH, t.ROUNDED_PIECE_WIDTH, c, n, i,
+            o, r)), (1 === u.endStyle.top || 1 === u.endStyle.bottom) && (d++, this._createSelectionPiece(t.SELECTION_CLASS_NAME,
+            u.top, u.left + u.width, t.ROUNDED_PIECE_WIDTH, c, n, i, o, r), s = t.EDITOR_BACKGROUND_CLASS_NAME, 1 ===
+          u.endStyle.top && (s += " " + t.SELECTION_TOP_LEFT), 1 === u.endStyle.bottom && (s += " " + t.SELECTION_BOTTOM_LEFT),
+          d++, this._createSelectionPiece(s, u.top, u.left + u.width, t.ROUNDED_PIECE_WIDTH, c, n, i, o, r)));
+        s = t.SELECTION_CLASS_NAME;
+        l && (0 === u.startStyle.top && (s += " " + t.SELECTION_TOP_LEFT), 0 === u.startStyle.bottom && (s += " " + t
+            .SELECTION_BOTTOM_LEFT), 0 === u.endStyle.top && (s += " " + t.SELECTION_TOP_RIGHT), 0 === u.endStyle.bottom &&
+          (s += " " + t.SELECTION_BOTTOM_RIGHT));
+        d++;
+        this._createSelectionPiece(s, u.top, u.left, u.width, c, n, i, o, r);
+      }
       return d;
     };
 
@@ -256,10 +251,11 @@ define("vs/editor/core/view/overlays/selections/selections", ["require", "export
       var a = 0;
       for (o.push('<div class="selections-layer" style="left:'), o.push(this._contentLeft.toString()), o.push(
         "px;width:"), o.push(e.scrollWidth.toString()), o.push("px;height:"), o.push(e.scrollHeight.toString()), o.push(
-        'px;">'), i = 0; i < this._selections.length; i++) t = this._selections[i];
-
-      t.isEmpty() || (n = this._getVisibleRangesWithStyle(t, e), a += this._actualRenderOneSelection(n, e.viewportLeft,
-        o, r, s));
+        'px;">'), i = 0; i < this._selections.length; i++) {
+        t = this._selections[i];
+        t.isEmpty() || (n = this._getVisibleRangesWithStyle(t, e), a += this._actualRenderOneSelection(n, e.viewportLeft,
+          o, r, s));
+      }
       o.push("</div>");
 
       return {
@@ -275,12 +271,11 @@ define("vs/editor/core/view/overlays/selections/selections", ["require", "export
     };
 
     t.prototype.render = function(e, t) {
-      if (this.shouldRender) this._previousRender = this._actualRender(e);
-
-      this.shouldRender = !1;
-
-      this._horizontalScrollChanged = !1;
-      else if (this._horizontalScrollChanged) {
+      if (this.shouldRender) {
+        this._previousRender = this._actualRender(e);
+        this.shouldRender = !1;
+        this._horizontalScrollChanged = !1;
+      } else if (this._horizontalScrollChanged) {
         var n;
 
         var i;
@@ -290,7 +285,9 @@ define("vs/editor/core/view/overlays/selections/selections", ["require", "export
         var r = this._previousRender.lefts;
 
         var s = this._previousRender.leftsIndices;
-        for (n = 0, i = r.length; i > n; n++) o[s[n]] = (r[n] - e.viewportLeft).toString();
+        for (n = 0, i = r.length; i > n; n++) {
+          o[s[n]] = (r[n] - e.viewportLeft).toString();
+        }
         this._horizontalScrollChanged = !1;
       }
       t && (t.renderedSelectionPieces += this._previousRender.piecesCount);

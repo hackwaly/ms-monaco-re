@@ -36,7 +36,9 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
   function g(e, t, n) {
     if (c(e)) {
       var o = l(e)[t];
-      if (!i.isUndefined(o)) return o;
+      if (!i.isUndefined(o)) {
+        return o;
+      }
     }
     return n;
   }
@@ -141,8 +143,11 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
       t instanceof e || t instanceof N || (t = new e(t, this.offdom));
       var n = [this];
       if (t instanceof N)
-        for (var i = 0; i < t.length; i++) n.push(t.item(i));
-      else n.push(t);
+        for (var i = 0; i < t.length; i++) {
+          n.push(t.item(i));
+        } else {
+          n.push(t);
+        }
       return new N(n);
     };
 
@@ -162,9 +167,12 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
 
       var l = u.childNodes;
       if (i.isNumber(n) && n < l.length)
-        for (o = 0, a = this.createdElements.length; a > o; o++) u.insertBefore(this.createdElements[o], l[n++]);
-      else
-        for (o = 0, a = this.createdElements.length; a > o; o++) u.appendChild(this.createdElements[o]);
+        for (o = 0, a = this.createdElements.length; a > o; o++) {
+          u.insertBefore(this.createdElements[o], l[n++]);
+        } else
+          for (o = 0, a = this.createdElements.length; a > o; o++) {
+            u.appendChild(this.createdElements[o]);
+          }
       return this;
     };
 
@@ -303,10 +311,11 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
 
     e.prototype.on = function(e, t, n, o) {
       var r = this;
-      if (i.isArray(e)) e.forEach(function(e) {
-        r.on(e, t, n, o);
-      });
-      else {
+      if (i.isArray(e)) {
+        e.forEach(function(e) {
+          r.on(e, t, n, o);
+        });
+      } else {
         var a = e;
 
         var u = s.addListener(this.currentElement, a, function(e) {
@@ -326,26 +335,32 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
 
     e.prototype.off = function(e, t) {
       var n = this;
-      if (i.isArray(e)) e.forEach(function(e) {
-        n.off(e);
-      });
-      else {
+      if (i.isArray(e)) {
+        e.forEach(function(e) {
+          n.off(e);
+        });
+      } else {
         var o = e;
         if (t) {
           if (this.captureToUnbind[o])
-            for (; this.captureToUnbind[o].length;) this.captureToUnbind[o].pop()();
+            for (; this.captureToUnbind[o].length;) {
+              this.captureToUnbind[o].pop()();
+            }
         } else if (this.toUnbind[o])
-          for (; this.toUnbind[o].length;) this.toUnbind[o].pop()();
+          for (; this.toUnbind[o].length;) {
+            this.toUnbind[o].pop()();
+          }
       }
       return this;
     };
 
     e.prototype.once = function(e, t, n, o) {
       var r = this;
-      if (i.isArray(e)) e.forEach(function(e) {
-        r.once(e, t);
-      });
-      else var a = e;
+      if (i.isArray(e)) {
+        e.forEach(function(e) {
+          r.once(e, t);
+        });
+      } else var a = e;
 
       var u = s.addListener(this.currentElement, a, function(e) {
         t(e, r, u);
@@ -451,7 +466,9 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
             this.doSetStyle(n, o);
           }
       } else {
-        if (i.isString(e) && !i.isString(t)) return this.currentElement.style[this.cssKeyToJavaScriptProperty(e)];
+        if (i.isString(e) && !i.isString(t)) {
+          return this.currentElement.style[this.cssKeyToJavaScriptProperty(e)];
+        }
         i.isString(e) && i.isString(t) && this.doSetStyle(e, t);
       }
       return this;
@@ -477,7 +494,9 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
           var i = t[n];
           e = e + i.charAt(0).toUpperCase() + i.substr(1);
         }
-      } else "float" === e && (e = "cssFloat");
+      } else {
+        "float" === e && (e = "cssFloat");
+      }
       return e;
     };
 
@@ -486,7 +505,9 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
     };
 
     e.prototype.addClass = function() {
-      for (var e = [], t = 0; t < arguments.length - 0; t++) e[t] = arguments[t + 0];
+      for (var e = [], t = 0; t < arguments.length - 0; t++) {
+        e[t] = arguments[t + 0];
+      }
       var n = this;
       e.forEach(function(e) {
         var t = e.split(" ");
@@ -511,7 +532,9 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
     };
 
     e.prototype.removeClass = function() {
-      for (var e = [], t = 0; t < arguments.length - 0; t++) e[t] = arguments[t + 0];
+      for (var e = [], t = 0; t < arguments.length - 0; t++) {
+        e[t] = arguments[t + 0];
+      }
       var n = this;
       e.forEach(function(e) {
         var t = e.split(" ");
@@ -821,7 +844,9 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
     };
 
     e.prototype.children = function(e) {
-      for (var t = this.currentElement.children, n = [], i = 0; i < t.length; i++) n.push(h(t.item(i), e));
+      for (var t = this.currentElement.children, n = [], i = 0; i < t.length; i++) {
+        n.push(h(t.item(i), e));
+      }
       return new N(n);
     };
 
@@ -833,7 +858,9 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
 
     e.prototype.select = function(e, t) {
       r.ok(i.isString(e), "Expected String as parameter");
-      for (var n = this.currentElement.querySelectorAll(e), o = [], s = 0; s < n.length; s++) o.push(h(n.item(s), t));
+      for (var n = this.currentElement.querySelectorAll(e), o = [], s = 0; s < n.length; s++) {
+        o.push(h(n.item(s), t));
+      }
       return new N(o);
     };
 
@@ -855,7 +882,9 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
           if (c(o)) {
             var r = l(o)[w];
             if (i.isArray(r))
-              for (; r.length;) r.pop()();
+              for (; r.length;) {
+                r.pop()();
+              }
             delete o[b];
           }
           this.unbindDescendants(o);
@@ -883,16 +912,22 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
         c(this.currentElement)) {
         var e = l(this.currentElement)[w];
         if (i.isArray(e))
-          for (; e.length;) e.pop()();
+          for (; e.length;) {
+            e.pop()();
+          }
         delete this.currentElement[b];
       }
       var t;
       for (t in this.toUnbind)
         if (this.toUnbind.hasOwnProperty(t) && i.isArray(this.toUnbind[t]))
-          for (; this.toUnbind[t].length;) this.toUnbind[t].pop()();
+          for (; this.toUnbind[t].length;) {
+            this.toUnbind[t].pop()();
+          }
       for (t in this.captureToUnbind)
         if (this.captureToUnbind.hasOwnProperty(t) && i.isArray(this.captureToUnbind[t]))
-          for (; this.captureToUnbind[t].length;) this.captureToUnbind[t].pop()();
+          for (; this.captureToUnbind[t].length;) {
+            this.captureToUnbind[t].pop()();
+          }
       this.currentElement = null;
 
       this.container = null;
@@ -942,14 +977,18 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
         var e = s.getDomNodePosition(this.currentElement);
         return new L(e.width, e.height);
       }
-      if (this.browserService.window.innerWidth && this.browserService.window.innerHeight) return new L(this.browserService
-        .window.innerWidth, this.browserService.window.innerHeight);
+      if (this.browserService.window.innerWidth && this.browserService.window.innerHeight) {
+        return new L(this.browserService.window.innerWidth, this.browserService.window.innerHeight);
+      }
       if (this.browserService.document.body && this.browserService.document.body.clientWidth && this.browserService.document
-        .body.clientWidth) return new L(this.browserService.document.body.clientWidth, this.browserService.document.body
-        .clientHeight);
+        .body.clientWidth) {
+        return new L(this.browserService.document.body.clientWidth, this.browserService.document.body.clientHeight);
+      }
       if (this.browserService.document.documentElement && this.browserService.document.documentElement.clientWidth &&
-        this.browserService.document.documentElement.clientHeight) return new L(this.browserService.document.documentElement
-        .clientWidth, this.browserService.document.documentElement.clientHeight);
+        this.browserService.document.documentElement.clientHeight) {
+        return new L(this.browserService.document.documentElement.clientWidth, this.browserService.document.documentElement
+          .clientHeight);
+      }
       throw new Error("Unable to figure out browser width and height");
     };
 
@@ -960,9 +999,12 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
     function t(n) {
       if (r.ok(i.isArray(n) || n instanceof t, "Expected Array or MultiBuilder as parameter"), e.call(this), this.length =
         0, this.builders = [], i.isArray(n))
-        for (var o = 0; o < n.length; o++) n[o] instanceof HTMLElement ? this.push(h(n[o])) : this.push(n[o]);
-      else
-        for (var o = 0; o < n.length; o++) this.push(n.item(o));
+        for (var o = 0; o < n.length; o++) {
+          n[o] instanceof HTMLElement ? this.push(h(n[o])) : this.push(n[o]);
+        } else
+          for (var o = 0; o < n.length; o++) {
+            this.push(n.item(o));
+          }
       var s = this;
 
       var a = function(e) {
@@ -973,14 +1015,19 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
               n || (n = []);
 
               r = !0;
-              for (var l = 0; l < u.length; l++) n.push(u.item(l));
-            } else i.isUndefined(u) || u instanceof T || (n || (n = []), n.push(u));
+              for (var l = 0; l < u.length; l++) {
+                n.push(u.item(l));
+              }
+            } else {
+              i.isUndefined(u) || u instanceof T || (n || (n = []), n.push(u));
+            }
           }
           return n && r ? new t(n) : n || s;
         };
       };
-      for (var u in T.prototype) "clone" !== u && "and" !== u && T.prototype.hasOwnProperty(u) && i.isFunction(T.prototype[
-        u]) && a(u);
+      for (var u in T.prototype) {
+        "clone" !== u && "and" !== u && T.prototype.hasOwnProperty(u) && i.isFunction(T.prototype[u]) && a(u);
+      }
     }
     __extends(t, e);
 
@@ -989,8 +1036,12 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
     };
 
     t.prototype.push = function() {
-      for (var e = [], t = 0; t < arguments.length - 0; t++) e[t] = arguments[t + 0];
-      for (var n = 0; n < e.length; n++) this.builders.push(e[n]);
+      for (var e = [], t = 0; t < arguments.length - 0; t++) {
+        e[t] = arguments[t + 0];
+      }
+      for (var n = 0; n < e.length; n++) {
+        this.builders.push(e[n]);
+      }
       this.length = this.builders.length;
     };
 
@@ -1044,8 +1095,11 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
       e instanceof T || e instanceof t || (e = new T(e));
       var n = [];
       if (e instanceof t)
-        for (var i = 0; i < e.length; i++) n.push(e.item(i));
-      else n.push(e);
+        for (var i = 0; i < e.length; i++) {
+          n.push(e.item(i));
+        } else {
+          n.push(e);
+        }
       this.push.apply(this, n);
 
       return this;
@@ -1077,27 +1131,35 @@ define("vs/base/dom/builder", ["require", "exports", "vs/base/lib/winjs.base", "
   };
   var M = /([\w\-]+)?(#([\w\-]+))?((.([\w\-]+))*)/;
   t.$ = function(e) {
-    if (i.isUndefined(e)) return p();
+    if (i.isUndefined(e)) {
+      return p();
+    }
     if (!e) throw new Error("Bad use of $");
-    if (s.isHTMLElement(e) || e === window) return h(e);
-    if (i.isArray(e)) return new N(e);
-    if (e instanceof T) return d(e);
+    if (s.isHTMLElement(e) || e === window) {
+      return h(e);
+    }
+    if (i.isArray(e)) {
+      return new N(e);
+    }
+    if (e instanceof T) {
+      return d(e);
+    }
     if (i.isString(e)) {
       if ("<" === e[0]) {
         var t;
 
         var n = a.getService().document.createElement("div");
         if (n.innerHTML = o.format.apply(o, arguments), 0 === n.children.length) throw new Error("Bad use of $");
-        if (1 === n.children.length) t = n.firstChild;
-
-        n.removeChild(t);
-
-        return h(t);
-        for (var r = []; n.firstChild;) t = n.firstChild;
-
-        n.removeChild(t);
-
-        r.push(h(t));
+        if (1 === n.children.length) {
+          t = n.firstChild;
+          n.removeChild(t);
+          return h(t);
+        }
+        for (var r = []; n.firstChild;) {
+          t = n.firstChild;
+          n.removeChild(t);
+          r.push(h(t));
+        }
         return new N(r);
       }
       if (1 === arguments.length) {

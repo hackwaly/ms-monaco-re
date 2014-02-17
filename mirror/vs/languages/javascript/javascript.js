@@ -4,7 +4,9 @@ var __extends = this.__extends || function(e, t) {
     function n() {
       this.constructor = e;
     }
-    for (var i in t) t.hasOwnProperty(i) && (e[i] = t[i]);
+    for (var i in t) {
+      t.hasOwnProperty(i) && (e[i] = t[i]);
+    }
     n.prototype = t.prototype;
 
     e.prototype = new n;
@@ -43,8 +45,12 @@ define("vs/languages/vsxml/vsxml", ["require", "exports", "vs/base/objects", "vs
     };
 
     t.prototype.equals = function(n) {
-      if (!e.prototype.equals.call(this, n)) return !1;
-      if (!(n instanceof t)) return !1;
+      if (!e.prototype.equals.call(this, n)) {
+        return !1;
+      }
+      if (!(n instanceof t)) {
+        return !1;
+      }
       var i = n;
       return null === this.state && null === i.state ? !0 : null === this.state || null === i.state ? !1 : null ===
         this.parentState && null === i.parentState ? !0 : null === this.parentState || null === i.parentState ? !1 :
@@ -139,10 +145,12 @@ define("vs/languages/vsxml/vsxml", ["require", "exports", "vs/base/objects", "vs
     t.prototype.stateTokenize = function(e) {
       for (; !e.eos();) {
         var t = e.nextToken();
-        if ('"' === t) return {
-          type: "attribute.value.vs",
-          nextState: this.parent
-        };
+        if ('"' === t) {
+          return {
+            type: "attribute.value.vs",
+            nextState: this.parent
+          };
+        }
       }
       return {
         type: "attribute.value.vs",
@@ -213,8 +221,12 @@ define("vs/languages/javascript/jsdoc", ["require", "exports", "vs/editor/modes/
 ], function(e, t, n, i, r) {
   function o(e, t, n) {
     var r = e[n];
-    if ("*" !== r) return null;
-    if (e.indexOf("*/", n) > -1) return null;
+    if ("*" !== r) {
+      return null;
+    }
+    if (e.indexOf("*/", n) > -1) {
+      return null;
+    }
     for (var o = null, s = 0; s < t.length; s++) {
       var a = t[s];
       if (a.startIndex > n) break;
@@ -254,7 +266,9 @@ var __extends = this.__extends || function(e, t) {
     function n() {
       this.constructor = e;
     }
-    for (var i in t) t.hasOwnProperty(i) && (e[i] = t[i]);
+    for (var i in t) {
+      t.hasOwnProperty(i) && (e[i] = t[i]);
+    }
     n.prototype = t.prototype;
 
     e.prototype = new n;
@@ -315,7 +329,9 @@ define("vs/languages/javascript/javascript", ["require", "exports", "vs/base/lib
     __extends(t, e);
 
     t.prototype.equals = function(n) {
-      if (!e.prototype.equals.call(this, n)) return !1;
+      if (!e.prototype.equals.call(this, n)) {
+        return !1;
+      }
       var i = n;
       return n instanceof t && this.getMode() === i.getMode() && this.name === i.name && (null === this.parent &&
         null === i.parent || null !== this.parent && this.parent.equals(i.parent));
@@ -358,16 +374,18 @@ define("vs/languages/javascript/javascript", ["require", "exports", "vs/base/lib
       var t = this.isAtBeginning ? 1 : 0;
       for (this.isAtBeginning = !1; !e.eos();) {
         var n = e.next();
-        if ("\\" === n) return 0 === t ? e.eos() ? {
-          type: "string.escape.js"
-        } : (e.next(), e.eos() ? {
-          type: "string.escape.js",
-          nextState: this.parent
-        } : {
-          type: "string.escape.js"
-        }) : (e.goBack(1), {
-          type: "string.js"
-        });
+        if ("\\" === n) {
+          return 0 === t ? e.eos() ? {
+            type: "string.escape.js"
+          } : (e.next(), e.eos() ? {
+            type: "string.escape.js",
+            nextState: this.parent
+          } : {
+            type: "string.escape.js"
+          }) : (e.goBack(1), {
+            type: "string.js"
+          });
+        }
         if (n === this.delimiter) break;
         t += 1;
       }
@@ -412,12 +430,15 @@ define("vs/languages/javascript/javascript", ["require", "exports", "vs/base/lib
     t.prototype.tokenize = function(e) {
       if (this._regexCanFollowPrevious()) {
         for (var t, n = !1, i = !1, r = e.pos(); !e.eos();)
-          if (t = e.next(), n) n = !1;
-          else {
-            if ("/" === t && !i) return {
-              type: "regexp.js",
-              nextState: this.parent
-            };
+          if (t = e.next(), n) {
+            n = !1;
+          } else {
+            if ("/" === t && !i) {
+              return {
+                type: "regexp.js",
+                nextState: this.parent
+              };
+            }
             "[" === t ? i = !0 : "]" === t ? i = !1 : "\\" === t && (n = !0);
           }
         e.goBack(e.pos() - r);
@@ -452,20 +473,25 @@ define("vs/languages/javascript/javascript", ["require", "exports", "vs/base/lib
 
       var r = !1;
       if ("0" === t && !e.eos()) {
-        if (t = e.peek(), "x" === t.toLowerCase()) n = 16;
-        else if ("." === t) n = 10;
-        else {
-          if (!o.isDigit(t, 8)) return {
-            type: "number.js",
-            nextState: this.parent
-          };
+        if (t = e.peek(), "x" === t.toLowerCase()) {
+          n = 16;
+        } else if ("." === t) {
+          n = 10;
+        } else {
+          if (!o.isDigit(t, 8)) {
+            return {
+              type: "number.js",
+              nextState: this.parent
+            };
+          }
           n = 8;
         }
         e.next();
       }
       for (; !e.eos();)
-        if (t = e.peek(), o.isDigit(t, n)) e.next();
-        else if (10 === n)
+        if (t = e.peek(), o.isDigit(t, n)) {
+          e.next();
+        } else if (10 === n)
         if ("." !== t || r || i) {
           if ("e" !== t || r) break;
           r = !0;
@@ -473,15 +499,15 @@ define("vs/languages/javascript/javascript", ["require", "exports", "vs/base/lib
           e.next();
 
           e.eos() || "-" !== e.peek() || e.next();
-        } else i = !0;
+        } else {
+          i = !0;
+          e.next();
+        } else {
+          if (8 !== n || !o.isDigit(t, 10)) break;
+          n = 10;
 
-      e.next();
-      else {
-        if (8 !== n || !o.isDigit(t, 10)) break;
-        n = 10;
-
-        e.next();
-      }
+          e.next();
+        }
       var s = "number";
       16 === n ? s += ".hex" : 8 === n && (s += ".octal");
 
@@ -513,12 +539,13 @@ define("vs/languages/javascript/javascript", ["require", "exports", "vs/base/lib
     t.prototype.tokenize = function(e) {
       for (; !e.eos();) {
         var t = e.next();
-        if ("*" === t && !e.eos() && !e.peekWhitespace() && "/" === e.peek()) e.next();
-
-        return {
-          type: this.tokenType,
-          nextState: this.parent
-        };
+        if ("*" === t && !e.eos() && !e.peekWhitespace() && "/" === e.peek()) {
+          e.next();
+          return {
+            type: this.tokenType,
+            nextState: this.parent
+          };
+        }
       }
       return {
         type: this.tokenType
@@ -539,7 +566,9 @@ define("vs/languages/javascript/javascript", ["require", "exports", "vs/base/lib
     __extends(t, e);
 
     t.prototype.equals = function(n) {
-      if (!e.prototype.equals.call(this, n)) return !1;
+      if (!e.prototype.equals.call(this, n)) {
+        return !1;
+      }
       var i = n;
       return n instanceof t && this.getMode() === i.getMode() && this.previous === i.previous && this.previousTokenText ===
         i.previousTokenText;
@@ -550,28 +579,32 @@ define("vs/languages/javascript/javascript", ["require", "exports", "vs/base/lib
     };
 
     t.prototype.stateTokenize = function(e) {
-      if (o.isDigit(e.peek(), 10)) this.previous = "number";
-
-      return {
-        nextState: new b(this.getMode(), this, e.next())
-      };
+      if (o.isDigit(e.peek(), 10)) {
+        this.previous = "number";
+        return {
+          nextState: new b(this.getMode(), this, e.next())
+        };
+      }
       var t = e.nextToken();
-      if ("/" === t) return e.advanceIfString("**/") ? {
-        type: "comment.js"
-      } : e.advanceIfString("**") ? {
-        nextState: new w(this.getMode(), this, "comment.doc.js")
-      } : e.advanceIfString("*") ? {
-        nextState: new w(this.getMode(), this, "comment.js")
-      } : e.advanceIfString("/") ? (e.advanceToEOS(), {
-        type: "comment.js"
-      }) : {
-        nextState: new _(this.getMode(), this, this.previous, this.previousTokenText)
-      };
-      if ('"' === t || "'" === t) this.previous = "string";
-
-      return {
-        nextState: new y(this.getMode(), this, t, !0)
-      };
+      if ("/" === t) {
+        return e.advanceIfString("**/") ? {
+          type: "comment.js"
+        } : e.advanceIfString("**") ? {
+          nextState: new w(this.getMode(), this, "comment.doc.js")
+        } : e.advanceIfString("*") ? {
+          nextState: new w(this.getMode(), this, "comment.js")
+        } : e.advanceIfString("/") ? (e.advanceToEOS(), {
+          type: "comment.js"
+        }) : {
+          nextState: new _(this.getMode(), this, this.previous, this.previousTokenText)
+        };
+      }
+      if ('"' === t || "'" === t) {
+        this.previous = "string";
+        return {
+          nextState: new y(this.getMode(), this, t, !0)
+        };
+      }
       if (h.characterIsBracket(t)) {
         var n = h.bracketTypeFromChar(t);
         this.previous = "bracket";
@@ -635,7 +668,9 @@ define("vs/languages/javascript/javascript", ["require", "exports", "vs/base/lib
     };
 
     e.prototype.shouldTriggerParameterHints = function(e, t, n) {
-      if (0 === t.tokens.length) return !1;
+      if (0 === t.tokens.length) {
+        return !1;
+      }
       var i = u.findIndexInSegmentsArray(t.tokens, n - 1);
 
       var r = t.tokens[i].type;
@@ -747,7 +782,9 @@ define("vs/languages/javascript/javascript", ["require", "exports", "vs/base/lib
     };
 
     t.prototype.shouldAutotriggerSuggestImpl = function(e, t, n) {
-      if (0 === t.length) return !1;
+      if (0 === t.length) {
+        return !1;
+      }
       var i = u.findIndexInSegmentsArray(t, n - 1);
 
       var r = t[i].type;

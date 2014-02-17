@@ -121,8 +121,12 @@ define("vs/editor/core/model/textModelWithTokens", ["require", "exports", "vs/nl
     };
 
     t.prototype.getModeAtPosition = function(e, t) {
-      if (1 === t) return this.getStateBeforeLine(e).getMode();
-      if (t === this.getLineMaxColumn(e)) return this.getStateAfterLine(e).getMode();
+      if (1 === t) {
+        return this.getStateBeforeLine(e).getMode();
+      }
+      if (t === this.getLineMaxColumn(e)) {
+        return this.getStateAfterLine(e).getMode();
+      }
       var n = this._getLineModeTransitions(e);
 
       var i = a.findIndexInSegmentsArray(n, t - 1);
@@ -225,8 +229,11 @@ define("vs/editor/core/model/textModelWithTokens", ["require", "exports", "vs/nl
             this._invalidLineStartIndex = Math.max(this._invalidLineStartIndex, g);
 
             c = g - 1;
-          } else this._lines[d].state = h.endState;
-          else this._lastState = h.endState;
+          } else {
+            this._lines[d].state = h.endState;
+          } else {
+            this._lastState = h.endState;
+          }
       }
       n && l >= u && this.emitModelTokensChangedEvent(u, l);
 

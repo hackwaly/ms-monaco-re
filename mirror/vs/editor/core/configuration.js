@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -57,8 +59,10 @@ define(["require", "exports", "vs/nls", "vs/base/env", "./config", "vs/base/obje
     b.prototype._mergeOptionsIn = function(a) {
       a = a || {};
       if (a.keyBindings)
-        for (var b in a.keyBindings) a.keyBindings.hasOwnProperty(b) && (this.keyBindings[b] = this.keyBindings[b] || [],
-          this.keyBindings[b].push(a.keyBindings[b]));
+        for (var b in a.keyBindings) {
+          a.keyBindings.hasOwnProperty(b) && (this.keyBindings[b] = this.keyBindings[b] || [], this.keyBindings[b].push(
+            a.keyBindings[b]));
+        }
       a.keyBindings && delete a.keyBindings;
       var c = typeof a.stopLineTokenizationAfter != "undefined";
 
@@ -143,21 +147,29 @@ define(["require", "exports", "vs/nls", "vs/base/env", "./config", "vs/base/obje
       var b = 0;
 
       var c;
-      for (c = 0; c < a.length; c++) a.charAt(c) === "	" ? b += this.editor.tabSize : b++;
+      for (c = 0; c < a.length; c++) {
+        a.charAt(c) === "	" ? b += this.editor.tabSize : b++;
+      }
       var d = "";
       if (!this.editor.insertSpaces) {
         var e = Math.floor(b / this.editor.tabSize);
         b %= this.editor.tabSize;
-        for (c = 0; c < e; c++) d += "	";
+        for (c = 0; c < e; c++) {
+          d += "	";
+        }
       }
-      for (c = 0; c < b; c++) d += " ";
+      for (c = 0; c < b; c++) {
+        d += " ";
+      }
       return d;
     };
 
     b.prototype.getOneIndent = function() {
       if (this.editor.insertSpaces) {
         var a = "";
-        for (var b = 0; b < this.editor.tabSize; b++) a += " ";
+        for (var b = 0; b < this.editor.tabSize; b++) {
+          a += " ";
+        }
         return a;
       }
       return "	";
@@ -180,8 +192,9 @@ define(["require", "exports", "vs/nls", "vs/base/env", "./config", "vs/base/obje
       var b = this;
 
       var c = this.getEditorClassName();
-      if (A.hasOwnProperty(c)) a(A[c]);
-      else {
+      if (A.hasOwnProperty(c)) {
+        a(A[c]);
+      } else {
         var d = new x.MeasurementHelper;
         d.measure(function(d) {
           d.measure(d.create("div", c, "||||||||||"), function(d, e) {

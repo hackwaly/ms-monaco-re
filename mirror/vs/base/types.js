@@ -28,9 +28,13 @@ define("vs/base/types", ["require", "exports"], function(e, t) {
   }
 
   function l(e) {
-    if (!t.isObject(e)) return !1;
+    if (!t.isObject(e)) {
+      return !1;
+    }
     for (var n in e)
-      if (e.hasOwnProperty(n)) return !1;
+      if (e.hasOwnProperty(n)) {
+        return !1;
+      }
     return !0;
   }
 
@@ -39,14 +43,18 @@ define("vs/base/types", ["require", "exports"], function(e, t) {
   }
 
   function d() {
-    for (var e = [], n = 0; n < arguments.length - 0; n++) e[n] = arguments[n + 0];
+    for (var e = [], n = 0; n < arguments.length - 0; n++) {
+      e[n] = arguments[n + 0];
+    }
     return e && e.length > 0 && e.every(function(e) {
       return t.isFunction(e);
     });
   }
 
   function h(e) {
-    for (var t = [], n = 0; n < arguments.length - 1; n++) t[n] = arguments[n + 1];
+    for (var t = [], n = 0; n < arguments.length - 1; n++) {
+      t[n] = arguments[n + 1];
+    }
     var i = Object.create(e.prototype);
     e.apply(i, t);
 
@@ -58,11 +66,13 @@ define("vs/base/types", ["require", "exports"], function(e, t) {
     var o;
 
     var r = {};
-    for (o in e)(i || e.hasOwnProperty(o)) && t.isFunction(e[o]) && (r[o] = function(t) {
-      return function() {
-        return n(e, t, arguments);
-      };
-    }(o));
+    for (o in e) {
+      (i || e.hasOwnProperty(o)) && t.isFunction(e[o]) && (r[o] = function(t) {
+        return function() {
+          return n(e, t, arguments);
+        };
+      }(o));
+    }
     return r;
   }
 
@@ -71,7 +81,9 @@ define("vs/base/types", ["require", "exports"], function(e, t) {
 
     var n = null;
     return function() {
-      for (var i = [], o = 0; o < arguments.length - 0; o++) i[o] = arguments[o + 0];
+      for (var i = [], o = 0; o < arguments.length - 0; o++) {
+        i[o] = arguments[o + 0];
+      }
       t || (t = !0, n = e.apply(self, i));
 
       return n;

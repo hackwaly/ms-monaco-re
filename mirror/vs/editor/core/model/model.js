@@ -76,14 +76,18 @@ define("vs/editor/core/model/model", ["require", "exports", "vs/base/severity", 
     };
 
     t.prototype.findMatches = function(e, t, n, o, r) {
-      if ("" === e) return [];
+      if ("" === e) {
+        return [];
+      }
       var s = null;
       try {
         s = i.createRegExp(e, n, o, r);
       } catch (u) {
         return [];
       }
-      if (i.regExpLeadsToEndlessLoop(s)) return [];
+      if (i.regExpLeadsToEndlessLoop(s)) {
+        return [];
+      }
       var l;
       l = a.isIRange(t) ? t : t ? this.getEditableRange() : this.getFullModelRange();
 
@@ -104,17 +108,17 @@ define("vs/editor/core/model/model", ["require", "exports", "vs/base/severity", 
       var i = [];
 
       var o = 0;
-      if (e.startLineNumber === e.endLineNumber) n = this._lines[e.startLineNumber - 1].text.substring(e.startColumn -
-        1, e.endColumn - 1);
-
-      o = this.findMatchesInLine(t, n, e.startLineNumber, e.startColumn - 1, o, i);
-
-      return i;
+      if (e.startLineNumber === e.endLineNumber) {
+        n = this._lines[e.startLineNumber - 1].text.substring(e.startColumn - 1, e.endColumn - 1);
+        o = this.findMatchesInLine(t, n, e.startLineNumber, e.startColumn - 1, o, i);
+        return i;
+      }
       n = this._lines[e.startLineNumber - 1].text.substring(e.startColumn - 1);
 
       o = this.findMatchesInLine(t, n, e.startLineNumber, e.startColumn - 1, o, i);
-      for (var r = e.startLineNumber + 1; r < e.endLineNumber && h >= o; r++) o = this.findMatchesInLine(t, this._lines[
-        r - 1].text, r, 0, o, i);
+      for (var r = e.startLineNumber + 1; r < e.endLineNumber && h >= o; r++) {
+        o = this.findMatchesInLine(t, this._lines[r - 1].text, r, 0, o, i);
+      }
       h >= o && (n = this._lines[e.endLineNumber - 1].text.substring(0, e.endColumn - 1), o = this.findMatchesInLine(
         t, n, e.endLineNumber, 0, o, i));
 
@@ -125,7 +129,9 @@ define("vs/editor/core/model/model", ["require", "exports", "vs/base/severity", 
       var s;
       do
         if (s = e.exec(t), s && (r.push(new a.Range(n, s.index + 1 + i, n, s.index + 1 + s[0].length + i)), o++, o >
-          h)) return o; while (s);
+          h)) {
+          return o;
+        } while (s);
       return o;
     };
 

@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -78,7 +80,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
 
         a.decorationRemover = k.Promise.timeout(350).then(function() {
           a.editor.changeDecorations(function(b) {
-            while (a.decorationIds.length > 0) b.removeDecoration(a.decorationIds.pop());
+            while (a.decorationIds.length > 0) {
+              b.removeDecoration(a.decorationIds.pop());
+            }
           });
         });
       }), this.currentRequest);

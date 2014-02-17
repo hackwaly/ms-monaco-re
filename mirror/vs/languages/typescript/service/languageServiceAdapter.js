@@ -38,7 +38,9 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
     });
 
     e.prototype.getExtraDiagnostics = function(e) {
-      if (!this._compilationSettings.semanticValidation) return [];
+      if (!this._compilationSettings.semanticValidation) {
+        return [];
+      }
       var t = r.check(this._compilationSettings.lint, this._languageService, e);
       return t.map(function(e) {
         return {
@@ -52,13 +54,17 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
     };
 
     e.prototype.getSyntacticDiagnostics = function(e) {
-      if (!this._compilationSettings.syntaxValidation) return [];
+      if (!this._compilationSettings.syntaxValidation) {
+        return [];
+      }
       var t = this._languageService.getSyntacticDiagnostics(e.toExternal());
       return this._toMarkers(e, t);
     };
 
     e.prototype.getSemanticDiagnostics = function(e) {
-      if (!this._compilationSettings.semanticValidation) return [];
+      if (!this._compilationSettings.semanticValidation) {
+        return [];
+      }
       var t = this._languageService.getSemanticDiagnostics(e.toExternal());
       return this._toMarkers(e, t);
     };
@@ -150,12 +156,11 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
     };
 
     e.prototype.applyTextEdits = function(e, t, n, r) {
-      for (var i, o = c.create(t), s = 0; s < e.length; s++) o.replace(e[s].minChar, e[s].limChar - e[s].minChar, e[s]
-        .text);
-
-      n = Math.min(n, e[s].minChar);
-
-      r = Math.max(r, e[s].limChar);
+      for (var i, o = c.create(t), s = 0; s < e.length; s++) {
+        o.replace(e[s].minChar, e[s].limChar - e[s].minChar, e[s].text);
+        n = Math.min(n, e[s].minChar);
+        r = Math.max(r, e[s].limChar);
+      }
       i = o.apply();
 
       i = i.substring(n, r + (i.length - t.getValue().length));
@@ -253,11 +258,17 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
       var i = n.getOffsetFromPosition(t);
 
       var o = this._languageService.getDefinitionAtPosition(r, i);
-      if (!o || 0 === o.length) return null;
+      if (!o || 0 === o.length) {
+        return null;
+      }
       var s = o[0];
-      if (!s.fileName) return null;
+      if (!s.fileName) {
+        return null;
+      }
       var a = this._host.getScriptSnapshot(s.fileName).model;
-      if (this.isBaseLibModel(a)) return null;
+      if (this.isBaseLibModel(a)) {
+        return null;
+      }
       var l = {
         resourceUrl: a.getAssociatedResource().toExternal(),
         range: this.rangeFromMinAndLim(s, a.getAssociatedResource(), !0),
@@ -278,7 +289,9 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
       var i = n.getAssociatedResource().toExternal();
 
       var o = this._languageService.getTypeAtPosition(i, r);
-      if (!o) return !0;
+      if (!o) {
+        return !0;
+      }
       switch (o.kind) {
         case u.Services.ScriptElementKind.localVariableElement:
         case u.Services.ScriptElementKind.localFunctionElement:
@@ -322,7 +335,9 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
       var i = n.getAssociatedResource().toExternal();
 
       var o = this._languageService.getTypeAtPosition(i, r);
-      if (!o) return null;
+      if (!o) {
+        return null;
+      }
       var s = [{
         className: "type",
         text: o.memberName.toString()
@@ -343,15 +358,16 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
     e.prototype.getRangesToPosition = function(e, t) {
       for (var n = this._host.getScriptSnapshotByUrl(e).model, r = n.getOffsetFromPosition(t), i = n.getAssociatedResource()
           .toExternal(), o = this._languageService.getSyntaxTree(i), s = o.sourceUnit().findToken(r), a = []; null !==
-        s;) a.unshift({
-        type: "node",
-        range: this.rangeFromMinAndLim({
-          minChar: s.start(),
-          limChar: s.end()
-        }, e)
-      });
-
-      s = s.parent();
+        s;) {
+        a.unshift({
+          type: "node",
+          range: this.rangeFromMinAndLim({
+            minChar: s.start(),
+            limChar: s.end()
+          }, e)
+        });
+        s = s.parent();
+      }
       return a;
     };
 
@@ -388,8 +404,12 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
 
       var v = this._suggestSettings.alwaysAllWords || !c || 0 === c.entries.length;
       if (g) {
-        for (var p = 0, m = h.snippets.length; m > p; p++) u.add(h.snippets[p]);
-        for (var p = 0, m = d.snippets.length; m > p; p++) u.add(d.snippets[p]);
+        for (var p = 0, m = h.snippets.length; m > p; p++) {
+          u.add(h.snippets[p]);
+        }
+        for (var p = 0, m = d.snippets.length; m > p; p++) {
+          u.add(d.snippets[p]);
+        }
       }
       v && r.getAllUniqueWords(o).filter(function(e) {
         return !/^-?\d*\.?\d/.test(e);
@@ -433,7 +453,9 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
       var o = r.getOffsetFromPosition(t);
 
       var s = this._languageService.getCompletionEntryDetails(i, o, n.label);
-      if (!s) return n;
+      if (!s) {
+        return n;
+      }
       if (n.documentationLabel = s.docComment, n.typeLabel = s.type, n.codeSnippet = s.name, this._suggestSettings.useCodeSnippetsOnMethodSuggest &&
         "function" === this.monacoTypeFromEntryKind(s.kind)) {
         var a = this.parseMethodSignature(s.type);
@@ -510,17 +532,17 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
               break;
             }
             a ? o += r : s += r;
-          } else i.push({
-            name: o,
-            type: s
-          });
-
-      o = "";
-
-      s = "";
-
-      a = !0;
-      else a = !1;
+          } else {
+            i.push({
+              name: o,
+              type: s
+            });
+            o = "";
+            s = "";
+            a = !0;
+          } else {
+            a = !1;
+          }
       return {
         arguments: i,
         flatArguments: e.substr(0, t + 1),
@@ -555,7 +577,9 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
       var o = r.getAssociatedResource().toExternal();
 
       var s = this._languageService.getSignatureAtPosition(o, i);
-      if (!s) return null;
+      if (!s) {
+        return null;
+      }
       var a = {
         currentSignature: Math.max(0, s.activeFormal),
         currentParameter: Math.max(0, s.actual.currentParameter),
@@ -570,9 +594,13 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
       var n = this._languageService.getEmitOutput(e.toExternal());
 
       var r = n.outputFiles;
-      if (!r) return null;
+      if (!r) {
+        return null;
+      }
       for (var i = 0, s = r.length; s > i; i++)
-        if (o.endsWith(r[i].name, t)) return r[i].text;
+        if (o.endsWith(r[i].name, t)) {
+          return r[i].text;
+        }
       return null;
     };
 
@@ -627,9 +655,10 @@ define("vs/languages/typescript/service/languageServiceAdapter", ["require", "ex
     e.prototype.preview = function(e, t, n, r) {
       "undefined" == typeof r && (r = 200);
       for (var i, o = this._languageService.getSyntaxTree(e.getAssociatedResource().toExternal()), s = o.sourceUnit()
-          .findToken(t); s && !i;) s.fullWidth() > r && (i = s);
-
-      s = s.parent();
+          .findToken(t); s && !i;) {
+        s.fullWidth() > r && (i = s);
+        s = s.parent();
+      }
       i || (i = o.sourceUnit().findToken(t).root());
       var a = e.getValue().substring(i.fullStart(), i.fullEnd());
 

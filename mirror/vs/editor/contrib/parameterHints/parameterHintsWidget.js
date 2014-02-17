@@ -24,15 +24,18 @@ define(["require", "exports", "vs/base/dom/builder", "vs/editor/core/constants",
 
       this.triggerCharactersListeners = [];
       var f = function() {
-        while (e.triggerCharactersListeners.length > 0) e.triggerCharactersListeners.pop()();
+        while (e.triggerCharactersListeners.length > 0) {
+          e.triggerCharactersListeners.pop()();
+        }
         if (e.editor.getModel()) {
           var a = e.editor.getModel().getMode();
           if (a.parameterHintsSupport) {
             var b = a.parameterHintsSupport.getParameterHintsTriggerCharacters();
-            for (var c = 0; c < b.length; c++) e.triggerCharactersListeners.push(e.editor.addTypingListener(b[c],
-              function() {
+            for (var c = 0; c < b.length; c++) {
+              e.triggerCharactersListeners.push(e.editor.addTypingListener(b[c], function() {
                 return e.model.trigger();
               }));
+            }
           }
         }
       };
@@ -170,8 +173,9 @@ define(["require", "exports", "vs/base/dom/builder", "vs/editor/core/constants",
       var e = b.label;
 
       var f = b.parameters.length > 0;
-      if (!f) d.append(i("span").text(b.label));
-      else {
+      if (!f) {
+        d.append(i("span").text(b.label));
+      } else {
         var g = i("span.parameters");
 
         var h = 0;
@@ -239,13 +243,17 @@ define(["require", "exports", "vs/base/dom/builder", "vs/editor/core/constants",
 
     a.prototype.releaseModel = function() {
       var a;
-      while (a = this.modelListenersToRemove.pop()) a();
+      while (a = this.modelListenersToRemove.pop()) {
+        a();
+      }
       this.model && (this.model.dispose(), this.model = null);
     };
 
     a.prototype.destroy = function() {
       this.releaseModel();
-      while (this.triggerCharactersListeners.length > 0) this.triggerCharactersListeners.pop()();
+      while (this.triggerCharactersListeners.length > 0) {
+        this.triggerCharactersListeners.pop()();
+      }
       this.$overloads && (this.$overloads.destroy(), delete this.$overloads);
 
       this.$signatures && (this.$signatures.destroy(), delete this.$signatures);

@@ -68,15 +68,17 @@ define("vs/editor/core/controller/cursorMoveHelper", ["require", "exports"], fun
     };
 
     e.prototype.visibleColumnFromColumn = function(e, t, n) {
-      for (var i = e.getLineContent(t), o = 0, r = 0; n - 1 > r; r++) o = "	" === i.charAt(r) ? this.nextTabColumn(o) :
-        o + 1;
+      for (var i = e.getLineContent(t), o = 0, r = 0; n - 1 > r; r++) {
+        o = "	" === i.charAt(r) ? this.nextTabColumn(o) : o + 1;
+      }
       return o;
     };
 
     e.prototype.columnFromVisibleColumn = function(e, t, n) {
-      for (var i = e.getLineContent(t), o = -1, r = 0, s = 0; s < i.length && n >= r; s++) o = r;
-
-      r = "	" === i.charAt(s) ? this.nextTabColumn(r) : r + 1;
+      for (var i = e.getLineContent(t), o = -1, r = 0, s = 0; s < i.length && n >= r; s++) {
+        o = r;
+        r = "	" === i.charAt(s) ? this.nextTabColumn(r) : r + 1;
+      }
       r = Math.abs(n - r);
 
       o = Math.abs(n - o);

@@ -77,12 +77,13 @@ define("vs/editor/core/view/parts/viewCursors/viewCursors", ["require", "exports
 
           this._secondaryCursors.push(o);
         } else if (this._secondaryCursors.length > e.secondaryPositions.length)
-          for (var r = this._secondaryCursors.length - e.secondaryPositions.length, i = 0; r > i; i++) this._secondaryCursors[
-            0].getDomNode().parentNode.removeChild(this._secondaryCursors[0].getDomNode());
-
-      this._secondaryCursors.splice(0, 1);
-      for (var i = 0; i < e.secondaryPositions.length; i++) this._secondaryCursors[i].onCursorPositionChanged(e.secondaryPositions[
-        i], e.isInEditableRange);
+          for (var r = this._secondaryCursors.length - e.secondaryPositions.length, i = 0; r > i; i++) {
+            this._secondaryCursors[0].getDomNode().parentNode.removeChild(this._secondaryCursors[0].getDomNode());
+            this._secondaryCursors.splice(0, 1);
+          }
+      for (var i = 0; i < e.secondaryPositions.length; i++) {
+        this._secondaryCursors[i].onCursorPositionChanged(e.secondaryPositions[i], e.isInEditableRange);
+      }
       return !0;
     };
 
@@ -92,8 +93,9 @@ define("vs/editor/core/view/parts/viewCursors/viewCursors", ["require", "exports
 
     t.prototype.onConfigurationChanged = function(e) {
       this._primaryCursor.onConfigurationChanged(e);
-      for (var t = 0, n = this._secondaryCursors.length; n > t; t++) this._secondaryCursors[t].onConfigurationChanged(
-        e);
+      for (var t = 0, n = this._secondaryCursors.length; n > t; t++) {
+        this._secondaryCursors[t].onConfigurationChanged(e);
+      }
       return !0;
     };
 
@@ -150,23 +152,31 @@ define("vs/editor/core/view/parts/viewCursors/viewCursors", ["require", "exports
 
     t.prototype._show = function() {
       this._primaryCursor.show();
-      for (var e = 0, t = this._secondaryCursors.length; t > e; e++) this._secondaryCursors[e].show();
+      for (var e = 0, t = this._secondaryCursors.length; t > e; e++) {
+        this._secondaryCursors[e].show();
+      }
       this._isVisible = !0;
     };
 
     t.prototype._hide = function() {
       this._primaryCursor.hide();
-      for (var e = 0, t = this._secondaryCursors.length; t > e; e++) this._secondaryCursors[e].hide();
+      for (var e = 0, t = this._secondaryCursors.length; t > e; e++) {
+        this._secondaryCursors[e].hide();
+      }
       this._isVisible = !1;
     };
 
     t.prototype._render = function(e) {
       var t = this;
       this._primaryCursor.prepareRender(e);
-      for (var n = 0, i = this._secondaryCursors.length; i > n; n++) this._secondaryCursors[n].prepareRender(e);
+      for (var n = 0, i = this._secondaryCursors.length; i > n; n++) {
+        this._secondaryCursors[n].prepareRender(e);
+      }
       this._requestModificationFrame(function() {
         t._primaryCursor.render(e);
-        for (var n = 0, i = t._secondaryCursors.length; i > n; n++) t._secondaryCursors[n].render(e);
+        for (var n = 0, i = t._secondaryCursors.length; i > n; n++) {
+          t._secondaryCursors[n].render(e);
+        }
       });
     };
 

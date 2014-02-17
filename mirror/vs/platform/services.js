@@ -23,7 +23,9 @@ define("vs/platform/services", ["require", "exports", "vs/base/lib/winjs.base", 
   t.AbstractDescriptor = d;
   var h = function(e) {
     function t(t) {
-      for (var n = [], i = 0; i < arguments.length - 1; i++) n[i] = arguments[i + 1];
+      for (var n = [], i = 0; i < arguments.length - 1; i++) {
+        n[i] = arguments[i + 1];
+      }
       e.call(this, n);
 
       this._ctor = t;
@@ -51,7 +53,9 @@ define("vs/platform/services", ["require", "exports", "vs/base/lib/winjs.base", 
   t.SyncDescriptor = h;
   var p = function(e) {
     function t(t, n) {
-      for (var i = [], o = 0; o < arguments.length - 2; o++) i[o] = arguments[o + 2];
+      for (var i = [], o = 0; o < arguments.length - 2; o++) {
+        i[o] = arguments[o + 2];
+      }
       e.call(this, i);
 
       this._moduleName = t;
@@ -135,7 +139,9 @@ define("vs/platform/services", ["require", "exports", "vs/base/lib/winjs.base", 
           t && t.length > 0 && (this.origin = this.origin.substring(0, this.origin.length - t.length + 1));
 
           o.endsWith(this.origin, "/") || (this.origin += "/");
-        } else this.origin = "/";
+        } else {
+          this.origin = "/";
+        }
     };
 
     e.prototype.getRequestUrl = function(e, t, n) {
@@ -149,7 +155,9 @@ define("vs/platform/services", ["require", "exports", "vs/base/lib/winjs.base", 
 
     e.prototype.getPath = function(e, t) {
       var n = this.getRequestUrl(e, "/", !0);
-      if (!n) return null;
+      if (!n) {
+        return null;
+      }
       var i = t.toExternal().indexOf(n);
       return 0 === i ? t.toExternal().substr(n.length - 1) : null;
     };
@@ -201,9 +209,10 @@ define("vs/platform/services", ["require", "exports", "vs/base/lib/winjs.base", 
       }
 
       function i(e) {
-        if (c) r("canceled");
-
-        return void 0;
+        if (c) {
+          r("canceled");
+          return void 0;
+        }
         var n = e.indexOf("\r\n\r\n", u);
         if (-1 !== n) {
           for (var i = []; - 1 !== n;) {

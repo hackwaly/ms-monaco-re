@@ -50,7 +50,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
       }
       var a;
       return new o.Promise(function(i, o) {
-        if (e.isDisposed()) return o(new Error("Item is disposed."));
+        if (e.isDisposed()) {
+          return o(new Error("Item is disposed."));
+        }
         var s = n.locks[e.id] = new r(e);
         return a = t().then(function(t) {
           delete n.locks[e.id];
@@ -68,7 +70,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
       var t;
       for (t in this.locks) {
         var n = this.locks[t];
-        if (e.intersects(n.item)) return n;
+        if (e.intersects(n.item)) {
+          return n;
+        }
       }
       return null;
     };
@@ -212,7 +216,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
 
     t.prototype.expand = function() {
       var e = this;
-      if (this.isExpanded() || !this.doesHaveChildren || this.lock.isLocked(this)) return o.Promise.as(!1);
+      if (this.isExpanded() || !this.doesHaveChildren || this.lock.isLocked(this)) {
+        return o.Promise.as(!1);
+      }
       var t = this.lock.run(this, function() {
         var t;
 
@@ -296,7 +302,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
       var e;
 
       var t = [];
-      for (e in this.traits) this.traits.hasOwnProperty(e) && this.traits[e] && t.push(e);
+      for (e in this.traits) {
+        this.traits.hasOwnProperty(e) && this.traits[e] && t.push(e);
+      }
       return t;
     };
 
@@ -309,9 +317,10 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
 
       "undefined" == typeof i && (i = !1);
       var r = this;
-      if (!i && !this.isExpanded()) this.needsChildrenRefresh = !0;
-
-      return o.Promise.as(this);
+      if (!i && !this.isExpanded()) {
+        this.needsChildrenRefresh = !0;
+        return o.Promise.as(this);
+      }
       this.needsChildrenRefresh = !1;
       var s = function() {
         var i = {
@@ -326,9 +335,10 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
           n = n ? n.slice(0) : [];
 
           n = r.sort(n);
-          for (var i = {}; null !== r.firstChild;) i[r.firstChild.id] = r.firstChild;
-
-          r.removeChild(r.firstChild);
+          for (var i = {}; null !== r.firstChild;) {
+            i[r.firstChild.id] = r.firstChild;
+            r.removeChild(r.firstChild);
+          }
           for (var s = 0, a = n.length; a > s; s++) {
             var u = n[s];
 
@@ -341,7 +351,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
 
             r.addChild(c);
           }
-          for (var d in i) i.hasOwnProperty(d) && i[d].dispose();
+          for (var d in i) {
+            i.hasOwnProperty(d) && i[d].dispose();
+          }
           return e ? o.Promise.join(r.mapEachChild(function(t) {
             return t.doRefresh(e, !0);
           })) : o.Promise.as(null);
@@ -382,7 +394,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
 
     t.prototype.isAncestorOf = function(e) {
       for (; e;) {
-        if (e.id === this.id) return !0;
+        if (e.id === this.id) {
+          return !0;
+        }
         e = e.parent;
       }
       return !1;
@@ -402,9 +416,10 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
       e.parent = this;
 
       e.depth = this.depth + 1;
-      for (var r = this, s = e.maxDepth + 1; r && r.maxDepth < s;) r.maxDepth = s++;
-
-      r = r.parent;
+      for (var r = this, s = e.maxDepth + 1; r && r.maxDepth < s;) {
+        r.maxDepth = s++;
+        r = r.parent;
+      }
     };
 
     t.prototype.removeChild = function(e) {
@@ -417,21 +432,21 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
       e.parent = null;
 
       e.depth = null;
-      for (var i = this, o = e.maxDepth + 1; i && i.maxDepth === o;) o = i.maxDepth + 1;
-
-      i.maxDepth = Math.max.apply(null, this.mapEachChild(function(e) {
-        return e.maxDepth;
-      })) + 1;
-
-      i = i.parent;
+      for (var i = this, o = e.maxDepth + 1; i && i.maxDepth === o;) {
+        o = i.maxDepth + 1;
+        i.maxDepth = Math.max.apply(null, this.mapEachChild(function(e) {
+          return e.maxDepth;
+        })) + 1;
+        i = i.parent;
+      }
     };
 
     t.prototype.forEachChild = function(e) {
-      for (var t, n = this.firstChild; n;) t = n.next;
-
-      e(n);
-
-      n = t;
+      for (var t, n = this.firstChild; n;) {
+        t = n.next;
+        e(n);
+        n = t;
+      }
     };
 
     t.prototype.mapEachChild = function(e) {
@@ -541,11 +556,14 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
     e.prototype.next = function() {
       if (this.item)
         do
-          if ((this.item instanceof l || this.item.isVisible() && this.item.isExpanded()) && this.item.firstChild)
+          if ((this.item instanceof l || this.item.isVisible() && this.item.isExpanded()) && this.item.firstChild) {
             this.item = this.item.firstChild;
-          else if (this.item === this.start) this.item = null;
-      else {
-        for (; this.item && this.item !== this.start && !this.item.next;) this.item = this.item.parent;
+          } else if (this.item === this.start) {
+        this.item = null;
+      } else {
+        for (; this.item && this.item !== this.start && !this.item.next;) {
+          this.item = this.item.parent;
+        }
         this.item === this.start && (this.item = null);
 
         this.item = this.item ? this.item.next : null;
@@ -662,7 +680,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
       var n = this;
 
       var i = this.getItem(e);
-      if (!i) return o.Promise.as(null);
+      if (!i) {
+        return o.Promise.as(null);
+      }
       var r = {
         item: i,
         recursive: t
@@ -680,7 +700,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
 
       var i = [];
       this.deferredEmit(function() {
-        for (var o = 0, r = e.length; r > o; o++) i.push(n.refresh(e[o], t));
+        for (var o = 0, r = e.length; r > o; o++) {
+          i.push(n.refresh(e[o], t));
+        }
       });
 
       return o.Promise.join(i);
@@ -692,7 +714,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
     };
 
     t.prototype.expandAll = function(e) {
-      for (var t = [], n = 0, i = e.length; i > n; n++) t.push(this.expand(e[n]));
+      for (var t = [], n = 0, i = e.length; i > n; n++) {
+        t.push(this.expand(e[n]));
+      }
       return o.Promise.join(t);
     };
 
@@ -708,7 +732,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
       "undefined" == typeof t && (t = !1);
 
       e || (e = [this.input], t = !0);
-      for (var n = [], i = 0, r = e.length; r > i; i++) n.push(this.collapse(e[i], t));
+      for (var n = [], i = 0, r = e.length; r > i; i++) {
+        n.push(this.collapse(e[i], t));
+      }
       return o.Promise.join(n);
     };
 
@@ -717,7 +743,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
     };
 
     t.prototype.toggleExpansionAll = function(e) {
-      for (var t = [], n = 0, i = e.length; i > n; n++) t.push(this.toggleExpansion(e[n]));
+      for (var t = [], n = 0, i = e.length; i > n; n++) {
+        t.push(this.toggleExpansion(e[n]));
+      }
       return o.Promise.join(t);
     };
 
@@ -822,7 +850,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
     t.prototype.selectNext = function(e, t) {
       "undefined" == typeof e && (e = 1);
       for (var n, i = this.getSelection(), o = i.length > 0 ? i[0] : this.input, r = this.getNavigator(o, !1), s = 0; e >
-        s && (n = r.next(), n); s++) o = n;
+        s && (n = r.next(), n); s++) {
+        o = n;
+      }
       this.setSelection([o], t);
     };
 
@@ -834,13 +864,17 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
 
       var o = null;
       if (0 === n.length) {
-        for (var r = this.getNavigator(this.input); i = r.next();) o = i;
+        for (var r = this.getNavigator(this.input); i = r.next();) {
+          o = i;
+        }
         this.setSelection([o], t);
 
         return void 0;
       }
       i = n[0];
-      for (var r = this.getNavigator(i, !1), s = 0; e > s && (o = r.previous(), o); s++) i = o;
+      for (var r = this.getNavigator(i, !1), s = 0; e > s && (o = r.previous(), o); s++) {
+        i = o;
+      }
       this.setSelection([i], t);
     };
 
@@ -876,15 +910,18 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
 
     t.prototype.focusNext = function(e, t) {
       "undefined" == typeof e && (e = 1);
-      for (var n, i = this.getFocus() || this.input, o = this.getNavigator(i, !1), r = 0; e > r && (n = o.next(), n); r++)
+      for (var n, i = this.getFocus() || this.input, o = this.getNavigator(i, !1), r = 0; e > r && (n = o.next(), n); r++) {
         i = n;
+      }
       this.setFocus(i, t);
     };
 
     t.prototype.focusPrevious = function(e, t) {
       "undefined" == typeof e && (e = 1);
       for (var n, i = this.getFocus() || this.input, o = this.getNavigator(i, !1), r = 0; e > r && (n = o.previous(),
-        n); r++) i = n;
+        n); r++) {
+        i = n;
+      }
       this.setFocus(i, t);
     };
 
@@ -931,9 +968,10 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
     };
 
     t.prototype.addTraits = function(e, t) {
-      for (var n, i = this.traitsToItems[e] || {}, o = 0, r = t.length; r > o; o++) n = this.getItem(t[o]);
-
-      n && (n.addTrait(e), i[n.id] = n);
+      for (var n, i = this.traitsToItems[e] || {}, o = 0, r = t.length; r > o; o++) {
+        n = this.getItem(t[o]);
+        n && (n.addTrait(e), i[n.id] = n);
+      }
       this.traitsToItems[e] = i;
     };
 
@@ -944,32 +982,41 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
 
       var o = this.traitsToItems[e] || {};
       if (0 === t.length) {
-        for (i in o) o.hasOwnProperty(i) && (n = o[i], n.removeTrait(e));
+        for (i in o) {
+          o.hasOwnProperty(i) && (n = o[i], n.removeTrait(e));
+        }
         delete this.traitsToItems[e];
       } else
-        for (var r = 0, s = t.length; s > r; r++) n = this.getItem(t[r]);
-
-      n && (n.removeTrait(e), delete o[n.id]);
+        for (var r = 0, s = t.length; s > r; r++) {
+          n = this.getItem(t[r]);
+          n && (n.removeTrait(e), delete o[n.id]);
+        }
     };
 
     t.prototype.setTraits = function(e, t) {
-      if (0 === t.length) this.removeTraits(e, t);
-      else {
-        for (var n, i = {}, o = 0, r = t.length; r > o; o++) n = this.getItem(t[o]);
-
-        n && (i[n.id] = n);
+      if (0 === t.length) {
+        this.removeTraits(e, t);
+      } else {
+        for (var n, i = {}, o = 0, r = t.length; r > o; o++) {
+          n = this.getItem(t[o]);
+          n && (i[n.id] = n);
+        }
         var s;
 
         var a = this.traitsToItems[e] || {};
 
         var u = [];
-        for (s in a) a.hasOwnProperty(s) && (i.hasOwnProperty(s) ? delete i[s] : u.push(a[s]));
-        for (var o = 0, r = u.length; r > o; o++) n = u[o];
-
-        n.removeTrait(e);
-
-        delete a[n.id];
-        for (s in i) i.hasOwnProperty(s) && (n = i[s], n.addTrait(e), a[s] = n);
+        for (s in a) {
+          a.hasOwnProperty(s) && (i.hasOwnProperty(s) ? delete i[s] : u.push(a[s]));
+        }
+        for (var o = 0, r = u.length; r > o; o++) {
+          n = u[o];
+          n.removeTrait(e);
+          delete a[n.id];
+        }
+        for (s in i) {
+          i.hasOwnProperty(s) && (n = i[s], n.addTrait(e), a[s] = n);
+        }
         this.traitsToItems[e] = a;
       }
     };
@@ -980,7 +1027,9 @@ define("vs/base/ui/widgets/tree/treeModel", ["require", "exports", "vs/base/asse
       var n = [];
 
       var i = this.traitsToItems[e] || {};
-      for (t in i) i.hasOwnProperty(t) && n.push(i[t].getElement());
+      for (t in i) {
+        i.hasOwnProperty(t) && n.push(i[t].getElement());
+      }
       return n;
     };
 

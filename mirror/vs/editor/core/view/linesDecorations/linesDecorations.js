@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -150,11 +152,11 @@ define(["require", "exports", "vs/editor/core/view/viewContext", "vs/editor/core
           } else {
             h = a.visibleRangesForRange(g, !1);
             if (h)
-              while (h.next()) l = h.getTop();
-
-            k.hasOwnProperty(l.toString()) || (k[l.toString()] = {});
-
-            k[l.toString()][f.options.linesDecorationsClassName] = !0;
+              while (h.next()) {
+                l = h.getTop();
+                k.hasOwnProperty(l.toString()) || (k[l.toString()] = {});
+                k[l.toString()][f.options.linesDecorationsClassName] = !0;
+              }
           }
       }
       b.push('<div class="');
@@ -176,9 +178,10 @@ define(["require", "exports", "vs/editor/core/view/viewContext", "vs/editor/core
       b.push('px;">');
       for (m in k) {
         b.push('<div class="');
-        for (n in k[m]) b.push(" ");
-
-        b.push(n);
+        for (n in k[m]) {
+          b.push(" ");
+          b.push(n);
+        }
         b.push('" style="top:');
 
         b.push(m);

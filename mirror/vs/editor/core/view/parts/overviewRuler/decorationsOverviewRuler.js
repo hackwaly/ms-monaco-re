@@ -99,14 +99,15 @@ define("vs/editor/core/view/parts/overviewRuler/decorationsOverviewRuler", ["req
       var i = this._context.model.getAllDecorations();
 
       var o = [];
-      for (e = 0, t = i.length; t > e; e++) n = i[e];
-
-      n.options.overviewRuler.color && o.push({
-        startLineNumber: n.range.startLineNumber,
-        endLineNumber: n.range.endLineNumber,
-        color: n.options.overviewRuler.color,
-        position: n.options.overviewRuler.position
-      });
+      for (e = 0, t = i.length; t > e; e++) {
+        n = i[e];
+        n.options.overviewRuler.color && o.push({
+          startLineNumber: n.range.startLineNumber,
+          endLineNumber: n.range.endLineNumber,
+          color: n.options.overviewRuler.color,
+          position: n.options.overviewRuler.position
+        });
+      }
       return o;
     };
 
@@ -118,15 +119,16 @@ define("vs/editor/core/view/parts/overviewRuler/decorationsOverviewRuler", ["req
       var n;
 
       var o = [];
-      for (e = 0, t = this._cursorPositions.length; t > e; e++) n = this._cursorPositions[e];
-
-      o.push({
-        forceHeight: 2,
-        startLineNumber: n.lineNumber,
-        endLineNumber: n.lineNumber,
-        color: "rgba(0, 0, 102, 0.8)",
-        position: i.OverviewRulerLane.Full
-      });
+      for (e = 0, t = this._cursorPositions.length; t > e; e++) {
+        n = this._cursorPositions[e];
+        o.push({
+          forceHeight: 2,
+          startLineNumber: n.lineNumber,
+          endLineNumber: n.lineNumber,
+          color: "rgba(0, 0, 102, 0.8)",
+          position: i.OverviewRulerLane.Full
+        });
+      }
       return o;
     };
 

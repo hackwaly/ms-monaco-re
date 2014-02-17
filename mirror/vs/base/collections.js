@@ -20,7 +20,9 @@ define("vs/base/collections", ["require", "exports", "vs/base/errors"], function
 
   function a(e) {
     var t = [];
-    for (var n in e) e.hasOwnProperty(n) && t.push(e[n]);
+    for (var n in e) {
+      e.hasOwnProperty(n) && t.push(e[n]);
+    }
     return t;
   }
 
@@ -59,7 +61,9 @@ define("vs/base/collections", ["require", "exports", "vs/base/errors"], function
     var n = e.length;
     return 0 === n ? t.EmptyIterable : 1 === n ? e[0] : {
       forEach: function(t) {
-        for (var i = 0; n > i; i++) e[i].forEach(t);
+        for (var i = 0; n > i; i++) {
+          e[i].forEach(t);
+        }
       }
     };
   }
@@ -417,19 +421,19 @@ define("vs/base/collections", ["require", "exports", "vs/base/errors"], function
       var i = this.indexOf(e);
 
       var o = this._elements[i];
-      if ("undefined" == typeof o) this._elements[i] = [{
-        key: e,
-        value: n
-      }];
-
-      this._count += 1;
-      else {
+      if ("undefined" == typeof o) {
+        this._elements[i] = [{
+          key: e,
+          value: n
+        }];
+        this._count += 1;
+      } else {
         for (var r = 0; r < o.length; r++)
-          if (e.equals(o[r].key)) o[r].key = e;
-
-        o[r].value = n;
-
-        return void 0;
+          if (e.equals(o[r].key)) {
+            o[r].key = e;
+            o[r].value = n;
+            return void 0;
+          }
         o.push({
           key: e,
           value: n
@@ -446,7 +450,9 @@ define("vs/base/collections", ["require", "exports", "vs/base/errors"], function
       var i = this._elements[n];
       if ("undefined" != typeof i)
         for (var o = 0; o < i.length; o++)
-          if (e.equals(i[o].key)) return i[o].value;
+          if (e.equals(i[o].key)) {
+            return i[o].value;
+          }
       return null;
     };
 
@@ -457,11 +463,11 @@ define("vs/base/collections", ["require", "exports", "vs/base/errors"], function
       var i = this._elements[n];
       if ("undefined" != typeof i)
         for (var o = 0; o < i.length; o++)
-          if (e.equals(i[o].key)) i.splice(o, 1);
-
-      this._count -= 1;
-
-      return !0;
+          if (e.equals(i[o].key)) {
+            i.splice(o, 1);
+            this._count -= 1;
+            return !0;
+          }
       return !1;
     };
 
@@ -472,7 +478,9 @@ define("vs/base/collections", ["require", "exports", "vs/base/errors"], function
       var i = this._elements[n];
       if ("undefined" != typeof i)
         for (var o = 0; o < i.length; o++)
-          if (e.equals(i[o].key)) return !0;
+          if (e.equals(i[o].key)) {
+            return !0;
+          }
       return !1;
     };
 

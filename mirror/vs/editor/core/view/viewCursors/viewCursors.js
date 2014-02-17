@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -118,13 +120,14 @@ define(["require", "exports", "vs/editor/core/view/viewEventHandler", "vs/editor
         }
       } else if (this.secondaryCursors.length > a.secondaryPositions.length) {
         var e = this.secondaryCursors.length - a.secondaryPositions.length;
-        for (var c = 0; c < e; c++) this.secondaryCursors[0].getDomNode().parentNode.removeChild(this.secondaryCursors[
-          0].getDomNode());
-
-        this.secondaryCursors.splice(0, 1);
+        for (var c = 0; c < e; c++) {
+          this.secondaryCursors[0].getDomNode().parentNode.removeChild(this.secondaryCursors[0].getDomNode());
+          this.secondaryCursors.splice(0, 1);
+        }
       }
-      for (var c = 0; c < a.secondaryPositions.length; c++) this.secondaryCursors[c].onCursorPositionChanged(a.secondaryPositions[
-        c], a.isInEditableRange);
+      for (var c = 0; c < a.secondaryPositions.length; c++) {
+        this.secondaryCursors[c].onCursorPositionChanged(a.secondaryPositions[c], a.isInEditableRange);
+      }
       return !0;
     };
 
@@ -138,7 +141,9 @@ define(["require", "exports", "vs/editor/core/view/viewEventHandler", "vs/editor
 
     b.prototype.onConfigurationChanged = function(a) {
       this.primaryCursor.onConfigurationChanged(a);
-      for (var b = 0, c = this.secondaryCursors.length; b < c; b++) this.secondaryCursors[b].onConfigurationChanged(a);
+      for (var b = 0, c = this.secondaryCursors.length; b < c; b++) {
+        this.secondaryCursors[b].onConfigurationChanged(a);
+      }
       return !0;
     };
 
@@ -148,7 +153,9 @@ define(["require", "exports", "vs/editor/core/view/viewEventHandler", "vs/editor
 
     b.prototype.onConfigurationLineHeightChanged = function() {
       this.primaryCursor.onConfigurationLineHeightChanged();
-      for (var a = 0, b = this.secondaryCursors.length; a < b; a++) this.secondaryCursors[a].onConfigurationLineHeightChanged();
+      for (var a = 0, b = this.secondaryCursors.length; a < b; a++) {
+        this.secondaryCursors[a].onConfigurationLineHeightChanged();
+      }
       this.currentLine.style.height = this.context.configuration.editor.lineHeight + "px";
 
       return !0;
@@ -220,20 +227,26 @@ define(["require", "exports", "vs/editor/core/view/viewEventHandler", "vs/editor
 
     b.prototype._show = function() {
       this.primaryCursor.show();
-      for (var a = 0, b = this.secondaryCursors.length; a < b; a++) this.secondaryCursors[a].show();
+      for (var a = 0, b = this.secondaryCursors.length; a < b; a++) {
+        this.secondaryCursors[a].show();
+      }
       this.isVisible = !0;
     };
 
     b.prototype._hide = function() {
       this.primaryCursor.hide();
-      for (var a = 0, b = this.secondaryCursors.length; a < b; a++) this.secondaryCursors[a].hide();
+      for (var a = 0, b = this.secondaryCursors.length; a < b; a++) {
+        this.secondaryCursors[a].hide();
+      }
       this.isVisible = !1;
     };
 
     b.prototype.prepareRender = function(a) {
       if (!this.shouldRender) return;
       this.primaryCursor.prepareRender(a);
-      for (var b = 0, c = this.secondaryCursors.length; b < c; b++) this.secondaryCursors[b].prepareRender(a);
+      for (var b = 0, c = this.secondaryCursors.length; b < c; b++) {
+        this.secondaryCursors[b].prepareRender(a);
+      }
     };
 
     b.prototype.render = function(a) {
@@ -241,7 +254,9 @@ define(["require", "exports", "vs/editor/core/view/viewEventHandler", "vs/editor
       this.shouldRender = !1;
 
       this.primaryCursor.render(a);
-      for (var b = 0, c = this.secondaryCursors.length; b < c; b++) this.secondaryCursors[b].render(a);
+      for (var b = 0, c = this.secondaryCursors.length; b < c; b++) {
+        this.secondaryCursors[b].render(a);
+      }
       this.currentLine.style.top = this.primaryCursor.getPositionTop() + "px";
 
       this.currentLine.style.width = a.scrollWidth + "px";

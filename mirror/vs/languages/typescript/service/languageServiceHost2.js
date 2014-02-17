@@ -125,8 +125,9 @@ define("vs/languages/typescript/service/languageServiceHost2", ["require", "expo
     e.prototype.getLineStartPositions = function() {
       if (!this._lineStarts) {
         this._lineStarts = [];
-        for (var e = 0, t = this._model.getLineCount(); t > e; e++) this._lineStarts.push(this._model.getLineStart(e +
-          1));
+        for (var e = 0, t = this._model.getLineCount(); t > e; e++) {
+          this._lineStarts.push(this._model.getLineStart(e + 1));
+        }
       }
       return this._lineStarts;
     };
@@ -165,9 +166,10 @@ define("vs/languages/typescript/service/languageServiceHost2", ["require", "expo
         var i = r.getVersionId();
         n.contains(this._resourceSet, t) && n.lookup(this._resourceSet, t).versionId === i || (this._resourceSet[t] =
           new l(r));
-      } else console.warn(e.toExternal() + " NOT found");
-
-      delete this._resourceService[t];
+      } else {
+        console.warn(e.toExternal() + " NOT found");
+        delete this._resourceService[t];
+      }
     };
 
     t.prototype.isScriptFileName = function(e) {

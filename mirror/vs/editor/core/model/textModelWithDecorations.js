@@ -176,9 +176,12 @@ define("vs/editor/core/model/textModelWithDecorations", ["require", "exports", "
       var n;
 
       var i = [];
-      for (t in this.decorations) this.decorations.hasOwnProperty(t) && (n = this.decorations[t], n.ownerId === e &&
-        i.push(n.id));
-      for (var o = 0; o < i.length; o++) this._removeDecorationImpl(null, i[o]);
+      for (t in this.decorations) {
+        this.decorations.hasOwnProperty(t) && (n = this.decorations[t], n.ownerId === e && i.push(n.id));
+      }
+      for (var o = 0; o < i.length; o++) {
+        this._removeDecorationImpl(null, i[o]);
+      }
     };
 
     t.prototype.getDecorationOptions = function(e) {
@@ -289,17 +292,20 @@ define("vs/editor/core/model/textModelWithDecorations", ["require", "exports", "
       this._onChangedRanges(e, n);
 
       this._handleCollectedDecorationsEvents(e);
-      for (var i = 0, o = t.length; o > i; i++) t[i].oldLineNumber = 0;
-
-      t[i].oldColumn = 0;
+      for (var i = 0, o = t.length; o > i; i++) {
+        t[i].oldLineNumber = 0;
+        t[i].oldColumn = 0;
+      }
     };
 
     t.prototype._onChangedRanges = function(e, t) {
       var n;
 
       var i;
-      for (n in t) t.hasOwnProperty(n) && this.rangeIdToDecorationId.hasOwnProperty(n) && (i = this.rangeIdToDecorationId[
-        n], e.addMovedDecoration(i, t[n]));
+      for (n in t) {
+        t.hasOwnProperty(n) && this.rangeIdToDecorationId.hasOwnProperty(n) && (i = this.rangeIdToDecorationId[n], e.addMovedDecoration(
+          i, t[n]));
+      }
     };
 
     t.prototype._handleCollectedDecorationsEvents = function(e) {
@@ -314,13 +320,16 @@ define("vs/editor/core/model/textModelWithDecorations", ["require", "exports", "
       var s = [];
 
       var a = [];
-      for (t in e.newOrChangedDecorations) e.newOrChangedDecorations.hasOwnProperty(t) && (a.push(t), n = this._getDecorationData(
-          t), n.isForValidation = n.options.className === o.ClassName.EditorErrorDecoration || n.options.className ===
-        o.ClassName.EditorWarningDecoration, r.push(n), e.oldDecorationRange.hasOwnProperty(t) && (i = e.oldDecorationRange[
-            t], i.startLineNumber = i.startLineNumber || n.range.startLineNumber, i.startColumn = i.startColumn || n.range
-          .startColumn, i.endLineNumber = i.endLineNumber || n.range.endLineNumber, i.endColumn = i.endColumn || n.range
-          .endColumn));
-      for (t in e.removedDecorations) e.removedDecorations.hasOwnProperty(t) && (a.push(t), s.push(t));
+      for (t in e.newOrChangedDecorations) {
+        e.newOrChangedDecorations.hasOwnProperty(t) && (a.push(t), n = this._getDecorationData(t), n.isForValidation =
+          n.options.className === o.ClassName.EditorErrorDecoration || n.options.className === o.ClassName.EditorWarningDecoration,
+          r.push(n), e.oldDecorationRange.hasOwnProperty(t) && (i = e.oldDecorationRange[t], i.startLineNumber = i.startLineNumber ||
+            n.range.startLineNumber, i.startColumn = i.startColumn || n.range.startColumn, i.endLineNumber = i.endLineNumber ||
+            n.range.endLineNumber, i.endColumn = i.endColumn || n.range.endColumn));
+      }
+      for (t in e.removedDecorations) {
+        e.removedDecorations.hasOwnProperty(t) && (a.push(t), s.push(t));
+      }
       if (a.length > 0) {
         var u = {
           ids: a,
@@ -416,9 +425,10 @@ define("vs/editor/core/model/textModelWithDecorations", ["require", "exports", "
       var a = [];
 
       var u = [];
-      for (o = 0, r = i.length; r > o; o++) a[o] = s(i[o].options);
-
-      u[o] = this.validateRange(i[o].range);
+      for (o = 0, r = i.length; r > o; o++) {
+        a[o] = s(i[o].options);
+        u[o] = this.validateRange(i[o].range);
+      }
       return this._deltaImpl(e, t, n, r, u, a);
     };
 
@@ -432,8 +442,10 @@ define("vs/editor/core/model/textModelWithDecorations", ["require", "exports", "
       var c;
 
       var d = {};
-      for (s = 0, a = n.length; a > s; s++) this.decorations.hasOwnProperty(n[s]) && (c = this.decorations[n[s]], l =
-        u(this.getTrackedRange(c.rangeId), c.options), d[l] = d[l] || [], d[l].push(n[s]));
+      for (s = 0, a = n.length; a > s; s++) {
+        this.decorations.hasOwnProperty(n[s]) && (c = this.decorations[n[s]], l = u(this.getTrackedRange(c.rangeId),
+          c.options), d[l] = d[l] || [], d[l].push(n[s]));
+      }
       var h;
 
       var p;
@@ -458,7 +470,9 @@ define("vs/editor/core/model/textModelWithDecorations", ["require", "exports", "
             }
         g || m.push(this._addDecorationImpl(e, t, o[s], r[s]));
       }
-      for (s = 0, a = n.length; a > s; s++) v.hasOwnProperty(n[s]) || this._removeDecorationImpl(e, n[s]);
+      for (s = 0, a = n.length; a > s; s++) {
+        v.hasOwnProperty(n[s]) || this._removeDecorationImpl(e, n[s]);
+      }
       return m;
     };
 

@@ -181,8 +181,12 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
     };
 
     e.prototype._newCustomWorker = function(n, i) {
-      if (!this.workerModule || this.workerModule === e.NULL_WORKER_ID) return null;
-      if (!this.contextService) return null;
+      if (!this.workerModule || this.workerModule === e.NULL_WORKER_ID) {
+        return null;
+      }
+      if (!this.contextService) {
+        return null;
+      }
       o.isUndefinedOrNull(i) && (i = this.workerModule.substring(this.workerModule.lastIndexOf("/") + 1));
       var s = [];
 
@@ -319,7 +323,9 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
 
     e.prototype.configure = function(e) {
       var t = this;
-      if (o.isEmptyObject(e)) return n.Promise.as(!0);
+      if (o.isEmptyObject(e)) {
+        return n.Promise.as(!0);
+      }
       this._options = e;
       var i = this.workerPool.map(function(i) {
         return i === t.nullWorker ? n.Promise.as(null) : t.request("configure", i, e);
@@ -354,7 +360,9 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
     };
 
     e.prototype.request = function(e, t) {
-      for (var n = [], i = 0; i < arguments.length - 2; i++) n[i] = arguments[i + 2];
+      for (var n = [], i = 0; i < arguments.length - 2; i++) {
+        n[i] = arguments[i + 2];
+      }
       return this.workerRequest({
         command: e,
         params: n
@@ -397,7 +405,9 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
     };
 
     e.prototype._handleEvent = function(e, t, n, i) {
-      if (0 === t.tokens.length || !this.supportsNestedMode) return i(this, e, t, n);
+      if (0 === t.tokens.length || !this.supportsNestedMode) {
+        return i(this, e, t, n);
+      }
       var o = t.modeTransitions;
 
       var r = t.tokens;
@@ -415,9 +425,10 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
       var d = -1;
       s + 1 < o.length ? (d = h.findIndexInSegmentsArray(r, o[s + 1].startIndex), c = r[d].startIndex) : (d = r.length,
         c = e.length);
-      for (var f, g = [], m = r[l].startIndex, v = l; d > v; v++) f = r[v];
-
-      g.push(new p(f.startIndex - m, f.type, f.bracket));
+      for (var f, g = [], m = r[l].startIndex, v = l; d > v; v++) {
+        f = r[v];
+        g.push(new p(f.startIndex - m, f.type, f.bracket));
+      }
       var y = e.substring(m, c);
 
       var _ = n - m;
@@ -435,15 +446,18 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
     };
 
     e.prototype._getEmbeddedLevel = function(e) {
-      for (var t = -1; e;) t++;
-
-      e = e.getStateData();
+      for (var t = -1; e;) {
+        t++;
+        e = e.getStateData();
+      }
       return t;
     };
 
     e.prototype._nestedTokenize = function(e, t, n, i, o, r) {
       for (var s = t.getStateData(), a = this.getLeavingNestedModeData(e, s), u = t; u.getStateData() && u.getStateData()
-        .getMode() !== this;) u = u.getStateData();
+        .getMode() !== this;) {
+        u = u.getStateData();
+      }
       var l = u.getMode();
       if (!a) {
         var c;
@@ -635,8 +649,12 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
     };
 
     e.prototype.equals = function(t) {
-      if (null === t || this.mode !== t.getMode()) return !1;
-      if (!(t instanceof e)) return !1;
+      if (null === t || this.mode !== t.getMode()) {
+        return !1;
+      }
+      if (!(t instanceof e)) {
+        return !1;
+      }
       var n = t;
       return null === this.stateData && null === n.stateData ? !0 : null === this.stateData || null === n.stateData ? !
         1 : this.stateData.equals(n.stateData);
@@ -695,7 +713,9 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
       var e;
 
       var t = [];
-      for (e in y) t.push(e);
+      for (e in y) {
+        t.push(e);
+      }
       return t;
     };
 
@@ -726,19 +746,27 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
     };
 
     e.prototype.getMode = function(e) {
-      if (!e) return null;
+      if (!e) {
+        return null;
+      }
       for (var t = e.split(","), n = 0; n < t.length; n++) {
         var i = t[n].trim();
 
         var o = this.getOrCreateOneModeSync(i);
-        if (o) return o;
+        if (o) {
+          return o;
+        }
       }
       return null;
     };
 
     e.prototype.getOrCreateOneModeSync = function(e) {
-      if (C.hasOwnProperty(e)) return C[e];
-      if (!this.isRegisteredMode(e)) return null;
+      if (C.hasOwnProperty(e)) {
+        return C[e];
+      }
+      if (!this.isRegisteredMode(e)) {
+        return null;
+      }
       var t = y[e].syncLoadAndCreate(this._modesRegistryInjector);
       t && (C[e] = t, w[t.getId()] = t, t.configSupport && (_.hasOwnProperty(e) && t.configSupport.configure(_[e] || {}),
         b.hasOwnProperty(t.getId()) && t.configSupport.configure(b[t.getId()] || {})));
@@ -750,16 +778,22 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
       if (e)
         for (var t = e.split(","), n = 0; n < t.length; n++) {
           var i = t[n].trim();
-          if (this.isRegisteredMode(i)) return y[i];
+          if (this.isRegisteredMode(i)) {
+            return y[i];
+          }
         }
       return null;
     };
 
     e.prototype.getOrCreateMode = function(e) {
-      if (!e) return n.Promise.as(null);
+      if (!e) {
+        return n.Promise.as(null);
+      }
       for (var t = e.split(","), i = 0; i < t.length; i++) {
         var o = t[i].trim();
-        if (this.isRegisteredMode(o)) return this.getOrCreateOneModeAsync(o);
+        if (this.isRegisteredMode(o)) {
+          return this.getOrCreateOneModeAsync(o);
+        }
       }
       return n.Promise.as(null);
     };

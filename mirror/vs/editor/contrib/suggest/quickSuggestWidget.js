@@ -2,9 +2,13 @@ define(["require", "exports", "vs/base/dom/builder", "vs/base/dom/dom", "vs/base
   "vs/css!./quickSuggest"
 ], function(a, b, c, d, e, f) {
   function k(a, b) {
-    if ("snippet" === b.type) return !1;
+    if ("snippet" === b.type) {
+      return !1;
+    }
     var c = b.highlights;
-    if (c.length !== 1 || c[0].start > 0) return !1;
+    if (c.length !== 1 || c[0].start > 0) {
+      return !1;
+    }
     var d = b.label;
     return d.length === a.length ? !1 : !0;
   }
@@ -43,7 +47,9 @@ define(["require", "exports", "vs/base/dom/builder", "vs/base/dom/dom", "vs/base
 
       this.bindings = this.handlerService.bindGroup(function(a) {
         var b = function() {
-          if (d.currentSuggestion) return d.model.accept(d.currentSuggestion);
+          if (d.currentSuggestion) {
+            return d.model.accept(d.currentSuggestion);
+          }
         };
 
         var c = function() {
@@ -119,7 +125,9 @@ define(["require", "exports", "vs/base/dom/builder", "vs/base/dom/dom", "vs/base
           b.currentWord = a.currentWord;
 
           b.onSuggestions();
-        } else b.cancel();
+        } else {
+          b.cancel();
+        }
       }));
 
       this.modelListenersToRemove.push(this.model.addListener("empty", function(a) {
@@ -169,7 +177,9 @@ define(["require", "exports", "vs/base/dom/builder", "vs/base/dom/dom", "vs/base
 
     a.prototype.releaseModel = function() {
       var a;
-      while (a = this.modelListenersToRemove.pop()) a();
+      while (a = this.modelListenersToRemove.pop()) {
+        a();
+      }
       this.model = null;
     };
 
@@ -209,7 +219,9 @@ define(["require", "exports", "vs/base/dom/builder", "vs/base/dom/dom", "vs/base
     };
 
     a.prototype.destroy = function() {
-      while (this.listenersToRemove.length > 0) this.listenersToRemove.pop()();
+      while (this.listenersToRemove.length > 0) {
+        this.listenersToRemove.pop()();
+      }
       this.bindings.dispose();
 
       this.releaseModel();

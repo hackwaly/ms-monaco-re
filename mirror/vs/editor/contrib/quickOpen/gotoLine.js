@@ -37,7 +37,9 @@ define("vs/editor/contrib/quickOpen/gotoLine", ["require", "exports", "vs/nls!vs
     };
 
     t.prototype.runOpen = function() {
-      if (this.invalidRange()) return !1;
+      if (this.invalidRange()) {
+        return !1;
+      }
       var e = this.toSelection();
       this.editor.setSelection(e, !0, !0, !0);
 
@@ -47,9 +49,10 @@ define("vs/editor/contrib/quickOpen/gotoLine", ["require", "exports", "vs/nls!vs
     };
 
     t.prototype.runPreview = function() {
-      if (this.invalidRange()) this.decorator.clearDecorations();
-
-      return !1;
+      if (this.invalidRange()) {
+        this.decorator.clearDecorations();
+        return !1;
+      }
       var e = this.toSelection();
       this.editor.setSelection(e, !0, !0, !0);
 

@@ -29,8 +29,12 @@ define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], functio
       if ("undefined" == typeof e && (e = null), this._listeners = {}, this._bulkListeners = [], this._collectedEvents = [],
         this._deferredCnt = 0, e) {
         this._allowedEventTypes = {};
-        for (var t = 0; t < e.length; t++) this._allowedEventTypes[e[t]] = !0;
-      } else this._allowedEventTypes = null;
+        for (var t = 0; t < e.length; t++) {
+          this._allowedEventTypes[e[t]] = !0;
+        }
+      } else {
+        this._allowedEventTypes = null;
+      }
     }
     e.prototype.dispose = function() {
       this._listeners = {};
@@ -105,7 +109,9 @@ define("vs/base/eventEmitter", ["require", "exports", "vs/base/errors"], functio
         var o = e;
         if (t) {
           o = [];
-          for (var r = 0, s = e.length; s > r; r++) o.push(new i(e[r].getType(), e[r].getData(), t));
+          for (var r = 0, s = e.length; s > r; r++) {
+            o.push(new i(e[r].getType(), e[r].getData(), t));
+          }
         }
         0 === n._deferredCnt ? n._emitEvents(o) : n._collectedEvents.push.apply(n._collectedEvents, o);
       });

@@ -40,16 +40,16 @@ define(["require", "exports", "./dom"], function(a, b, c) {
       var b = this.measurements.length;
 
       var c;
-      for (a = 0; a < b; a++) c = this.measurements[a];
-
-      c.container = document.createElement("div");
-
-      c.container.style.position = "absolute";
-
-      c.container.style.top = "-5000px";
-
-      c.container.appendChild(c.domNode);
-      for (a = 0; a < b; a++) document.body.appendChild(this.measurements[a].container);
+      for (a = 0; a < b; a++) {
+        c = this.measurements[a];
+        c.container = document.createElement("div");
+        c.container.style.position = "absolute";
+        c.container.style.top = "-5000px";
+        c.container.appendChild(c.domNode);
+      }
+      for (a = 0; a < b; a++) {
+        document.body.appendChild(this.measurements[a].container);
+      }
       for (a = 0; a < b; a++) {
         c = this.measurements[a];
         try {
@@ -60,7 +60,9 @@ define(["require", "exports", "./dom"], function(a, b, c) {
           console.error(e);
         }
       }
-      for (a = 0; a < b; a++) document.body.removeChild(this.measurements[a].container);
+      for (a = 0; a < b; a++) {
+        document.body.removeChild(this.measurements[a].container);
+      }
     };
 
     return a;

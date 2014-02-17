@@ -82,13 +82,17 @@ define("vs/editor/contrib/contextmenu/contextmenu", ["require", "exports", "vs/n
       var t = this._editor.getActions();
 
       var n = e.PREDEFINED.map(function(n) {
-        if (n === e.SEPARATOR) return new h.Separator;
+        if (n === e.SEPARATOR) {
+          return new h.Separator;
+        }
         var i = t.filter(function(e) {
           return e.id === n;
         });
         if (i && i.length > 0) {
           var o = i[0];
-          if (o.enabled && f.isFunction(o.shouldShowInContextMenu) && o.shouldShowInContextMenu()) return o;
+          if (o.enabled && f.isFunction(o.shouldShowInContextMenu) && o.shouldShowInContextMenu()) {
+            return o;
+          }
         }
         return null;
       });
@@ -119,7 +123,9 @@ define("vs/editor/contrib/contextmenu/contextmenu", ["require", "exports", "vs/n
           i = o;
           break;
         }
-      if (-1 === i) return [];
+      if (-1 === i) {
+        return [];
+      }
       e = e.slice(i);
       for (var r = e.length - 1; r >= 0; r--) {
         var s = e[r].id === h.Separator.ID;
@@ -165,11 +171,15 @@ define("vs/editor/contrib/contextmenu/contextmenu", ["require", "exports", "vs/n
 
             var o = [];
             if (i.keybindings) {
-              for (var r = 0; r < i.keybindings.length; r++) o.push(c.asString(i.keybindings[r], !0));
-              if (o.length > 0) return new h.ActionItem(e, e, {
-                label: !0,
-                keybinding: o.join(n.localize("vs_editor_contrib_contextmenu_contextmenu", 0))
-              });
+              for (var r = 0; r < i.keybindings.length; r++) {
+                o.push(c.asString(i.keybindings[r], !0));
+              }
+              if (o.length > 0) {
+                return new h.ActionItem(e, e, {
+                  label: !0,
+                  keybinding: o.join(n.localize("vs_editor_contrib_contextmenu_contextmenu", 0))
+                });
+              }
             }
           }
           return null;

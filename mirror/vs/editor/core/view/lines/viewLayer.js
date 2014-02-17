@@ -35,7 +35,9 @@ define("vs/editor/core/view/lines/viewLayer", ["require", "exports", "vs/base/do
     };
 
     t.prototype.onConfigurationChanged = function(e) {
-      for (var t = 0; t < this._lines.length; t++) this._lines[t].onConfigurationChanged(e);
+      for (var t = 0; t < this._lines.length; t++) {
+        this._lines[t].onConfigurationChanged(e);
+      }
       return !0;
     };
 
@@ -71,10 +73,14 @@ define("vs/editor/core/view/lines/viewLayer", ["require", "exports", "vs/base/do
       var i = Math.min(e.toLineNumber - this._rendLineNumberStart, this._lines.length - 1);
       if (e.fromLineNumber < this._rendLineNumberStart && (e.toLineNumber < this._rendLineNumberStart ? this._rendLineNumberStart -=
         e.toLineNumber - e.fromLineNumber + 1 : this._rendLineNumberStart = e.fromLineNumber), i >= n) {
-        for (t = n; i >= t; t++) this.domNode.removeChild(this._lines[t].getDomNode());
+        for (t = n; i >= t; t++) {
+          this.domNode.removeChild(this._lines[t].getDomNode());
+        }
         this._lines.splice(n, i - n + 1);
       }
-      for (t = n; t < this._lines.length; t++) this._lines[t].onLinesDeletedAbove();
+      for (t = n; t < this._lines.length; t++) {
+        this._lines[t].onLinesDeletedAbove();
+      }
       return !0;
     };
 
@@ -83,20 +89,24 @@ define("vs/editor/core/view/lines/viewLayer", ["require", "exports", "vs/base/do
 
       var n = !1;
       t >= 0 && t < this._lines.length && (this._lines[t].onContentChanged(), n = !0);
-      for (var i = Math.max(t, 0); i < this._lines.length; i++) this._lines[i].onLineChangedAbove();
-
-      n = !0;
+      for (var i = Math.max(t, 0); i < this._lines.length; i++) {
+        this._lines[i].onLineChangedAbove();
+        n = !0;
+      }
       return n;
     };
 
     t.prototype.onModelLinesInserted = function(e) {
       var t;
       if (e.fromLineNumber <= this._rendLineNumberStart) {
-        for (this._rendLineNumberStart += e.toLineNumber - e.fromLineNumber + 1, t = 0; t < this._lines.length; t++)
+        for (this._rendLineNumberStart += e.toLineNumber - e.fromLineNumber + 1, t = 0; t < this._lines.length; t++) {
           this._lines[t].onLinesInsertedAbove();
+        }
         return !0;
       }
-      if (e.fromLineNumber >= this._rendLineNumberStart + this._lines.length) return !1;
+      if (e.fromLineNumber >= this._rendLineNumberStart + this._lines.length) {
+        return !1;
+      }
       var n = Math.min(e.fromLineNumber - this._rendLineNumberStart, this._lines.length - 1);
 
       var i = Math.min(e.toLineNumber - this._rendLineNumberStart, this._lines.length - 1);
@@ -108,11 +118,14 @@ define("vs/editor/core/view/lines/viewLayer", ["require", "exports", "vs/base/do
 
           this._lines.splice(t, 0, r);
         }
-        for (var s = i - n + 1, t = this._lines.length - s; t < this._lines.length; t++) this.domNode.removeChild(
-          this._lines[t].getDomNode());
+        for (var s = i - n + 1, t = this._lines.length - s; t < this._lines.length; t++) {
+          this.domNode.removeChild(this._lines[t].getDomNode());
+        }
         this._lines.splice(this._lines.length - s, s);
       }
-      for (t = i; t < this._lines.length; t++) this._lines[t].onLinesInsertedAbove();
+      for (t = i; t < this._lines.length; t++) {
+        this._lines[t].onLinesInsertedAbove();
+      }
       return !0;
     };
 
@@ -120,11 +133,14 @@ define("vs/editor/core/view/lines/viewLayer", ["require", "exports", "vs/base/do
       var t = e.fromLineNumber - this._rendLineNumberStart;
 
       var n = e.toLineNumber - this._rendLineNumberStart;
-      if (0 > n || t >= this._lines.length) return !1;
+      if (0 > n || t >= this._lines.length) {
+        return !1;
+      }
       for (var i = Math.min(Math.max(t, 0), this._lines.length - 1), o = Math.min(Math.max(n, 0), this._lines.length -
-          1), r = !1, s = i; o >= s; s++) r = !0;
-
-      this._lines[s].onTokensChanged();
+          1), r = !1, s = i; o >= s; s++) {
+        r = !0;
+        this._lines[s].onTokensChanged();
+      }
       return r;
     };
 
@@ -218,9 +234,10 @@ define("vs/editor/core/view/lines/viewLayer", ["require", "exports", "vs/base/do
       var r;
 
       var s;
-      for (r = t; n >= r; r++) s = e.rendLineNumberStart + r;
-
-      e.lines[r].layoutLine(s, i[s - o]);
+      for (r = t; n >= r; r++) {
+        s = e.rendLineNumberStart + r;
+        e.lines[r].layoutLine(s, i[s - o]);
+      }
     };
 
     e.prototype._insertLinesBefore = function(e, t, n) {
@@ -231,17 +248,19 @@ define("vs/editor/core/view/lines/viewLayer", ["require", "exports", "vs/base/do
       var r = e.linesLength > 0 ? e.lines[0].getDomNode() : e.guardElement;
 
       var s = [];
-      for (o = t; n >= o; o++) i = this._createLine(!0);
-
-      s.push(i);
-
-      e.domNode.insertBefore(i.getDomNode(), r);
+      for (o = t; n >= o; o++) {
+        i = this._createLine(!0);
+        s.push(i);
+        e.domNode.insertBefore(i.getDomNode(), r);
+      }
       e.lines = s.concat(e.lines);
     };
 
     e.prototype._removeLinesBefore = function(e, t) {
       var n;
-      for (n = 0; t > n; n++) e.domNode.removeChild(e.lines[n].getDomNode());
+      for (n = 0; t > n; n++) {
+        e.domNode.removeChild(e.lines[n].getDomNode());
+      }
       e.lines.splice(0, t);
     };
 
@@ -253,11 +272,11 @@ define("vs/editor/core/view/lines/viewLayer", ["require", "exports", "vs/base/do
       var r = e.guardElement;
 
       var s = [];
-      for (o = t; n >= o; o++) i = this._createLine(!0);
-
-      s.push(i);
-
-      e.domNode.insertBefore(i.getDomNode(), r);
+      for (o = t; n >= o; o++) {
+        i = this._createLine(!0);
+        s.push(i);
+        e.domNode.insertBefore(i.getDomNode(), r);
+      }
       e.lines = e.lines.concat(s);
     };
 
@@ -265,7 +284,9 @@ define("vs/editor/core/view/lines/viewLayer", ["require", "exports", "vs/base/do
       var n;
 
       var i = e.linesLength - t;
-      for (n = 0; t > n; n++) e.domNode.removeChild(e.lines[i + n].getDomNode());
+      for (n = 0; t > n; n++) {
+        e.domNode.removeChild(e.lines[i + n].getDomNode());
+      }
       e.lines.splice(i, t);
     };
 
@@ -293,11 +314,12 @@ define("vs/editor/core/view/lines/viewLayer", ["require", "exports", "vs/base/do
       var h = 0;
 
       var p = 0;
-      for (n = 0; n < e.linesLength; n++) i = e.lines[n];
-
-      i.shouldUpdateHTML(n + e.rendLineNumberStart) ? (a = a.concat(i.getLineOuterHTML(n + e.rendLineNumberStart, t[n])),
-        s[n] = !0, r = !0, e.frameData && (o = i.getLineStatistics(), l++, d += o.partsCount, p += o.charactersCount)
-      ) : e.frameData && (o = i.getLineStatistics(), u++, c += o.partsCount, h += o.charactersCount);
+      for (n = 0; n < e.linesLength; n++) {
+        i = e.lines[n];
+        i.shouldUpdateHTML(n + e.rendLineNumberStart) ? (a = a.concat(i.getLineOuterHTML(n + e.rendLineNumberStart, t[
+          n])), s[n] = !0, r = !0, e.frameData && (o = i.getLineStatistics(), l++, d += o.partsCount, p += o.charactersCount)) :
+          e.frameData && (o = i.getLineStatistics(), u++, c += o.partsCount, h += o.charactersCount);
+      }
       if (e.frameData && (e.frameData.renderedVisibleLinesCount += l, e.frameData.totalVisibleLinesCount += l + u, e.frameData
         .renderedVisiblePartsCount += d, e.frameData.totalVisiblePartsCount += d + c, e.frameData.renderedVisibleCharactersCount +=
         p, e.frameData.totalVisibleCharactersCount += p + h), r) {
@@ -306,9 +328,10 @@ define("vs/editor/core/view/lines/viewLayer", ["require", "exports", "vs/base/do
         var g;
 
         var m;
-        for (n = 0; n < e.linesLength; n++) i = e.lines[n];
-
-        s[n] && (m = f.firstChild, g = i.getDomNode(), g.parentNode.replaceChild(m, g), i.setDomNode(m));
+        for (n = 0; n < e.linesLength; n++) {
+          i = e.lines[n];
+          s[n] && (m = f.firstChild, g = i.getDomNode(), g.parentNode.replaceChild(m, g), i.setDomNode(m));
+        }
       }
     };
 

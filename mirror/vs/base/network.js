@@ -8,8 +8,12 @@ define("vs/base/network", ["require", "exports", "./assert", "./hash", "./string
         var o = n[i];
         if (o.indexOf("=") >= 0) {
           var r = o.split("=");
-          if (decodeURIComponent(r[0]) === e && r.length > 1) return decodeURIComponent(r[1]);
-        } else if (decodeURIComponent(o) === e) return "true";
+          if (decodeURIComponent(r[0]) === e && r.length > 1) {
+            return decodeURIComponent(r[1]);
+          }
+        } else if (decodeURIComponent(o) === e) {
+          return "true";
+        }
       }
     }
     return null;

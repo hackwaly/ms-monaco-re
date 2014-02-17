@@ -130,20 +130,23 @@ define("vs/editor/core/model/editableTextModel", ["require", "exports", "vs/edit
 
       var l = this._lines;
       for (i = t - 1, o = l.length; o > i; i++) {
-        for (n = l[i], a = n.markers, r = 0, s = a.length; s > r; r++) u = a[r];
-
-        e[u.id] = !0;
-
-        u.oldLineNumber = u.oldLineNumber || n.lineNumber;
+        for (n = l[i], a = n.markers, r = 0, s = a.length; s > r; r++) {
+          u = a[r];
+          e[u.id] = !0;
+          u.oldLineNumber = u.oldLineNumber || n.lineNumber;
+        }
         n.lineNumber = i + 1;
       }
     };
 
     t.prototype._insertText = function(e, t, n, i) {
       var o = this.validatePosition(t);
-      if (0 === n.length) return o;
-      for (var r = n.split("\n"), s = 0, a = r.length; a > s; s++) "\r" === r[s].charAt(r[s].length - 1) && (r[s] = r[
-        s].substring(0, r[s].length - 1));
+      if (0 === n.length) {
+        return o;
+      }
+      for (var r = n.split("\n"), s = 0, a = r.length; a > s; s++) {
+        "\r" === r[s].charAt(r[s].length - 1) && (r[s] = r[s].substring(0, r[s].length - 1));
+      }
       return 1 === r.length ? this._insertTextOneLine(e, o, r[0], i) : this._insertTextMultiline(e, o, r, i);
     };
 
@@ -167,9 +170,10 @@ define("vs/editor/core/model/editableTextModel", ["require", "exports", "vs/edit
         markers: null
       }, i, !0);
       var l = "";
-      for (o = 1, a = n.length - 1; a > o; o++) l += n[o] + "\n";
-
-      this._lines.splice(t.lineNumber + o - 1, 0, new r.ModelLine(t.lineNumber + o, n[o]));
+      for (o = 1, a = n.length - 1; a > o; o++) {
+        l += n[o] + "\n";
+        this._lines.splice(t.lineNumber + o - 1, 0, new r.ModelLine(t.lineNumber + o, n[o]));
+      }
       var c = t.lineNumber - 1 + n.length - 1;
       this._lines.splice(c, 0, new r.ModelLine(c + 1, n[n.length - 1]));
 
@@ -215,15 +219,13 @@ define("vs/editor/core/model/editableTextModel", ["require", "exports", "vs/edit
 
       var c = [];
       for (o = n; i >= o; o++) {
-        for (l.push(this._lines[o].text), a = this._lines[o].markers, r = 0, s = a.length; s > r; r++) u = a[r];
-
-        e[u.id] = !0;
-
-        u.oldColumn = u.oldColumn || u.column;
-
-        u.oldLineNumber = u.oldLineNumber || o + 1;
-
-        u.column = t;
+        for (l.push(this._lines[o].text), a = this._lines[o].markers, r = 0, s = a.length; s > r; r++) {
+          u = a[r];
+          e[u.id] = !0;
+          u.oldColumn = u.oldColumn || u.column;
+          u.oldLineNumber = u.oldLineNumber || o + 1;
+          u.column = t;
+        }
         c = c.concat(a);
       }
       this._lines.splice(n, i - n + 1);

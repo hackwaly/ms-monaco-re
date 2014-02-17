@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -139,7 +141,9 @@ define(["require", "exports", "vs/base/dom/dom", "vs/base/lib/winjs.base", "vs/e
     };
 
     b.prototype.dispose = function() {
-      while (this.toUnbind.length > 0) this.toUnbind.pop()();
+      while (this.toUnbind.length > 0) {
+        this.toUnbind.pop()();
+      }
       this.markers = null;
 
       this.disposed = !0;
@@ -301,7 +305,9 @@ define(["require", "exports", "vs/base/dom/dom", "vs/base/lib/winjs.base", "vs/e
     __extends(b, a);
 
     b.prototype.cleanUp = function() {
-      while (this.toUnhook.length > 0) this.toUnhook.pop()();
+      while (this.toUnhook.length > 0) {
+        this.toUnhook.pop()();
+      }
       this.zone && (this.zone.dispose(), this.zone = null);
 
       this.model && (this.model.dispose(), this.model = null);
@@ -309,7 +315,9 @@ define(["require", "exports", "vs/base/dom/dom", "vs/base/lib/winjs.base", "vs/e
 
     b.prototype.getOrCreateModel = function() {
       var a = this;
-      if (this.model) return this.model;
+      if (this.model) {
+        return this.model;
+      }
       var b = this.getMarkers();
       this.model = new E(this.editor, b);
 

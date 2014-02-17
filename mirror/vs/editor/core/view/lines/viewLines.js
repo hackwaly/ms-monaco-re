@@ -53,8 +53,9 @@ define("vs/editor/core/view/lines/viewLines", ["require", "exports", "vs/editor/
     };
 
     t.prototype.onModelDecorationsChanged = function(t) {
-      for (var n = e.prototype.onModelDecorationsChanged.call(this, t), i = 0; i < this._lines.length; i++) this._lines[
-        i].onModelDecorationsChanged();
+      for (var n = e.prototype.onModelDecorationsChanged.call(this, t), i = 0; i < this._lines.length; i++) {
+        this._lines[i].onModelDecorationsChanged();
+      }
       return n || !0;
     };
 
@@ -69,13 +70,19 @@ define("vs/editor/core/view/lines/viewLines", ["require", "exports", "vs/editor/
 
     t.prototype.getPositionFromDOMInfo = function(e, t) {
       var n = this._getLineNumberFromDOMInfo(e);
-      if (-1 === n) return null;
-      if (1 === this._context.model.getLineMaxColumn(n)) return {
-        lineNumber: n,
-        column: 1
-      };
+      if (-1 === n) {
+        return null;
+      }
+      if (1 === this._context.model.getLineMaxColumn(n)) {
+        return {
+          lineNumber: n,
+          column: 1
+        };
+      }
       var i = n - this._rendLineNumberStart;
-      if (0 > i || i >= this._lines.length) return null;
+      if (0 > i || i >= this._lines.length) {
+        return null;
+      }
       var o = this._lines[i].getColumnOfNodeOffset(n, e, t);
       return {
         lineNumber: n,
@@ -85,7 +92,9 @@ define("vs/editor/core/view/lines/viewLines", ["require", "exports", "vs/editor/
 
     t.prototype._getLineNumberFromDOMInfo = function(e) {
       for (; e && 1 === e.nodeType;) {
-        if (e.className === o.ClassNames.VIEW_LINE) return parseInt(e.getAttribute("lineNumber"), 10);
+        if (e.className === o.ClassNames.VIEW_LINE) {
+          return parseInt(e.getAttribute("lineNumber"), 10);
+        }
         e = e.parentElement;
       }
       return -1;
@@ -97,9 +106,13 @@ define("vs/editor/core/view/lines/viewLines", ["require", "exports", "vs/editor/
     };
 
     t.prototype.visibleRangesForRange2 = function(e, n, i) {
-      if (this.shouldRender) return null;
+      if (this.shouldRender) {
+        return null;
+      }
       var o = e.endLineNumber;
-      if (e = r.intersectRanges(e, this._currentVisibleRange), !e) return null;
+      if (e = r.intersectRanges(e, this._currentVisibleRange), !e) {
+        return null;
+      }
       var s;
 
       var a;
@@ -128,9 +141,10 @@ define("vs/editor/core/view/lines/viewLines", ["require", "exports", "vs/editor/
         if (u = a - this._rendLineNumberStart, !(0 > u || u >= this._lines.length) && (l = a === e.startLineNumber ?
           e.startColumn : 1, c = a === e.endLineNumber ? e.endColumn : this._context.model.getLineMaxColumn(a), s =
           this._lines[u].getVisibleRangesForRange(a, l, c, m, v, this._guardElement), s && s.length > 0)) {
-          for (var y = 0, _ = s.length; _ > y; y++) s[y].top = (s[y].top / f + .5 | 0) * f + n;
-
-          s[y].height = f;
+          for (var y = 0, _ = s.length; _ > y; y++) {
+            s[y].top = (s[y].top / f + .5 | 0) * f + n;
+            s[y].height = f;
+          }
           i && o > a && (d = h, h = this._context.model.convertViewPositionToModelPosition(a + 1, 1).lineNumber, d !==
             h && (s[s.length - 1].width += t.LINE_FEED_WIDTH));
 
@@ -167,9 +181,10 @@ define("vs/editor/core/view/lines/viewLines", ["require", "exports", "vs/editor/
       var t;
 
       var n = 1;
-      for (e = 0; e < this._lines.length; e++) t = this._lines[e].getWidth();
-
-      n = Math.max(n, t);
+      for (e = 0; e < this._lines.length; e++) {
+        t = this._lines[e].getWidth();
+        n = Math.max(n, t);
+      }
       this._ensureMaxLineWidth(n);
     };
 
@@ -207,16 +222,20 @@ define("vs/editor/core/view/lines/viewLines", ["require", "exports", "vs/editor/
       if (n) {
         var l = (i + o) / 2;
         u = Math.max(0, l - s / 2);
-      } else u = this._computeMinimumScrolling(r, a, i, o);
+      } else {
+        u = this._computeMinimumScrolling(r, a, i, o);
+      }
       return u;
     };
 
     t.prototype._computeScrollLeftToRevealRange = function(e) {
       var n = 0;
-      if (e.startLineNumber !== e.endLineNumber) return {
-        scrollLeft: 0,
-        maxHorizontalOffset: n
-      };
+      if (e.startLineNumber !== e.endLineNumber) {
+        return {
+          scrollLeft: 0,
+          maxHorizontalOffset: n
+        };
+      }
       var i = this._layoutProvider.getCurrentViewport();
 
       var o = i.left;
@@ -228,18 +247,20 @@ define("vs/editor/core/view/lines/viewLines", ["require", "exports", "vs/editor/
       var a = Number.MAX_VALUE;
 
       var u = 0;
-      if (!s) return {
-        scrollLeft: o,
-        maxHorizontalOffset: n
-      };
+      if (!s) {
+        return {
+          scrollLeft: o,
+          maxHorizontalOffset: n
+        };
+      }
       var l;
 
       var c;
-      for (l = 0; l < s.length; l++) c = s[l];
-
-      c.left < a && (a = c.left);
-
-      c.left + c.width > u && (u = c.left + c.width);
+      for (l = 0; l < s.length; l++) {
+        c = s[l];
+        c.left < a && (a = c.left);
+        c.left + c.width > u && (u = c.left + c.width);
+      }
       n = u;
 
       a = Math.max(0, a - t.HORIZONTAL_EXTRA_PX);

@@ -40,33 +40,31 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
         var d = r.substring(0, n - 1) + i.text + r.substring(n - 1, r.length);
         if (a !== e.DEFAULT_TOKENS_NON_EMPTY_TEXT && a !== e.DEFAULT_TOKENS_EMPTY_TEXT) {
           var h;
-          for (l = 0, c = a.length; c > l; l++) h = a[l];
-
-          h.startIndex >= n - 1 && h.startIndex > 0 && (h.startIndex += u);
+          for (l = 0, c = a.length; c > l; l++) {
+            h = a[l];
+            h.startIndex >= n - 1 && h.startIndex > 0 && (h.startIndex += u);
+          }
         }
         var p;
-        for (l = 0, c = this.markers.length; c > l; l++) p = this.markers[l];
-
-        (p.column > n || p.column === n && (o || !p.stickToPreviousCharacter)) && (t[p.id] = !0, p.oldLineNumber = p.oldLineNumber ||
-          this.lineNumber, p.oldColumn = p.oldColumn || p.column, p.column += u);
+        for (l = 0, c = this.markers.length; c > l; l++) {
+          p = this.markers[l];
+          (p.column > n || p.column === n && (o || !p.stickToPreviousCharacter)) && (t[p.id] = !0, p.oldLineNumber =
+            p.oldLineNumber || this.lineNumber, p.oldColumn = p.oldColumn || p.column, p.column += u);
+        }
         this.text = d;
 
         this._recreateLineTokens(a);
       }
       if (i.markers)
-        for (l = 0, c = i.markers.length; c > l; l++) p = i.markers[l];
-
-      t[p.id] = !0;
-
-      p.oldLineNumber = p.oldLineNumber || this.lineNumber;
-
-      p.oldColumn = p.oldColumn || p.column;
-
-      p.line = this;
-
-      p.column += n - 1;
-
-      this.markers.push(p);
+        for (l = 0, c = i.markers.length; c > l; l++) {
+          p = i.markers[l];
+          t[p.id] = !0;
+          p.oldLineNumber = p.oldLineNumber || this.lineNumber;
+          p.oldColumn = p.oldColumn || p.column;
+          p.line = this;
+          p.column += n - 1;
+          this.markers.push(p);
+        }
     };
 
     e.prototype.removeText = function(t, n, i, o, r) {
@@ -111,13 +109,14 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
         this._recreateLineTokens(d);
       }
       var m;
-      for (h = 0; h < this.markers.length; h++) m = this.markers[h];
-
-      m.column > s || m.column === s && (r || !m.stickToPreviousCharacter) ? (t[m.id] = !0, m.oldLineNumber = m.oldLineNumber ||
-        this.lineNumber, m.oldColumn = m.oldColumn || m.column, m.column -= a.length) : (m.column > n || m.column ===
-        n && (r || !m.stickToPreviousCharacter)) && (t[m.id] = !0, m.oldLineNumber = m.oldLineNumber || this.lineNumber,
-        m.oldColumn = m.oldColumn || m.column, o ? (m.line = null, m.column -= n - 1, this.markers.splice(h, 1), h--,
-          u.push(m)) : m.column = n);
+      for (h = 0; h < this.markers.length; h++) {
+        m = this.markers[h];
+        m.column > s || m.column === s && (r || !m.stickToPreviousCharacter) ? (t[m.id] = !0, m.oldLineNumber = m.oldLineNumber ||
+          this.lineNumber, m.oldColumn = m.oldColumn || m.column, m.column -= a.length) : (m.column > n || m.column ===
+          n && (r || !m.stickToPreviousCharacter)) && (t[m.id] = !0, m.oldLineNumber = m.oldLineNumber || this.lineNumber,
+          m.oldColumn = m.oldColumn || m.column, o ? (m.line = null, m.column -= n - 1, this.markers.splice(h, 1), h--,
+            u.push(m)) : m.column = n);
+      }
       return {
         text: a,
         markers: u
@@ -134,7 +133,9 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
       var t;
 
       var n;
-      for (t = 0, n = e.length; n > t; t++) e[t].line = this;
+      for (t = 0, n = e.length; n > t; t++) {
+        e[t].line = this;
+      }
       this.markers = this.markers.concat(e);
     };
 
@@ -152,7 +153,9 @@ define("vs/editor/core/model/modelLine", ["require", "exports", "vs/editor/modes
 
       var i = this.markers;
       for (t = 0, n = i.length; n > t; t++)
-        if (i[t].id === e) return t;
+        if (i[t].id === e) {
+          return t;
+        }
       return -1;
     };
 

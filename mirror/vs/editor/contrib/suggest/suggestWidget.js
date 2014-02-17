@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -18,8 +20,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/error
 
     var e = 0;
     for (var f = 0; f < b.length && f < a.length; f++)
-      if (b[f] === a[f]) e += 2;
-      else {
+      if (b[f] === a[f]) {
+        e += 2;
+      } else {
         if (c[f] !== d[f]) break;
         e += 1;
       }
@@ -74,12 +77,17 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/error
     };
 
     a.prototype.getId = function(b, c) {
-      if (c instanceof A) return "messageroot";
-      if (c instanceof z) return "message" + c.message;
+      if (c instanceof A) {
+        return "messageroot";
+      }
+      if (c instanceof z) {
+        return "message" + c.message;
+      }
       if (!c.suggestions) {
-        if (q.isISuggestion(c)) typeof c.id != "string" && (c.id = String(a._IdPool++));
-
-        return c.id;
+        if (q.isISuggestion(c)) {
+          typeof c.id != "string" && (c.id = String(a._IdPool++));
+          return c.id;
+        }
         throw p.illegalArgument("element");
       }
       return "root";
@@ -144,15 +152,16 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/error
 
     b.prototype.renderContents = function(a, b, c) {
       var d = y(c);
-      if (b instanceof z) d.empty().span({
-        style: {
-          opacity: .7,
-          "padding-left": "12px"
-        },
-        text: b.message
-      });
-
-      return null;
+      if (b instanceof z) {
+        d.empty().span({
+          style: {
+            opacity: .7,
+            "padding-left": "12px"
+          },
+          text: b.message
+        });
+        return null;
+      }
       var e = b;
 
       var f = d.getBinding();
@@ -405,7 +414,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/error
     };
 
     a.prototype.selectNext = function() {
-      if (this.isLoading) return !0;
+      if (this.isLoading) {
+        return !0;
+      }
       if (this.isActive) {
         var a = this.tree.getFocus();
         this.tree.focusNext(1);
@@ -422,7 +433,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/error
     };
 
     a.prototype.selectPrevious = function() {
-      if (this.isLoading) return !0;
+      if (this.isLoading) {
+        return !0;
+      }
       if (this.isActive) {
         var a = this.tree.getFocus();
         this.tree.focusPrevious(1);
@@ -435,7 +448,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/error
     };
 
     a.prototype.acceptSelectedSuggestion = function() {
-      if (this.isLoading) return !0;
+      if (this.isLoading) {
+        return !0;
+      }
       if (this.isActive) {
         var a = this.tree.getFocus();
         a ? this.tree.setSelection([a]) : this.model.cancel();
@@ -447,7 +462,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/error
 
     a.prototype.releaseModel = function() {
       var a;
-      while (a = this.modelListenersToRemove.pop()) a();
+      while (a = this.modelListenersToRemove.pop()) {
+        a();
+      }
       this.model = null;
     };
 

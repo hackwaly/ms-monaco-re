@@ -10,13 +10,19 @@ define(["require", "exports", "vs/editor/core/range", "vs/editor/core/selection"
       this._usedEndToken = null;
     }
     a.prototype._haystackHasNeedleAtOffset = function(a, b, c) {
-      if (c < 0) return !1;
+      if (c < 0) {
+        return !1;
+      }
       var d = b.length;
 
       var e = a.length;
-      if (c + d > e) return !1;
+      if (c + d > e) {
+        return !1;
+      }
       for (var f = 0; f < d; f++)
-        if (a.charCodeAt(c + f) !== b.charCodeAt(f)) return !1;
+        if (a.charCodeAt(c + f) !== b.charCodeAt(f)) {
+          return !1;
+        }
       return !0;
     };
 

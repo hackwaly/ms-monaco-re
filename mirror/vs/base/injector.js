@@ -27,11 +27,12 @@ define("vs/base/injector", ["require", "exports", "vs/base/assert", "vs/base/typ
       var t = this;
       n.ok(!i.isUndefinedOrNull(e));
       var s = !1;
-      if (i.isArray(e)) e.forEach(function(e) {
-        s = t.injectTo(e) || s;
-      });
-
-      return s;
+      if (i.isArray(e)) {
+        e.forEach(function(e) {
+          s = t.injectTo(e) || s;
+        });
+        return s;
+      }
       for (var a in e)
         if (0 === a.indexOf(o)) {
           var u = e[a];

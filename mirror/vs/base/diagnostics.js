@@ -1,6 +1,8 @@
 define("vs/base/diagnostics", ["require", "exports"], function(e, t) {
   function n(e, t) {
-    for (; e.length > t;) e.shift();
+    for (; e.length > t;) {
+      e.shift();
+    }
   }
 
   function i(e, t) {
@@ -11,7 +13,9 @@ define("vs/base/diagnostics", ["require", "exports"], function(e, t) {
 
     s[e] = o;
     var u = function() {
-      for (var i = [], o = 0; o < arguments.length - 0; o++) i[o] = arguments[o + 0];
+      for (var i = [], o = 0; o < arguments.length - 0; o++) {
+        i[o] = arguments[o + 0];
+      }
       var s;
       if (r[e] === !0) {
         var u = [arguments];

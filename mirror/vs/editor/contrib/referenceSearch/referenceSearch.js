@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -90,7 +92,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/s
       for (var c = 0, d = this._references.length; c < d; c++) {
         var e = this._references[c].range;
         if (this._references[c].resourceUrl === a && e.startLineNumber <= b.lineNumber && e.endLineNumber >= b.lineNumber &&
-          e.startColumn <= b.column && e.endColumn >= b.column) return c;
+          e.startColumn <= b.column && e.endColumn >= b.column) {
+          return c;
+        }
       }
       return -1;
     };
@@ -103,7 +107,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/s
   var L = function() {
     function a() {}
     a.prototype.getId = function(a, b) {
-      if (b instanceof K) return "reference.model";
+      if (b instanceof K) {
+        return "reference.model";
+      }
       var c = b;
       return c.resourceUrl + c.range.startLineNumber + c.range.startColumn + c.range.endLineNumber + c.range.endColumn;
     };
@@ -366,7 +372,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/s
 
     b.prototype.setModel = function(a) {
       var c = this;
-      while (this.toUnhook.length > 0) this.toUnhook.pop()();
+      while (this.toUnhook.length > 0) {
+        this.toUnhook.pop()();
+      }
       this.model = a;
 
       this.model && (this.toUnhook.push(this.tree.addListener(N.Events.FOCUSED, function(a) {
@@ -539,7 +547,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/s
       var c = this.widget ? this.widget.position : null;
 
       var d = this.clear();
-      if (d && !! c && b.containsPosition(c)) return null;
+      if (d && !! c && b.containsPosition(c)) {
+        return null;
+      }
       var e = ++this.requestIdPool;
 
       var f = this.editor.getModel();

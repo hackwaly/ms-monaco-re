@@ -146,7 +146,9 @@ define("vs/base/ui/widgets/progressbar", ["require", "exports", "vs/base/lib/win
     };
 
     e.prototype.dispose = function() {
-      for (; this.toUnbind.length;) this.toUnbind.pop()();
+      for (; this.toUnbind.length;) {
+        this.toUnbind.pop()();
+      }
     };
 
     return e;

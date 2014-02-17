@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -120,7 +122,9 @@ define(["require", "exports", "vs/editor/core/view/viewEventHandler", "vs/css!./
     };
 
     b.prototype.visibleRangesHaveGaps = function(a) {
-      if (a.length <= 1) return !1;
+      if (a.length <= 1) {
+        return !1;
+      }
       var b;
 
       var c;
@@ -131,7 +135,9 @@ define(["require", "exports", "vs/editor/core/view/viewEventHandler", "vs/css!./
       b = a[0].top;
       for (d = 1, e = a.length; d < e; d++) {
         c = a[d].top;
-        if (c === b) return !0;
+        if (c === b) {
+          return !0;
+        }
         b = c;
       }
       return !1;
@@ -159,31 +165,25 @@ define(["require", "exports", "vs/editor/core/view/viewEventHandler", "vs/css!./
       var l;
 
       var m;
-      for (l = 0, m = a.length; l < m; l++) b = a[l];
-
-      c = b.left;
-
-      d = b.left + b.width;
-
-      j = {
-        top: e.EXTERN,
-        bottom: e.EXTERN
-      };
-
-      k = {
-        top: e.EXTERN,
-        bottom: e.EXTERN
-      };
-
-      l > 0 && (f = a[l - 1].left, g = a[l - 1].left + a[l - 1].width, c === f ? j.top = e.FLAT : c > f && (j.top = e
-        .INTERN), d === g ? k.top = e.FLAT : f < d && d < g && (k.top = e.INTERN));
-
-      l + 1 < m && (h = a[l + 1].left, i = a[l + 1].left + a[l + 1].width, c === h ? j.bottom = e.FLAT : h < c && c <
-        i && (j.bottom = e.INTERN), d === i ? k.bottom = e.FLAT : d < i && (k.bottom = e.INTERN));
-
-      b.startStyle = j;
-
-      b.endStyle = k;
+      for (l = 0, m = a.length; l < m; l++) {
+        b = a[l];
+        c = b.left;
+        d = b.left + b.width;
+        j = {
+          top: e.EXTERN,
+          bottom: e.EXTERN
+        };
+        k = {
+          top: e.EXTERN,
+          bottom: e.EXTERN
+        };
+        l > 0 && (f = a[l - 1].left, g = a[l - 1].left + a[l - 1].width, c === f ? j.top = e.FLAT : c > f && (j.top =
+          e.INTERN), d === g ? k.top = e.FLAT : f < d && d < g && (k.top = e.INTERN));
+        l + 1 < m && (h = a[l + 1].left, i = a[l + 1].left + a[l + 1].width, c === h ? j.bottom = e.FLAT : h < c && c <
+          i && (j.bottom = e.INTERN), d === i ? k.bottom = e.FLAT : d < i && (k.bottom = e.INTERN));
+        b.startStyle = j;
+        b.endStyle = k;
+      }
     };
 
     b.prototype.getVisibleRangesWithStyle = function(a, b) {
@@ -238,26 +238,22 @@ define(["require", "exports", "vs/editor/core/view/viewEventHandler", "vs/css!./
       for (k = 0; k < a.length; k++) {
         l = a[k];
         if (h) {
-          if (l.startStyle.top === e.INTERN || l.startStyle.bottom === e.INTERN) this.createSelectionPiece(b.SELECTION_CLASS_NAME,
-            l.top, l.left - b.ROUNDED_PIECE_WIDTH, b.ROUNDED_PIECE_WIDTH, j, c, d, f, g);
-
-          i = b.EDITOR_BACKGROUND_CLASS_NAME;
-
-          l.startStyle.top === e.INTERN && (i += " " + b.SELECTION_TOP_RIGHT);
-
-          l.startStyle.bottom === e.INTERN && (i += " " + b.SELECTION_BOTTOM_RIGHT);
-
-          this.createSelectionPiece(i, l.top, l.left - b.ROUNDED_PIECE_WIDTH, b.ROUNDED_PIECE_WIDTH, j, c, d, f, g);
-          if (l.endStyle.top === e.INTERN || l.endStyle.bottom === e.INTERN) this.createSelectionPiece(b.SELECTION_CLASS_NAME,
-            l.top, l.left + l.width, b.ROUNDED_PIECE_WIDTH, j, c, d, f, g);
-
-          i = b.EDITOR_BACKGROUND_CLASS_NAME;
-
-          l.endStyle.top === e.INTERN && (i += " " + b.SELECTION_TOP_LEFT);
-
-          l.endStyle.bottom === e.INTERN && (i += " " + b.SELECTION_BOTTOM_LEFT);
-
-          this.createSelectionPiece(i, l.top, l.left + l.width, b.ROUNDED_PIECE_WIDTH, j, c, d, f, g);
+          if (l.startStyle.top === e.INTERN || l.startStyle.bottom === e.INTERN) {
+            this.createSelectionPiece(b.SELECTION_CLASS_NAME, l.top, l.left - b.ROUNDED_PIECE_WIDTH, b.ROUNDED_PIECE_WIDTH,
+              j, c, d, f, g);
+            i = b.EDITOR_BACKGROUND_CLASS_NAME;
+            l.startStyle.top === e.INTERN && (i += " " + b.SELECTION_TOP_RIGHT);
+            l.startStyle.bottom === e.INTERN && (i += " " + b.SELECTION_BOTTOM_RIGHT);
+            this.createSelectionPiece(i, l.top, l.left - b.ROUNDED_PIECE_WIDTH, b.ROUNDED_PIECE_WIDTH, j, c, d, f, g);
+          }
+          if (l.endStyle.top === e.INTERN || l.endStyle.bottom === e.INTERN) {
+            this.createSelectionPiece(b.SELECTION_CLASS_NAME, l.top, l.left + l.width, b.ROUNDED_PIECE_WIDTH, j, c, d,
+              f, g);
+            i = b.EDITOR_BACKGROUND_CLASS_NAME;
+            l.endStyle.top === e.INTERN && (i += " " + b.SELECTION_TOP_LEFT);
+            l.endStyle.bottom === e.INTERN && (i += " " + b.SELECTION_BOTTOM_LEFT);
+            this.createSelectionPiece(i, l.top, l.left + l.width, b.ROUNDED_PIECE_WIDTH, j, c, d, f, g);
+          }
         }
         i = b.SELECTION_CLASS_NAME;
 
@@ -315,12 +311,11 @@ define(["require", "exports", "vs/editor/core/view/viewEventHandler", "vs/css!./
     };
 
     b.prototype.render = function(a) {
-      if (this.shouldRender) this.previousRender = this.actualRender(a);
-
-      this.shouldRender = !1;
-
-      this.horizontalScrollChanged = !1;
-      else if (this.horizontalScrollChanged) {
+      if (this.shouldRender) {
+        this.previousRender = this.actualRender(a);
+        this.shouldRender = !1;
+        this.horizontalScrollChanged = !1;
+      } else if (this.horizontalScrollChanged) {
         var b;
 
         var c;
@@ -330,7 +325,9 @@ define(["require", "exports", "vs/editor/core/view/viewEventHandler", "vs/css!./
         var e = this.previousRender.lefts;
 
         var f = this.previousRender.leftsIndices;
-        for (b = 0, c = e.length; b < c; b++) d[f[b]] = (e[b] - a.viewportLeft).toString();
+        for (b = 0, c = e.length; b < c; b++) {
+          d[f[b]] = (e[b] - a.viewportLeft).toString();
+        }
         this.horizontalScrollChanged = !1;
       }
       return this.previousRender.html;

@@ -40,7 +40,9 @@ define("vs/base/uuid", ["require", "exports", "vs/base/assert"], function(e, t, 
     };
 
     e.toHexString = function(e, t) {
-      for (var n = e.toString(16), i = t - n.length; i-- > 0;) n = "0" + n;
+      for (var n = e.toString(16), i = t - n.length; i-- > 0;) {
+        n = "0" + n;
+      }
       return n;
     };
 

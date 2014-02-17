@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -100,7 +102,9 @@ define(["require", "exports", "vs/editor/core/codeEditorWidget", "vs/editor/diff
       };
       if (b) {
         var d;
-        for (d in b) b.hasOwnProperty(d) && (c[d] = b[d]);
+        for (d in b) {
+          b.hasOwnProperty(d) && (c[d] = b[d]);
+        }
       }
       return y.create(c);
     };

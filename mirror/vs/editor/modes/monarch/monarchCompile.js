@@ -2,11 +2,17 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
   "vs/editor/modes/monarch/monarchCommon"
 ], function(e, t, n, i, o) {
   function r(e, t) {
-    if (!t) return !1;
-    if (!(t instanceof Array)) return !1;
+    if (!t) {
+      return !1;
+    }
+    if (!(t instanceof Array)) {
+      return !1;
+    }
     var n;
     for (n in t)
-      if (t.hasOwnProperty(n) && !e(t[n])) return !1;
+      if (t.hasOwnProperty(n) && !e(t[n])) {
+        return !1;
+      }
     return !0;
   }
 
@@ -29,27 +35,36 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
   }
 
   function c(e, t) {
-    if ("string" != typeof t) return null;
-    for (var n = 0; t.indexOf("@") >= 0 && 5 > n;) n++;
+    if ("string" != typeof t) {
+      return null;
+    }
+    for (var n = 0; t.indexOf("@") >= 0 && 5 > n;) {
+      n++;
+      t = t.replace(/@(\w+)/g, function(n, i) {
+        var r = "";
+        "string" == typeof e[i] ? r = e[i] : e[i] && e[i] instanceof RegExp ? r = e[i].source : void 0 === e[i] ? o
+          .throwError(e, "language definition does not contain attribute '" + i + "', used at: " + t) : o.throwError(
+            e, "attribute reference '" + i + "' must be a string, used at: " + t);
 
-    t = t.replace(/@(\w+)/g, function(n, i) {
-      var r = "";
-      "string" == typeof e[i] ? r = e[i] : e[i] && e[i] instanceof RegExp ? r = e[i].source : void 0 === e[i] ? o.throwError(
-        e, "language definition does not contain attribute '" + i + "', used at: " + t) : o.throwError(e,
-        "attribute reference '" + i + "' must be a string, used at: " + t);
-
-      return o.empty(r) ? "" : "(?:" + r + ")";
-    });
+        return o.empty(r) ? "" : "(?:" + r + ")";
+      });
+    }
     return new RegExp(t, e.ignoreCase ? "i" : "");
   }
 
   function d(e, t, n, i) {
-    if (0 > i) return e;
-    if (i < t.length) return t[i];
+    if (0 > i) {
+      return e;
+    }
+    if (i < t.length) {
+      return t[i];
+    }
     if (i >= 100) {
       i -= 100;
       var o = n.split(".");
-      if (o.unshift(n), i < o.length) return o[i];
+      if (o.unshift(n), i < o.length) {
+        return o[i];
+      }
     }
     return null;
   }
@@ -85,11 +100,12 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
         f = function(e) {
           return "~" === h ? v.test(e) : !v.test(e);
         };
-      } else f = function(t, n, i, r) {
-        var s = c(e, "^" + o.substituteMatches(e, p, n, i, r) + "$");
-        return s.test(t);
-      };
-      else if (p.indexOf("$") < 0) {
+      } else {
+        f = function(t, n, i, r) {
+          var s = c(e, "^" + o.substituteMatches(e, p, n, i, r) + "$");
+          return s.test(t);
+        };
+      } else if (p.indexOf("$") < 0) {
       var y = o.fixCase(e, p);
       f = function(e) {
         return "==" === h ? e === y : e !== y;
@@ -124,21 +140,25 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
 
   function p(e, t, n) {
     if (n) {
-      if ("string" == typeof n) return n;
+      if ("string" == typeof n) {
+        return n;
+      }
       if (n.token || "" === n.token) {
-        if ("string" != typeof n.token) o.throwError(e, "a 'token' attribute must be of type string, in rule: " + t);
-
-        return {
-          token: ""
-        };
+        if ("string" != typeof n.token) {
+          o.throwError(e, "a 'token' attribute must be of type string, in rule: " + t);
+          return {
+            token: ""
+          };
+        }
         var i = {
           token: n.token
         };
         if (n.token.indexOf("$") >= 0 && (i.tokenSubst = !0), "string" == typeof n.bracket && ("@open" === n.bracket ?
           i.bracket = 1 : "@close" === n.bracket ? i.bracket = -1 : o.throwError(e,
             "a 'bracket' attribute must be either '@open' or '@close', in rule: " + t)), n.next)
-          if ("string" != typeof n.next) o.throwError(e, "the next state must be a string value in rule: " + t);
-          else {
+          if ("string" != typeof n.next) {
+            o.throwError(e, "the next state must be a string value in rule: " + t);
+          } else {
             var r = n.next;
             /^(@pop|@push|@popall)$/.test(r) || ("@" === r[0] && (r = r.substr(1)), r.indexOf("$") < 0 && (o.stateExists(
               e, o.substituteMatches(e, r, "", [], "")) || o.throwError(e, "the next state '" + n.next +
@@ -160,7 +180,9 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
         var s;
 
         var a = [];
-        for (s in n) n.hasOwnProperty(s) && (a[s] = p(e, t, n[s]));
+        for (s in n) {
+          n.hasOwnProperty(s) && (a[s] = p(e, t, n[s]));
+        }
         return {
           group: a
         };
@@ -191,7 +213,9 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
             for (o in l)
               if (l.hasOwnProperty(o)) {
                 var r = !l[o].test || l[o].test(e, t, n, i);
-                if (r) return l[o].value;
+                if (r) {
+                  return l[o].value;
+                }
               }
             return d;
           }
@@ -216,40 +240,39 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
           var d = l[c];
 
           var h = d.include;
-          if (h) "string" != typeof h && o.throwError(n, "an 'include' attribute must be a string at: " + r);
-
-          "@" === h[0] && (h = h.substr(1));
-
-          e.tokenizer[h] || o.throwError(n, "include target '" + h + "' is not defined at: " + r);
-
-          t(r + "." + h, u, e.tokenizer[h]);
-          else {
+          if (h) {
+            "string" != typeof h && o.throwError(n, "an 'include' attribute must be a string at: " + r);
+            "@" === h[0] && (h = h.substr(1));
+            e.tokenizer[h] || o.throwError(n, "include target '" + h + "' is not defined at: " + r);
+            t(r + "." + h, u, e.tokenizer[h]);
+          } else {
             var p = new g(r);
             if (d instanceof Array && d.length >= 1 && d.length <= 3)
               if (p.setRegex(i, d[0]), d.length >= 3)
-                if ("string" == typeof d[1]) p.setAction(i, {
-                  token: d[1],
-                  next: d[2]
-                });
-                else if ("object" == typeof d[1]) {
+                if ("string" == typeof d[1]) {
+                  p.setAction(i, {
+                    token: d[1],
+                    next: d[2]
+                  });
+                } else if ("object" == typeof d[1]) {
               var f = d[1];
               f.next = d[2];
 
               p.setAction(i, f);
-            } else o.throwError(n,
-              "a next state as the last element of a rule can only be given if the action is either an object or a string, at: " +
-              r);
-            else p.setAction(i, d[1]);
-            else d.regex || o.throwError(n,
-              "a rule must either be an array, or an object with a 'regex' or 'include' field at: " + r);
-
-            d.name && (p.name = a(d.name));
-
-            d.matchOnlyAtStart && (p.matchOnlyAtLineStart = s(d.matchOnlyAtLineStart));
-
-            p.setRegex(i, d.regex);
-
-            p.setAction(i, d.action);
+            } else {
+              o.throwError(n,
+                "a next state as the last element of a rule can only be given if the action is either an object or a string, at: " +
+                r);
+            } else {
+              p.setAction(i, d[1]);
+            } else {
+              d.regex || o.throwError(n,
+                "a rule must either be an array, or an object with a 'regex' or 'include' field at: " + r);
+              d.name && (p.name = a(d.name));
+              d.matchOnlyAtStart && (p.matchOnlyAtLineStart = s(d.matchOnlyAtLineStart));
+              p.setRegex(i, d.regex);
+              p.setAction(i, d.action);
+            }
             u.push(p);
           }
         }
@@ -338,7 +361,9 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
       o.throwError(n, "the 'nonWordTokens' attribute must be an array of strings");
     });
     var h;
-    for (h in n.nonWordTokens) n.nonWordTokens.hasOwnProperty(h) && (n.nonWordTokens[h] += n.tokenPostfix);
+    for (h in n.nonWordTokens) {
+      n.nonWordTokens.hasOwnProperty(h) && (n.nonWordTokens[h] += n.tokenPostfix);
+    }
     e.brackets ? e.brackets instanceof Array || o.throwError(n,
       "the 'brackets' attribute must be defined as an array") : e.brackets = [{
       open: "{",
@@ -392,48 +417,56 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
           var b = v[y];
           if ("@brackets" === b || "@brackets" === b[0]) {
             var C;
-            for (C in p) p.hasOwnProperty(C) && p[C].open && 1 === p[C].open.length && p[C].close && 1 === p[C].close
-              .length && (_ = {
+            for (C in p) {
+              p.hasOwnProperty(C) && p[C].open && 1 === p[C].open.length && p[C].close && 1 === p[C].close.length &&
+                (_ = {
                 open: p[C].open,
                 close: p[C].close
               }, n.autoClosingPairs.push(_));
-          } else b instanceof Array && 2 === b.length && "string" == typeof b[0] && 1 === b[0].length && "string" ==
-            typeof b[1] && 1 === b[1].length ? (_ = {
-              open: o.fixCase(n, b[0]),
-              close: o.fixCase(n, b[1])
-            }, n.autoClosingPairs.push(_)) : "string" == typeof b.open && 1 === b.open.length && "string" == typeof b
-            .close && 1 === b.close.length ? (_ = {
-              open: o.fixCase(n, b.open[0]),
-              close: o.fixCase(n, b.close[0])
-            }, n.autoClosingPairs.push(_)) : o.throwError(n,
-              "every element in an 'autoClosingPairs' array must be a pair of 1 character strings, or a '@brackets' directive"
-          );
+            }
+          } else {
+            b instanceof Array && 2 === b.length && "string" == typeof b[0] && 1 === b[0].length && "string" ==
+              typeof b[1] && 1 === b[1].length ? (_ = {
+                open: o.fixCase(n, b[0]),
+                close: o.fixCase(n, b[1])
+              }, n.autoClosingPairs.push(_)) : "string" == typeof b.open && 1 === b.open.length && "string" == typeof b
+              .close && 1 === b.close.length ? (_ = {
+                open: o.fixCase(n, b.open[0]),
+                close: o.fixCase(n, b.close[0])
+              }, n.autoClosingPairs.push(_)) : o.throwError(n,
+                "every element in an 'autoClosingPairs' array must be a pair of 1 character strings, or a '@brackets' directive"
+            );
+          }
         }
     if (e.autoIndent) {
       var w = [];
       e.autoIndent instanceof Array || o.throwError(n,
         "an 'autoIndent' attribute must be an array of '{match,matchAfter}' objects");
-      for (var E in e.autoIndent) e.autoIndent.hasOwnProperty(E) && ("string" != typeof e.autoIndent[E].match && o.throwError(
-        n, "each object in the 'autoIndent' array must define a 'match' attribute"), w.push({
-        match: c(n, e.autoIndent[E].match),
-        matchAfter: c(n, a(e.autoIndent[E].matchAfter))
-      }));
+      for (var E in e.autoIndent) {
+        e.autoIndent.hasOwnProperty(E) && ("string" != typeof e.autoIndent[E].match && o.throwError(n,
+          "each object in the 'autoIndent' array must define a 'match' attribute"), w.push({
+          match: c(n, e.autoIndent[E].match),
+          matchAfter: c(n, a(e.autoIndent[E].matchAfter))
+        }));
+      }
       n.autoIndent = w;
     }
     if (e.autoComplete) {
       var S = [];
       e.autoComplete instanceof Array || o.throwError(n,
         "an 'autoComplete' attribute must be an array of '{trigger,match,complete}' objects");
-      for (var x in e.autoComplete) e.autoComplete.hasOwnProperty(x) && ("string" != typeof e.autoComplete[x].triggers &&
-        o.throwError(n, "each object in the 'autoComplete' array must define a 'triggers' attribute"), "string" !=
-        typeof e.autoComplete[x].match && o.throwError(n,
-          "each object in the 'autoComplete' array must define a 'match' attribute as a regular expression string"),
-        "string" != typeof e.autoComplete[x].complete && o.throwError(n,
-          "each object in the 'autoComplete' array must define a 'complete' attribute"), S.push({
-          triggers: o.fixCase(n, a(e.autoComplete[x].triggers)),
-          match: c(n, e.autoComplete[x].match),
-          complete: a(e.autoComplete[x].complete)
-        }));
+      for (var x in e.autoComplete) {
+        e.autoComplete.hasOwnProperty(x) && ("string" != typeof e.autoComplete[x].triggers && o.throwError(n,
+            "each object in the 'autoComplete' array must define a 'triggers' attribute"), "string" != typeof e.autoComplete[
+            x].match && o.throwError(n,
+            "each object in the 'autoComplete' array must define a 'match' attribute as a regular expression string"),
+          "string" != typeof e.autoComplete[x].complete && o.throwError(n,
+            "each object in the 'autoComplete' array must define a 'complete' attribute"), S.push({
+            triggers: o.fixCase(n, a(e.autoComplete[x].triggers)),
+            match: c(n, e.autoComplete[x].match),
+            complete: a(e.autoComplete[x].complete)
+          }));
+      }
       n.autoComplete = S;
     }
     if (e.noindentBrackets) {
@@ -448,7 +481,9 @@ define("vs/editor/modes/monarch/monarchCompile", ["require", "exports", "vs/base
         var M = n.brackets[N].close;
         M && M.length > 0 && (n.noindentBrackets && n.noindentBrackets.test(M) || T.push(M.substr(M.length - 1)));
       }
-    for (var D in n.autoComplete) n.autoComplete.hasOwnProperty(D) && T.push(n.autoComplete[D].triggers);
+    for (var D in n.autoComplete) {
+      n.autoComplete.hasOwnProperty(D) && T.push(n.autoComplete[D].triggers);
+    }
     n.electricChars = T.join("") + a(e.outdentTriggers, "");
 
     n.logConsole || (n.logConsole = "monarchConsole");

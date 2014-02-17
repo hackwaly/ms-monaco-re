@@ -270,13 +270,11 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
         var l = this.model._getMarker(this.selStartMarkerId);
 
         var c = this.model._getMarker(this.selEndMarkerId);
-        if (i = new s.Range(l.lineNumber, l.column, c.lineNumber, c.column), i.isEmpty()) a = new r.Position(i.startLineNumber,
-          i.startColumn);
-
-        i = null;
-
-        a.equals(n) ? a = null : u = this.viewModelHelper.convertModelPositionToViewPosition(a.lineNumber, a.column);
-        else {
+        if (i = new s.Range(l.lineNumber, l.column, c.lineNumber, c.column), i.isEmpty()) {
+          a = new r.Position(i.startLineNumber, i.startColumn);
+          i = null;
+          a.equals(n) ? a = null : u = this.viewModelHelper.convertModelPositionToViewPosition(a.lineNumber, a.column);
+        } else {
           var d = this.viewModelHelper.convertModelPositionToViewPosition(i.startLineNumber, i.startColumn);
 
           var h = this.viewModelHelper.convertModelPositionToViewPosition(i.endLineNumber, i.endColumn);
@@ -292,15 +290,17 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
 
     e.prototype.jumpToBracket = function(e) {
       var t = this.bracketDecorations.length;
-      if (2 !== t) return !1;
+      if (2 !== t) {
+        return !1;
+      }
       for (var n = 0; 2 > n; n++) {
         var i = this.model.getDecorationRange(this.bracketDecorations[n]);
 
         var o = this.model.getDecorationRange(this.bracketDecorations[1 - n]);
-        if (g.isPositionAtRangeEdges(this.position, i) || g.isPositionInsideRange(this.position, i)) this._moveModelPosition(
-          e, null, !1, o.startLineNumber, o.startColumn, 0, !1);
-
-        return !0;
+        if (g.isPositionAtRangeEdges(this.position, i) || g.isPositionInsideRange(this.position, i)) {
+          this._moveModelPosition(e, null, !1, o.startLineNumber, o.startColumn, 0, !1);
+          return !0;
+        }
       }
       return !1;
     };
@@ -556,11 +556,11 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
       var a;
 
       var u;
-      if (e && this.inSelectionMode) a = o.lineNumber;
-
-      u = r.isBeforeOrEqual(this.selectionStart.getStartPosition()) ? 1 : this.viewModelHelper.viewModel.getLineMaxColumn(
-        a);
-      else {
+      if (e && this.inSelectionMode) {
+        a = o.lineNumber;
+        u = r.isBeforeOrEqual(this.selectionStart.getStartPosition()) ? 1 : this.viewModelHelper.viewModel.getLineMaxColumn(
+          a);
+      } else {
         var l = new s.Range(o.lineNumber, 1, o.lineNumber, this.viewModelHelper.viewModel.getLineMaxColumn(o.lineNumber));
 
         var c = this.viewModelHelper.convertViewToModelPosition(l.startLineNumber, l.startColumn);
@@ -593,18 +593,16 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
       var l = this.model.validatePosition(t);
 
       var c = this.helper.findWord(l, n);
-      if (e && this.inSelectionMode) o = c ? c.start + 1 : l.column;
-
-      r = c ? c.end + 1 : l.column;
-
-      a = l.lineNumber;
-
-      u = l.isBeforeOrEqual(this.selectionStart.getStartPosition()) ? o : r;
-      else {
-        if (c) o = c.start + 1;
-
-        r = c.end + 1;
-        else {
+      if (e && this.inSelectionMode) {
+        o = c ? c.start + 1 : l.column;
+        r = c ? c.end + 1 : l.column;
+        a = l.lineNumber;
+        u = l.isBeforeOrEqual(this.selectionStart.getStartPosition()) ? o : r;
+      } else {
+        if (c) {
+          o = c.start + 1;
+          r = c.end + 1;
+        } else {
           var d = this.model.getLineMaxColumn(l.lineNumber);
           l.column === d || "left" === n ? (o = l.column - 1, r = l.column) : (o = l.column, r = l.column + 1);
 
@@ -680,10 +678,11 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
         indentAction: 0,
         appendText: "",
         indentOutdentAppendText: ""
-      }, 0 === r.indentAction) this.actualType("\n" + this.helper.normalizeIndentation(c + r.appendText), e, t, o);
-      else if (1 === r.indentAction) this.actualType("\n" + this.helper.normalizeIndentation(c + r.appendText), e, t,
-        o);
-      else if (2 === r.indentAction) {
+      }, 0 === r.indentAction) {
+        this.actualType("\n" + this.helper.normalizeIndentation(c + r.appendText), e, t, o);
+      } else if (1 === r.indentAction) {
+        this.actualType("\n" + this.helper.normalizeIndentation(c + r.appendText), e, t, o);
+      } else if (2 === r.indentAction) {
         var h = this.helper.normalizeIndentation(c);
 
         var p = this.helper.normalizeIndentation(c + r.appendText);
@@ -696,13 +695,19 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
     };
 
     e.prototype._typeInterceptorAutoClosingCloseChar = function(e, t) {
-      if (!this.configuration.editor.autoClosingBrackets) return !1;
+      if (!this.configuration.editor.autoClosingBrackets) {
+        return !1;
+      }
       var n = this.getSelection();
-      if (!n.isEmpty() || !this.modeConfiguration.autoClosingPairsClose.hasOwnProperty(e)) return !1;
+      if (!n.isEmpty() || !this.modeConfiguration.autoClosingPairsClose.hasOwnProperty(e)) {
+        return !1;
+      }
       var i = this.model.getLineContent(this.position.lineNumber);
 
       var o = i[this.position.column - 1];
-      if (o !== e) return !1;
+      if (o !== e) {
+        return !1;
+      }
       var r = new s.Range(this.position.lineNumber, this.position.column, this.position.lineNumber, this.position.column +
         1);
       t.executeCommand = new u.ReplaceCommand(r, e);
@@ -711,16 +716,24 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
     };
 
     e.prototype._typeInterceptorAutoClosingOpenChar = function(e, t) {
-      if (!this.configuration.editor.autoClosingBrackets) return !1;
+      if (!this.configuration.editor.autoClosingBrackets) {
+        return !1;
+      }
       var n = this.getSelection();
-      if (!n.isEmpty() || !this.modeConfiguration.autoClosingPairsOpen.hasOwnProperty(e)) return !1;
-      if (!this.model.getMode().characterPairSupport) return !1;
+      if (!n.isEmpty() || !this.modeConfiguration.autoClosingPairsOpen.hasOwnProperty(e)) {
+        return !1;
+      }
+      if (!this.model.getMode().characterPairSupport) {
+        return !1;
+      }
       var i = this.model.getLineContent(this.position.lineNumber);
 
       var o = i[this.position.column - 1];
 
       var r = this.modeConfiguration.autoClosingPairsOpen[e];
-      if (o && o !== r && !/\s/.test(o)) return !1;
+      if (o && o !== r && !/\s/.test(o)) {
+        return !1;
+      }
       var s = this.model.getRawLineTokens(this.position.lineNumber);
 
       var a = !1;
@@ -734,9 +747,13 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
     };
 
     e.prototype._typeInterceptorSurroundSelection = function(e, t) {
-      if (!this.configuration.editor.autoClosingBrackets) return !1;
+      if (!this.configuration.editor.autoClosingBrackets) {
+        return !1;
+      }
       var n = this.getSelection();
-      if (n.isEmpty() || !this.modeConfiguration.surroundingPairs.hasOwnProperty(e)) return !1;
+      if (n.isEmpty() || !this.modeConfiguration.surroundingPairs.hasOwnProperty(e)) {
+        return !1;
+      }
       var i;
 
       var o;
@@ -756,10 +773,13 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
       var h = " ".charCodeAt(0);
       for (i = n.startLineNumber; i <= n.endLineNumber; i++)
         for (u = this.model.getLineContent(i), o = i === n.startLineNumber ? n.startColumn - 1 : 0, r = i === n.endLineNumber ?
-          n.endColumn - 1 : u.length, s = o; r > s; s++) a = u.charCodeAt(s);
-
-      a !== d && a !== h && (c = !1, i = n.endLineNumber + 1, s = r);
-      if (c) return !1;
+          n.endColumn - 1 : u.length, s = o; r > s; s++) {
+          a = u.charCodeAt(s);
+          a !== d && a !== h && (c = !1, i = n.endLineNumber + 1, s = r);
+        }
+      if (c) {
+        return !1;
+      }
       var p = this.modeConfiguration.surroundingPairs[e];
       t.shouldPushStackElementBefore = !0;
 
@@ -843,20 +863,24 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
     };
 
     e.prototype.tab = function(e) {
-      if (this.configuration.editor.tabFocusMode) return !1;
+      if (this.configuration.editor.tabFocusMode) {
+        return !1;
+      }
       var t = this.getSelection();
       if (t.isEmpty()) {
         var n = "";
         if (this.configuration.getIndentationOptions().insertSpaces)
-          for (var i = this.helper.nextTabColumn(this.position.column - 1), o = this.position.column; i >= o; o++) n +=
-            " ";
-        else n = "	";
+          for (var i = this.helper.nextTabColumn(this.position.column - 1), o = this.position.column; i >= o; o++) {
+            n += " ";
+          } else {
+            n = "	";
+          }
         e.executeCommand = new u.ReplaceCommand(t, n);
-      } else e.shouldPushStackElementBefore = !0;
-
-      e.shouldPushStackElementAfter = !0;
-
-      this.indent(e);
+      } else {
+        e.shouldPushStackElementBefore = !0;
+        e.shouldPushStackElementAfter = !0;
+        this.indent(e);
+      }
       return !0;
     };
 
@@ -870,7 +894,9 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
     };
 
     e.prototype.outdent = function(e) {
-      if (this.configuration.editor.tabFocusMode) return !1;
+      if (this.configuration.editor.tabFocusMode) {
+        return !1;
+      }
       var t = this.getSelection();
       e.executeCommand = new a.ShiftCommand(this.configuration, !0, t);
 
@@ -892,15 +918,21 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
     };
 
     e.prototype._autoClosingPairDelete = function(e) {
-      if (!this.configuration.editor.autoClosingBrackets) return !1;
+      if (!this.configuration.editor.autoClosingBrackets) {
+        return !1;
+      }
       var t = this.model.getLineContent(this.position.lineNumber);
 
       var n = t[this.position.column - 2];
-      if (!this.modeConfiguration.autoClosingPairsOpen.hasOwnProperty(n)) return !1;
+      if (!this.modeConfiguration.autoClosingPairsOpen.hasOwnProperty(n)) {
+        return !1;
+      }
       var i = t[this.position.column - 1];
 
       var o = this.modeConfiguration.autoClosingPairsOpen[n];
-      if (i !== o) return !1;
+      if (i !== o) {
+        return !1;
+      }
       var r = new s.Range(this.position.lineNumber, this.position.column - 1, this.position.lineNumber, this.position
         .column + 1);
       e.executeCommand = new u.ReplaceCommand(r, "");
@@ -909,7 +941,9 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
     };
 
     e.prototype.deleteLeft = function(e) {
-      if (this._autoClosingPairDelete(e)) return !0;
+      if (this._autoClosingPairDelete(e)) {
+        return !0;
+      }
       var t = this.getSelection();
       if (t.isEmpty()) {
         var n = this.helper.getLeftOfPosition(this.model, this.position.lineNumber, this.position.column);
@@ -920,19 +954,24 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
     };
 
     e.prototype.deleteWordLeft = function(e) {
-      if (this._autoClosingPairDelete(e)) return !0;
+      if (this._autoClosingPairDelete(e)) {
+        return !0;
+      }
       var t = this.getSelection();
       if (t.isEmpty()) {
         var n = this.position.lineNumber;
 
         var i = this.position.column;
-        if (1 === n && 1 === i) return !0;
+        if (1 === n && 1 === i) {
+          return !0;
+        }
         var o = this.helper.findWord(this.position, "left", !0);
         i = o ? o.end + 1 < i ? o.end + 1 : o.start + 1 : 1;
         var r = new s.Range(n, i, n, this.position.column);
-        if (!r.isEmpty()) e.executeCommand = new u.ReplaceCommand(r, "");
-
-        return !0;
+        if (!r.isEmpty()) {
+          e.executeCommand = new u.ReplaceCommand(r, "");
+          return !0;
+        }
       }
       return this.deleteLeft(e);
     };
@@ -957,29 +996,37 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
         var o = this.model.getLineCount();
 
         var a = this.model.getLineMaxColumn(n);
-        if (n === o && i === a) return !0;
+        if (n === o && i === a) {
+          return !0;
+        }
         var l = this.helper.findWord(new r.Position(n, i), "right", !0);
         i = l ? l.start + 1 > i ? l.start + 1 : l.end + 1 : a;
         var c = new s.Range(n, i, n, this.position.column);
-        if (!c.isEmpty()) e.executeCommand = new u.ReplaceCommand(c, "");
-
-        return !0;
+        if (!c.isEmpty()) {
+          e.executeCommand = new u.ReplaceCommand(c, "");
+          return !0;
+        }
       }
       return this.deleteRight(e);
     };
 
     e.prototype.deleteAllLeft = function(e) {
-      if (this._autoClosingPairDelete(e)) return !0;
+      if (this._autoClosingPairDelete(e)) {
+        return !0;
+      }
       var t = this.getSelection();
       if (t.isEmpty()) {
         var n = this.position.lineNumber;
 
         var i = this.position.column;
-        if (1 === i) return !0;
+        if (1 === i) {
+          return !0;
+        }
         var o = new s.Range(n, 1, n, i);
-        if (!o.isEmpty()) e.executeCommand = new u.ReplaceCommand(o, "");
-
-        return !0;
+        if (!o.isEmpty()) {
+          e.executeCommand = new u.ReplaceCommand(o, "");
+          return !0;
+        }
       }
       return this.deleteLeft(e);
     };
@@ -992,11 +1039,14 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
         var i = this.position.column;
 
         var o = this.model.getLineMaxColumn(n);
-        if (i === o) return !0;
+        if (i === o) {
+          return !0;
+        }
         var r = new s.Range(n, i, n, o);
-        if (!r.isEmpty()) e.executeCommand = new u.ReplaceCommand(r, "");
-
-        return !0;
+        if (!r.isEmpty()) {
+          e.executeCommand = new u.ReplaceCommand(r, "");
+          return !0;
+        }
       }
       return this.deleteRight(e);
     };
@@ -1061,14 +1111,20 @@ define("vs/editor/core/controller/oneCursor", ["require", "exports", "vs/editor/
       if (n) {
         if (i = e.column - 1, "left" === t) {
           for (o = s.length - 1; o >= 0; o--)
-            if (!(s[o].start >= i)) return s[o];
+            if (!(s[o].start >= i)) {
+              return s[o];
+            }
         } else
           for (o = 0, r = s.length; r > o; o++)
-            if (!(s[o].end <= i)) return s[o];
+            if (!(s[o].end <= i)) {
+              return s[o];
+            }
       } else
         for (i = e.column, "left" === t ? 1 !== i && (i -= .1) : i !== this.model.getLineMaxColumn(e.lineNumber) && (
           i += .1), i -= 1, o = 0, r = s.length; r > o; o++)
-          if (s[o].start <= i && i <= s[o].end) return s[o];
+          if (s[o].start <= i && i <= s[o].end) {
+            return s[o];
+          }
       return null;
     };
 

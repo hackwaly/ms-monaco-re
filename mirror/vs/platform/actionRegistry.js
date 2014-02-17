@@ -3,7 +3,9 @@ define("vs/platform/actionRegistry", ["require", "exports", "vs/platform/platfor
 ], function(e, t, n, i, o, r, s) {
   var a = function(e) {
     function t(t, n, i) {
-      for (var o = [], r = 0; r < arguments.length - 3; r++) o[r] = arguments[r + 3];
+      for (var o = [], r = 0; r < arguments.length - 3; r++) {
+        o[r] = arguments[r + 3];
+      }
       e.call(this, t);
 
       this.id = n;
@@ -15,7 +17,9 @@ define("vs/platform/actionRegistry", ["require", "exports", "vs/platform/platfor
     __extends(t, e);
 
     t.prototype.createNew = function() {
-      for (var t = [], n = 0; n < arguments.length - 0; n++) t[n] = arguments[n + 0];
+      for (var t = [], n = 0; n < arguments.length - 0; n++) {
+        t[n] = arguments[n + 0];
+      }
       return e.prototype.createNew.apply(this, t);
     };
 
@@ -24,7 +28,9 @@ define("vs/platform/actionRegistry", ["require", "exports", "vs/platform/platfor
   t.ActionDescriptor = a;
   var u = function(e) {
     function t(t, n, i) {
-      for (var o = [], r = 0; r < arguments.length - 3; r++) o[r] = arguments[r + 3];
+      for (var o = [], r = 0; r < arguments.length - 3; r++) {
+        o[r] = arguments[r + 3];
+      }
       e.call(this, t, n, i, o);
     }
     __extends(t, e);
@@ -58,7 +64,9 @@ define("vs/platform/actionRegistry", ["require", "exports", "vs/platform/platfor
   t.SyncActionDescriptor = u;
   var l = function(e) {
     function t(t, n, i) {
-      for (var o = [], r = 0; r < arguments.length - 3; r++) o[r] = arguments[r + 3];
+      for (var o = [], r = 0; r < arguments.length - 3; r++) {
+        o[r] = arguments[r + 3];
+      }
       e.call(this, n, i);
 
       this._entryPointModule = t;

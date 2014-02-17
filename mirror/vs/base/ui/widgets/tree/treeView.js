@@ -239,51 +239,47 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
 
       var l = 0;
       null === t ? (o = 0, a = 0) : (o = this.indexes[t] + 1, a = this.heightMap[o - 1].top + this.heightMap[o - 1].height);
-      for (var c = this.heightMap.splice.bind(this.heightMap, o, 0), d = []; n = u.next();) i = new m(this.context, n,
-        a + l);
-
-      this.emit("viewItem:create", {
-        item: i.model
-      });
-
-      this.indexes[n.id] = o++;
-
-      d.push(i);
-
-      l += i.height;
-      for (c.apply(this.heightMap, d), r = o; r < this.heightMap.length; r++) i = this.heightMap[r];
-
-      i.top += l;
-
-      this.indexes[i.id] = r;
-      for (r = d.length - 1; r >= 0; r--) this.onInsertItem(d[r]);
-      for (r = o; r < this.heightMap.length; r++) this.onRefreshItem(this.heightMap[r]);
+      for (var c = this.heightMap.splice.bind(this.heightMap, o, 0), d = []; n = u.next();) {
+        i = new m(this.context, n, a + l);
+        this.emit("viewItem:create", {
+          item: i.model
+        });
+        this.indexes[n.id] = o++;
+        d.push(i);
+        l += i.height;
+      }
+      for (c.apply(this.heightMap, d), r = o; r < this.heightMap.length; r++) {
+        i = this.heightMap[r];
+        i.top += l;
+        this.indexes[i.id] = r;
+      }
+      for (r = d.length - 1; r >= 0; r--) {
+        this.onInsertItem(d[r]);
+      }
+      for (r = o; r < this.heightMap.length; r++) {
+        this.onRefreshItem(this.heightMap[r]);
+      }
     };
 
     t.prototype.onInsertItem = function() {};
 
     t.prototype.onRemoveItems = function(e) {
-      for (var t, n, i, o = s.isArray(e) ? new p(e) : e, r = null, a = 0; t = o.next();) t = t.id || t;
-
-      i = this.indexes[t];
-
-      n = this.heightMap[i];
-
-      a -= n.height;
-
-      delete this.indexes[t];
-
-      this.onRemoveItem(n);
-
-      null === r && (r = i);
+      for (var t, n, i, o = s.isArray(e) ? new p(e) : e, r = null, a = 0; t = o.next();) {
+        t = t.id || t;
+        i = this.indexes[t];
+        n = this.heightMap[i];
+        a -= n.height;
+        delete this.indexes[t];
+        this.onRemoveItem(n);
+        null === r && (r = i);
+      }
       if (0 !== a)
-        for (this.heightMap.splice(r, i - r + 1), i = r; i < this.heightMap.length; i++) n = this.heightMap[i];
-
-      n.top += a;
-
-      this.indexes[n.id] = i;
-
-      this.onRefreshItem(n);
+        for (this.heightMap.splice(r, i - r + 1), i = r; i < this.heightMap.length; i++) {
+          n = this.heightMap[i];
+          n.top += a;
+          this.indexes[n.id] = i;
+          this.onRefreshItem(n);
+        }
     };
 
     t.prototype.onRemoveItem = function() {};
@@ -297,11 +293,11 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
 
     t.prototype.onRefreshItems = function(e) {
       for (var t, n, i, o, r = s.isArray(e) ? new p(e) : e, a = null, u = 0; t = r.next();) {
-        for (o = this.indexes[t.id]; 0 !== u && null !== a && o > a; a++) n = this.heightMap[a];
-
-        n.top += u;
-
-        this.onRefreshItem(n);
+        for (o = this.indexes[t.id]; 0 !== u && null !== a && o > a; a++) {
+          n = this.heightMap[a];
+          n.top += u;
+          this.onRefreshItem(n);
+        }
         n = this.heightMap[o];
 
         i = t.getHeight();
@@ -317,11 +313,11 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
         a = o + 1;
       }
       if (0 !== u && null !== a)
-        for (; a < this.heightMap.length; a++) n = this.heightMap[a];
-
-      n.top += u;
-
-      this.onRefreshItem(n);
+        for (; a < this.heightMap.length; a++) {
+          n = this.heightMap[a];
+          n.top += u;
+          this.onRefreshItem(n);
+        }
     };
 
     t.prototype.onRefreshItem = function(e, t) {
@@ -340,14 +336,19 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
       e = this.indexAt(e);
 
       t = this.indexAt(t);
-      for (var i = e; t >= i; i++) n(this.heightMap[i].id);
+      for (var i = e; t >= i; i++) {
+        n(this.heightMap[i].id);
+      }
     };
 
     t.prototype.indexAt = function(e) {
       for (var t, n, i = 0, o = this.heightMap.length; o > i;)
-        if (t = Math.floor((i + o) / 2), n = this.heightMap[t], e < n.top) o = t;
-        else {
-          if (!(e >= n.top + n.height)) return t;
+        if (t = Math.floor((i + o) / 2), n = this.heightMap[t], e < n.top) {
+          o = t;
+        } else {
+          if (!(e >= n.top + n.height)) {
+            return t;
+          }
           if (i === t) break;
           i = t;
         }
@@ -602,14 +603,18 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
       var a = o;
 
       var u = 0 === r ? 0 : r;
-      for (n = this.indexAfter(a) - 1, i = this.indexAt(Math.max(u, s)); n >= i; n--) this.insertItemInDOM(this.itemAtIndex(
-        n));
-      for (n = Math.min(this.indexAt(this.renderTop), this.indexAfter(a)) - 1, i = this.indexAt(s); n >= i; n--) this
-        .insertItemInDOM(this.itemAtIndex(n));
-      for (n = this.indexAt(this.renderTop), i = Math.min(this.indexAt(s), this.indexAfter(u)); i > n; n++) this.removeItemFromDOM(
-        this.itemAtIndex(n));
-      for (n = Math.max(this.indexAfter(a), this.indexAt(this.renderTop)), i = this.indexAfter(u); i > n; n++) this.removeItemFromDOM(
-        this.itemAtIndex(n));
+      for (n = this.indexAfter(a) - 1, i = this.indexAt(Math.max(u, s)); n >= i; n--) {
+        this.insertItemInDOM(this.itemAtIndex(n));
+      }
+      for (n = Math.min(this.indexAt(this.renderTop), this.indexAfter(a)) - 1, i = this.indexAt(s); n >= i; n--) {
+        this.insertItemInDOM(this.itemAtIndex(n));
+      }
+      for (n = this.indexAt(this.renderTop), i = Math.min(this.indexAt(s), this.indexAfter(u)); i > n; n++) {
+        this.removeItemFromDOM(this.itemAtIndex(n));
+      }
+      for (n = Math.max(this.indexAfter(a), this.indexAt(this.renderTop)), i = this.indexAfter(u); i > n; n++) {
+        this.removeItemFromDOM(this.itemAtIndex(n));
+      }
       var l = this.itemAtIndex(this.indexAt(s));
       l && (this.rowsContainer.style.top = l.top - s + "px");
 
@@ -704,8 +709,9 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
       var i = this.itemAtIndex(n).model.getElement();
 
       var o = this.model.getFocus();
-      if (o !== i) this.model.setFocus(i, e);
-      else {
+      if (o !== i) {
+        this.model.setFocus(i, e);
+      } else {
         var r = this.scrollTop;
         this.scrollTop += this.viewHeight;
 
@@ -723,8 +729,9 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
       var i = this.itemAtIndex(t).model.getElement();
 
       var o = this.model.getFocus();
-      if (o !== i) this.model.setFocus(i, e);
-      else {
+      if (o !== i) {
+        this.model.setFocus(i, e);
+      } else {
         var r = this.scrollTop;
         this.scrollTop -= this.viewHeight;
 
@@ -817,7 +824,9 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
 
         i.loading = !0;
       })), !e.isNested) {
-        for (var r, s = [], a = n.getNavigator(); r = a.next();) s.push(r.id);
+        for (var r, s = [], a = n.getNavigator(); r = a.next();) {
+          s.push(r.id);
+        }
         this.refreshingPreviousChildrenIds[n.id] = s;
       }
     };
@@ -827,8 +836,9 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
 
       var n = this.items[t.id];
       if (n && (n.loadingPromise && (n.loadingPromise.cancel(), n.loadingPromise = null), n.loading = !1), !e.isNested) {
-        for (var i, o = this.refreshingPreviousChildrenIds[t.id], r = [], s = t.getNavigator(); i = s.next();) r.push(
-          i);
+        for (var i, o = this.refreshingPreviousChildrenIds[t.id], r = [], s = t.getNavigator(); i = s.next();) {
+          r.push(i);
+        }
         for (var a = new u.LcsDiff({
           getLength: function() {
             return o.length;
@@ -1093,22 +1103,21 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
       var n = new c.DragMouseEvent(e);
 
       var i = this.getItemAround(n.target);
-      if (!i) this.currentDropTarget && (this.currentDropTargets.forEach(function(e) {
-        return e.dropTarget = !1;
-      }), this.currentDropTargets = [], this.currentDropPromise && (this.currentDropPromise.cancel(), this.currentDropPromise =
-        null));
-
-      this.cancelDragAndDropScrollInterval();
-
-      delete this.currentDropTarget;
-
-      delete this.currentDropElement;
-
-      delete this.dragAndDropMouseY;
-
-      return !1;
+      if (!i) {
+        this.currentDropTarget && (this.currentDropTargets.forEach(function(e) {
+          return e.dropTarget = !1;
+        }), this.currentDropTargets = [], this.currentDropPromise && (this.currentDropPromise.cancel(), this.currentDropPromise =
+          null));
+        this.cancelDragAndDropScrollInterval();
+        delete this.currentDropTarget;
+        delete this.currentDropElement;
+        delete this.dragAndDropMouseY;
+        return !1;
+      }
       if (this.setupDragAndDropScrollInterval(), this.dragAndDropMouseY = n.posy, !this.currentDragAndDropData) {
-        if (!n.dataTransfer.types) return !1;
+        if (!n.dataTransfer.types) {
+          return !1;
+        }
         this.currentDragAndDropData = new g;
       }
       this.currentDragAndDropData.update(n);
@@ -1122,9 +1131,10 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
           this.currentDragAndDropData, r, n), 3 !== s) break;
         a = a && a.parent;
       } while (a);
-      if (!a) delete this.currentDropElement;
-
-      return !1;
+      if (!a) {
+        delete this.currentDropElement;
+        return !1;
+      }
       var u = 1 === s || 2 === s;
       u ? (this.currentDropElement = a.getElement(), n.preventDefault(), n.dataTransfer.dropEffect = n.ctrlKey ?
         "copy" : "move") : delete this.currentDropElement;
@@ -1137,9 +1147,10 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
           null)), this.currentDropTarget = l, this.currentDropElementReaction = s, u)) {
         if (this.currentDropTarget && (this.currentDropTarget.dropTarget = !0, this.currentDropTargets.push(this.currentDropTarget)),
           2 === s)
-          for (var d, h = a.getNavigator(); d = h.next();) i = this.items[d.id];
-
-        i && (i.dropTarget = !0, this.currentDropTargets.push(i));
+          for (var d, h = a.getNavigator(); d = h.next();) {
+            i = this.items[d.id];
+            i && (i.dropTarget = !0, this.currentDropTargets.push(i));
+          }
         this.currentDropPromise = o.Promise.timeout(500).then(function() {
           return t.treeContext.tree.expand(t.currentDropElement).then(function() {
             t.shouldInvalidateDropReaction = !0;
@@ -1229,21 +1240,28 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
     t.prototype.getItemAround = function(e) {
       var n = this.inputItem;
       do {
-        if (e[t.BINDING] && (n = e[t.BINDING]), e === this.wrapper || e === this.domNode) return n;
-        if (e === document.body) return null;
+        if (e[t.BINDING] && (n = e[t.BINDING]), e === this.wrapper || e === this.domNode) {
+          return n;
+        }
+        if (e === document.body) {
+          return null;
+        }
       } while (e = e.parentElement);
     };
 
     t.prototype.releaseModel = function() {
       if (this.model) {
-        for (; this.modelListeners.length;) this.modelListeners.pop()();
+        for (; this.modelListeners.length;) {
+          this.modelListeners.pop()();
+        }
         this.model = null;
       }
     };
 
     t.prototype.dispose = function() {
-      for (this.scrollableElement.destroy(), this.releaseModel(), this.modelListeners = null; this.viewListeners.length;)
+      for (this.scrollableElement.destroy(), this.releaseModel(), this.modelListeners = null; this.viewListeners.length;) {
         this.viewListeners.pop()();
+      }
       this.viewListeners = null;
 
       this.domNode.parentNode && this.domNode.parentNode.removeChild(this.domNode);

@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -129,9 +131,13 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
     };
 
     b.prototype.destroy = function() {
-      while (this.lifetimeListeners.length > 0) this.lifetimeListeners.pop()();
+      while (this.lifetimeListeners.length > 0) {
+        this.lifetimeListeners.pop()();
+      }
       var b;
-      for (b in this.contributions) this.contributions.hasOwnProperty(b) && this.contributions[b].dispose();
+      for (b in this.contributions) {
+        this.contributions.hasOwnProperty(b) && this.contributions[b].dispose();
+      }
       this.contributions = {};
 
       this.contentWidgets = {};
@@ -245,11 +251,15 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
     };
 
     b.prototype.getSelections = function() {
-      if (!this.cursor) return null;
+      if (!this.cursor) {
+        return null;
+      }
       var a = this.cursor.getSelections();
 
       var b = [];
-      for (var c = 0, d = a.length; c < d; c++) b[c] = a[c].clone();
+      for (var c = 0, d = a.length; c < d; c++) {
+        b[c] = a[c].clone();
+      }
       return b;
     };
 
@@ -263,8 +273,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
 
       var f = K.isIRange(a);
       if (!e && !f) throw new Error("Invalid arguments");
-      if (e) this._setSelectionImpl(a, b, c, d);
-      else if (f) {
+      if (e) {
+        this._setSelectionImpl(a, b, c, d);
+      } else if (f) {
         var g = {
           selectionStartLineNumber: a.startLineNumber,
           selectionStartColumn: a.startColumn,
@@ -334,7 +345,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
     };
 
     b.prototype.saveViewState = function() {
-      if (!this.cursor || !this.hasView) return null;
+      if (!this.cursor || !this.hasView) {
+        return null;
+      }
       var a = this.cursor.saveState();
 
       var b = this.view.saveState();
@@ -619,15 +632,19 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constant
 
         this.view.renderOnce(function() {
           var a;
-          for (a in b.contentWidgets) b.contentWidgets.hasOwnProperty(a) && b.view.addContentWidget(b.contentWidgets[
-            a]);
-          for (a in b.overlayWidgets) b.overlayWidgets.hasOwnProperty(a) && b.view.addOverlayWidget(b.overlayWidgets[
-            a]);
+          for (a in b.contentWidgets) {
+            b.contentWidgets.hasOwnProperty(a) && b.view.addContentWidget(b.contentWidgets[a]);
+          }
+          for (a in b.overlayWidgets) {
+            b.overlayWidgets.hasOwnProperty(a) && b.view.addOverlayWidget(b.overlayWidgets[a]);
+          }
           b.view.render();
 
           b.hasView = !0;
         });
-      } else this.hasView = !1;
+      } else {
+        this.hasView = !1;
+      }
     };
 
     b.prototype._detachModel = function() {

@@ -41,7 +41,9 @@ define("vs/editor/core/config/configuration", ["require", "exports", "vs/nls!vs/
       t.push("stopLineTokenizationAfter");
 
       t.push("stopRenderingLineAfter");
-      for (var n = {}, i = 0, o = t.length; o > i; i++) n[t[i]] = r.clone(this._editor[t[i]]);
+      for (var n = {}, i = 0, o = t.length; o > i; i++) {
+        n[t[i]] = r.clone(this._editor[t[i]]);
+      }
       this._mergeOptionsIn(e);
       for (var s = [], i = 0, o = t.length; o > i; i++) {
         var a = n[t[i]];
@@ -70,7 +72,9 @@ define("vs/editor/core/config/configuration", ["require", "exports", "vs/nls!vs/
     e._createTestElement = function(t, n) {
       var i = document.createElement("span");
       i.id = e._testElementId(t);
-      for (var o = " " === n ? "&nbsp;" : n, r = 0; 8 > r; r++) o += o;
+      for (var o = " " === n ? "&nbsp;" : n, r = 0; 8 > r; r++) {
+        o += o;
+      }
       i.textContent = o;
 
       return i;
@@ -85,9 +89,10 @@ define("vs/editor/core/config/configuration", ["require", "exports", "vs/nls!vs/
       n.style.top = "-50000px";
 
       n.style.width = "50000px";
-      for (var i = 0, o = e._USUAL_CHARS.length; o > i; i++) n.appendChild(document.createElement("br"));
-
-      n.appendChild(e._createTestElement(i, e._USUAL_CHARS[i]));
+      for (var i = 0, o = e._USUAL_CHARS.length; o > i; i++) {
+        n.appendChild(document.createElement("br"));
+        n.appendChild(e._createTestElement(i, e._USUAL_CHARS[i]));
+      }
       var r = e._testElementId(e._USUAL_CHARS.length);
 
       var s = document.createElement("div");
@@ -107,7 +112,9 @@ define("vs/editor/core/config/configuration", ["require", "exports", "vs/nls!vs/
     };
 
     e._readFromTestElements = function() {
-      for (var t = [], n = 0, i = e._USUAL_CHARS.length; i > n; n++) t.push(e._readTestElementWidth(n));
+      for (var t = [], n = 0, i = e._USUAL_CHARS.length; i > n; n++) {
+        t.push(e._readTestElementWidth(n));
+      }
       return t;
     };
 
@@ -323,7 +330,9 @@ define("vs/editor/core/config/configuration", ["require", "exports", "vs/nls!vs/
         suggestOnTriggerCharacters: !1
       };
       if (e.length > 0)
-        for (var n = 0; n < e.length; n++) t[e[n]] = !0;
+        for (var n = 0; n < e.length; n++) {
+          t[e[n]] = !0;
+        }
       return t;
     };
 
@@ -363,10 +372,12 @@ define("vs/editor/core/config/configuration", ["require", "exports", "vs/nls!vs/
 
     t.prototype._computeIndentationOptions = function() {
       var e = this._configWithDefaults.getEditorOptions();
-      if ("auto" !== e.tabSize && "auto" !== e.insertSpaces) return {
-        insertSpaces: e.insertSpaces,
-        tabSize: e.tabSize
-      };
+      if ("auto" !== e.tabSize && "auto" !== e.insertSpaces) {
+        return {
+          insertSpaces: e.insertSpaces,
+          tabSize: e.tabSize
+        };
+      }
       var t = null;
       this._indentationGuesser && (t = "auto" !== e.tabSize ? this._indentationGuesser(e.tabSize) : this._indentationGuesser(
         4));
@@ -398,13 +409,19 @@ define("vs/editor/core/config/configuration", ["require", "exports", "vs/nls!vs/
       var n = this.getIndentationOptions();
 
       var i = 0;
-      for (t = 0; t < e.length; t++) "	" === e.charAt(t) ? i += n.tabSize : i++;
+      for (t = 0; t < e.length; t++) {
+        "	" === e.charAt(t) ? i += n.tabSize : i++;
+      }
       var o = "";
       if (!n.insertSpaces) {
         var r = Math.floor(i / n.tabSize);
-        for (i %= n.tabSize, t = 0; r > t; t++) o += "	";
+        for (i %= n.tabSize, t = 0; r > t; t++) {
+          o += "	";
+        }
       }
-      for (t = 0; i > t; t++) o += " ";
+      for (t = 0; i > t; t++) {
+        o += " ";
+      }
       return o;
     };
 
@@ -417,7 +434,9 @@ define("vs/editor/core/config/configuration", ["require", "exports", "vs/nls!vs/
     t.prototype.getOneIndent = function() {
       var e = this.getIndentationOptions();
       if (e.insertSpaces) {
-        for (var t = "", n = 0; n < e.tabSize; n++) t += " ";
+        for (var t = "", n = 0; n < e.tabSize; n++) {
+          t += " ";
+        }
         return t;
       }
       return "	";

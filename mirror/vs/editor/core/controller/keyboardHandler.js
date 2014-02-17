@@ -24,7 +24,9 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
     };
 
     e.fromEditorSelectionAndPreviousState = function(t, i, o) {
-      if (s.browser.isIPad) return new e("", 0, 0, u);
+      if (s.browser.isIPad) {
+        return new e("", 0, 0, u);
+      }
       var r = 100;
 
       var a = 0;
@@ -88,8 +90,12 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
     };
 
     e.prototype.extractNewText = function(e) {
-      if (this.selectionStart !== this.selectionEnd) return "";
-      if (!e) return this.value;
+      if (this.selectionStart !== this.selectionEnd) {
+        return "";
+      }
+      if (!e) {
+        return this.value;
+      }
       var t = e.value.substring(0, e.selectionStart);
 
       var n = e.value.substring(e.selectionEnd, e.value.length);
@@ -196,12 +202,14 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
       }));
 
       s.browser.isMacintosh && this.listenersToRemove.push(r.addListener(this.textArea, "input", function() {
-        if (l.justHadAPaste) l.justHadAPaste = !1;
-
-        return void 0;
-        if (l.justHadACut) l.justHadACut = !1;
-
-        return void 0;
+        if (l.justHadAPaste) {
+          l.justHadAPaste = !1;
+          return void 0;
+        }
+        if (l.justHadACut) {
+          l.justHadACut = !1;
+          return void 0;
+        }
         var e = (new Date).getTime();
 
         var t = e - l.lastKeyPressTime;
@@ -216,7 +224,9 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
               if (o.length <= r.length) return;
               if (o.substring(o.length - r.length) !== r) return;
               i = o.substring(0, o.length - r.length);
-            } else i = o;
+            } else {
+              i = o;
+            }
             console.log("DEDUCED input: <<<" + i + ">>>");
           }
         }
@@ -361,15 +371,18 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
     t.prototype._onKeyPress = function(e) {
       if (this.hasFocus) {
         if (s.browser.isOpera && s.browser.isWindows) {
-          if ("Ctrl-X" === e.asString()) this._onCut(null);
-
-          return void 0;
-          if ("Ctrl-V" === e.asString()) this._onPaste(null);
-
-          return void 0;
-          if ("Ctrl-C" === e.asString()) this._onCopy(null);
-
-          return void 0;
+          if ("Ctrl-X" === e.asString()) {
+            this._onCut(null);
+            return void 0;
+          }
+          if ("Ctrl-V" === e.asString()) {
+            this._onPaste(null);
+            return void 0;
+          }
+          if ("Ctrl-C" === e.asString()) {
+            this._onCopy(null);
+            return void 0;
+          }
         }
         this.lastKeyPressTime = (new Date).getTime();
 
@@ -461,7 +474,9 @@ define("vs/editor/core/controller/keyboardHandler", ["require", "exports", "vs/e
         return o.isEmpty() ? "" : this.context.model.getValueInRange(o, t);
       }
       i = i.slice(0).sort(n.compareRangesUsingStarts);
-      for (var r = [], a = 0; a < i.length; a++) r.push(this.context.model.getValueInRange(i[a], t));
+      for (var r = [], a = 0; a < i.length; a++) {
+        r.push(this.context.model.getValueInRange(i[a], t));
+      }
       return r.join(e);
     };
 

@@ -38,19 +38,35 @@ define("vs/base/errors", ["require", "exports", "vs/nls!vs/editor/worker/editorW
   }
 
   function h(e, t) {
-    if ("undefined" == typeof t && (t = !1), !e) return n.localize("vs_base_errors", 9);
-    if (r.isString(e)) return e;
-    if (e instanceof C) return l(e, t);
-    if (!r.isUndefinedOrNull(e.status)) return c(e, t);
+    if ("undefined" == typeof t && (t = !1), !e) {
+      return n.localize("vs_base_errors", 9);
+    }
+    if (r.isString(e)) {
+      return e;
+    }
+    if (e instanceof C) {
+      return l(e, t);
+    }
+    if (!r.isUndefinedOrNull(e.status)) {
+      return c(e, t);
+    }
     if (e.detail) {
       var i = e.detail;
       if (i.error) {
-        if (i.error && !r.isUndefinedOrNull(i.error.status)) return c(i.error, t);
-        if (!r.isArray(i.error)) return d(i.error, t);
+        if (i.error && !r.isUndefinedOrNull(i.error.status)) {
+          return c(i.error, t);
+        }
+        if (!r.isArray(i.error)) {
+          return d(i.error, t);
+        }
         for (var o = 0; o < i.error.length; o++)
-          if (i.error[o] && !r.isUndefinedOrNull(i.error[o].status)) return c(i.error[o], t);
+          if (i.error[o] && !r.isUndefinedOrNull(i.error[o].status)) {
+            return c(i.error[o], t);
+          }
       }
-      if (i.exception) return r.isUndefinedOrNull(i.exception.status) ? d(i.exception, t) : c(i.exception, t);
+      if (i.exception) {
+        return r.isUndefinedOrNull(i.exception.status) ? d(i.exception, t) : c(i.exception, t);
+      }
     }
     return e.stack ? d(e, t) : e.message ? e.message : n.localize("vs_base_errors", 10);
   }
@@ -59,8 +75,12 @@ define("vs/base/errors", ["require", "exports", "vs/nls!vs/editor/worker/editorW
     if (e)
       if (r.isArray(e)) {
         for (var t = 0; t < e.length; t++)
-          if (e[t] && e[t].status) return e[t].status;
-      } else if (e.status) return e.status;
+          if (e[t] && e[t].status) {
+            return e[t].status;
+          }
+      } else if (e.status) {
+      return e.status;
+    }
     return -1;
   }
 

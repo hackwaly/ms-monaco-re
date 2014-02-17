@@ -43,8 +43,9 @@ define("vs/editor/core/model/editStack", ["require", "exports", "vs/editor/core/
 
     e.prototype.undo = function() {
       if (this.pushStackElement(), this.past.length > 0) {
-        for (var e = this.past.pop(), t = e.editOperations.length - 1; t >= 0; t--) e.editOperations[t] = n.ModelEditOperation
-          .execute(this.model, e.editOperations[t]);
+        for (var e = this.past.pop(), t = e.editOperations.length - 1; t >= 0; t--) {
+          e.editOperations[t] = n.ModelEditOperation.execute(this.model, e.editOperations[t]);
+        }
         this.future.push(e);
 
         return e.beforeCursorState;
@@ -55,8 +56,9 @@ define("vs/editor/core/model/editStack", ["require", "exports", "vs/editor/core/
     e.prototype.redo = function() {
       if (this.future.length > 0) {
         if (this.currentOpenStackElement) throw new Error("How is this possible?");
-        for (var e = this.future.pop(), t = 0; t < e.editOperations.length; t++) e.editOperations[t] = n.ModelEditOperation
-          .execute(this.model, e.editOperations[t]);
+        for (var e = this.future.pop(), t = 0; t < e.editOperations.length; t++) {
+          e.editOperations[t] = n.ModelEditOperation.execute(this.model, e.editOperations[t]);
+        }
         this.past.push(e);
 
         return e.afterCursorState;

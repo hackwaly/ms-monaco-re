@@ -38,7 +38,9 @@ define("vs/platform/telemetry/telemetryService", ["require", "exports", "vs/base
       this.authFilter = u.getBasicAuthRemover();
     }
     e.prototype.dispose = function() {
-      for (; this.toUnbind.length;) this.toUnbind.pop()();
+      for (; this.toUnbind.length;) {
+        this.toUnbind.pop()();
+      }
       this.timeKeeper.dispose();
 
       this.idleMonitor && this.idleMonitor.dispose();

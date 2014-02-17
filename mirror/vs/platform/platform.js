@@ -6,7 +6,9 @@ define("vs/platform/platform", ["require", "exports", "vs/base/errors", "vs/base
       this.ctor = e;
     }
     e.prototype.createNew = function() {
-      for (var e = [], t = 0; t < arguments.length - 0; t++) e[t] = arguments[t + 0];
+      for (var e = [], t = 0; t < arguments.length - 0; t++) {
+        e[t] = arguments[t + 0];
+      }
       e.unshift(this.ctor);
       var n = o.create.apply(this, e);
       this.assertType(n);
@@ -61,7 +63,9 @@ define("vs/platform/platform", ["require", "exports", "vs/base/errors", "vs/base
       var r = this;
       return new i.Promise(function(n, i) {
         e([r.moduleId], function(e) {
-          if (o) return i(o);
+          if (o) {
+            return i(o);
+          }
           try {
             var s = r.doCreate(e, t);
             n(s);
@@ -121,7 +125,9 @@ define("vs/platform/platform", ["require", "exports", "vs/base/errors", "vs/base
       return new i.Promise(function(n, i) {
         e(s.entryModuleIds, function() {
           e([s.getModuleId()], function(e) {
-            if (r) return i(r);
+            if (r) {
+              return i(r);
+            }
             o.isUndefinedOrNull(e[s.getCtorName()]) && i(new Error("module " + s.getModuleId() +
               " does not export " + s.getCtorName()));
             var a = s.getPayload().slice(0);

@@ -20,7 +20,9 @@ define("vs/editor/core/model/textModelWithTokensHelpers", ["require", "exports",
 
             t = new RegExp(t.source, r);
           }
-        } else t = i.NullMode.DEFAULT_WORD_REGEXP;
+        } else {
+          t = i.NullMode.DEFAULT_WORD_REGEXP;
+        }
       }
       t.lastIndex = 0;
 
@@ -28,8 +30,9 @@ define("vs/editor/core/model/textModelWithTokensHelpers", ["require", "exports",
     };
 
     e.getWords = function(t, n, i, o) {
-      if ("undefined" == typeof o && (o = !1), o && !t._lineIsTokenized(n)) return e._getWordsInText(t.getLineContent(
-        n), e.massageWordDefinitionOf(t.getMode()));
+      if ("undefined" == typeof o && (o = !1), o && !t._lineIsTokenized(n)) {
+        return e._getWordsInText(t.getLineContent(n), e.massageWordDefinitionOf(t.getMode()));
+      }
       var r;
 
       var s;
@@ -95,18 +98,20 @@ define("vs/editor/core/model/textModelWithTokensHelpers", ["require", "exports",
       var u = e.match(t) || [];
 
       var l = [];
-      for (n = 0; n < u.length; n++) a = u[n].trim();
-
-      a.length > 0 && (i = e.indexOf(a, o), o = i + a.length, r = i, s = o, l.push({
-        start: r,
-        end: s
-      }));
+      for (n = 0; n < u.length; n++) {
+        a = u[n].trim();
+        a.length > 0 && (i = e.indexOf(a, o), o = i + a.length, r = i, s = o, l.push({
+          start: r,
+          end: s
+        }));
+      }
       return l;
     };
 
     e.getWordAtPosition = function(t, i, o, r) {
-      if ("undefined" == typeof r && (r = !1), r && !t._lineIsTokenized(i.lineNumber)) return e._getWordAtText(i.column,
-        e.massageWordDefinitionOf(t.getMode()), t.getLineContent(i.lineNumber), 0);
+      if ("undefined" == typeof r && (r = !1), r && !t._lineIsTokenized(i.lineNumber)) {
+        return e._getWordAtText(i.column, e.massageWordDefinitionOf(t.getMode()), t.getLineContent(i.lineNumber), 0);
+      }
       var s = t._getInternalTokens(i.lineNumber);
 
       var a = -1;
@@ -150,11 +155,13 @@ define("vs/editor/core/model/textModelWithTokensHelpers", ["require", "exports",
       var c = n.match(t) || [];
       for (o = 0; o < c.length; o++)
         if (l = c[o].trim(), l.length > 0 && (r = n.indexOf(l, s), s = r + l.length, a = i + r + 1, u = i + s + 1, e >=
-          a && u >= e)) return {
-          word: l,
-          startColumn: a,
-          endColumn: u
-        };
+          a && u >= e)) {
+          return {
+            word: l,
+            startColumn: a,
+            endColumn: u
+          };
+        }
       return null;
     };
 
@@ -166,7 +173,9 @@ define("vs/editor/core/model/textModelWithTokensHelpers", ["require", "exports",
       var i = e._getNonWordTokenTypes();
 
       var o = {};
-      for (t = 0, n = i.length; n > t; t++) o[i[t]] = !0;
+      for (t = 0, n = i.length; n > t; t++) {
+        o[i[t]] = !0;
+      }
       return o;
     };
 
@@ -192,9 +201,10 @@ define("vs/editor/core/model/textModelWithTokensHelpers", ["require", "exports",
 
         var h = t.getLineContent(a);
         for (l = (a === i ? o : d.length) - 1; l >= 0; l--)
-          if (d[l].type === n && (c += e._sign(d[l].bracket), 0 === c)) u = l === d.length - 1 ? h.length : d[l + 1].startIndex;
-
-        return new r.Range(a, d[l].startIndex + 1, a, u + 1);
+          if (d[l].type === n && (c += e._sign(d[l].bracket), 0 === c)) {
+            u = l === d.length - 1 ? h.length : d[l + 1].startIndex;
+            return new r.Range(a, d[l].startIndex + 1, a, u + 1);
+          }
       }
       return null;
     };
@@ -212,20 +222,23 @@ define("vs/editor/core/model/textModelWithTokensHelpers", ["require", "exports",
 
       var h = 1;
       for (a = i, u = t.getLineCount(); u >= a; a++) {
-        if (s && !t._lineIsTokenized(a)) return {
-          range: null,
-          isAccurate: !1
-        };
+        if (s && !t._lineIsTokenized(a)) {
+          return {
+            range: null,
+            isAccurate: !1
+          };
+        }
         var p = t._getInternalTokens(a);
 
         var f = t.getLineContent(a);
         for (c = a === i ? o + 1 : 0, d = p.length; d > c; c++)
-          if (p[c].type === n && (h += e._sign(p[c].bracket), 0 === h)) l = c === p.length - 1 ? f.length : p[c + 1].startIndex;
-
-        return {
-          range: new r.Range(a, p[c].startIndex + 1, a, l + 1),
-          isAccurate: !0
-        };
+          if (p[c].type === n && (h += e._sign(p[c].bracket), 0 === h)) {
+            l = c === p.length - 1 ? f.length : p[c + 1].startIndex;
+            return {
+              range: new r.Range(a, p[c].startIndex + 1, a, l + 1),
+              isAccurate: !0
+            };
+          }
       }
       return {
         range: null,
@@ -249,19 +262,21 @@ define("vs/editor/core/model/textModelWithTokensHelpers", ["require", "exports",
       var c = t._getInternalTokens(i.lineNumber);
 
       var d = t.getLineContent(i.lineNumber);
-      for (o = 0, r = c.length; - 1 === l && r > o; o++) s = c[o];
-
-      a = o === r - 1 ? d.length : c[o + 1].startIndex;
-
-      s.startIndex <= u && a >= u && (l = o);
+      for (o = 0, r = c.length; - 1 === l && r > o; o++) {
+        s = c[o];
+        a = o === r - 1 ? d.length : c[o + 1].startIndex;
+        s.startIndex <= u && a >= u && (l = o);
+      }
       return e._findMatchingBracketUp(t, n, i.lineNumber, l + 1, 0);
     };
 
     e.matchBracket = function(t, n, i) {
-      if (i && !t._lineIsTokenized(n.lineNumber)) return {
-        brackets: null,
-        isAccurate: !1
-      };
+      if (i && !t._lineIsTokenized(n.lineNumber)) {
+        return {
+          brackets: null,
+          isAccurate: !1
+        };
+      }
       var o;
 
       var s;

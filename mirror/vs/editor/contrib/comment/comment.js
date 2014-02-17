@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -35,7 +37,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
       var a = [];
 
       var b = this.editor.getSelections();
-      for (var c = 0; c < b.length; c++) a.push(new n.LineCommentCommand(b[c]));
+      for (var c = 0; c < b.length; c++) {
+        a.push(new n.LineCommentCommand(b[c]));
+      }
       this.editor.executeCommands(this.id, a);
 
       return k.Promise.as(null);
@@ -56,7 +60,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
       var a = [];
 
       var b = this.editor.getSelections();
-      for (var c = 0; c < b.length; c++) a.push(new o.BlockCommentCommand(b[c]));
+      for (var c = 0; c < b.length; c++) {
+        a.push(new o.BlockCommentCommand(b[c]));
+      }
       this.editor.executeCommands(this.id, a);
 
       return k.Promise.as(null);

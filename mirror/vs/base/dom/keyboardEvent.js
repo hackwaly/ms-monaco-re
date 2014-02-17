@@ -90,7 +90,9 @@ define("vs/base/dom/keyboardEvent", ["require", "vs/base/lib/winjs.base", "vs/ba
       (e.Meta = 57392)) : n.browser.isWebKit && n.browser.isMacintosh && (e.Meta = 91);
     var t = {};
     ! function() {
-      for (var n in e) e.hasOwnProperty(n) && (t[e[n]] = n);
+      for (var n in e) {
+        e.hasOwnProperty(n) && (t[e[n]] = n);
+      }
     }();
 
     n.browser.isOpera ? (t[189] = "-", t[187] = "=", t[186] = ";") : n.browser.isWebKit && n.browser.isMacintosh && (

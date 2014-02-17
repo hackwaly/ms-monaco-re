@@ -16,9 +16,10 @@ define("vs/languages/typescript/resources/dependencyResolverGraph", ["require", 
 
     function r(e, r) {
       function o(e) {
-        if (p) a("canceled");
-
-        return void 0;
+        if (p) {
+          a("canceled");
+          return void 0;
+        }
         var n = e.indexOf("\r\n\r\n", c);
         if (-1 !== n) {
           var r = t(e.substring(c, n));
@@ -108,8 +109,9 @@ define("vs/languages/typescript/resources/dependencyResolverGraph", ["require", 
         return i.resources;
       }).then(function(e) {
         t = e;
-        for (var i = [], o = 0; o < e.length; o++) r._resourceService.contains(e[o]) || i.push(r._requestService.getPath(
-          "root", e[o]));
+        for (var i = [], o = 0; o < e.length; o++) {
+          r._resourceService.contains(e[o]) || i.push(r._requestService.getPath("root", e[o]));
+        }
         return 0 === i.length ? n.Promise.as(e) : p.fetchChunkedData(r._requestService, {
           type: "POST",
           url: r._requestService.getRequestUrl("typeScriptFiles"),
@@ -148,8 +150,9 @@ define("vs/languages/typescript/resources/dependencyResolverGraph", ["require", 
     };
 
     t.prototype._parseGraph = function(e) {
-      for (var t = this._requestService.getRequestUrl("root", "", !0), n = Object.keys(e.i), r = 0; r < n.length; r++)
+      for (var t = this._requestService.getRequestUrl("root", "", !0), n = Object.keys(e.i), r = 0; r < n.length; r++) {
         0 !== e.i[n[r]].indexOf("error:") && (e.i[n[r]] = t + e.i[n[r]].substring(1));
+      }
       return l.Graph.fromJSON(e);
     };
 

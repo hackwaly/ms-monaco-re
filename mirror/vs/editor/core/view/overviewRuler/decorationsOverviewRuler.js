@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -86,13 +88,14 @@ define(["require", "exports", "vs/editor/core/view/overviewRuler/overviewRulerIm
         var e;
 
         var f;
-        for (d = 0, e = b.length; d < e; d++) f = b[d];
-
-        f.options.showInOverviewRuler && c.push({
-          startLineNumber: f.range.startLineNumber,
-          endLineNumber: f.range.endLineNumber,
-          color: f.options.showInOverviewRuler
-        });
+        for (d = 0, e = b.length; d < e; d++) {
+          f = b[d];
+          f.options.showInOverviewRuler && c.push({
+            startLineNumber: f.range.startLineNumber,
+            endLineNumber: f.range.endLineNumber,
+            color: f.options.showInOverviewRuler
+          });
+        }
         this.hasDecorations = c.length > 0;
 
         this.overviewRuler.setZones(c, !1);

@@ -56,11 +56,19 @@ define("vs/editor/core/view/lines/viewLineParts", ["require", "exports", "vs/bas
     e.prototype.equals = function(t) {
       if (t instanceof e) {
         var n = t;
-        if (this.lastPartIndex !== n.lastPartIndex) return !1;
-        if (this.lastEndOffset !== n.lastEndOffset) return !1;
+        if (this.lastPartIndex !== n.lastPartIndex) {
+          return !1;
+        }
+        if (this.lastEndOffset !== n.lastEndOffset) {
+          return !1;
+        }
         for (var i = 0, o = this.parts.length; o > i; i++) {
-          if (this.parts[i].startIndex !== n.parts[i].startIndex) return !1;
-          if (this.parts[i].type !== n.parts[i].type) return !1;
+          if (this.parts[i].startIndex !== n.parts[i].startIndex) {
+            return !1;
+          }
+          if (this.parts[i].type !== n.parts[i].type) {
+            return !1;
+          }
         }
         return !0;
       }
@@ -104,7 +112,9 @@ define("vs/editor/core/view/lines/viewLineParts", ["require", "exports", "vs/bas
     }
     e.prototype.consumeLowerThan = function(e, t, n) {
       for (; this.count > 0 && this.stopOffsets[0] < e;) {
-        for (var i = 0; i + 1 < this.count && this.stopOffsets[i] === this.stopOffsets[i + 1];) i++;
+        for (var i = 0; i + 1 < this.count && this.stopOffsets[i] === this.stopOffsets[i + 1];) {
+          i++;
+        }
         n.push(new a(t, this.stopOffsets[i], this.classNames.join(" ")));
 
         t = this.stopOffsets[i] + 1;
@@ -121,10 +131,10 @@ define("vs/editor/core/view/lines/viewLineParts", ["require", "exports", "vs/bas
     };
 
     e.prototype.insert = function(e, t) {
-      if (0 === this.count || this.stopOffsets[this.count - 1] <= e) this.stopOffsets.push(e);
-
-      this.classNames.push(t);
-      else
+      if (0 === this.count || this.stopOffsets[this.count - 1] <= e) {
+        this.stopOffsets.push(e);
+        this.classNames.push(t);
+      } else
         for (var n = 0; n < this.count; n++)
           if (this.stopOffsets[n] >= e) {
             this.stopOffsets.splice(n, 0, e);
@@ -142,7 +152,9 @@ define("vs/editor/core/view/lines/viewLineParts", ["require", "exports", "vs/bas
     function e() {}
     e.normalize = function(t, n) {
       var i = [];
-      if (0 === n.length) return i;
+      if (0 === n.length) {
+        return i;
+      }
       var o;
 
       var r;
@@ -156,11 +168,12 @@ define("vs/editor/core/view/lines/viewLineParts", ["require", "exports", "vs/bas
       var c = new u;
 
       var d = 0;
-      for (a = 0, l = n.length; l > a; a++) o = n[a];
-
-      o.range.endLineNumber < t || o.range.startLineNumber > t || (r = o.range.startLineNumber === t ? o.range.startColumn -
-        1 : 0, s = o.range.endLineNumber === t ? o.range.endColumn - 2 : e.MAX_LINE_LENGTH - 1, 0 > s || (d = c.consumeLowerThan(
-          r, d, i), 0 === c.count && (d = r), c.insert(s, o.options.inlineClassName)));
+      for (a = 0, l = n.length; l > a; a++) {
+        o = n[a];
+        o.range.endLineNumber < t || o.range.startLineNumber > t || (r = o.range.startLineNumber === t ? o.range.startColumn -
+          1 : 0, s = o.range.endLineNumber === t ? o.range.endColumn - 2 : e.MAX_LINE_LENGTH - 1, 0 > s || (d = c.consumeLowerThan(
+            r, d, i), 0 === c.count && (d = r), c.insert(s, o.options.inlineClassName)));
+      }
       c.consumeLowerThan(e.MAX_LINE_LENGTH, d, i);
 
       return i;

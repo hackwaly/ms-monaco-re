@@ -68,7 +68,9 @@ define(["require", "exports", "vs/editor/core/constants", "vs/platform/platform"
       this._glyphWidget && (this._glyphWidget.dispose(), this._glyphWidget = null);
 
       this._contentWidget && (this._contentWidget.dispose(), this._contentWidget = null);
-      while (this._toUnhook.length > 0) this._toUnhook.pop()();
+      while (this._toUnhook.length > 0) {
+        this._toUnhook.pop()();
+      }
     };
 
     a.ID = "editor.contrib.hover";

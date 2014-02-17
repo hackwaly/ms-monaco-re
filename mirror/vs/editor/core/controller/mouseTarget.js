@@ -46,7 +46,9 @@ define("vs/editor/core/controller/mouseTarget", ["require", "exports", "vs/edito
     }
 
     function n() {
-      for (var e = [], t = 0; t < arguments.length - 0; t++) e[t] = arguments[t + 0];
+      for (var e = [], t = 0; t < arguments.length - 0; t++) {
+        e[t] = arguments[t + 0];
+      }
       var n = !1;
       "$" === e[e.length - 1] && (n = !0, e.pop());
 
@@ -74,10 +76,10 @@ define("vs/editor/core/controller/mouseTarget", ["require", "exports", "vs/edito
       this.viewHelper = t;
     }
     e.prototype.getClassNamePathTo = function(e, t) {
-      for (var n, i = []; e && e !== document.body && e !== t;) e.nodeType === e.ELEMENT_NODE && (n = e.className, n &&
-        i.unshift(n));
-
-      e = e.parentNode;
+      for (var n, i = []; e && e !== document.body && e !== t;) {
+        e.nodeType === e.ELEMENT_NODE && (n = e.className, n && i.unshift(n));
+        e = e.parentNode;
+      }
       return i.join("/");
     };
 
@@ -93,18 +95,31 @@ define("vs/editor/core/controller/mouseTarget", ["require", "exports", "vs/edito
       var l = a.hasAttribute && a.hasAttribute("lineNumber") ? a.getAttribute("lineNumber") : null;
 
       var c = a.hasAttribute && a.hasAttribute("column") ? a.getAttribute("column") : null;
-      if (l && c) return this.createMouseTargetFromViewCursor(a, parseInt(l, 10), parseInt(c, 10));
-      if (s.IS_CHILD_OF_CONTENT_WIDGETS.test(u)) return this.createMouseTargetFromContentWidgetsChild(a);
-      if (s.IS_CHILD_OF_OVERLAY_WIDGETS.test(u)) return this.createMouseTargetFromOverlayWidgetsChild(a);
-      if (s.IS_TEXTAREA_COVER.test(u)) return this.context.configuration.editor.glyphMargin ? this.createMouseTargetFromGlyphMargin(
-        a, i) : this.context.configuration.editor.lineNumbers ? this.createMouseTargetFromLineNumbers(a, i) : this.createMouseTargetFromLinesDecorationsChild(
-        a, i);
-      if (s.IS_TEXTAREA.test(u)) return new r(a, 1);
-      if (s.IS_VIEW_LINES.test(u)) return this.createMouseTargetFromViewLines(a, i);
+      if (l && c) {
+        return this.createMouseTargetFromViewCursor(a, parseInt(l, 10), parseInt(c, 10));
+      }
+      if (s.IS_CHILD_OF_CONTENT_WIDGETS.test(u)) {
+        return this.createMouseTargetFromContentWidgetsChild(a);
+      }
+      if (s.IS_CHILD_OF_OVERLAY_WIDGETS.test(u)) {
+        return this.createMouseTargetFromOverlayWidgetsChild(a);
+      }
+      if (s.IS_TEXTAREA_COVER.test(u)) {
+        return this.context.configuration.editor.glyphMargin ? this.createMouseTargetFromGlyphMargin(a, i) : this.context
+          .configuration.editor.lineNumbers ? this.createMouseTargetFromLineNumbers(a, i) : this.createMouseTargetFromLinesDecorationsChild(
+            a, i);
+      }
+      if (s.IS_TEXTAREA.test(u)) {
+        return new r(a, 1);
+      }
+      if (s.IS_VIEW_LINES.test(u)) {
+        return this.createMouseTargetFromViewLines(a, i);
+      }
       if (!n || s.IS_CHILD_OF_VIEW_LINES.test(u)) {
         var d = this._doHitTest(e, t);
-        if (d.position) return this.createMouseTargetFromHitTestPosition(a, d.position.lineNumber, d.position.column,
-          o);
+        if (d.position) {
+          return this.createMouseTargetFromHitTestPosition(a, d.position.lineNumber, d.position.column, o);
+        }
         d.hitTarget && (a = d.hitTarget, u = this.getClassNamePathTo(a, this.viewHelper.viewDomNode));
       }
       return s.IS_CHILD_OF_SCROLLABLE_ELEMENT.test(u) ? this.createMouseTargetFromScrollbar(a, i) : s.IS_CHILD_OF_LINES_DECORATIONS
@@ -115,8 +130,12 @@ define("vs/editor/core/controller/mouseTarget", ["require", "exports", "vs/edito
 
     e.prototype._isChild = function(e, t, n) {
       for (; e && e !== document.body;) {
-        if (e === t) return !0;
-        if (e === n) return !1;
+        if (e === t) {
+          return !0;
+        }
+        if (e === n) {
+          return !1;
+        }
         e = e.parentNode;
       }
       return !1;
@@ -124,8 +143,12 @@ define("vs/editor/core/controller/mouseTarget", ["require", "exports", "vs/edito
 
     e.prototype._findAttribute = function(e, t, n) {
       for (; e && e !== document.body;) {
-        if (e.hasAttribute(t)) return e.getAttribute(t);
-        if (e === n) return null;
+        if (e.hasAttribute(t)) {
+          return e.getAttribute(t);
+        }
+        if (e === n) {
+          return null;
+        }
         e = e.parentNode;
       }
       return null;
@@ -222,7 +245,9 @@ define("vs/editor/core/controller/mouseTarget", ["require", "exports", "vs/edito
         t = this.viewHelper.getPositionFromDOMInfo(u, h.text.length);
 
         h.moveToElementText(this.viewHelper.viewDomNode);
-      } else n = u;
+      } else {
+        n = u;
+      }
       i.moveToElementText(this.viewHelper.viewDomNode);
 
       return {
@@ -274,7 +299,9 @@ define("vs/editor/core/controller/mouseTarget", ["require", "exports", "vs/edito
 
     e.prototype.createMouseTargetFromViewLines = function(e, t) {
       var i = this._getZoneAtCoord(t);
-      if (i) return new r(e, 8, i.position, null, i.viewZoneId);
+      if (i) {
+        return new r(e, 8, i.position, null, i.viewZoneId);
+      }
       var o = this.context.model.getLineCount();
 
       var s = this.context.model.getLineMaxColumn(o);
@@ -285,9 +312,13 @@ define("vs/editor/core/controller/mouseTarget", ["require", "exports", "vs/edito
       var a = new n.Position(t, o);
 
       var u = this.viewHelper.getLineWidth(t);
-      if (s > u) return new r(e, 7, a);
+      if (s > u) {
+        return new r(e, 7, a);
+      }
       var l = this.viewHelper.visibleRangeForPosition2(t, o).left;
-      if (s === l) return new r(e, 6, a);
+      if (s === l) {
+        return new r(e, 6, a);
+      }
       var c;
       if (o > 1) {
         var d = this.viewHelper.visibleRangeForPosition2(t, o).left;
@@ -322,21 +353,27 @@ define("vs/editor/core/controller/mouseTarget", ["require", "exports", "vs/edito
 
     e.prototype.createMouseTargetFromLinesDecorationsChild = function(e, t) {
       var i = this._getZoneAtCoord(t);
-      if (i) return new r(e, 5, i.position, null, i.viewZoneId);
+      if (i) {
+        return new r(e, 5, i.position, null, i.viewZoneId);
+      }
       var o = this._getFullLineRangeAtCoord(t);
       return new r(e, 4, new n.Position(o.startLineNumber, 1), o);
     };
 
     e.prototype.createMouseTargetFromLineNumbers = function(e, t) {
       var i = this._getZoneAtCoord(t);
-      if (i) return new r(e, 5, i.position, null, i.viewZoneId);
+      if (i) {
+        return new r(e, 5, i.position, null, i.viewZoneId);
+      }
       var o = this._getFullLineRangeAtCoord(t);
       return new r(e, 3, new n.Position(o.startLineNumber, 1), o);
     };
 
     e.prototype.createMouseTargetFromGlyphMargin = function(e, t) {
       var i = this._getZoneAtCoord(t);
-      if (i) return new r(e, 5, i.position, null, i.viewZoneId);
+      if (i) {
+        return new r(e, 5, i.position, null, i.viewZoneId);
+      }
       var o = this._getFullLineRangeAtCoord(t);
       return new r(e, 2, new n.Position(o.startLineNumber, 1), o);
     };

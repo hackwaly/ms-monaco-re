@@ -32,15 +32,13 @@ define(["require", "exports"], function(a, b) {
       this.domNode.style.top = a.top + "px";
 
       this.domNode.style.right = a.right + "px";
-      if (this.width !== a.width || this.height !== a.height) this.width = a.width;
-
-      this.height = a.height;
-
-      this.domNode.width = this.width;
-
-      this.domNode.height = this.height;
-
-      b && this.render();
+      if (this.width !== a.width || this.height !== a.height) {
+        this.width = a.width;
+        this.height = a.height;
+        this.domNode.width = this.width;
+        this.domNode.height = this.height;
+        b && this.render();
+      }
     };
 
     a.prototype.getDomNode = function() {
@@ -130,16 +128,15 @@ define(["require", "exports"], function(a, b) {
 
         k = j * this.maximumHeight;
         if (i - h > k)
-          for (var l = g.startLineNumber; l <= g.endLineNumber; l++) h = this.getVerticalOffsetForLine(l);
-
-        i = h + this.lineHeight;
-
-        h *= a;
-
-        i *= a;
-
-        this._insertZone(d, h, i, this.maximumHeight, g.color);
-        else this._insertZone(d, h, i, k, g.color);
+          for (var l = g.startLineNumber; l <= g.endLineNumber; l++) {
+            h = this.getVerticalOffsetForLine(l);
+            i = h + this.lineHeight;
+            h *= a;
+            i *= a;
+            this._insertZone(d, h, i, this.maximumHeight, g.color);
+          } else {
+            this._insertZone(d, h, i, k, g.color);
+          }
       }
       var m = function(a, b) {
         return a.from - b.from;
@@ -163,8 +160,10 @@ define(["require", "exports"], function(a, b) {
           q = o[0].to;
 
           c.fillStyle = n;
-          for (e = 1, f = o.length; e < f; e++) q >= o[e].from ? q = Math.max(q, o[e].to) : (c.fillRect(0, p, this.width,
-            q - p), p = o[e].from, q = o[e].to);
+          for (e = 1, f = o.length; e < f; e++) {
+            q >= o[e].from ? q = Math.max(q, o[e].to) : (c.fillRect(0, p, this.width, q - p), p = o[e].from, q = o[e]
+              .to);
+          }
           c.fillRect(0, p, this.width, q - p);
         }
     };

@@ -30,7 +30,9 @@ define("vs/editor/modes/nullMode", ["require", "exports", "vs/editor/modes/modes
     };
 
     e.prototype.equals = function(e) {
-      if (this.mode !== e.getMode()) return !1;
+      if (this.mode !== e.getMode()) {
+        return !1;
+      }
       var t = e.getStateData();
       return this.stateData || t ? this.stateData && t ? this.stateData.equals(t) : !1 : !0;
     };

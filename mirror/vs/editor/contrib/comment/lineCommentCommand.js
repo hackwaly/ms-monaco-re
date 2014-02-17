@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -31,9 +33,13 @@ define(["require", "exports", "vs/editor/contrib/comment/blockCommentCommand", "
       var e;
       for (var f = b; f <= c; f++) {
         d = a.getModeAtPosition(b, 1).commentsSupport;
-        if (!d) return !1;
+        if (!d) {
+          return !1;
+        }
         e = d.getCommentsConfiguration();
-        if (!e || !e.lineCommentTokens || e.lineCommentTokens.length === 0) return !1;
+        if (!e || !e.lineCommentTokens || e.lineCommentTokens.length === 0) {
+          return !1;
+        }
       }
       return !0;
     };
@@ -81,23 +87,27 @@ define(["require", "exports", "vs/editor/contrib/comment/blockCommentCommand", "
       var t;
 
       var u;
-      for (u = d.startLineNumber; u <= d.endLineNumber; u++) t = b.getModeAtPosition(u, 1).commentsSupport.getCommentsConfiguration()
-        .lineCommentTokens[0];
-
-      r[u - d.startLineNumber] = t;
-
-      o && (p = b.getLineContent(u), s = g.firstNonWhitespaceIndex(p), s === -1 ? o = !1 : this._haystackHasNeedleAtOffset(
-        p, t, s) || (o = !1), q[u - d.startLineNumber] = s);
+      for (u = d.startLineNumber; u <= d.endLineNumber; u++) {
+        t = b.getModeAtPosition(u, 1).commentsSupport.getCommentsConfiguration().lineCommentTokens[0];
+        r[u - d.startLineNumber] = t;
+        o && (p = b.getLineContent(u), s = g.firstNonWhitespaceIndex(p), s === -1 ? o = !1 : this._haystackHasNeedleAtOffset(
+          p, t, s) || (o = !1), q[u - d.startLineNumber] = s);
+      }
       if (o)
-        for (u = d.startLineNumber; u <= d.endLineNumber; u++) c.addEditOperation(new h.Range(u, q[u - d.startLineNumber] +
-          1, u, q[u - d.startLineNumber] + 1 + r[u - d.startLineNumber].length), null);
-      else
-        for (u = d.startLineNumber; u <= d.endLineNumber; u++) c.addEditOperation(new h.Range(u, 1, u, 1), r[u - d.startLineNumber]);
+        for (u = d.startLineNumber; u <= d.endLineNumber; u++) {
+          c.addEditOperation(new h.Range(u, q[u - d.startLineNumber] + 1, u, q[u - d.startLineNumber] + 1 + r[u - d.startLineNumber]
+            .length), null);
+        } else
+          for (u = d.startLineNumber; u <= d.endLineNumber; u++) {
+            c.addEditOperation(new h.Range(u, 1, u, 1), r[u - d.startLineNumber]);
+          }
       this._selectionId = c.trackSelection(d);
     };
 
     b.prototype.computeCursorState = function(b, c) {
-      if (this._hasDelegatedToParent) return a.prototype.computeCursorState.call(this, b, c);
+      if (this._hasDelegatedToParent) {
+        return a.prototype.computeCursorState.call(this, b, c);
+      }
       var d = c.getTrackedSelection(this._selectionId);
       this._moveEndPositionDown && (d = d.setEndPosition(d.endLineNumber + 1, 1));
 

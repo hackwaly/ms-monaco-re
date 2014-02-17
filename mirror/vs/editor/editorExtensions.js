@@ -90,8 +90,9 @@ define("vs/editor/editorExtensions", ["require", "exports", "vs/base/ui/actions"
         return t.enabled ? (t.telemetryService.publicLog("editorActionInvoked", {
           name: t.label
         }), o.Promise.as(t.run()).done(), !0) : !1;
-      }, i = 0; i < this.descriptor.keybindings.length; i++) this.bindings.push(this.handlerService.bind(this.descriptor
-        .keybindings[i], n));
+      }, i = 0; i < this.descriptor.keybindings.length; i++) {
+        this.bindings.push(this.handlerService.bind(this.descriptor.keybindings[i], n));
+      }
       this.updateEnablementState();
     };
 
@@ -131,8 +132,12 @@ define("vs/editor/editorExtensions", ["require", "exports", "vs/base/ui/actions"
     };
 
     n.prototype.dispose = function() {
-      for (; this.toUnhook.length > 0;) this.toUnhook.pop()();
-      for (var t = 0; t < this.bindings.length; t++) this.bindings[t].dispose();
+      for (; this.toUnhook.length > 0;) {
+        this.toUnhook.pop()();
+      }
+      for (var t = 0; t < this.bindings.length; t++) {
+        this.bindings[t].dispose();
+      }
       this.bindings = [];
 
       e.prototype.dispose.call(this);

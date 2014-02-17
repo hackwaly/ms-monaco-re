@@ -41,8 +41,9 @@ define("vs/editor/core/model/mirrorModel", ["require", "exports", "vs/editor/cor
 
     t.prototype._ensurePrefixSum = function() {
       if (!this._lineStarts) {
-        for (var e = [], t = this.getEOL().length, n = 0, o = this._lines.length; o > n; n++) e.push(this._lines[n].text
-          .length + t);
+        for (var e = [], t = this.getEOL().length, n = 0, o = this._lines.length; o > n; n++) {
+          e.push(this._lines[n].text.length + t);
+        }
         this._lineStarts = new i.PrefixSumComputer(e);
       }
     };
@@ -177,16 +178,20 @@ define("vs/editor/core/model/mirrorModel", ["require", "exports", "vs/editor/cor
         var i = this.getProperty("$WordDefinitionForMirrorModel");
         this.wordsRegexp = i ? new RegExp(i.source, i.flags) : /(-?\d*\.\d\w*)|(\w+)/g;
       }
-      for (; t = this.wordsRegexp.exec(e);) n.push({
-        start: t.index,
-        end: t.index + t[0].length
-      });
+      for (; t = this.wordsRegexp.exec(e);) {
+        n.push({
+          start: t.index,
+          end: t.index + t[0].length
+        });
+      }
       return n;
     };
 
     t.prototype.getWord = function(e, t, n) {
       for (var i = this.wordenize(e), o = 0; o < i.length && t >= i[o].start; o++)
-        if (t <= i[o].end) return n(e, i[o].start, i[o].end);
+        if (t <= i[o].end) {
+          return n(e, i[o].start, i[o].end);
+        }
       return n(e, -1, -1);
     };
 
@@ -281,10 +286,10 @@ define("vs/editor/core/model/mirrorModel", ["require", "exports", "vs/editor/cor
       var i = this.getEOL().length;
 
       var o = e.detail.split("\n");
-      for (t = e.fromLineNumber - 1, n = 0; t < e.toLineNumber; t++, n++) this._lineStarts && this._lineStarts.insertValue(
-        t, o[n].length + i);
-
-      this._lines.splice(t, 0, new r.ModelLine(0, o[n]));
+      for (t = e.fromLineNumber - 1, n = 0; t < e.toLineNumber; t++, n++) {
+        this._lineStarts && this._lineStarts.insertValue(t, o[n].length + i);
+        this._lines.splice(t, 0, new r.ModelLine(0, o[n]));
+      }
     };
 
     return t;

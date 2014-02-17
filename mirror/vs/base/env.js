@@ -61,7 +61,9 @@ define("vs/base/env", ["require", "exports", "vs/base/types"], function(e, t, n)
     },
     hasWorkers: h,
     hasCSSAnimationSupport: function() {
-      if (this._hasCSSAnimationSupport === !0 || this._hasCSSAnimationSupport === !1) return this._hasCSSAnimationSupport;
+      if (this._hasCSSAnimationSupport === !0 || this._hasCSSAnimationSupport === !1) {
+        return this._hasCSSAnimationSupport;
+      }
       for (var e = !1, t = document.createElement("div"), i = ["animationName", "webkitAnimationName",
           "msAnimationName", "MozAnimationName", "OAnimationName"
         ], o = 0; o < i.length; o++) {

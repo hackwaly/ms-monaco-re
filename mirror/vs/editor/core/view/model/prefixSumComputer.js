@@ -4,7 +4,9 @@ define("vs/editor/core/view/model/prefixSumComputer", ["require", "exports"], fu
       this.values = e;
 
       this.prefixSum = [];
-      for (var t = 0, n = this.values.length; n > t; t++) this.prefixSum[t] = 0;
+      for (var t = 0, n = this.values.length; n > t; t++) {
+        this.prefixSum[t] = 0;
+      }
       this.prefixSumValidIndex = -1;
     }
     e.prototype.getCount = function() {
@@ -37,11 +39,17 @@ define("vs/editor/core/view/model/prefixSumComputer", ["require", "exports"], fu
     };
 
     e.prototype.getAccumulatedValue = function(e) {
-      if (0 > e) return 0;
-      if (e <= this.prefixSumValidIndex) return this.prefixSum[e];
+      if (0 > e) {
+        return 0;
+      }
+      if (e <= this.prefixSumValidIndex) {
+        return this.prefixSum[e];
+      }
       var t = this.prefixSumValidIndex + 1;
       0 === t && (this.prefixSum[0] = this.values[0], t++);
-      for (var n = t; e >= n; n++) this.prefixSum[n] = this.prefixSum[n - 1] + this.values[n];
+      for (var n = t; e >= n; n++) {
+        this.prefixSum[n] = this.prefixSum[n - 1] + this.values[n];
+      }
       this.prefixSumValidIndex = Math.max(this.prefixSumValidIndex, e);
 
       return this.prefixSum[e];
@@ -49,8 +57,9 @@ define("vs/editor/core/view/model/prefixSumComputer", ["require", "exports"], fu
 
     e.prototype.getIndexOf = function(e, t) {
       for (var n, i, o, r = 0, s = this.values.length - 1; s >= r;)
-        if (n = r + (s - r) / 2 | 0, o = this.getAccumulatedValue(n), i = o - this.values[n], i > e) s = n - 1;
-        else {
+        if (n = r + (s - r) / 2 | 0, o = this.getAccumulatedValue(n), i = o - this.values[n], i > e) {
+          s = n - 1;
+        } else {
           if (!(e >= o)) break;
           r = n + 1;
         }

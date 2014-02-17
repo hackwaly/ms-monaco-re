@@ -97,7 +97,9 @@ define("vs/editor/worker/editorWorkerClient", ["require", "exports", "vs/base/wo
     };
 
     e.prototype._mixinProperties = function(e, t, n) {
-      for (var i = 0; i < n.length; i++) e[n[i]] = t[n[i]];
+      for (var i = 0; i < n.length; i++) {
+        e[n[i]] = t[n[i]];
+      }
       return e;
     };
 

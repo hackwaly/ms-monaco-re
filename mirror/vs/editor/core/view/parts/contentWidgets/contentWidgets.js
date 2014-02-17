@@ -65,8 +65,10 @@ define("vs/editor/core/view/parts/contentWidgets/contentWidgets", ["require", "e
 
       this._requestModificationFrameBeforeRendering(function() {
         var e;
-        for (e in t._widgets) t._widgets.hasOwnProperty(e) && (t._widgets[e].widget.getDomNode().style.maxWidth = t
-          ._contentWidth + "px");
+        for (e in t._widgets) {
+          t._widgets.hasOwnProperty(e) && (t._widgets[e].widget.getDomNode().style.maxWidth = t._contentWidth +
+            "px");
+        }
       });
 
       return !0;
@@ -132,7 +134,9 @@ define("vs/editor/core/view/parts/contentWidgets/contentWidgets", ["require", "e
 
     t.prototype._layoutBoxInViewport = function(e, t, n) {
       var i = n.visibleRangeForPosition(e);
-      if (!i) return null;
+      if (!i) {
+        return null;
+      }
       var o = t.clientWidth;
 
       var r = t.clientHeight;
@@ -177,7 +181,9 @@ define("vs/editor/core/view/parts/contentWidgets/contentWidgets", ["require", "e
 
     t.prototype._prepareRenderWidget = function(e, t) {
       var n = this;
-      if (!e.position || !e.preference) return null;
+      if (!e.position || !e.preference) {
+        return null;
+      }
       var i;
 
       var o;
@@ -199,18 +205,28 @@ define("vs/editor/core/view/parts/contentWidgets/contentWidgets", ["require", "e
       for (o = 1; 2 >= o; o++)
         for (r = 0; r < e.preference.length; r++)
           if (i = e.preference[r], 1 === i) {
-            if (l(), !u) return null;
-            if (2 === o || u.fitsAbove) return {
-              top: u.aboveTop,
-              left: u.left
-            };
+            if (l(), !u) {
+              return null;
+            }
+            if (2 === o || u.fitsAbove) {
+              return {
+                top: u.aboveTop,
+                left: u.left
+              };
+            }
           } else {
-            if (2 !== i) return this._prepareRenderWidgetAtExactPosition(a, t);
-            if (l(), !u) return null;
-            if (2 === o || u.fitsBelow) return {
-              top: u.belowTop,
-              left: u.left
-            };
+            if (2 !== i) {
+              return this._prepareRenderWidgetAtExactPosition(a, t);
+            }
+            if (l(), !u) {
+              return null;
+            }
+            if (2 === o || u.fitsBelow) {
+              return {
+                top: u.belowTop,
+                left: u.left
+              };
+            }
           }
     };
 
@@ -222,17 +238,21 @@ define("vs/editor/core/view/parts/contentWidgets/contentWidgets", ["require", "e
       var o = this;
 
       var r = {};
-      for (i in this._widgets) this._widgets.hasOwnProperty(i) && (n = this._prepareRenderWidget(this._widgets[i], e),
-        n && (t && t.renderedContentWidgets++, r[i] = n));
+      for (i in this._widgets) {
+        this._widgets.hasOwnProperty(i) && (n = this._prepareRenderWidget(this._widgets[i], e), n && (t && t.renderedContentWidgets++,
+          r[i] = n));
+      }
       this._requestModificationFrame(function() {
         var e;
 
         var t;
 
         var n;
-        for (e in o._widgets) o._widgets.hasOwnProperty(e) && (t = o._widgets[e], n = o._widgets[e].widget.getDomNode(),
-          r.hasOwnProperty(e) ? (n.style.top = r[e].top + "px", n.style.left = r[e].left + "px", t.isVisible || (t.isVisible = !
+        for (e in o._widgets) {
+          o._widgets.hasOwnProperty(e) && (t = o._widgets[e], n = o._widgets[e].widget.getDomNode(), r.hasOwnProperty(
+            e) ? (n.style.top = r[e].top + "px", n.style.left = r[e].left + "px", t.isVisible || (t.isVisible = !
             0)) : t.isVisible && (t.isVisible = !1, n.style.top = "-1000px"));
+        }
       });
     };
 

@@ -9,11 +9,21 @@ define("vs/editor/core/view/model/characterHardWrappingLineMapper", ["require", 
     var u = 0;
 
     var l = e + t + n;
-    for (i = 0; i < l.length; i++) u = Math.max(u, l.charCodeAt(i));
-    for (i = 0; u >= i; i++) o[i] = 0;
-    for (i = 0; i < e.length; i++) o[e.charCodeAt(i)] = r;
-    for (i = 0; i < t.length; i++) o[t.charCodeAt(i)] = s;
-    for (i = 0; i < n.length; i++) o[n.charCodeAt(i)] = a;
+    for (i = 0; i < l.length; i++) {
+      u = Math.max(u, l.charCodeAt(i));
+    }
+    for (i = 0; u >= i; i++) {
+      o[i] = 0;
+    }
+    for (i = 0; i < e.length; i++) {
+      o[e.charCodeAt(i)] = r;
+    }
+    for (i = 0; i < t.length; i++) {
+      o[t.charCodeAt(i)] = s;
+    }
+    for (i = 0; i < n.length; i++) {
+      o[n.charCodeAt(i)] = a;
+    }
     return o;
   }
   var o = {
@@ -64,9 +74,10 @@ define("vs/editor/core/view/model/characterHardWrappingLineMapper", ["require", 
     };
 
     e.prototype.computeMapping = function() {
-      if (-1 === this.wrappingColumn) this.prefixSums = null;
-
-      return void 0;
+      if (-1 === this.wrappingColumn) {
+        this.prefixSums = null;
+        return void 0;
+      }
       var t;
 
       var i;
@@ -106,26 +117,18 @@ define("vs/editor/core/view/model/characterHardWrappingLineMapper", ["require", 
       var E = -1;
 
       var S = 0;
-      for (o = 0, t = 0, i = f.length; i > t; t++) u = f.charCodeAt(t);
-
-      l = u === v;
-
-      c = u < p.length ? p[u] : 0;
-
-      c === r && (C = t, w = 0);
-
-      o = e.nextVisibleColumn(o, g, l);
-
-      o > m && 0 !== t && (-1 !== C ? (d = C, h = w) : -1 !== E ? (d = E, h = S) : (d = t, h = 0), _[b++] = d - y, y =
-        d, o = e.nextVisibleColumn(h, g, l), C = -1, w = 0, E = -1, S = 0);
-
-      - 1 !== C && (w = e.nextVisibleColumn(w, g, l));
-
-      - 1 !== E && (S = e.nextVisibleColumn(S, g, l));
-
-      c === s && (C = t + 1, w = 0);
-
-      c === a && (E = t + 1, S = 0);
+      for (o = 0, t = 0, i = f.length; i > t; t++) {
+        u = f.charCodeAt(t);
+        l = u === v;
+        c = u < p.length ? p[u] : 0;
+        c === r && (C = t, w = 0);
+        o = e.nextVisibleColumn(o, g, l);
+        o > m && 0 !== t && (-1 !== C ? (d = C, h = w) : -1 !== E ? (d = E, h = S) : (d = t, h = 0), _[b++] = d - y,
+          y = d, o = e.nextVisibleColumn(h, g, l), C = -1, w = 0, E = -1, S = 0); - 1 !== C && (w = e.nextVisibleColumn(
+          w, g, l)); - 1 !== E && (S = e.nextVisibleColumn(S, g, l));
+        c === s && (C = t + 1, w = 0);
+        c === a && (E = t + 1, S = 0);
+      }
       _[b++] = i - y;
 
       this.prefixSums = new n.PrefixSumComputer(_);

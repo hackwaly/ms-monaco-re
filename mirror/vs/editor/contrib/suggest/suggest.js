@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -109,10 +111,11 @@ define(["require", "exports", "vs/nls", "vs/editor/contrib/snippet/snippet", "vs
             var e = a.editor.getModel().getRawLineTokens(c.lineNumber);
             b.suggestSupport.shouldAutotriggerSuggest(d, e, c.column - 1) && a.triggerSuggest(!0).done(null, v.onUnexpectedError);
           };
-          for (var e = 0; e < c.length; e++) this.triggerCharacterListeners.push(this.editor.addTypingListener(c[e],
-            function() {
+          for (var e = 0; e < c.length; e++) {
+            this.triggerCharacterListeners.push(this.editor.addTypingListener(c[e], function() {
               return d();
             }));
+          }
         }
       }
     };
@@ -186,7 +189,9 @@ define(["require", "exports", "vs/nls", "vs/editor/contrib/snippet/snippet", "vs
 
     b.prototype.dispose = function() {
       a.prototype.dispose.call(this);
-      while (this.triggerCharacterListeners.length > 0) this.triggerCharacterListeners.pop()();
+      while (this.triggerCharacterListeners.length > 0) {
+        this.triggerCharacterListeners.pop()();
+      }
       this.quickSuggestWidget && (this.quickSuggestWidget.destroy(), this.quickSuggestWidget = null);
 
       this.suggestWidget && (this.suggestWidget.destroy(), this.suggestWidget = null);

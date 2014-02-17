@@ -66,9 +66,10 @@ define("vs/base/ui/scrollbar/impl/abstractScrollbar", ["require", "exports", "vs
 
           this.computedSliderPosition < 0 && (this.computedSliderPosition = 0);
         }
-      } else this.computedSliderSize = this.computedRepresentableSize;
-
-      this.computedSliderPosition = 0;
+      } else {
+        this.computedSliderSize = this.computedRepresentableSize;
+        this.computedSliderPosition = 0;
+      }
     };
 
     e.prototype.getArrowSize = function() {

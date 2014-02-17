@@ -53,8 +53,12 @@ define("vs/platform/handlerService", ["require", "exports", "vs/nls!vs/editor/ed
 
       var r = this;
       n = function() {
-        for (var n = [], o = 0; o < arguments.length - 0; o++) n[o] = arguments[o + 0];
-        if (!this.active) return !1;
+        for (var n = [], o = 0; o < arguments.length - 0; o++) {
+          n[o] = arguments[o + 0];
+        }
+        if (!this.active) {
+          return !1;
+        }
         var s = !1;
         try {
           s = e.apply(e, n);
@@ -93,10 +97,14 @@ define("vs/platform/handlerService", ["require", "exports", "vs/nls!vs/editor/ed
     };
 
     e.prototype.trigger = function() {
-      for (var e = [], t = 0; t < arguments.length - 0; t++) e[t] = arguments[t + 0];
+      for (var e = [], t = 0; t < arguments.length - 0; t++) {
+        e[t] = arguments[t + 0];
+      }
       for (var n = 0; n < this.data.length; n++) {
         var i = this.data[n].apply(this.data[n], e);
-        if (i === !0) return !0;
+        if (i === !0) {
+          return !0;
+        }
       }
       return !1;
     };

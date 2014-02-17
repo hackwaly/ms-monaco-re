@@ -33,13 +33,20 @@ define("vs/languages/typescript/lint/rules/layout", ["require", "exports", "vs/l
     };
 
     e.prototype._hasComment = function(e) {
-      if (!e) return !1;
-      if (!e.firstToken() || !e.lastToken()) return !1;
+      if (!e) {
+        return !1;
+      }
+      if (!e.firstToken() || !e.lastToken()) {
+        return !1;
+      }
       for (var t = e.leadingTrivia().concat(e.trailingTrivia()), i = 0, o = t.count(); o > i; i++)
-        if (n.syntaxHelper.isOfKind(t.syntaxTriviaAt(i), r.SyntaxKind.MultiLineCommentTrivia, r.SyntaxKind.SingleLineCommentTrivia))
+        if (n.syntaxHelper.isOfKind(t.syntaxTriviaAt(i), r.SyntaxKind.MultiLineCommentTrivia, r.SyntaxKind.SingleLineCommentTrivia)) {
           return !0;
+        }
       for (var i = 0, o = e.childCount(); o > i; i++)
-        if (this._hasComment(e.childAt(i))) return !0;
+        if (this._hasComment(e.childAt(i))) {
+          return !0;
+        }
       return !1;
     };
 

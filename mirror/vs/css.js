@@ -4,7 +4,9 @@ var __extends = this.__extends || function(e, t) {
     function n() {
       this.constructor = e;
     }
-    for (var r in t) t.hasOwnProperty(r) && (e[r] = t[r]);
+    for (var r in t) {
+      t.hasOwnProperty(r) && (e[r] = t[r]);
+    }
     n.prototype = t.prototype;
 
     e.prototype = new n;
@@ -98,14 +100,17 @@ var CSSLoaderPlugin;
 
       var i = document.getElementsByTagName("link");
       for (n = 0, r = i.length; r > n; n++)
-        if (o = i[n].getAttribute("data-name"), s = i[n].getAttribute("href"), o === e || s === t) return !0;
+        if (o = i[n].getAttribute("data-name"), s = i[n].getAttribute("href"), o === e || s === t) {
+          return !0;
+        }
       return !1;
     };
 
     e.prototype.load = function(e, t, n, r) {
-      if (this._linkTagExists(e, t)) n();
-
-      return void 0;
+      if (this._linkTagExists(e, t)) {
+        n();
+        return void 0;
+      }
       var o = this.createLinkTag(e, t, n, r);
       this._insertLinkNode(o);
     };
@@ -124,9 +129,10 @@ var CSSLoaderPlugin;
     __extends(t, e);
 
     t.prototype.load = function(e, t, n, r) {
-      if (this._linkTagExists(e, t)) n();
-
-      return void 0;
+      if (this._linkTagExists(e, t)) {
+        n();
+        return void 0;
+      }
       var o = this.createLinkTag(e, t, n, r);
       this._styleSheetCount() < 31 ? this._insertLinkNode(o) : (this._blockedLoads.push(o), this._handleBlocked());
     };
@@ -160,7 +166,9 @@ var CSSLoaderPlugin;
     };
 
     t.prototype._mergeStyleSheet = function(e, t, n, r) {
-      for (var o = r.rules.length - 1; o >= 0; o--) t.insertRule(a.rewriteUrls(n, e, r.rules[o].cssText), 0);
+      for (var o = r.rules.length - 1; o >= 0; o--) {
+        t.insertRule(a.rewriteUrls(n, e, r.rules[o].cssText), 0);
+      }
     };
 
     t.prototype._mergeStyleSheets = function() {
@@ -174,10 +182,12 @@ var CSSLoaderPlugin;
       var r = n.length;
 
       var o = [];
-      for (e = 0; r > e; e++)("loaded" === n[e].readyState || "complete" === n[e].readyState) && o.push({
-        linkNode: n[e],
-        rulesLength: n[e].styleSheet.rules.length
-      });
+      for (e = 0; r > e; e++) {
+        ("loaded" === n[e].readyState || "complete" === n[e].readyState) && o.push({
+          linkNode: n[e],
+          rulesLength: n[e].styleSheet.rules.length
+        });
+      }
       var s = o.length;
 
       var i = Math.min(Math.floor(s / 2), t);
@@ -187,19 +197,17 @@ var CSSLoaderPlugin;
       var a;
 
       var l;
-      for (e = 0; i > e; e++) a = o.length - 1 - e;
-
-      l = e % (o.length - i);
-
-      this._mergeStyleSheet(o[l].linkNode.href, o[l].linkNode.styleSheet, o[a].linkNode.href, o[a].linkNode.styleSheet);
-
-      o[a].linkNode.parentNode.removeChild(o[a].linkNode);
-
-      r--;
-      for (var u = this._styleSheetCount(); 31 > u && this._blockedLoads.length > 0;) this._insertLinkNode(this._blockedLoads
-        .shift());
-
-      u++;
+      for (e = 0; i > e; e++) {
+        a = o.length - 1 - e;
+        l = e % (o.length - i);
+        this._mergeStyleSheet(o[l].linkNode.href, o[l].linkNode.styleSheet, o[a].linkNode.href, o[a].linkNode.styleSheet);
+        o[a].linkNode.parentNode.removeChild(o[a].linkNode);
+        r--;
+      }
+      for (var u = this._styleSheetCount(); 31 > u && this._blockedLoads.length > 0;) {
+        this._insertLinkNode(this._blockedLoads.shift());
+        u++;
+      }
     };
 
     return t;
@@ -273,7 +281,9 @@ var CSSLoaderPlugin;
         for (var s = r.toUrl(n + ".css"), i = ["/*---------------------------------------------------------",
             " * Copyright (C) Microsoft Corporation. All rights reserved.",
             " *--------------------------------------------------------*/"
-          ], l = t.entryPoints[n], u = 0; u < l.length; u++) i.push(a.rewriteUrls(l[u].moduleName, n, l[u].contents));
+          ], l = t.entryPoints[n], u = 0; u < l.length; u++) {
+          i.push(a.rewriteUrls(l[u].moduleName, n, l[u].contents));
+        }
         o(s, i.join("\r\n"));
       }
     };
@@ -304,9 +314,10 @@ var CSSLoaderPlugin;
           if ("../" === t) {
             var n = e.length > 0 ? e[e.length - 1] : null;
             if (n && "/" === n) return;
-            if (n && "../" !== n) e.pop();
-
-            return void 0;
+            if (n && "../" !== n) {
+              e.pop();
+              return void 0;
+            }
           }
           e.push(t);
         }
@@ -351,21 +362,29 @@ var CSSLoaderPlugin;
     };
 
     e.relativePath = function(t, n) {
-      if (e.startsWith(n, "/") || e.startsWith(n, "http://") || e.startsWith(n, "https://")) return n;
+      if (e.startsWith(n, "/") || e.startsWith(n, "http://") || e.startsWith(n, "https://")) {
+        return n;
+      }
       var r = e.commonFolderPrefix(t, n);
       t = t.substr(r.length);
 
       n = n.substr(r.length);
-      for (var o = t.split("/").length, s = "", i = 1; o > i; i++) s += "../";
+      for (var o = t.split("/").length, s = "", i = 1; o > i; i++) {
+        s += "../";
+      }
       return s + n;
     };
 
     e.rewriteUrls = function(t, n, r) {
       return r.replace(/url\(\s*([^\)]+)\s*\)?/g, function() {
-        for (var r = [], o = 0; o < arguments.length - 1; o++) r[o] = arguments[o + 1];
+        for (var r = [], o = 0; o < arguments.length - 1; o++) {
+          r[o] = arguments[o + 1];
+        }
         var s = r[0];
         for (('"' === s.charAt(0) || "'" === s.charAt(0)) && (s = s.substring(1)); s.length > 0 && (" " === s.charAt(
-          s.length - 1) || "	" === s.charAt(s.length - 1));) s = s.substring(0, s.length - 1);
+          s.length - 1) || "	" === s.charAt(s.length - 1));) {
+          s = s.substring(0, s.length - 1);
+        }
         if (('"' === s.charAt(s.length - 1) || "'" === s.charAt(s.length - 1)) && (s = s.substring(0, s.length - 1)), !
           e.startsWith(s, "data:") && !e.startsWith(s, "http://") && !e.startsWith(s, "https://")) {
           var i = e.joinPaths(e.pathOf(t), s);

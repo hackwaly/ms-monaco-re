@@ -1,6 +1,8 @@
 define("vs/editor/core/editorState", ["require", "exports", "vs/base/strings"], function(e, t, n) {
   function i(e) {
-    for (var t = [], n = 0; n < arguments.length - 1; n++) t[n] = arguments[n + 1];
+    for (var t = [], n = 0; n < arguments.length - 1; n++) {
+      t[n] = arguments[n + 1];
+    }
     return new o(e, t);
   }! function(e) {
     e[e.Value = 0] = "Value";
@@ -41,7 +43,9 @@ define("vs/editor/core/editorState", ["require", "exports", "vs/base/strings"], 
       });
     }
     e.prototype.equals = function(t) {
-      if (!(t instanceof e)) return !1;
+      if (!(t instanceof e)) {
+        return !1;
+      }
       var n = t;
       return this.modelVersionId !== n.modelVersionId ? !1 : this.scrollLeft !== n.scrollLeft || this.scrollTop !== n
         .scrollTop ? !1 : !this.position && n.position || this.position && !n.position || this.position && n.position && !

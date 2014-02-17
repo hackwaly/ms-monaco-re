@@ -149,9 +149,10 @@ define("vs/editor/core/view/layout/editorLayoutProvider", ["require", "exports"]
     };
 
     e.prototype.digitCount = function(e) {
-      for (var t = 0; e;) e = Math.floor(e / 10);
-
-      t++;
+      for (var t = 0; e;) {
+        e = Math.floor(e / 10);
+        t++;
+      }
       return t ? t : 1;
     };
 

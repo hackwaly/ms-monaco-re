@@ -35,9 +35,10 @@ define("vs/base/performance/timer", ["require", "exports", "vs/base/env", "vs/ba
   t.NullTimerEvent = u;
   var l = function() {
     function e(e, t, n, i) {
-      if (this.timeKeeper = e, this.name = t, this.topic = n, this.stopTime = null, i) this.startTime = i;
-
-      return void 0;
+      if (this.timeKeeper = e, this.name = t, this.topic = n, this.stopTime = null, i) {
+        this.startTime = i;
+        return void 0;
+      }
       if (this.startTime = (new Date).getTime(), a) {
         var o = ["Monaco", this.topic, this.name, "start"];
         self.msWriteProfilerMark(o.join("|"));
@@ -50,9 +51,10 @@ define("vs/base/performance/timer", ["require", "exports", "vs/base/env", "vs/ba
 
     e.prototype.stop = function(e) {
       if (null === this.stopTime) {
-        if (e) this.stopTime = e;
-
-        return void 0;
+        if (e) {
+          this.stopTime = e;
+          return void 0;
+        }
         if (this.stopTime = (new Date).getTime(), this.timeKeeper.emit("eventStop", this), a) {
           var t = ["Monaco", this.topic, this.name, "stop"];
           self.msWriteProfilerMark(t.join("|"));
@@ -88,7 +90,9 @@ define("vs/base/performance/timer", ["require", "exports", "vs/base/env", "vs/ba
     };
 
     i.prototype.start = function(e, n) {
-      if (this.enabled() === !1) return t.nullEvent;
+      if (this.enabled() === !1) {
+        return t.nullEvent;
+      }
       0 === e ? e = "Editor" : 1 === e ? e = "Languages" : 2 === e ? e = "Worker" : 3 === e && (e = "Workbench");
       var i = new l(this, n, e);
       this.addEvent(i);

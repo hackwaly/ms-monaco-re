@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -166,17 +168,13 @@ define(["require", "exports", "vs/base/ui/widgets/findInput", "./findModel", "vs
       var d = new r.KeyboardEvent(a);
 
       var e = !1;
-      if (d.asString() === (s.browser.isMacintosh ? "Meta-H" : "Ctrl-H") || d.asString() === "DownArrow") this._enableReplace(!
-        0);
-
-      this.replaceInputElement.select();
-
-      this.replaceInputElement.focus();
-
-      d.preventDefault();
-
-      e = !0;
-      !e && d.asString() === "Enter" && (this.codeEditor.getAction(o.NEXT_MATCH_FIND_ID).run().done(null, q.onUnexpectedError),
+      if (d.asString() === (s.browser.isMacintosh ? "Meta-H" : "Ctrl-H") || d.asString() === "DownArrow") {
+        this._enableReplace(!0);
+        this.replaceInputElement.select();
+        this.replaceInputElement.focus();
+        d.preventDefault();
+        e = !0;
+      }!e && d.asString() === "Enter" && (this.codeEditor.getAction(o.NEXT_MATCH_FIND_ID).run().done(null, q.onUnexpectedError),
         d.preventDefault(), e = !0);
 
       !e && d.asString() === "Shift-Enter" && (this.codeEditor.getAction(o.PREVIOUS_MATCH_FIND_ID).run().done(null, q
@@ -195,15 +193,12 @@ define(["require", "exports", "vs/base/ui/widgets/findInput", "./findModel", "vs
       var d = new r.KeyboardEvent(a);
 
       var e = !1;
-      if (d.asString() === (s.browser.isMacintosh ? "Meta-H" : "Ctrl-H") || d.asString() === "UpArrow") this.findInput
-        .select();
-
-      this.findInput.focus();
-
-      d.preventDefault();
-
-      e = !0;
-      !e && d.asString() === "Enter" && (this.codeEditor.getAction(o.REPLACE_ID).run().done(null, q.onUnexpectedError),
+      if (d.asString() === (s.browser.isMacintosh ? "Meta-H" : "Ctrl-H") || d.asString() === "UpArrow") {
+        this.findInput.select();
+        this.findInput.focus();
+        d.preventDefault();
+        e = !0;
+      }!e && d.asString() === "Enter" && (this.codeEditor.getAction(o.REPLACE_ID).run().done(null, q.onUnexpectedError),
         d.preventDefault(), e = !0);
 
       !e && d.asString() === (s.browser.isMacintosh ? "Meta-Enter" : "Ctrl-Enter") && (this.codeEditor.getAction(o.REPLACE_ALL_ID)
@@ -228,8 +223,12 @@ define(["require", "exports", "vs/base/ui/widgets/findInput", "./findModel", "vs
         label: t.localize("label.find", "Find"),
         placeholder: t.localize("placeholder.find", "Find"),
         validation: function(a) {
-          if (a.length === 0) return "";
-          if (!this.findInput.getRegex()) return "";
+          if (a.length === 0) {
+            return "";
+          }
+          if (!this.findInput.getRegex()) {
+            return "";
+          }
           try {
             new RegExp(a);
 

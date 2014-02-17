@@ -39,8 +39,9 @@ define("vs/editor/core/view/viewEventDispatcher", ["require", "exports", "vs/bas
         try {
           e.isConsumingQueue = !0;
           for (var t, n, i, o; e.eventQueue.length > 0;)
-            for (o = e.eventQueue, e.eventQueue = [], i = e.eventHandlers.slice(0), t = 0, n = i.length; n > t; t++)
+            for (o = e.eventQueue, e.eventQueue = [], i = e.eventHandlers.slice(0), t = 0, n = i.length; n > t; t++) {
               i[t].handleEvents(o);
+            }
         } finally {
           e.isConsumingQueue = !1;
         }

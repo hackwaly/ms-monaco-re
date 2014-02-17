@@ -68,9 +68,12 @@ define("vs/editor/core/model/consoleModel", ["require", "exports", "./model", "v
         var d = this.foceCurrentMode;
 
         var h = this.getLineContent(l);
-        if (this.modes.hasOwnProperty(l.toString())) r = this.modes[l.toString()];
-        else
-          for (r = [], s = 0, a = h.length; a > s; s++) r[s] = 0;
+        if (this.modes.hasOwnProperty(l.toString())) {
+          r = this.modes[l.toString()];
+        } else
+          for (r = [], s = 0, a = h.length; a > s; s++) {
+            r[s] = 0;
+          }
         for (s = 0, a = t.length; a > s; s++)
           if ("\r" !== t.charAt(s)) {
             if (27 === t.charCodeAt(s)) {
@@ -106,7 +109,9 @@ define("vs/editor/core/model/consoleModel", ["require", "exports", "./model", "v
             r[c - 1] = d;
 
             c++;
-          } else c = 1;
+          } else {
+            c = 1;
+          }
         u = e.insertText(new i.Position(l, 1), h, !0);
 
         e.deleteText(new o.Range(l, u.column, l, this.getLineMaxColumn(l)));
@@ -128,8 +133,9 @@ define("vs/editor/core/model/consoleModel", ["require", "exports", "./model", "v
     t.prototype.appendOutput = function(e) {
       var t = this;
       this.change(function(n) {
-        for (var i = 0, o = 0, r = e.length; r > o; o++) "\n" === e.charAt(o) && (t.appendOutputPiece(n, e.substring(
-          i, o), !0), i = o + 1);
+        for (var i = 0, o = 0, r = e.length; r > o; o++) {
+          "\n" === e.charAt(o) && (t.appendOutputPiece(n, e.substring(i, o), !0), i = o + 1);
+        }
         r > i && t.appendOutputPiece(n, e.substr(i), !1);
       });
     };
@@ -171,13 +177,14 @@ define("vs/editor/core/model/consoleModel", ["require", "exports", "./model", "v
 
           var r = Number.MIN_VALUE;
           n = [];
-          for (var s = 0; s < o.length; s++) o[s] !== r && n.push({
-            startIndex: s,
-            type: 0 === o[s] ? "" : "meta.code" + o[s] + ".terminal",
-            bracket: 0
-          });
-
-          r = o[s];
+          for (var s = 0; s < o.length; s++) {
+            o[s] !== r && n.push({
+              startIndex: s,
+              type: 0 === o[s] ? "" : "meta.code" + o[s] + ".terminal",
+              bracket: 0
+            });
+            r = o[s];
+          }
         }
       }
       this._lines[e].setTokens(n);

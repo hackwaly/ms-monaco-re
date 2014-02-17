@@ -87,24 +87,22 @@ define("vs/editor/core/view/overlays/lineNumbers/lineNumbers", ["require", "expo
 
     t.prototype._actualRender = function(e) {
       var t = [];
-      if (!this._context.configuration.editor.lineNumbers) return t;
+      if (!this._context.configuration.editor.lineNumbers) {
+        return t;
+      }
       var i;
 
       var o;
       for (t.push('<div class="'), t.push(n.ClassNames.LINE_NUMBERS), t.push('" style="left:'), t.push(this._lineNumbersLeft
         .toString()), t.push("px;width:"), t.push(this._lineNumbersWidth.toString()), t.push("px;height:"), t.push(
-        e.scrollHeight.toString()), t.push('px;">'), o = e.visibleRange.startLineNumber; o <= e.visibleRange.endLineNumber; o++)
+        e.scrollHeight.toString()), t.push('px;">'), o = e.visibleRange.startLineNumber; o <= e.visibleRange.endLineNumber; o++) {
         i = e.getViewportVerticalOffsetForLineNumber(o);
-
-      t.push('<div class="clnr" style="top:');
-
-      t.push(i.toString());
-
-      t.push('px;">');
-
-      t.push(this._context.model.getLineRenderLineNumber(o));
-
-      t.push("</div>");
+        t.push('<div class="clnr" style="top:');
+        t.push(i.toString());
+        t.push('px;">');
+        t.push(this._context.model.getLineRenderLineNumber(o));
+        t.push("</div>");
+      }
       t.push("</div>");
 
       return t;

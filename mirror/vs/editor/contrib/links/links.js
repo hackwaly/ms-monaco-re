@@ -87,13 +87,15 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
     a.prototype.updateDecorations = function(b) {
       var c = [];
       if (b)
-        for (var d = 0; d < b.length; d++) c.push({
-          range: b[d].range,
-          options: {
-            inlineClassName: a.CLASS_NAME,
-            hoverMessage: a.HOVER_MESSAGE
-          }
-        });
+        for (var d = 0; d < b.length; d++) {
+          c.push({
+            range: b[d].range,
+            options: {
+              inlineClassName: a.CLASS_NAME,
+              hoverMessage: a.HOVER_MESSAGE
+            }
+          });
+        }
       this.decorations = this.editor.deltaDecorations(this.decorations, c);
     };
 
@@ -119,7 +121,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
 
           d.activeLinkDecoration = e;
         }) : this.cleanUpActiveLinkDecoration();
-      } else this.cleanUpActiveLinkDecoration();
+      } else {
+        this.cleanUpActiveLinkDecoration();
+      }
     };
 
     a.prototype.cleanUpActiveLinkDecoration = function() {
@@ -159,7 +163,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
         var f = d[e];
         if (f.options && (f.options.inlineClassName === a.CLASS_NAME || f.options.inlineClassName === a.CLASS_NAME_ACTIVE)) {
           var g = new p.Range(f.range.startLineNumber, f.range.startColumn, f.range.endLineNumber, f.range.endColumn);
-          if (g.containsPosition(c)) return f;
+          if (g.containsPosition(c)) {
+            return f;
+          }
         }
       }
       return null;

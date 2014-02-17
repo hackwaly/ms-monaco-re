@@ -24,7 +24,9 @@ define("vs/languages/javascript/javascript.configuration", ["require", "exports"
     }
     e.prototype.classify = function(e) {
       var t = /.*?(\d+):.*?/.exec(e.message());
-      if (!t) return n.Severity.Error;
+      if (!t) {
+        return n.Severity.Error;
+      }
       var o = Number(t[1]);
       return isNaN(o) ? n.Severity.Error : 2e3 > o ? n.Severity.Error : 2094 === o && 0 !== i.lookup(this._severities,
         o) && /The property '[\w\d_]+' does not exist on value of type 'any'\./.test(e.text()) ? 0 : i.lookup(this._severities,

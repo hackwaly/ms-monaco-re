@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -85,15 +87,16 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
 
     b.prototype.update = function() {
       var a = this;
-      if (this.state !== null && this.state.validate()) this.emit(b.Events.Updated, this);
-
-      return u.Promise.as(null);
+      if (this.state !== null && this.state.validate()) {
+        this.emit(b.Events.Updated, this);
+        return u.Promise.as(null);
+      }
       var c = this.editor.getModel();
-      if (!c || !c.getMode().inEditorActionsSupport) this.actions = [];
-
-      this.emit(b.Events.Updated, this);
-
-      return u.Promise.as(null);
+      if (!c || !c.getMode().inEditorActionsSupport) {
+        this.actions = [];
+        this.emit(b.Events.Updated, this);
+        return u.Promise.as(null);
+      }
       this.request.cancel();
 
       this.state = C.capture(this.editor, C.Flag.Position);
@@ -230,7 +233,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
               return c.run(a);
             }));
           }
-        } else console.warn("NO action found for " + b);
+        } else {
+          console.warn("NO action found for " + b);
+        }
       });
 
       h.length > 0 ? this.show() : this.hide();
@@ -281,7 +286,9 @@ define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/p
     };
 
     a.prototype.dispose = function() {
-      while (this.toUnhook.length > 0) this.toUnhook.pop()();
+      while (this.toUnhook.length > 0) {
+        this.toUnhook.pop()();
+      }
       this.domNode && this.domNode.parentElement.removeChild(this.domNode);
 
       this.actionBar.dispose();

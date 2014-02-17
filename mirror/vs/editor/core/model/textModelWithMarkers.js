@@ -84,7 +84,9 @@ define("vs/editor/core/model/textModelWithMarkers", ["require", "exports", "vs/e
       var t;
 
       var n = [];
-      for (t in e) e.hasOwnProperty(t) && this._markerIdToMarker.hasOwnProperty(t) && n.push(this._markerIdToMarker[t]);
+      for (t in e) {
+        e.hasOwnProperty(t) && this._markerIdToMarker.hasOwnProperty(t) && n.push(this._markerIdToMarker[t]);
+      }
       return n;
     };
 

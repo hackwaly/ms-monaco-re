@@ -68,7 +68,9 @@ define("vs/base/ui/widgets/quickopen/quickOpenViewer", ["require", "exports", "v
       var o = null;
       if (t instanceof s.QuickOpenEntry) {
         var a = t;
-        if (a instanceof s.QuickOpenEntryItem) return t.render(e, n, i);
+        if (a instanceof s.QuickOpenEntryItem) {
+          return t.render(e, n, i);
+        }
         if (a instanceof s.QuickOpenEntryGroup) {
           var l = a;
           l.showBorder() && u(n).addClass("results-group-separator");
@@ -97,10 +99,12 @@ define("vs/base/ui/widgets/quickopen/quickOpenViewer", ["require", "exports", "v
             };
 
             n.setValue(a.getLabel(), t);
-          } else a.getLabel() && e.span({
-            text: a.getLabel(),
-            "class": "quick-open-entry-label"
-          });
+          } else {
+            a.getLabel() && e.span({
+              text: a.getLabel(),
+              "class": "quick-open-entry-label"
+            });
+          }
           a.getMeta() && e.span({
             text: a.getMeta(),
             "class": "quick-open-entry-meta"

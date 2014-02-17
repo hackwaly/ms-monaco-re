@@ -27,11 +27,12 @@ define("vs/editor/contrib/hover/modesGlyphHover", ["require", "exports", "vs/edi
       var i = [];
 
       var o = this._editor.getLineDecorations(this._lineNumber);
-      for (e = 0, t = o.length; t > e; e++) n = o[e];
-
-      n.options.glyphMarginClassName && n.options.hoverMessage && i.push({
-        value: n.options.hoverMessage
-      });
+      for (e = 0, t = o.length; t > e; e++) {
+        n = o[e];
+        n.options.glyphMarginClassName && n.options.hoverMessage && i.push({
+          value: n.options.hoverMessage
+        });
+      }
       return i;
     };
 

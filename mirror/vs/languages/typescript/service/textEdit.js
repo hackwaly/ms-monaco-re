@@ -54,25 +54,25 @@ define("vs/languages/typescript/service/textEdit", ["require", "exports", "vs/ba
     };
 
     e.prototype.insert = function(e) {
-      if (this.enclosedBy(e)) e.insert(this);
-
-      return e;
+      if (this.enclosedBy(e)) {
+        e.insert(this);
+        return e;
+      }
       var t;
 
       var n;
 
       var r;
       for (t = 0, n = this.children.length; n > t; t++)
-        if (r = this.children[t], r.enclosedBy(e)) this.removeChild(r);
-
-      e.insert(r);
-
-      n--;
-
-      t--;
-      else if (r.encloses(e)) r.insert(e);
-
-      return this;
+        if (r = this.children[t], r.enclosedBy(e)) {
+          this.removeChild(r);
+          e.insert(r);
+          n--;
+          t--;
+        } else if (r.encloses(e)) {
+        r.insert(e);
+        return this;
+      }
       this.addChild(e);
 
       return this;
@@ -83,7 +83,9 @@ define("vs/languages/typescript/service/textEdit", ["require", "exports", "vs/ba
     };
 
     e.prototype.encloses = function(e) {
-      if (this.offset === this.offset && this.length === e.length) return !1;
+      if (this.offset === this.offset && this.length === e.length) {
+        return !1;
+      }
       var t = this.length - e.length;
 
       var n = e.offset - this.offset;
@@ -112,11 +114,11 @@ define("vs/languages/typescript/service/textEdit", ["require", "exports", "vs/ba
     e.prototype.apply = function() {
       if (this.model.getVersionId() !== this.modelVersion) throw new Error("illegal state - model has been changed");
       for (var e, t = this.model.getValue();
-        (e = this.edit.getRightMostChild()) !== this.edit;) t = n.splice(t, e.offset, e.length, e.text);
-
-      e.parent.length += e.text.length - e.length;
-
-      e.remove();
+        (e = this.edit.getRightMostChild()) !== this.edit;) {
+        t = n.splice(t, e.offset, e.length, e.text);
+        e.parent.length += e.text.length - e.length;
+        e.remove();
+      }
       return t;
     };
 

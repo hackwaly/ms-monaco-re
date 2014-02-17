@@ -58,9 +58,10 @@ define("vs/editor/core/view/lines/viewLine", ["require", "exports", "vs/base/env
             "</span>"), i++, n.output.push('<span class="'), s = "token " + w[l].type.replace(/[^a-z0-9\-]/gi, " "),
           n.output.push(s), n.output.push('">'), h = 0), n.charOffsetInPart[r] = h, o = t.charCodeAt(r)) {
           case g:
-            for (a = b - (r + d) % b, d += a - 1, h += a - 1; a > 0;) n.output.push(" ");
-
-            a--;
+            for (a = b - (r + d) % b, d += a - 1, h += a - 1; a > 0;) {
+              n.output.push(" ");
+              a--;
+            }
             break;
           case f:
             n.output.push(" ");
@@ -93,7 +94,9 @@ define("vs/editor/core/view/lines/viewLine", ["require", "exports", "vs/base/env
 
       p.length > 0 && (n.output.push('<span class="'), n.output.push(s), n.output.push('" style="color:grey">'), n.output
         .push(p), n.output.push("&hellip;</span>"));
-    } else n.output.push("<span>&nbsp;</span>");
+    } else {
+      n.output.push("<span>&nbsp;</span>");
+    }
     n.output.push("</span>");
 
     n.partsCount = i;
@@ -281,11 +284,15 @@ define("vs/editor/core/view/lines/viewLine", ["require", "exports", "vs/base/env
     e.prototype._readVisibleRangesForRange = function(e, t, n, i, o, s) {
       var a;
       if (a = t === n ? this._readRawVisibleRangesForPosition(e, t, i, o, s) : this._readRawVisibleRangesForRange(e,
-        t, n, i, o, s), !a || a.length <= 1) return a;
+        t, n, i, o, s), !a || a.length <= 1) {
+        return a;
+      }
       a.sort(r);
-      for (var u, l = [], c = a[0], d = 1, h = a.length; h > d; d++) u = a[d];
-
-      c.left + c.width + .001 >= u.left ? c.width = Math.max(c.width, u.left + u.width - c.left) : (l.push(c), c = u);
+      for (var u, l = [], c = a[0], d = 1, h = a.length; h > d; d++) {
+        u = a[d];
+        c.left + c.width + .001 >= u.left ? c.width = Math.max(c.width, u.left + u.width - c.left) : (l.push(c), c =
+          u);
+      }
       l.push(c);
 
       return l;
@@ -305,7 +312,9 @@ define("vs/editor/core/view/lines/viewLine", ["require", "exports", "vs/base/env
     };
 
     e.prototype._readRawVisibleRangesForRange = function(e, t, n, i, o, r) {
-      if (1 === t && n === this._charOffsetInPart.length) return this._readRawVisibleRangesForEntireLine(i, o);
+      if (1 === t && n === this._charOffsetInPart.length) {
+        return this._readRawVisibleRangesForEntireLine(i, o);
+      }
       var a = s(this._lineParts, t - 1, this._lastRenderedPartIndex);
 
       var u = this._charOffsetInPart[t - 1];
@@ -344,19 +353,25 @@ define("vs/editor/core/view/lines/viewLine", ["require", "exports", "vs/base/env
       var r = e.length;
 
       var s = [];
-      for (o = 0; r > o; o++) i = e[o];
-
-      s.push(new l(i.top - t, Math.max(0, i.left - n), i.width, i.height));
+      for (o = 0; r > o; o++) {
+        i = e[o];
+        s.push(new l(i.top - t, Math.max(0, i.left - n), i.width, i.height));
+      }
       return s;
     };
 
     e.prototype.getColumnOfNodeOffset = function(e, t, n) {
-      for (var i = -1; t;) t = t.previousSibling;
-
-      i++;
+      for (var i = -1; t;) {
+        t = t.previousSibling;
+        i++;
+      }
       var o = this._lineParts.getParts();
-      if (i >= o.length) return this._context.configuration.editor.stopRenderingLineAfter;
-      if (0 === n) return o[i].startIndex + 1;
+      if (i >= o.length) {
+        return this._context.configuration.editor.stopRenderingLineAfter;
+      }
+      if (0 === n) {
+        return o[i].startIndex + 1;
+      }
       var r;
 
       var s;
@@ -373,7 +388,9 @@ define("vs/editor/core/view/lines/viewLine", ["require", "exports", "vs/base/env
       for (var d, h, p, f, g; c > l;) {
         if (u = Math.floor((l + c) / 2), d = this._charOffsetInPart[u], h = u === r ? Number.MAX_VALUE : u + 1 === r ?
           s : this._charOffsetInPart[u + 1], p = u === a ? Number.MIN_VALUE : this._charOffsetInPart[u - 1], f = (p +
-            d) / 2, g = (d + h) / 2, n > f && g >= n) return u + 1;
+            d) / 2, g = (d + h) / 2, n > f && g >= n) {
+          return u + 1;
+        }
         f >= n ? c = u - 1 : l = u + 1;
       }
       return l + 1;
@@ -400,9 +417,10 @@ define("vs/editor/core/view/lines/viewLine", ["require", "exports", "vs/base/env
       var a = screen.logicalYDPI / screen.deviceYDPI;
 
       var u = screen.logicalXDPI / screen.deviceXDPI;
-      for (s = new Array(r), o = 0; r > o; o++) i = e[o];
-
-      s[o] = new l(i.top * a - t, Math.max(0, i.left * u - n), i.width * u, i.height * a);
+      for (s = new Array(r), o = 0; r > o; o++) {
+        i = e[o];
+        s[o] = new l(i.top * a - t, Math.max(0, i.left * u - n), i.width * u, i.height * a);
+      }
       return s;
     };
 
@@ -417,7 +435,9 @@ define("vs/editor/core/view/lines/viewLine", ["require", "exports", "vs/base/env
 
     t.prototype._readVisibleRangesForRange = function(t, n, i, o, r, s) {
       var a = e.prototype._readVisibleRangesForRange.call(this, t, n, i, o, r, s);
-      if (!a || 0 === a.length || n === i || 1 === n && i === this._charOffsetInPart.length) return a;
+      if (!a || 0 === a.length || n === i || 1 === n && i === this._charOffsetInPart.length) {
+        return a;
+      }
       var u = this._readRawVisibleRangesForPosition(t, i - 1, o, r, s);
 
       var l = this._readRawVisibleRangesForPosition(t, i, o, r, s);

@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -146,7 +148,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/nls", "vs/platform/p
       };
       for (var e = 0; e < a.length; e++) {
         if (a[e].startLineNumber !== b) continue;
-        if (r.RangeUtils.containsPosition(a[e], d)) return e;
+        if (r.RangeUtils.containsPosition(a[e], d)) {
+          return e;
+        }
       }
       return -1;
     };
@@ -178,12 +182,14 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/nls", "vs/platform/p
         positionLineNumber: a[d].startLineNumber,
         positionColumn: a[d].startColumn + f
       });
-      for (var i = 0; i < a.length; i++) i !== d && h.push({
-        selectionStartLineNumber: a[i].startLineNumber,
-        selectionStartColumn: a[i].startColumn + g,
-        positionLineNumber: a[i].startLineNumber,
-        positionColumn: a[i].startColumn + f
-      });
+      for (var i = 0; i < a.length; i++) {
+        i !== d && h.push({
+          selectionStartLineNumber: a[i].startLineNumber,
+          selectionStartColumn: a[i].startColumn + g,
+          positionLineNumber: a[i].startLineNumber,
+          positionColumn: a[i].startColumn + f
+        });
+      }
       new u(this.editor, h, a, this.handlerService);
     };
 
@@ -243,8 +249,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/nls", "vs/platform/p
           var g = [];
           for (e = 0; !f && e < c.length; e++) {
             var h = c[e];
-            if (typeof d == "undefined") d = h.resourceUrl;
-            else if (d !== h.resourceUrl) {
+            if (typeof d == "undefined") {
+              d = h.resourceUrl;
+            } else if (d !== h.resourceUrl) {
               f = !0;
               break;
             }

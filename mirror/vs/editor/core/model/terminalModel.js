@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -69,10 +71,13 @@ define(["require", "exports", "./model", "vs/editor/core/position", "vs/editor/c
           var l;
 
           var m = this.getLineContent(e);
-          if (this.modes.hasOwnProperty(e.toString())) j = this.modes[e.toString()];
-          else {
+          if (this.modes.hasOwnProperty(e.toString())) {
+            j = this.modes[e.toString()];
+          } else {
             j = [];
-            for (k = 0, l = m.length; k < l; k++) j[k] = 0;
+            for (k = 0, l = m.length; k < l; k++) {
+              j[k] = 0;
+            }
           }
           for (var k = 0, l = b.length; k < l; k++) {
             if (b.charAt(k) === "\r") {
@@ -140,8 +145,9 @@ define(["require", "exports", "./model", "vs/editor/core/position", "vs/editor/c
         var b = this;
         this.change(function(c) {
           var d = 0;
-          for (var e = 0, f = a.length; e < f; e++) a.charAt(e) === "\n" && (b.appendOutputPiece(c, a.substring(d, e), !
-            0), d = e + 1);
+          for (var e = 0, f = a.length; e < f; e++) {
+            a.charAt(e) === "\n" && (b.appendOutputPiece(c, a.substring(d, e), !0), d = e + 1);
+          }
           d < f && b.appendOutputPiece(c, a.substr(d), !1);
         });
       };
@@ -183,13 +189,14 @@ define(["require", "exports", "./model", "vs/editor/core/position", "vs/editor/c
 
             var f = Number.MIN_VALUE;
             c = [];
-            for (var g = 0; g < e.length; g++) e[g] !== f && c.push({
-              startIndex: g,
-              type: e[g] === 0 ? "" : "meta.code" + e[g] + ".terminal",
-              bracket: j.Bracket.None
-            });
-
-            f = e[g];
+            for (var g = 0; g < e.length; g++) {
+              e[g] !== f && c.push({
+                startIndex: g,
+                type: e[g] === 0 ? "" : "meta.code" + e[g] + ".terminal",
+                bracket: j.Bracket.None
+              });
+              f = e[g];
+            }
           }
         }
         this.lines[a].setTokens(c);

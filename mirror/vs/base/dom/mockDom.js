@@ -794,7 +794,9 @@ define("vs/base/dom/mockDom", ["require", "exports"], function(e, t) {
     e.prototype.printChildren = function(e) {
       var t = "";
       if (e.hasChildNodes())
-        for (var n = 0; n < e.childNodes.length; n++) t += this.print(e.childNodes.item(n));
+        for (var n = 0; n < e.childNodes.length; n++) {
+          t += this.print(e.childNodes.item(n));
+        }
       return t;
     };
 

@@ -170,8 +170,9 @@ define("vs/languages/typescript/service/outline", ["require", "exports", "vs/bas
         var o = r.tail(this._parentStack, 2);
 
         var s = o.expression;
-        if (s.kind() === i.SyntaxKind.IdentifierName && s.valueText() === t._define) return e.prototype.visitFunctionExpression
-          .call(this, n);
+        if (s.kind() === i.SyntaxKind.IdentifierName && s.valueText() === t._define) {
+          return e.prototype.visitFunctionExpression.call(this, n);
+        }
       }
       e.prototype.skip.call(this, n);
     };

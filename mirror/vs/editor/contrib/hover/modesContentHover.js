@@ -32,7 +32,9 @@ define("vs/editor/contrib/hover/modesContentHover", ["require", "exports", "vs/e
           var n = "undefined" != typeof e.value;
 
           var i = "undefined" != typeof e.htmlContent && e.htmlContent && e.htmlContent.length > 0;
-          if (t && (n || i)) return [e];
+          if (t && (n || i)) {
+            return [e];
+          }
         }
         return null;
       }) : i.TPromise.as(null);
@@ -102,8 +104,9 @@ define("vs/editor/contrib/hover/modesContentHover", ["require", "exports", "vs/e
     t.prototype.startShowingAt = function(e) {
       if (!this._lastRange || !this._lastRange.equalsRange(e)) {
         if (this._hoverOperation.cancel(), this._isVisible)
-          if (this._showAtPosition.lineNumber !== e.startLineNumber) this.hide();
-          else {
+          if (this._showAtPosition.lineNumber !== e.startLineNumber) {
+            this.hide();
+          } else {
             for (var t = [], n = 0, i = this._messages.length; i > n; n++) {
               var o = this._messages[n];
 

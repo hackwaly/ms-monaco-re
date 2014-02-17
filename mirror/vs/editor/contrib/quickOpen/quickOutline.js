@@ -98,7 +98,9 @@ define("vs/editor/contrib/quickOpen/quickOutline", ["require", "exports", "vs/nl
       var s = n.getMode();
 
       var a = s.outlineSupport;
-      if (!a) return null;
+      if (!a) {
+        return null;
+      }
       var u = a.getOutline(n.getAssociatedResource());
       return u.then(function(n) {
         return o.isArray(n) && n.length > 0 ? (t.cachedResult = n, e.prototype.run.call(t)) : i.Promise.as(!0);
@@ -160,7 +162,9 @@ define("vs/editor/contrib/quickOpen/quickOutline", ["require", "exports", "vs/nl
             u > 0)) : _++;
         }
         y && y.setGroupLabel(this.typeToLabel(v, _));
-      } else i.length > 0 && i[0].setGroupLabel(n.localize("vs_editor_contrib_quickOpen_quickOutline", 1, i.length));
+      } else {
+        i.length > 0 && i[0].setGroupLabel(n.localize("vs_editor_contrib_quickOpen_quickOutline", 1, i.length));
+      }
       return i;
     };
 
@@ -218,7 +222,9 @@ define("vs/editor/contrib/quickOpen/quickOutline", ["require", "exports", "vs/nl
       var o = n.getLabel().toLowerCase();
 
       var r = s.localeCompare(i, o);
-      if (0 !== r) return r;
+      if (0 !== r) {
+        return r;
+      }
       var a = t.getRange();
 
       var u = n.getRange();
@@ -232,14 +238,18 @@ define("vs/editor/contrib/quickOpen/quickOutline", ["require", "exports", "vs/nl
       var o = n.getType();
 
       var r = s.localeCompare(i, o);
-      if (0 !== r) return r;
+      if (0 !== r) {
+        return r;
+      }
       if (e) {
         var a = t.getLabel().toLowerCase();
 
         var u = n.getLabel().toLowerCase();
 
         var r = s.localeCompare(a, u);
-        if (0 !== r) return r;
+        if (0 !== r) {
+          return r;
+        }
       }
       var l = t.getRange();
 

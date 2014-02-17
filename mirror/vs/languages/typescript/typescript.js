@@ -4,7 +4,9 @@ var __extends = this.__extends || function(e, t) {
     function n() {
       this.constructor = e;
     }
-    for (var r in t) t.hasOwnProperty(r) && (e[r] = t[r]);
+    for (var r in t) {
+      t.hasOwnProperty(r) && (e[r] = t[r]);
+    }
     n.prototype = t.prototype;
 
     e.prototype = new n;
@@ -43,8 +45,12 @@ define("vs/languages/vsxml/vsxml", ["require", "exports", "vs/base/objects", "vs
     };
 
     t.prototype.equals = function(n) {
-      if (!e.prototype.equals.call(this, n)) return !1;
-      if (!(n instanceof t)) return !1;
+      if (!e.prototype.equals.call(this, n)) {
+        return !1;
+      }
+      if (!(n instanceof t)) {
+        return !1;
+      }
       var r = n;
       return null === this.state && null === r.state ? !0 : null === this.state || null === r.state ? !1 : null ===
         this.parentState && null === r.parentState ? !0 : null === this.parentState || null === r.parentState ? !1 :
@@ -139,10 +145,12 @@ define("vs/languages/vsxml/vsxml", ["require", "exports", "vs/base/objects", "vs
     t.prototype.stateTokenize = function(e) {
       for (; !e.eos();) {
         var t = e.nextToken();
-        if ('"' === t) return {
-          type: "attribute.value.vs",
-          nextState: this.parent
-        };
+        if ('"' === t) {
+          return {
+            type: "attribute.value.vs",
+            nextState: this.parent
+          };
+        }
       }
       return {
         type: "attribute.value.vs",
@@ -213,8 +221,12 @@ define("vs/languages/javascript/jsdoc", ["require", "exports", "vs/editor/modes/
 ], function(e, t, n, r, i) {
   function o(e, t, n) {
     var i = e[n];
-    if ("*" !== i) return null;
-    if (e.indexOf("*/", n) > -1) return null;
+    if ("*" !== i) {
+      return null;
+    }
+    if (e.indexOf("*/", n) > -1) {
+      return null;
+    }
     for (var o = null, s = 0; s < t.length; s++) {
       var a = t[s];
       if (a.startIndex > n) break;
@@ -254,7 +266,9 @@ var __extends = this.__extends || function(e, t) {
     function n() {
       this.constructor = e;
     }
-    for (var r in t) t.hasOwnProperty(r) && (e[r] = t[r]);
+    for (var r in t) {
+      t.hasOwnProperty(r) && (e[r] = t[r]);
+    }
     n.prototype = t.prototype;
 
     e.prototype = new n;
@@ -342,9 +356,10 @@ define("vs/languages/typescript/typescript", ["require", "exports", "vs/editor/m
         if (this.processTriviaList(e, t, n.leadingTrivia(), r), this.addResult(e, t, r, n.width(), n.tokenKind, n.valueText()),
           this.processTriviaList(e, t, n.trailingTrivia(), r), this.scanner.absoluteIndex() >= e.length) {
           if (this.diagnostics.length > 0 && this.diagnostics[this.diagnostics.length - 1].diagnosticKey() === a.DiagnosticCode
-            .AsteriskSlash_expected) r.finalLexState = -1 !== e.indexOf("/**") ? 2 : 1;
-
-          return void 0;
+            .AsteriskSlash_expected) {
+            r.finalLexState = -1 !== e.indexOf("/**") ? 2 : 1;
+            return void 0;
+          }
           if (n.tokenKind === a.SyntaxKind.StringLiteral) {
             var i = n.text();
             if (i.length > 0 && 92 === i.charCodeAt(i.length - 1)) {
@@ -474,14 +489,16 @@ define("vs/languages/typescript/typescript", ["require", "exports", "vs/editor/m
 
     t.prototype.tokenize = function(e) {
       if (0 === this.lineTokens.length) {
-        if (e.advanceIfRegExp(/^\s*\/\/\//).length > 0) return e.eos() ? {
-          type: "comment.vs"
-        } : "/" === e.peek() ? (e.advanceToEOS(), {
-          type: "comment.ts"
-        }) : {
-          type: "comment.vs",
-          nextState: new o.VSXMLEmbeddedState(this.getMode(), this.vsState, this)
-        };
+        if (e.advanceIfRegExp(/^\s*\/\/\//).length > 0) {
+          return e.eos() ? {
+            type: "comment.vs"
+          } : "/" === e.peek() ? (e.advanceToEOS(), {
+            type: "comment.ts"
+          }) : {
+            type: "comment.vs",
+            nextState: new o.VSXMLEmbeddedState(this.getMode(), this.vsState, this)
+          };
+        }
         var t = e.advanceToEOS();
         e.goBack(t.length);
         var n = this.classifier.getClassificationsForLine(t, this.endOfLineState);
@@ -662,7 +679,9 @@ define("vs/languages/typescript/typescript", ["require", "exports", "vs/editor/m
     };
 
     t.prototype.shouldAutotriggerSuggestImpl = function(e, t, n) {
-      if (0 === t.length) return !1;
+      if (0 === t.length) {
+        return !1;
+      }
       var r = u.findIndexInSegmentsArray(t, n - 1);
 
       var i = t[r].type;
@@ -700,7 +719,9 @@ define("vs/languages/typescript/typescript", ["require", "exports", "vs/editor/m
     };
 
     t.prototype.shouldTriggerParameterHints = function(e, t, n) {
-      if (0 === t.tokens.length) return !1;
+      if (0 === t.tokens.length) {
+        return !1;
+      }
       var r = u.findIndexInSegmentsArray(t.tokens, n - 1);
 
       var i = t.tokens[r].type;

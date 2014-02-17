@@ -33,8 +33,9 @@ define("vs/editor/core/view/viewPart", ["require", "exports", "vs/editor/core/vi
 
     t.prototype.onBeforeForcedLayout = function() {
       if (this._modificationBeforeRenderingRunners.length > 0) {
-        for (var e = 0; e < this._modificationBeforeRenderingRunners.length; e++) this._modificationBeforeRenderingRunners[
-          e]();
+        for (var e = 0; e < this._modificationBeforeRenderingRunners.length; e++) {
+          this._modificationBeforeRenderingRunners[e]();
+        }
         this._modificationBeforeRenderingRunners = [];
       }
     };
@@ -49,7 +50,9 @@ define("vs/editor/core/view/viewPart", ["require", "exports", "vs/editor/core/vi
 
     t.prototype._executeModificationRunners = function() {
       if (this._modificationRunners.length > 0) {
-        for (var e = 0; e < this._modificationRunners.length; e++) this._modificationRunners[e]();
+        for (var e = 0; e < this._modificationRunners.length; e++) {
+          this._modificationRunners[e]();
+        }
         this._modificationRunners = [];
       }
     };

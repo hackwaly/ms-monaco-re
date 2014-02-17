@@ -25,11 +25,10 @@ define("vs/editor/core/model/tokenIterator", ["require", "exports"], function(e,
       }
     }
     e.prototype._advanceNext = function() {
-      if (this._prev = this._next, this._next = null, this._currentTokenIndex + 1 < this._currentLineTokens.length)
+      if (this._prev = this._next, this._next = null, this._currentTokenIndex + 1 < this._currentLineTokens.length) {
         this._currentTokenIndex++;
-
-      this._next = this._current();
-      else {
+        this._next = this._current();
+      } else {
         for (; this._currentLineNumber + 1 <= this._model.getLineCount();)
           if (this._currentLineNumber++, this._currentLineTokens = this._model._getInternalTokens(this._currentLineNumber),
             this._currentLineTokens.length > 0) {
@@ -44,10 +43,10 @@ define("vs/editor/core/model/tokenIterator", ["require", "exports"], function(e,
     };
 
     e.prototype._advancePrev = function() {
-      if (this._next = this._prev, this._prev = null, this._currentTokenIndex > 0) this._currentTokenIndex--;
-
-      this._prev = this._current();
-      else
+      if (this._next = this._prev, this._prev = null, this._currentTokenIndex > 0) {
+        this._currentTokenIndex--;
+        this._prev = this._current();
+      } else
         for (; this._currentLineNumber > 1;)
           if (this._currentLineNumber--, this._currentLineTokens = this._model._getInternalTokens(this._currentLineNumber),
             this._currentLineTokens.length > 0) {

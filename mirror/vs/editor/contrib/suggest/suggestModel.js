@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -85,7 +87,9 @@ define(["require", "exports", "vs/editor/contrib/snippet/snippet", "vs/base/lib/
 
       this.autoSuggestDelay = this.editor.getConfiguration().quickSuggestionsDelay;
       if (isNaN(this.autoSuggestDelay) || !this.autoSuggestDelay && this.autoSuggestDelay !== 0 || this.autoSuggestDelay >
-        2e3 || this.autoSuggestDelay < 0) this.autoSuggestDelay = 500;
+        2e3 || this.autoSuggestDelay < 0) {
+        this.autoSuggestDelay = 500;
+      }
       this.triggerAutoSuggestPromise = null;
 
       this.state = s.NOT_ACTIVE;
@@ -216,7 +220,9 @@ define(["require", "exports", "vs/editor/contrib/snippet/snippet", "vs/base/lib/
     };
 
     b.prototype.accept = function(a) {
-      if (!a && this.suggestions === null) return !1;
+      if (!a && this.suggestions === null) {
+        return !1;
+      }
       a = a || this.suggestions[0];
 
       this.cancel();

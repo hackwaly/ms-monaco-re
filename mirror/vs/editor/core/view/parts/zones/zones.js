@@ -38,12 +38,16 @@ define("vs/editor/core/view/parts/zones/zones", ["require", "exports", "vs/base/
           var r;
 
           var s = {};
-          for (i in this._zones) this._zones.hasOwnProperty(i) && (o = this._zones[i], r = this._heightInLinesToPixels(
-            o.delegate.heightInLines), n.isFunction(o.delegate.onComputedHeight) && o.delegate.onComputedHeight(r), s[
-            i] = r, this._whitespaceManager.changeWhitespace(parseInt(i, 10), r));
+          for (i in this._zones) {
+            this._zones.hasOwnProperty(i) && (o = this._zones[i], r = this._heightInLinesToPixels(o.delegate.heightInLines),
+              n.isFunction(o.delegate.onComputedHeight) && o.delegate.onComputedHeight(r), s[i] = r, this._whitespaceManager
+              .changeWhitespace(parseInt(i, 10), r));
+          }
           this._requestModificationFrame(function() {
-            for (i in t._zones) t._zones.hasOwnProperty(i) && s.hasOwnProperty(i) && (t._zones[i].delegate.domNode.style
-              .height = s[i] + "px");
+            for (i in t._zones) {
+              t._zones.hasOwnProperty(i) && s.hasOwnProperty(i) && (t._zones[i].delegate.domNode.style.height = s[i] +
+                "px");
+            }
           });
 
           return !0;
@@ -87,13 +91,16 @@ define("vs/editor/core/view/parts/zones/zones", ["require", "exports", "vs/base/
       };
 
       t.prototype._computeWhitespaceAfterLineNumber = function(e) {
-        if (0 === e.afterLineNumber) return 0;
+        if (0 === e.afterLineNumber) {
+          return 0;
+        }
         var t;
-        if ("undefined" != typeof e.afterColumn) t = this._context.model.validateModelPosition({
-          lineNumber: e.afterLineNumber,
-          column: e.afterColumn
-        });
-        else {
+        if ("undefined" != typeof e.afterColumn) {
+          t = this._context.model.validateModelPosition({
+            lineNumber: e.afterLineNumber,
+            column: e.afterColumn
+          });
+        } else {
           var n = this._context.model.validateModelPosition({
             lineNumber: e.afterLineNumber,
             column: 1
@@ -178,18 +185,21 @@ define("vs/editor/core/view/parts/zones/zones", ["require", "exports", "vs/base/
           var s = {};
 
           var a = !1;
-          for (t = 0, r = o.length; r > t; t++) s[o[t].id.toString()] = o[t];
-
-          a = !0;
+          for (t = 0, r = o.length; r > t; t++) {
+            s[o[t].id.toString()] = o[t];
+            a = !0;
+          }
           var u;
 
           var l;
-          for (u in i._zones) i._zones.hasOwnProperty(u) && (l = i._zones[u], s.hasOwnProperty(u) ? (l.delegate.domNode
-            .style.top = e.getScrolledTopFromAbsoluteTop(s[u].verticalOffset) + "px", l.delegate.domNode.style.height =
-            s[u].height + "px", l.isVisible || (l.delegate.domNode.style.display = "block", l.isVisible = !0), n.isFunction(
-              l.delegate.onDomNodeTop) && l.delegate.onDomNodeTop(e.getScrolledTopFromAbsoluteTop(s[u].verticalOffset))
-          ) : (l.isVisible && (l.delegate.domNode.style.display = "none", l.isVisible = !1), n.isFunction(l.delegate
-            .onDomNodeTop) && l.delegate.onDomNodeTop(e.getScrolledTopFromAbsoluteTop(-1e6))));
+          for (u in i._zones) {
+            i._zones.hasOwnProperty(u) && (l = i._zones[u], s.hasOwnProperty(u) ? (l.delegate.domNode.style.top = e.getScrolledTopFromAbsoluteTop(
+                s[u].verticalOffset) + "px", l.delegate.domNode.style.height = s[u].height + "px", l.isVisible || (
+                l.delegate.domNode.style.display = "block", l.isVisible = !0), n.isFunction(l.delegate.onDomNodeTop) &&
+              l.delegate.onDomNodeTop(e.getScrolledTopFromAbsoluteTop(s[u].verticalOffset))) : (l.isVisible && (l.delegate
+                .domNode.style.display = "none", l.isVisible = !1), n.isFunction(l.delegate.onDomNodeTop) && l.delegate
+              .onDomNodeTop(e.getScrolledTopFromAbsoluteTop(-1e6))));
+          }
           a && (i.domNode.style.width = e.scrollWidth + "px");
         });
       };

@@ -41,7 +41,9 @@ define("vs/languages/typescript/lint/lint", ["require", "exports", "vs/nls!vs/la
       this._rules = {};
 
       this._errors = [];
-      for (var t = 0, n = e.length; n > t; t++) this._addRule(e[t]);
+      for (var t = 0, n = e.length; n > t; t++) {
+        this._addRule(e[t]);
+      }
     }
     e.prototype._addRule = function(e) {
       var t = this;
@@ -107,18 +109,20 @@ define("vs/languages/typescript/lint/lint", ["require", "exports", "vs/nls!vs/la
           t.concat(e.trailingTrivia());
 
           this._currentTriviaPosition = this.start(e) - e.leadingTriviaWidth();
-          for (var r = 0, i = t.count(); i > r; r++) this._currentTrivia = t.syntaxTriviaAt(r);
-
-          this._checkNodeOrToken(this._currentTrivia);
-
-          r !== n ? this._currentTriviaPosition += this._currentTrivia.fullWidth() : this._currentTriviaPosition =
-            this.end(e) - e.trailingTriviaWidth();
+          for (var r = 0, i = t.count(); i > r; r++) {
+            this._currentTrivia = t.syntaxTriviaAt(r);
+            this._checkNodeOrToken(this._currentTrivia);
+            r !== n ? this._currentTriviaPosition += this._currentTrivia.fullWidth() : this._currentTriviaPosition =
+              this.end(e) - e.trailingTriviaWidth();
+          }
           this._currentTrivia = null;
 
           this._currentTriviaPosition = null;
         }
         this._checkNodeOrToken(e);
-        for (var r = 0, i = e.childCount(); i > r; r++) this._visit(e.childAt(r));
+        for (var r = 0, i = e.childCount(); i > r; r++) {
+          this._visit(e.childAt(r));
+        }
       }
     };
 

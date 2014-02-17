@@ -72,10 +72,11 @@ define("vs/editor/core/view/parts/overlayWidgets/overlayWidgets", ["require", "e
       var t = "data-editor-restoreStyleTop";
 
       var n = e.widget.getDomNode();
-      if (null !== e.preference) 0 === e.preference ? (n.hasAttribute(t) || n.setAttribute(t, n.style.top), n.style.top =
-        "0px", n.style.right = 2 * this._verticalScrollbarWidth + "px") : 1 === e.preference && (n.hasAttribute(t) ||
-        n.setAttribute(t, n.style.top), n.style.top = "0px", n.style.right = "50%");
-      else if (n.hasAttribute(t)) {
+      if (null !== e.preference) {
+        0 === e.preference ? (n.hasAttribute(t) || n.setAttribute(t, n.style.top), n.style.top = "0px", n.style.right =
+          2 * this._verticalScrollbarWidth + "px") : 1 === e.preference && (n.hasAttribute(t) || n.setAttribute(t, n.style
+          .top), n.style.top = "0px", n.style.right = "50%");
+      } else if (n.hasAttribute(t)) {
         var i = n.getAttribute(t);
         n.removeAttribute(t);
 
@@ -88,9 +89,13 @@ define("vs/editor/core/view/parts/overlayWidgets/overlayWidgets", ["require", "e
 
       var i = this;
       if (t)
-        for (n in this._widgets) this._widgets.hasOwnProperty(n) && t.renderedOverlayWidgets++;
+        for (n in this._widgets) {
+          this._widgets.hasOwnProperty(n) && t.renderedOverlayWidgets++;
+        }
       this._requestModificationFrame(function() {
-        for (n in i._widgets) i._widgets.hasOwnProperty(n) && i._renderWidget(i._widgets[n]);
+        for (n in i._widgets) {
+          i._widgets.hasOwnProperty(n) && i._renderWidget(i._widgets[n]);
+        }
       });
     };
 

@@ -318,7 +318,9 @@ define("vs/editor/core/view/model/viewModel", ["require", "exports", "vs/base/ev
 
     t.prototype.getLineRenderLineNumber = function(e) {
       var t = this.convertViewPositionToModelPosition(e, 1);
-      if (1 !== t.column) return "";
+      if (1 !== t.column) {
+        return "";
+      }
       var n = t.lineNumber;
       return "function" == typeof this.configuration.editor.lineNumbers ? this.configuration.editor.lineNumbers(n) :
         n.toString();

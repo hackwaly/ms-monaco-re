@@ -17,7 +17,9 @@ define(["require", "exports", "vs/editor/core/range"], function(a, b, c) {
         c.endLineNumber - 1, a.getLineMaxColumn(c.endLineNumber - 1)), !this._isCopyingDown && c.isEmpty() && (this
         ._moveEndPositionDown = !1, this._moveStartPositionUp = !0));
       var e = [];
-      for (var f = c.startLineNumber; f <= c.endLineNumber; f++) e.push(a.getLineContent(f));
+      for (var f = c.startLineNumber; f <= c.endLineNumber; f++) {
+        e.push(a.getLineContent(f));
+      }
       var g = e.join("\n");
       this._isCopyingDown ? b.addEditOperation(new d.Range(c.startLineNumber, 1, c.startLineNumber, 1), g + "\n") : b
         .addEditOperation(new d.Range(c.endLineNumber, a.getLineMaxColumn(c.endLineNumber), c.endLineNumber, a.getLineMaxColumn(

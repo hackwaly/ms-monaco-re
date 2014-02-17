@@ -67,14 +67,13 @@ define("vs/platform/markers/markers", ["require", "exports", "vs/base/assert", "
   function g(e, t) {
     var i = null;
     if (t) {
-      if (n.ok(e.getAssociatedResource().toExternal() === t.getAssociatedResource().toExternal()), e.getId() === y.DEFAULT_GROUP)
+      if (n.ok(e.getAssociatedResource().toExternal() === t.getAssociatedResource().toExternal()), e.getId() === y.DEFAULT_GROUP) {
         i = new y(t.getAssociatedResource(), e.getMarkers());
-
-      t.getGroups().forEach(function(e) {
-        i.addGroup(e);
-      });
-
-      return i;
+        t.getGroups().forEach(function(e) {
+          i.addGroup(e);
+        });
+        return i;
+      }
       var o = new v(t, e.getId(), e.getMarkers());
 
       var r = t.getGroup(e.getId());
@@ -83,7 +82,9 @@ define("vs/platform/markers/markers", ["require", "exports", "vs/base/assert", "
           e.getId() !== o.getId() && i.addGroup(e);
         }), i.addGroup(o), i) : (t.addGroup(o), t);
     }
-    if (e.getId() === y.DEFAULT_GROUP) return new y(e.getAssociatedResource(), e.getMarkers());
+    if (e.getId() === y.DEFAULT_GROUP) {
+      return new y(e.getAssociatedResource(), e.getMarkers());
+    }
     i = new y(e.getAssociatedResource());
     var s = new v(i, e.getId(), e.getMarkers());
     i.addGroup(s);
@@ -185,9 +186,13 @@ define("vs/platform/markers/markers", ["require", "exports", "vs/base/assert", "
     };
 
     t.prototype.getGroup = function(n) {
-      if (t.DEFAULT_GROUP === n) return new v(this, this.getId(), e.prototype.getMarkers.call(this));
+      if (t.DEFAULT_GROUP === n) {
+        return new v(this, this.getId(), e.prototype.getMarkers.call(this));
+      }
       for (var i = 0; i < this.groups.length; i++)
-        if (this.groups[i].getId() === n) return this.groups[i];
+        if (this.groups[i].getId() === n) {
+          return this.groups[i];
+        }
       return null;
     };
 

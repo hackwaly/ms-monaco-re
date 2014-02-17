@@ -81,7 +81,9 @@ define("vs/platform/instantiation/instantiationService", ["require", "exports", 
     };
 
     t.prototype.createInstance = function(e) {
-      for (var t = new Array(arguments.length - 1), n = 1, i = arguments.length; i > n; n++) t[n - 1] = arguments[n];
+      for (var t = new Array(arguments.length - 1), n = 1, i = arguments.length; i > n; n++) {
+        t[n - 1] = arguments[n];
+      }
       return e instanceof s.SyncDescriptor ? this._servicesMap.createInstance(e, t) : e instanceof s.AsyncDescriptor ?
         this._createInstanceAsync(e, t) : this._servicesMap.createInstance(new s.SyncDescriptor(e), t);
     };
@@ -94,8 +96,12 @@ define("vs/platform/instantiation/instantiationService", ["require", "exports", 
         e.onError = u;
 
         e([t.moduleName], function(e) {
-          if (r && u(r), !e) return u(i.illegalArgument("module not found: " + t.moduleName));
-          if ("function" != typeof e[t.functionName]) return u(i.illegalArgument("not a function: " + t.functionName));
+          if (r && u(r), !e) {
+            return u(i.illegalArgument("module not found: " + t.moduleName));
+          }
+          if ("function" != typeof e[t.functionName]) {
+            return u(i.illegalArgument("not a function: " + t.functionName));
+          }
           try {
             o.unshift.apply(o, t.staticArguments());
 

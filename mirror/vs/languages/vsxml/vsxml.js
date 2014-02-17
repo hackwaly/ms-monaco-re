@@ -1,23 +1,23 @@
 define("vs/languages/vsxml/vsxml", ["require", "exports", "vs/base/objects", "vs/base/errors",
   "vs/editor/modes/modesExtensions"
-], function(e, t, n, i, r) {
+], function(e, t, n, r, i) {
   var o = '<>"=/';
 
   var s = "	 ";
 
   var a = n.createKeywordMatcher(["summary", "reference", "returns", "param", "loc"]);
 
-  var u = n.createKeywordMatcher(["type", "path", "name", "locid", "filename", "format", "optional"]);
+  var l = n.createKeywordMatcher(["type", "path", "name", "locid", "filename", "format", "optional"]);
 
-  var l = n.createKeywordMatcher(o.split(""));
+  var c = n.createKeywordMatcher(o.split(""));
 
-  var c = function(e) {
-    function t(t, n, i) {
+  var u = function(e) {
+    function t(t, n, r) {
       e.call(this, t);
 
       this.state = n;
 
-      this.parentState = i;
+      this.parentState = r;
     }
     __extends(t, e);
 
@@ -31,12 +31,16 @@ define("vs/languages/vsxml/vsxml", ["require", "exports", "vs/base/objects", "vs
     };
 
     t.prototype.equals = function(n) {
-      if (!e.prototype.equals.call(this, n)) return !1;
-      if (!(n instanceof t)) return !1;
-      var i = n;
-      return null === this.state && null === i.state ? !0 : null === this.state || null === i.state ? !1 : null ===
-        this.parentState && null === i.parentState ? !0 : null === this.parentState || null === i.parentState ? !1 :
-        this.state.equals(i.state) && this.parentState.equals(i.parentState);
+      if (!e.prototype.equals.call(this, n)) {
+        return !1;
+      }
+      if (!(n instanceof t)) {
+        return !1;
+      }
+      var r = n;
+      return null === this.state && null === r.state ? !0 : null === this.state || null === r.state ? !1 : null ===
+        this.parentState && null === r.parentState ? !0 : null === this.parentState || null === r.parentState ? !1 :
+        this.state.equals(r.state) && this.parentState.equals(r.parentState);
     };
 
     t.prototype.setState = function(e) {
@@ -57,11 +61,11 @@ define("vs/languages/vsxml/vsxml", ["require", "exports", "vs/base/objects", "vs
     };
 
     return t;
-  }(r.AbstractState);
-  t.EmbeddedState = c;
-  var d = function(e) {
-    function t(t, n, i) {
-      e.call(this, t, n, i);
+  }(i.AbstractState);
+  t.EmbeddedState = u;
+  var p = function(e) {
+    function t(t, n, r) {
+      e.call(this, t, n, r);
     }
     __extends(t, e);
 
@@ -78,19 +82,19 @@ define("vs/languages/vsxml/vsxml", ["require", "exports", "vs/base/objects", "vs
     };
 
     return t;
-  }(c);
-  t.VSXMLEmbeddedState = d;
+  }(u);
+  t.VSXMLEmbeddedState = p;
   var h = function(e) {
-    function t(t, n, i, r) {
-      "undefined" == typeof r && (r = "");
+    function t(t, n, r, i) {
+      "undefined" == typeof i && (i = "");
 
       e.call(this, t);
 
       this.name = n;
 
-      this.parent = i;
+      this.parent = r;
 
-      this.whitespaceTokenType = r;
+      this.whitespaceTokenType = i;
     }
     __extends(t, e);
 
@@ -108,13 +112,13 @@ define("vs/languages/vsxml/vsxml", ["require", "exports", "vs/base/objects", "vs
     };
 
     t.prototype.stateTokenize = function() {
-      throw i.notImplemented();
+      throw r.notImplemented();
     };
 
     return t;
-  }(r.AbstractState);
+  }(i.AbstractState);
   t.VSXMLState = h;
-  var p = function(e) {
+  var d = function(e) {
     function t(t, n) {
       e.call(this, t, "string", n, "attribute.value.vs");
     }
@@ -127,10 +131,12 @@ define("vs/languages/vsxml/vsxml", ["require", "exports", "vs/base/objects", "vs
     t.prototype.stateTokenize = function(e) {
       for (; !e.eos();) {
         var t = e.nextToken();
-        if ('"' === t) return {
-          type: "attribute.value.vs",
-          nextState: this.parent
-        };
+        if ('"' === t) {
+          return {
+            type: "attribute.value.vs",
+            nextState: this.parent
+          };
+        }
       }
       return {
         type: "attribute.value.vs",
@@ -140,8 +146,8 @@ define("vs/languages/vsxml/vsxml", ["require", "exports", "vs/base/objects", "vs
 
     return t;
   }(h);
-  t.VSXMLString = p;
-  var f = function(e) {
+  t.VSXMLString = d;
+  var m = function(e) {
     function t(t, n) {
       e.call(this, t, "expression", n, "vs");
     }
@@ -160,8 +166,8 @@ define("vs/languages/vsxml/vsxml", ["require", "exports", "vs/base/objects", "vs
         nextState: this.parent
       } : '"' === t ? {
         type: "attribute.value.vs",
-        nextState: new p(this.getMode(), this)
-      } : (a(t) ? n = "tag.vs" : u(t) ? n = "attribute.name.vs" : l(t) && (n = "delimiter.vs"), {
+        nextState: new d(this.getMode(), this)
+      } : (a(t) ? n = "tag.vs" : l(t) ? n = "attribute.name.vs" : c(t) && (n = "delimiter.vs"), {
         type: n,
         nextState: this
       });
@@ -169,8 +175,8 @@ define("vs/languages/vsxml/vsxml", ["require", "exports", "vs/base/objects", "vs
 
     return t;
   }(h);
-  t.VSXMLTag = f;
-  var g = function(e) {
+  t.VSXMLTag = m;
+  var f = function(e) {
     function t(t, n) {
       e.call(this, t, "expression", n, "vs");
     }
@@ -184,7 +190,7 @@ define("vs/languages/vsxml/vsxml", ["require", "exports", "vs/base/objects", "vs
       var t = e.nextToken();
       return "<" === t ? {
         type: "delimiter.vs",
-        nextState: new f(this.getMode(), this)
+        nextState: new m(this.getMode(), this)
       } : {
         type: this.whitespaceTokenType,
         nextState: this
@@ -193,5 +199,5 @@ define("vs/languages/vsxml/vsxml", ["require", "exports", "vs/base/objects", "vs
 
     return t;
   }(h);
-  t.VSXMLExpression = g;
+  t.VSXMLExpression = f;
 });

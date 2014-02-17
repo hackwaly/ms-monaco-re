@@ -14,9 +14,12 @@ define("vs/base/paths", ["require", "exports"], function(e, t) {
   }
 
   function o() {
-    for (var e = [], t = 0; t < arguments.length - 0; t++) e[t] = arguments[t + 0];
-    for (var n = [], r = /\w+:\/\//.exec(e[0]), i = "/" === e[0][0], o = 0; o < e.length; o++) n.push.apply(n, e[o].split(
-      "/"));
+    for (var e = [], t = 0; t < arguments.length - 0; t++) {
+      e[t] = arguments[t + 0];
+    }
+    for (var n = [], r = /\w+:\/\//.exec(e[0]), i = "/" === e[0][0], o = 0; o < e.length; o++) {
+      n.push.apply(n, e[o].split("/"));
+    }
     for (var o = 0; o < n.length; o++) {
       var s = n[o];
       "." === s || 0 === s.length ? (n.splice(o, 1), o -= 1) : o > 0 && ".." === s && (n.splice(o - 1, 2), o -= 2);

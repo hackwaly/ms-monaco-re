@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -53,7 +55,9 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/base/types", "vs/pla
     }
     a.prototype.update = function() {
       var a = this;
-      while (this.callOnModel.length > 0) this.callOnModel.pop()();
+      while (this.callOnModel.length > 0) {
+        this.callOnModel.pop()();
+      }
       if (!this.editor.getConfiguration().formatOnType) return;
       if (m.isUndefinedOrNull(this.editor.getModel())) return;
       var b = this.editor.getModel();
@@ -119,8 +123,12 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/base/types", "vs/pla
     };
 
     a.prototype.dispose = function() {
-      while (this.callOnDispose.length > 0) this.callOnDispose.pop()();
-      while (this.callOnModel.length > 0) this.callOnModel.pop()();
+      while (this.callOnDispose.length > 0) {
+        this.callOnDispose.pop()();
+      }
+      while (this.callOnModel.length > 0) {
+        this.callOnModel.pop()();
+      }
     };
 
     a.ID = "editor.contrib.autoFormat";

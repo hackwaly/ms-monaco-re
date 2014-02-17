@@ -137,7 +137,9 @@ define("vs/base/dom/touch", ["require", "exports", "vs/base/arrays", "vs/base/li
             b(t.timeStamp, Math.abs(m) / g, p, Math.abs(v) / g, f);
           }
           delete this.activeTouches[l.identifier];
-        } else console.warn("end of an UNKNOWN touch", l);
+        } else {
+          console.warn("end of an UNKNOWN touch", l);
+        }
       }
     };
 
@@ -162,7 +164,9 @@ define("vs/base/dom/touch", ["require", "exports", "vs/base/arrays", "vs/base/li
           a.rollingPageY.push(s.pageY);
 
           a.rollingTimestamps.push(t.timeStamp);
-        } else console.warn("end of an UNKNOWN touch", s);
+        } else {
+          console.warn("end of an UNKNOWN touch", s);
+        }
       }
     };
 

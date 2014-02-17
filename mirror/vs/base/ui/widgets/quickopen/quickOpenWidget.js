@@ -56,7 +56,9 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
             if ("Enter" === n.key) {
               var o = e.tree.getFocus();
               o && e.elementSelected(o, t);
-            } else !i.browser.isIE9 || "Backspace" !== n.key && "Delete" !== n.key || e.onType();
+            } else {
+              !i.browser.isIE9 || "Backspace" !== n.key && "Delete" !== n.key || e.onType();
+            }
           }).on(g.EventType.INPUT, function() {
             e.onType();
           }).attr({
@@ -154,24 +156,28 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
           if (n)
             for (var o = i - 1; o >= 0; o--) {
               var r = e[o];
-              if (r instanceof l.QuickOpenEntryGroup && r.getGroupLabel()) this.tree.setFocus(r);
-
-              return void 0;
+              if (r instanceof l.QuickOpenEntryGroup && r.getGroupLabel()) {
+                this.tree.setFocus(r);
+                return void 0;
+              }
             } else
               for (var o = i + 1; o < e.length; o++) {
                 var s = e[o];
-                if (s instanceof l.QuickOpenEntryGroup && s.getGroupLabel()) this.tree.setFocus(s);
-
-                return void 0;
+                if (s instanceof l.QuickOpenEntryGroup && s.getGroupLabel()) {
+                  this.tree.setFocus(s);
+                  return void 0;
+                }
               }
-        if (!n) this.tree.setFocus(e[0]);
-
-        return void 0;
+        if (!n) {
+          this.tree.setFocus(e[0]);
+          return void 0;
+        }
         for (var o = e.length - 1; o >= 0; o--) {
           var r = e[o];
-          if (r instanceof l.QuickOpenEntryGroup && r.getGroupLabel()) this.tree.setFocus(r);
-
-          return void 0;
+          if (r instanceof l.QuickOpenEntryGroup && r.getGroupLabel()) {
+            this.tree.setFocus(r);
+            return void 0;
+          }
         }
       }
     };
@@ -263,16 +269,16 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
             u, n && i) break;
         }
         var l = n || i;
-        if (l) this.tree.setFocus(l);
-
-        this.tree.reveal(l, 0);
-
-        return void 0;
+        if (l) {
+          this.tree.setFocus(l);
+          this.tree.reveal(l, 0);
+          return void 0;
+        }
       }
-      if (t.autoFocusFirstEntry) this.tree.focusNext();
-
-      this.tree.reveal(this.tree.getFocus(), 0);
-      else if (t.autoFocusSecondEntry) {
+      if (t.autoFocusFirstEntry) {
+        this.tree.focusNext();
+        this.tree.reveal(this.tree.getFocus(), 0);
+      } else if (t.autoFocusSecondEntry) {
         var o = e.getEntries();
         o.length > 1 && this.tree.setFocus(o[1]);
       }
@@ -375,7 +381,9 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
     };
 
     e.prototype.dispose = function() {
-      for (; this.toUnbind.length;) this.toUnbind.pop()();
+      for (; this.toUnbind.length;) {
+        this.toUnbind.pop()();
+      }
       this.progressBar.dispose();
 
       this.inputBox.dispose();

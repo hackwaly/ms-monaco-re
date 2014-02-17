@@ -11,7 +11,9 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
   var o = function() {
     function e() {}
     e.Copy = function(e, t, n, i, o) {
-      for (var r = 0; o > r; r++) n[i + r] = e[t + r];
+      for (var r = 0; o > r; r++) {
+        n[i + r] = e[t + r];
+      }
     };
 
     return e;
@@ -135,12 +137,14 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
     };
 
     e.prototype.ComputeDiffRecursive = function(e, t, o, r, s) {
-      for (s[0] = !1; t >= e && r >= o && this.ElementsAreEqual(e, o);) e++;
-
-      o++;
-      for (; t >= e && r >= o && this.ElementsAreEqual(t, r);) t--;
-
-      r--;
+      for (s[0] = !1; t >= e && r >= o && this.ElementsAreEqual(e, o);) {
+        e++;
+        o++;
+      }
+      for (; t >= e && r >= o && this.ElementsAreEqual(t, r);) {
+        t--;
+        r--;
+      }
       if (e > t || o > r) {
         var a;
         r >= o ? (i.Assert(e === t + 1, "originalStart should only be one more than originalEnd"), a = [new n.DiffChange(
@@ -160,7 +164,9 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
       var d = u[0];
 
       var h = l[0];
-      if (null !== c) return c;
+      if (null !== c) {
+        return c;
+      }
       if (!s[0]) {
         var p = this.ComputeDiffRecursive(e, d, o, h, s);
 
@@ -191,14 +197,13 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
       var x = Number.MIN_VALUE;
 
       var N = this.m_forwardHistory.length - 1;
-      do b = T + e;
-
-      b === S || L > b && c[b - 1] < c[b + 1] ? (h = c[b + 1], g = h - T - o, x > h && E.MarkNextChange(), x = h, E.AddModifiedElement(
-        h + 1, g), T = b + 1 - e) : (h = c[b - 1] + 1, g = h - T - o, x > h && E.MarkNextChange(), x = h - 1, E.AddOriginalElement(
-        h, g + 1), T = b - 1 - e);
-
-      N >= 0 && (c = this.m_forwardHistory[N], e = c[0], S = 1, L = c.length - 1);
-      while (--N >= -1);
+      do {
+        b = T + e;
+        b === S || L > b && c[b - 1] < c[b + 1] ? (h = c[b + 1], g = h - T - o, x > h && E.MarkNextChange(), x = h, E
+          .AddModifiedElement(h + 1, g), T = b + 1 - e) : (h = c[b - 1] + 1, g = h - T - o, x > h && E.MarkNextChange(),
+          x = h - 1, E.AddOriginalElement(h, g + 1), T = b - 1 - e);
+        N >= 0 && (c = this.m_forwardHistory[N], e = c[0], S = 1, L = c.length - 1);
+      } while (--N >= -1);
       if (C = E.getReverseChanges(), _[0]) {
         var M = f[0] + 1;
 
@@ -222,14 +227,13 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
         x = Number.MAX_VALUE;
 
         N = y ? this.m_reverseHistory.length - 1 : this.m_reverseHistory.length - 2;
-        do b = T + r;
-
-        b === S || L > b && d[b - 1] >= d[b + 1] ? (h = d[b + 1] - 1, g = h - T - l, h > x && E.MarkNextChange(), x =
-          h + 1, E.AddOriginalElement(h + 1, g + 1), T = b + 1 - r) : (h = d[b - 1], g = h - T - l, h > x && E.MarkNextChange(),
-          x = h, E.AddModifiedElement(h + 1, g + 1), T = b - 1 - r);
-
-        N >= 0 && (d = this.m_reverseHistory[N], r = d[0], S = 1, L = d.length - 1);
-        while (--N >= -1);
+        do {
+          b = T + r;
+          b === S || L > b && d[b - 1] >= d[b + 1] ? (h = d[b + 1] - 1, g = h - T - l, h > x && E.MarkNextChange(), x =
+            h + 1, E.AddOriginalElement(h + 1, g + 1), T = b + 1 - r) : (h = d[b - 1], g = h - T - l, h > x && E.MarkNextChange(),
+            x = h, E.AddModifiedElement(h + 1, g + 1), T = b - 1 - r);
+          N >= 0 && (d = this.m_reverseHistory[N], r = d[0], S = 1, L = d.length - 1);
+        } while (--N >= -1);
         w = E.getChanges();
       }
       return this.ConcatenateChanges(C, w);
@@ -294,38 +298,39 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
         for (p = this.ClipDiagonalBound(C - h, h, C, y), f = this.ClipDiagonalBound(C + h, h, C, y), x = p; f >= x; x +=
           2) {
           for (c = x === p || f > x && _[x - 1] < _[x + 1] ? _[x + 1] : _[x - 1] + 1, d = c - (x - C) - E, N = c; t >
-            c && s > d && this.ElementsAreEqual(c + 1, d + 1);) c++;
-
-          d++;
-          if (_[x] = c, c + d > M + k && (M = c, k = d), !T && Math.abs(x - w) <= h - 1 && c >= b[x]) a[0] = c;
-
-          u[0] = d;
-
-          return N <= b[x] && r > 0 && r + 1 >= h ? this.WALKTRACE(C, p, f, E, w, g, m, S, _, b, c, t, a, d, s, u, T,
-            l) : null;
+            c && s > d && this.ElementsAreEqual(c + 1, d + 1);) {
+            c++;
+            d++;
+          }
+          if (_[x] = c, c + d > M + k && (M = c, k = d), !T && Math.abs(x - w) <= h - 1 && c >= b[x]) {
+            a[0] = c;
+            u[0] = d;
+            return N <= b[x] && r > 0 && r + 1 >= h ? this.WALKTRACE(C, p, f, E, w, g, m, S, _, b, c, t, a, d, s, u,
+              T, l) : null;
+          }
         }
         var I = (M - e + (k - i) - h) / 2;
         if (null !== this.ContinueProcessingPredicate && !this.ContinueProcessingPredicate(M, this.OriginalSequence,
-          I)) l[0] = !0;
-
-        a[0] = M;
-
-        u[0] = k;
-
-        return I > 0 && r > 0 && r + 1 >= h ? this.WALKTRACE(C, p, f, E, w, g, m, S, _, b, c, t, a, d, s, u, T, l) :
-          (e++, i++, [new n.DiffChange(e, t - e + 1, i, s - i + 1)]);
+          I)) {
+          l[0] = !0;
+          a[0] = M;
+          u[0] = k;
+          return I > 0 && r > 0 && r + 1 >= h ? this.WALKTRACE(C, p, f, E, w, g, m, S, _, b, c, t, a, d, s, u, T, l) :
+            (e++, i++, [new n.DiffChange(e, t - e + 1, i, s - i + 1)]);
+        }
         for (g = this.ClipDiagonalBound(w - h, h, w, y), m = this.ClipDiagonalBound(w + h, h, w, y), x = g; m >= x; x +=
           2) {
           for (c = x === g || m > x && b[x - 1] >= b[x + 1] ? b[x + 1] - 1 : b[x - 1], d = c - (x - w) - S, N = c; c >
-            e && d > i && this.ElementsAreEqual(c, d);) c--;
-
-          d--;
-          if (b[x] = c, T && Math.abs(x - C) <= h && c <= _[x]) a[0] = c;
-
-          u[0] = d;
-
-          return N >= _[x] && r > 0 && r + 1 >= h ? this.WALKTRACE(C, p, f, E, w, g, m, S, _, b, c, t, a, d, s, u, T,
-            l) : null;
+            e && d > i && this.ElementsAreEqual(c, d);) {
+            c--;
+            d--;
+          }
+          if (b[x] = c, T && Math.abs(x - C) <= h && c <= _[x]) {
+            a[0] = c;
+            u[0] = d;
+            return N >= _[x] && r > 0 && r + 1 >= h ? this.WALKTRACE(C, p, f, E, w, g, m, S, _, b, c, t, a, d, s, u,
+              T, l) : null;
+          }
         }
         if (r >= h) {
           var D = new Array(f - p + 2);
@@ -382,7 +387,9 @@ define("vs/base/diff/diff", ["require", "exports", "vs/base/diff/diffChange"], f
     };
 
     e.prototype.ClipDiagonalBound = function(e, t, n, i) {
-      if (e >= 0 && i > e) return e;
+      if (e >= 0 && i > e) {
+        return e;
+      }
       var o = n;
 
       var r = i - n - 1;

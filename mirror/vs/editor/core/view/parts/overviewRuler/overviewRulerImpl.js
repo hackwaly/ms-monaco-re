@@ -121,20 +121,19 @@ define("vs/editor/core/view/parts/overviewRuler/overviewRulerImpl", ["require", 
         for (r = 0, s = this._zones.length; s > r; r++)
           if (a = this._zones[r], a.position & n)
             if (u = this._getVerticalOffsetForLine(a.startLineNumber), l = this._getVerticalOffsetForLine(a.endLineNumber) +
-              this._lineHeight, u *= t, l *= t, a.forceHeight) l = u + a.forceHeight;
-
-        this._insertZone(h, u, l, a.forceHeight, a.forceHeight, a.color);
-        else if (c = a.endLineNumber - a.startLineNumber + 1, d = c * this._maximumHeight, l - u > d)
-          for (var p = a.startLineNumber; p <= a.endLineNumber; p++) u = this._getVerticalOffsetForLine(p);
-
-        l = u + this._lineHeight;
-
-        u *= t;
-
-        l *= t;
-
-        this._insertZone(h, u, l, this._minimumHeight, this._maximumHeight, a.color);
-        else this._insertZone(h, u, l, this._minimumHeight, d, a.color);
+              this._lineHeight, u *= t, l *= t, a.forceHeight) {
+              l = u + a.forceHeight;
+              this._insertZone(h, u, l, a.forceHeight, a.forceHeight, a.color);
+            } else if (c = a.endLineNumber - a.startLineNumber + 1, d = c * this._maximumHeight, l - u > d)
+          for (var p = a.startLineNumber; p <= a.endLineNumber; p++) {
+            u = this._getVerticalOffsetForLine(p);
+            l = u + this._lineHeight;
+            u *= t;
+            l *= t;
+            this._insertZone(h, u, l, this._minimumHeight, this._maximumHeight, a.color);
+          } else {
+            this._insertZone(h, u, l, this._minimumHeight, d, a.color);
+          }
         var f;
 
         var g;
@@ -148,8 +147,9 @@ define("vs/editor/core/view/parts/overviewRuler/overviewRulerImpl", ["require", 
         };
         for (f in h)
           if (h.hasOwnProperty(f)) {
-            for (g = h[f], g.sort(y), m = g[0].from, v = g[0].to, e.fillStyle = f, r = 1, s = g.length; s > r; r++) v >=
-              g[r].from ? v = Math.max(v, g[r].to) : (e.fillRect(i, m, o, v - m), m = g[r].from, v = g[r].to);
+            for (g = h[f], g.sort(y), m = g[0].from, v = g[0].to, e.fillStyle = f, r = 1, s = g.length; s > r; r++) {
+              v >= g[r].from ? v = Math.max(v, g[r].to) : (e.fillRect(i, m, o, v - m), m = g[r].from, v = g[r].to);
+            }
             e.fillRect(i, m, o, v - m);
           }
       };

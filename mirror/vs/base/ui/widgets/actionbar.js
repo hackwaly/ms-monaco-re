@@ -421,7 +421,9 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
     };
 
     t.prototype.clear = function() {
-      for (var e; e = this.items.pop();) e.dispose();
+      for (var e; e = this.items.pop();) {
+        e.dispose();
+      }
       d(this.actionsList).empty();
     };
 
@@ -448,10 +450,10 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
       var e;
 
       var t = this.focusedItem;
-      do this.focusedItem = (this.focusedItem + 1) % this.items.length;
-
-      e = this.items[this.focusedItem];
-      while (this.focusedItem !== t && !e.isEnabled());
+      do {
+        this.focusedItem = (this.focusedItem + 1) % this.items.length;
+        e = this.items[this.focusedItem];
+      } while (this.focusedItem !== t && !e.isEnabled());
       this.focusedItem !== t || e.isEnabled() || (this.focusedItem = void 0);
 
       this.updateFocus();
@@ -462,21 +464,21 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
       var e;
 
       var t = this.focusedItem;
-      do this.focusedItem = this.focusedItem - 1;
-
-      this.focusedItem < 0 && (this.focusedItem = this.items.length - 1);
-
-      e = this.items[this.focusedItem];
-      while (this.focusedItem !== t && !e.isEnabled());
+      do {
+        this.focusedItem = this.focusedItem - 1;
+        this.focusedItem < 0 && (this.focusedItem = this.items.length - 1);
+        e = this.items[this.focusedItem];
+      } while (this.focusedItem !== t && !e.isEnabled());
       this.focusedItem !== t || e.isEnabled() || (this.focusedItem = void 0);
 
       this.updateFocus();
     };
 
     t.prototype.updateFocus = function() {
-      if ("undefined" == typeof this.focusedItem) this.domNode.focus();
-
-      return void 0;
+      if ("undefined" == typeof this.focusedItem) {
+        this.domNode.focus();
+        return void 0;
+      }
       for (var e = 0; e < this.items.length; e++) {
         var t = this.items[e];
 

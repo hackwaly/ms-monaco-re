@@ -4,7 +4,9 @@ var __extends = this.__extends || function(e, t) {
     function n() {
       this.constructor = e;
     }
-    for (var r in t) t.hasOwnProperty(r) && (e[r] = t[r]);
+    for (var r in t) {
+      t.hasOwnProperty(r) && (e[r] = t[r]);
+    }
     n.prototype = t.prototype;
 
     e.prototype = new n;
@@ -33,8 +35,9 @@ define("vs/languages/typescript/participants/nlsParticipant", ["require", "expor
     };
 
     t.prototype.visitInvocationExpression = function(t) {
-      if (t.expression.kind() !== s.SyntaxKind.MemberAccessExpression) return e.prototype.visitInvocationExpression.call(
-        this, t);
+      if (t.expression.kind() !== s.SyntaxKind.MemberAccessExpression) {
+        return e.prototype.visitInvocationExpression.call(this, t);
+      }
       var n = t.expression;
       return n.expression.kind() === s.SyntaxKind.IdentifierName && i.equalsIgnoreCase(n.expression.text(), "nls") ?
         n.name.kind() !== s.SyntaxKind.IdentifierName || "localize" !== n.name.text() ? e.prototype.visitInvocationExpression
@@ -42,10 +45,12 @@ define("vs/languages/typescript/participants/nlsParticipant", ["require", "expor
     };
 
     t.prototype.visitMemberAccessExpression = function(t) {
-      if (t.name.kind() !== s.SyntaxKind.IdentifierName || !i.equalsIgnoreCase("nls", t.name.text())) return e.prototype
-        .visitMemberAccessExpression.call(this, t);
-      if (t.expression.kind() !== s.SyntaxKind.InvocationExpression) return e.prototype.visitMemberAccessExpression.call(
-        this, t);
+      if (t.name.kind() !== s.SyntaxKind.IdentifierName || !i.equalsIgnoreCase("nls", t.name.text())) {
+        return e.prototype.visitMemberAccessExpression.call(this, t);
+      }
+      if (t.expression.kind() !== s.SyntaxKind.InvocationExpression) {
+        return e.prototype.visitMemberAccessExpression.call(this, t);
+      }
       var n = t.expression;
       return n.kind() === s.SyntaxKind.IdentifierName && i.equalsIgnoreCase("localize", n.expression.fullText()) ? (
         this.skip(t), void 0) : e.prototype.visitMemberAccessExpression.call(this, t);

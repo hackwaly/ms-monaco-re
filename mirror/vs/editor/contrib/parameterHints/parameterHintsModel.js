@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -63,14 +65,16 @@ define(["require", "exports", "vs/base/lib/winjs.base", "vs/base/async", "vs/edi
       var a = this;
 
       var b = this.editor.getModel();
-      if (!b || !b.getMode().parameterHintsSupport) return g.Promise.as(!1);
+      if (!b || !b.getMode().parameterHintsSupport) {
+        return g.Promise.as(!1);
+      }
       var c = b.getMode().parameterHintsSupport;
       return c.getParameterHints(b.getAssociatedResource(), this.editor.getPosition()).then(function(b) {
-        if (!b) a.cancel();
-
-        a.emit("cancel");
-
-        return !1;
+        if (!b) {
+          a.cancel();
+          a.emit("cancel");
+          return !1;
+        }
         a.active = !0;
         var c = {
           hints: b

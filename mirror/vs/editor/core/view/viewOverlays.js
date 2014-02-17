@@ -42,9 +42,13 @@ define("vs/editor/core/view/viewOverlays", ["require", "exports", "vs/base/dom/d
 
       t.prototype.dispose = function() {
         e.prototype.dispose.call(this);
-        for (var t = 0; t < this._dynamicOverlays.length; t++) this._dynamicOverlays[t].dispose();
+        for (var t = 0; t < this._dynamicOverlays.length; t++) {
+          this._dynamicOverlays[t].dispose();
+        }
         this._dynamicOverlays = null;
-        for (var t = 0; t < this._overlays.length; t++) this._overlays[t].dispose();
+        for (var t = 0; t < this._overlays.length; t++) {
+          this._overlays[t].dispose();
+        }
         this._overlays = null;
       };
 
@@ -77,17 +81,24 @@ define("vs/editor/core/view/viewOverlays", ["require", "exports", "vs/base/dom/d
       };
 
       t.prototype._render = function(e, t) {
-        for (var n = this, i = !1, o = 0; !i && o < this._dynamicOverlays.length; o++) i = this._dynamicOverlays[o].shouldCallRender() ||
-          i;
+        for (var n = this, i = !1, o = 0; !i && o < this._dynamicOverlays.length; o++) {
+          i = this._dynamicOverlays[o].shouldCallRender() || i;
+        }
         var r = null;
         if (i) {
           r = [];
-          for (var o = 0; o < this._dynamicOverlays.length; o++) r = r.concat(this._dynamicOverlays[o].render(e, t));
+          for (var o = 0; o < this._dynamicOverlays.length; o++) {
+            r = r.concat(this._dynamicOverlays[o].render(e, t));
+          }
         }
-        for (var o = 0; o < this._overlays.length; o++) this._overlays[o].prepareRender(e);
+        for (var o = 0; o < this._overlays.length; o++) {
+          this._overlays[o].prepareRender(e);
+        }
         this._requestModificationFrame(function() {
           r && (n._dynamicDomNode.innerHTML = r.join(""));
-          for (var t = 0; t < n._overlays.length; t++) n._overlays[t].render(e);
+          for (var t = 0; t < n._overlays.length; t++) {
+            n._overlays[t].render(e);
+          }
           n._scrollHeight !== e.scrollHeight && (n._scrollHeight = e.scrollHeight, n._backgroundDomNode.style.height =
             n._scrollHeight + "px");
           var i = e.getViewportVerticalOffsetForLineNumber(e.visibleRange.startLineNumber) + "px";

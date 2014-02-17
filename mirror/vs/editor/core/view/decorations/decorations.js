@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -170,31 +172,21 @@ define(["require", "exports", "vs/editor/core/view/viewEventHandler", "vs/css!./
           } else {
             h = a.visibleRangesForRange(g, !1);
             if (h)
-              while (h.next()) b.push('<div class="');
-
-            b.push(f.options.className);
-
-            b.push('" style="top:');
-
-            b.push(h.getTop().toString());
-
-            b.push("px;left:");
-
-            c.push(h.getLeft());
-
-            d.push(b.length);
-
-            b.push((h.getLeft() - a.viewportLeft).toString());
-
-            b.push("px;width:");
-
-            b.push(h.getWidth().toString());
-
-            b.push("px;height:");
-
-            b.push(i.toString());
-
-            b.push('px;"></div>');
+              while (h.next()) {
+                b.push('<div class="');
+                b.push(f.options.className);
+                b.push('" style="top:');
+                b.push(h.getTop().toString());
+                b.push("px;left:");
+                c.push(h.getLeft());
+                d.push(b.length);
+                b.push((h.getLeft() - a.viewportLeft).toString());
+                b.push("px;width:");
+                b.push(h.getWidth().toString());
+                b.push("px;height:");
+                b.push(i.toString());
+                b.push('px;"></div>');
+              }
           }
       }
       b.push("</div>");
@@ -211,12 +203,11 @@ define(["require", "exports", "vs/editor/core/view/viewEventHandler", "vs/css!./
     };
 
     b.prototype.render = function(a) {
-      if (this.shouldRender) this.previousRender = this.actualRender(a);
-
-      this.shouldRender = !1;
-
-      this.horizontalScrollChanged = !1;
-      else if (this.horizontalScrollChanged) {
+      if (this.shouldRender) {
+        this.previousRender = this.actualRender(a);
+        this.shouldRender = !1;
+        this.horizontalScrollChanged = !1;
+      } else if (this.horizontalScrollChanged) {
         var b;
 
         var c;
@@ -226,7 +217,9 @@ define(["require", "exports", "vs/editor/core/view/viewEventHandler", "vs/css!./
         var e = this.previousRender.lefts;
 
         var f = this.previousRender.leftsIndices;
-        for (b = 0, c = e.length; b < c; b++) d[f[b]] = (e[b] - a.viewportLeft).toString();
+        for (b = 0, c = e.length; b < c; b++) {
+          d[f[b]] = (e[b] - a.viewportLeft).toString();
+        }
         this.horizontalScrollChanged = !1;
       }
       return this.previousRender.html;

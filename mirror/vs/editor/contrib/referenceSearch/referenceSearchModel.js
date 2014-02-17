@@ -180,7 +180,9 @@ define("vs/editor/contrib/referenceSearch/referenceSearchModel", ["require", "ex
         return new c(s, t, s._requestService.getPath("root", t) || t.getPath());
       });
       a.forEach(function(e) {
-        for (var t = 0, n = e.value.length; n > t; t++) e.key.children.push(new l(e.key, e.value[t]));
+        for (var t = 0, n = e.value.length; n > t; t++) {
+          e.key.children.push(new l(e.key, e.value[t]));
+        }
       });
 
       this._references = a.keys.toArray();
@@ -229,7 +231,9 @@ define("vs/editor/contrib/referenceSearch/referenceSearchModel", ["require", "ex
           var r;
           if (o.children.some(function(e) {
             return a.containsPosition(e.range, t) ? (r = e, !0) : !1;
-          }), r) return r;
+          }), r) {
+            return r;
+          }
         }
       }
       return null;

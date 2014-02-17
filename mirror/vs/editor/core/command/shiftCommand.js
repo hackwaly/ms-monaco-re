@@ -19,8 +19,9 @@ define("vs/editor/core/command/shiftCommand", ["require", "exports", "vs/editor/
           var a;
 
           var u = e.getLineContent(r);
-          if ("	" === u.charAt(0)) a = 1;
-          else
+          if ("	" === u.charAt(0)) {
+            a = 1;
+          } else
             for (a = 0; a < u.length && s > a; a++) {
               if ("	" === u.charAt(a)) {
                 a++;
@@ -32,7 +33,9 @@ define("vs/editor/core/command/shiftCommand", ["require", "exports", "vs/editor/
         }
       } else {
         var l = this._configuration.getOneIndent();
-        for (r = i; o >= r; r++) t.addEditOperation(new n.Range(r, 1, r, 1), l);
+        for (r = i; o >= r; r++) {
+          t.addEditOperation(new n.Range(r, 1, r, 1), l);
+        }
       }
       this._selectionId = t.trackSelection(this._selection);
     };

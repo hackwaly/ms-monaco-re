@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -94,8 +96,10 @@ define(["require", "exports", "vs/editor/core/view/viewContext", "vs/editor/edit
     b.prototype.onLayoutChanged = function(a) {
       this.contentWidth = a.contentWidth;
       var b;
-      for (b in this.widgets) this.widgets.hasOwnProperty(b) && (this.widgets[b].widget.getDomNode().style.maxWidth =
-        this.contentWidth + "px");
+      for (b in this.widgets) {
+        this.widgets.hasOwnProperty(b) && (this.widgets[b].widget.getDomNode().style.maxWidth = this.contentWidth +
+          "px");
+      }
       return !0;
     };
 
@@ -159,7 +163,9 @@ define(["require", "exports", "vs/editor/core/view/viewContext", "vs/editor/edit
 
     b.prototype.layoutBoxInViewport = function(a, b, c) {
       var d = c.visibleRangeForPosition(a);
-      if (!d) return null;
+      if (!d) {
+        return null;
+      }
       var e = b.clientWidth;
 
       var f = b.clientHeight;
@@ -204,7 +210,9 @@ define(["require", "exports", "vs/editor/core/view/viewContext", "vs/editor/edit
 
     b.prototype.prepareRenderWidget = function(a, b) {
       var c = this;
-      if (!a.position || !a.preference) return null;
+      if (!a.position || !a.preference) {
+        return null;
+      }
       var d = this.context.model.validateModelPosition(a.position);
 
       var e = this.context.model.convertModelPositionToViewPosition(d.lineNumber, d.column);
@@ -227,32 +235,45 @@ define(["require", "exports", "vs/editor/core/view/viewContext", "vs/editor/edit
           f = a.preference[i];
           if (f === g.ContentWidgetPositionPreference.ABOVE) {
             k();
-            if (!j) return null;
-            if (h === 2 || j.fitsAbove) return {
-              top: j.aboveTop,
-              left: j.left
-            };
+            if (!j) {
+              return null;
+            }
+            if (h === 2 || j.fitsAbove) {
+              return {
+                top: j.aboveTop,
+                left: j.left
+              };
+            }
           } else {
-            if (f !== g.ContentWidgetPositionPreference.BELOW) return this.prepareRenderWidgetAtExactPosition(e, b);
+            if (f !== g.ContentWidgetPositionPreference.BELOW) {
+              return this.prepareRenderWidgetAtExactPosition(e, b);
+            }
             k();
-            if (!j) return null;
-            if (h === 2 || j.fitsBelow) return {
-              top: j.belowTop,
-              left: j.left
-            };
+            if (!j) {
+              return null;
+            }
+            if (h === 2 || j.fitsBelow) {
+              return {
+                top: j.belowTop,
+                left: j.left
+              };
+            }
           }
         }
     };
 
     b.prototype.prepareRender = function(a) {
-      if (!this.shouldRender) return null;
+      if (!this.shouldRender) {
+        return null;
+      }
       var b = {};
 
       var c;
 
       var d;
-      for (d in this.widgets) this.widgets.hasOwnProperty(d) && (c = this.prepareRenderWidget(this.widgets[d], a), c &&
-        (b[d] = c));
+      for (d in this.widgets) {
+        this.widgets.hasOwnProperty(d) && (c = this.prepareRenderWidget(this.widgets[d], a), c && (b[d] = c));
+      }
       return b;
     };
 
@@ -264,9 +285,11 @@ define(["require", "exports", "vs/editor/core/view/viewContext", "vs/editor/edit
       var d;
 
       var e;
-      for (c in this.widgets) this.widgets.hasOwnProperty(c) && (d = this.widgets[c], e = this.widgets[c].widget.getDomNode(),
-        a.hasOwnProperty(c) ? (e.style.top = a[c].top + "px", e.style.left = a[c].left + "px", d.isVisible || (d.isVisible = !
-          0)) : d.isVisible && (d.isVisible = !1, e.style.top = "-1000px"));
+      for (c in this.widgets) {
+        this.widgets.hasOwnProperty(c) && (d = this.widgets[c], e = this.widgets[c].widget.getDomNode(), a.hasOwnProperty(
+            c) ? (e.style.top = a[c].top + "px", e.style.left = a[c].left + "px", d.isVisible || (d.isVisible = !0)) :
+          d.isVisible && (d.isVisible = !1, e.style.top = "-1000px"));
+      }
     };
 
     return b;

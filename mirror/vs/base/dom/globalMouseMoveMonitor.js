@@ -52,16 +52,16 @@ define("vs/base/dom/globalMouseMoveMonitor", ["require", "exports", "vs/base/lif
         this.mouseMoveCallback = t;
 
         this.onStopCallback = n;
-        for (var a = r.getSameOriginWindowChain(), u = 0; u < a.length; u++) this.hooks.push(i.addDisposableThrottledListener(
-          a[u].window.document, "mousemove", function(e) {
+        for (var a = r.getSameOriginWindowChain(), u = 0; u < a.length; u++) {
+          this.hooks.push(i.addDisposableThrottledListener(a[u].window.document, "mousemove", function(e) {
             return s.mouseMoveCallback(e);
           }, function(e, t) {
             return s.mouseMoveEventMerger(e, t);
           }));
-
-        this.hooks.push(i.addDisposableListener(a[u].window.document, "mouseup", function() {
-          return s.stopMonitoring(!0);
-        }));
+          this.hooks.push(i.addDisposableListener(a[u].window.document, "mouseup", function() {
+            return s.stopMonitoring(!0);
+          }));
+        }
         if (r.hasDifferentOriginAncestor()) {
           var l = a[a.length - 1];
           this.hooks.push(i.addDisposableListener(l.window.document, "mouseout", function(e) {

@@ -72,7 +72,9 @@ define("vs/base/worker/workerClient", ["require", "exports", "vs/base/lib/winjs.
     };
 
     t.prototype.onLoaded = function() {
-      for (this.loaded = !0; this.beforeLoadMessages.length > 0;) this.postMessage(this.beforeLoadMessages.shift());
+      for (this.loaded = !0; this.beforeLoadMessages.length > 0;) {
+        this.postMessage(this.beforeLoadMessages.shift());
+      }
     };
 
     t.prototype.getId = function() {
@@ -172,7 +174,9 @@ define("vs/base/worker/workerClient", ["require", "exports", "vs/base/lib/winjs.
         console.warn("Terminating a worker with " + e.length + " pending promises:");
 
         console.warn(this._promises);
-        for (var t in this._promises) e.hasOwnProperty(t) && this._promises[t].error("Worker forcefully terminated");
+        for (var t in this._promises) {
+          e.hasOwnProperty(t) && this._promises[t].error("Worker forcefully terminated");
+        }
       }
       this._worker.terminate();
     };
@@ -240,14 +244,12 @@ define("vs/base/worker/workerClient", ["require", "exports", "vs/base/lib/winjs.
 
     e.prototype._removeMessage = function(e) {
       for (var t = 0, n = this._messagesQueue.length; n > t; t++)
-        if (this._messagesQueue[t].id === e) this._promises.hasOwnProperty(String(e)) && delete this._promises[String(
-          e)];
-
-      this._messagesQueue.splice(t, 1);
-
-      this._processMessagesQueue();
-
-      return void 0;
+        if (this._messagesQueue[t].id === e) {
+          this._promises.hasOwnProperty(String(e)) && delete this._promises[String(e)];
+          this._messagesQueue.splice(t, 1);
+          this._processMessagesQueue();
+          return void 0;
+        }
     };
 
     e.prototype._processMessagesQueue = function() {
@@ -279,9 +281,10 @@ define("vs/base/worker/workerClient", ["require", "exports", "vs/base/lib/winjs.
           case s.MessageType.REPLY:
             var t = e;
             if (this._waitingForWorkerReply = !1, this._lastTimerEvent && this._lastTimerEvent.stop(), !this._promises
-              .hasOwnProperty(String(t.id))) this._onError("Received unexpected message from Worker:", e);
-
-            return void 0;
+              .hasOwnProperty(String(t.id))) {
+              this._onError("Received unexpected message from Worker:", e);
+              return void 0;
+            }
             switch (t.action) {
               case s.ReplyType.COMPLETE:
                 this._promises[t.id].complete(t.payload);
@@ -329,8 +332,9 @@ define("vs/base/worker/workerClient", ["require", "exports", "vs/base/lib/winjs.
             }
             break;
           default:
-            if (e.type in this && "function" == typeof this[e.type]) this[e.type](e.payload);
-            else {
+            if (e.type in this && "function" == typeof this[e.type]) {
+              this[e.type](e.payload);
+            } else {
               var i = this._messageHandlers[e.type];
               i && "function" == typeof i ? i(e.payload) : this._onError("Received unexpected message from Worker:",
                 e);

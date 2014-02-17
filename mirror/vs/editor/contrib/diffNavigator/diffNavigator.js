@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -149,7 +151,9 @@ define(["require", "exports", "vs/base/eventEmitter", "vs/base/assert", "vs/edit
     };
 
     b.prototype.dispose = function() {
-      while (this.toUnbind.length > 0) this.toUnbind.pop()();
+      while (this.toUnbind.length > 0) {
+        this.toUnbind.pop()();
+      }
       this.ranges = null;
 
       this.disposed = !0;

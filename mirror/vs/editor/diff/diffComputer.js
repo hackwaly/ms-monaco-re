@@ -1,6 +1,8 @@
 define("vs/editor/diff/diffComputer", ["require", "exports", "vs/base/diff/diff"], function(e, t, n) {
   function i(e) {
-    if (e.length <= 1) return e;
+    if (e.length <= 1) {
+      return e;
+    }
     var t;
 
     var n;
@@ -16,16 +18,14 @@ define("vs/editor/diff/diffComputer", ["require", "exports", "vs/base/diff/diff"
     var u = [e[0]];
 
     var l = u[0];
-    for (t = 1, n = e.length; n > t; t++) a = e[t];
-
-    i = a.originalStart - (l.originalStart + l.originalLength);
-
-    o = a.modifiedStart - (l.modifiedStart + l.modifiedLength);
-
-    s = Math.min(i, o);
-
-    r > s ? (l.originalLength = a.originalStart + a.originalLength - l.originalStart, l.modifiedLength = a.modifiedStart +
-      a.modifiedLength - l.modifiedStart) : (u.push(a), l = a);
+    for (t = 1, n = e.length; n > t; t++) {
+      a = e[t];
+      i = a.originalStart - (l.originalStart + l.originalLength);
+      o = a.modifiedStart - (l.modifiedStart + l.modifiedLength);
+      s = Math.min(i, o);
+      r > s ? (l.originalLength = a.originalStart + a.originalLength - l.originalStart, l.modifiedLength = a.modifiedStart +
+        a.modifiedLength - l.modifiedStart) : (u.push(a), l = a);
+    }
     return u;
   }
   var o = 2e3;
@@ -84,40 +84,40 @@ define("vs/editor/diff/diffComputer", ["require", "exports", "vs/base/diff/diff"
       var l = [];
 
       var c = [];
-      for (r = 0, i = 0, o = t.length; o > i; i++) u += t[i];
-
-      s = 1;
-
-      a = t[i].length + 1;
-
-      n && (s = this._getFirstNonBlankColumn(t[i], 1), a = this._getLastNonBlankColumn(t[i], 1));
-
-      l.push({
-        offset: r + s - 1,
-        lineNumber: i + 1,
-        column: s
-      });
-
-      c.push({
-        offset: r + a - 1,
-        lineNumber: i + 1,
-        column: a
-      });
-
-      r += t[i].length;
+      for (r = 0, i = 0, o = t.length; o > i; i++) {
+        u += t[i];
+        s = 1;
+        a = t[i].length + 1;
+        n && (s = this._getFirstNonBlankColumn(t[i], 1), a = this._getLastNonBlankColumn(t[i], 1));
+        l.push({
+          offset: r + s - 1,
+          lineNumber: i + 1,
+          column: s
+        });
+        c.push({
+          offset: r + a - 1,
+          lineNumber: i + 1,
+          column: a
+        });
+        r += t[i].length;
+      }
       e.call(this, u, l, c);
     }
     __extends(t, e);
 
     t.prototype._getFirstNonBlankColumn = function(e, t) {
       for (var n = 0, i = e.length; i > n; n++)
-        if (" " !== e.charAt(n) && "	" !== e.charAt(n)) return n + 1;
+        if (" " !== e.charAt(n) && "	" !== e.charAt(n)) {
+          return n + 1;
+        }
       return t;
     };
 
     t.prototype._getLastNonBlankColumn = function(e, t) {
       for (var n = e.length - 1; n >= 0; n--)
-        if (" " !== e.charAt(n) && "	" !== e.charAt(n)) return n + 2;
+        if (" " !== e.charAt(n) && "	" !== e.charAt(n)) {
+          return n + 2;
+        }
       return t;
     };
 
@@ -134,17 +134,18 @@ define("vs/editor/diff/diffComputer", ["require", "exports", "vs/base/diff/diff"
 
       var u = [];
       for (n = e; t >= n; n++)
-        for (o = this.startMarkers[n], r = this.endMarkers[n], i = o.offset; i < r.offset; i++) a.push({
-          offset: i,
-          lineNumber: o.lineNumber,
-          column: o.column + (i - o.offset)
-        });
-
-      u.push({
-        offset: i + 1,
-        lineNumber: o.lineNumber,
-        column: o.column + (i - o.offset) + 1
-      });
+        for (o = this.startMarkers[n], r = this.endMarkers[n], i = o.offset; i < r.offset; i++) {
+          a.push({
+            offset: i,
+            lineNumber: o.lineNumber,
+            column: o.column + (i - o.offset)
+          });
+          u.push({
+            offset: i + 1,
+            lineNumber: o.lineNumber,
+            column: o.column + (i - o.offset) + 1
+          });
+        }
       return new s(this.buffer, a, u);
     };
 
@@ -184,7 +185,9 @@ define("vs/editor/diff/diffComputer", ["require", "exports", "vs/base/diff/diff"
         s && (d = i(d));
 
         this.charChanges = [];
-        for (var h = 0, p = d.length; p > h; h++) this.charChanges.push(new u(d[h], a, l));
+        for (var h = 0, p = d.length; p > h; h++) {
+          this.charChanges.push(new u(d[h], a, l));
+        }
       }
     }
     return e;
@@ -205,13 +208,16 @@ define("vs/editor/diff/diffComputer", ["require", "exports", "vs/base/diff/diff"
     e.prototype.computeDiff = function() {
       this.computationStartTime = (new Date).getTime();
       for (var e = new n.LcsDiff(this.original, this.modified, this._continueProcessingPredicate.bind(this)), t = e.ComputeDiff(),
-          i = [], o = 0, r = t.length; r > o; o++) i.push(new l(t[o], this.original, this.modified, this._continueProcessingPredicate
-        .bind(this), this.shouldPostProcessCharChanges));
+          i = [], o = 0, r = t.length; r > o; o++) {
+        i.push(new l(t[o], this.original, this.modified, this._continueProcessingPredicate.bind(this), this.shouldPostProcessCharChanges));
+      }
       return i;
     };
 
     e.prototype._continueProcessingPredicate = function() {
-      if (0 === this.maximumRunTimeMs) return !0;
+      if (0 === this.maximumRunTimeMs) {
+        return !0;
+      }
       var e = (new Date).getTime();
       return e - this.computationStartTime < this.maximumRunTimeMs;
     };

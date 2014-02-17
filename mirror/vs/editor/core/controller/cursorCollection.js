@@ -44,14 +44,18 @@ define("vs/editor/core/controller/cursorCollection", ["require", "exports", "vs/
     e.prototype.getPositions = function() {
       var e = [];
       e.push(this.primaryCursor.getPosition());
-      for (var t = 0, n = this.secondaryCursors.length; n > t; t++) e.push(this.secondaryCursors[t].getPosition());
+      for (var t = 0, n = this.secondaryCursors.length; n > t; t++) {
+        e.push(this.secondaryCursors[t].getPosition());
+      }
       return e;
     };
 
     e.prototype.getViewPositions = function() {
       var e = [];
       e.push(this.primaryCursor.getViewPosition());
-      for (var t = 0, n = this.secondaryCursors.length; n > t; t++) e.push(this.secondaryCursors[t].getViewPosition());
+      for (var t = 0, n = this.secondaryCursors.length; n > t; t++) {
+        e.push(this.secondaryCursors[t].getViewPosition());
+      }
       return e;
     };
 
@@ -62,14 +66,18 @@ define("vs/editor/core/controller/cursorCollection", ["require", "exports", "vs/
     e.prototype.getSelections = function() {
       var e = [];
       e.push(this.primaryCursor.getSelection());
-      for (var t = 0, n = this.secondaryCursors.length; n > t; t++) e.push(this.secondaryCursors[t].getSelection());
+      for (var t = 0, n = this.secondaryCursors.length; n > t; t++) {
+        e.push(this.secondaryCursors[t].getSelection());
+      }
       return e;
     };
 
     e.prototype.getViewSelections = function() {
       var e = [];
       e.push(this.primaryCursor.getViewSelection());
-      for (var t = 0, n = this.secondaryCursors.length; n > t; t++) e.push(this.secondaryCursors[t].getViewSelection());
+      for (var t = 0, n = this.secondaryCursors.length; n > t; t++) {
+        e.push(this.secondaryCursors[t].getViewSelection());
+      }
       return e;
     };
 
@@ -87,7 +95,9 @@ define("vs/editor/core/controller/cursorCollection", ["require", "exports", "vs/
       this._mergeCursorsIfNecessary();
 
       this.primaryCursor.adjustBracketDecorations();
-      for (var e = 0, t = this.secondaryCursors.length; t > e; e++) this.secondaryCursors[e].adjustBracketDecorations();
+      for (var e = 0, t = this.secondaryCursors.length; t > e; e++) {
+        this.secondaryCursors[e].adjustBracketDecorations();
+      }
     };
 
     e.prototype.addSecondaryCursor = function(e) {
@@ -102,7 +112,9 @@ define("vs/editor/core/controller/cursorCollection", ["require", "exports", "vs/
     e.prototype.duplicateCursors = function() {
       var e = [];
       e.push(this.primaryCursor.duplicate());
-      for (var t = 0, n = this.secondaryCursors.length; n > t; t++) e.push(this.secondaryCursors[t].duplicate());
+      for (var t = 0, n = this.secondaryCursors.length; n > t; t++) {
+        e.push(this.secondaryCursors[t].duplicate());
+      }
       this.secondaryCursors = this.secondaryCursors.concat(e);
 
       this.lastAddedCursorIndex = this.secondaryCursors.length;
@@ -120,10 +132,15 @@ define("vs/editor/core/controller/cursorCollection", ["require", "exports", "vs/
 
       var i = n - t;
       if (n > t)
-        for (var o = n - t, r = 0; o > r; r++) this.addSecondaryCursor(null);
-      else if (t > n)
-        for (var s = t - n, r = 0; s > r; r++) this._removeSecondaryCursor(this.secondaryCursors.length - 1);
-      for (var r = 0; n > r; r++) e[r] && this.secondaryCursors[r].setSelection(e[r]);
+        for (var o = n - t, r = 0; o > r; r++) {
+          this.addSecondaryCursor(null);
+        } else if (t > n)
+          for (var s = t - n, r = 0; s > r; r++) {
+            this._removeSecondaryCursor(this.secondaryCursors.length - 1);
+          }
+      for (var r = 0; n > r; r++) {
+        e[r] && this.secondaryCursors[r].setSelection(e[r]);
+      }
       return i;
     };
 
@@ -137,10 +154,12 @@ define("vs/editor/core/controller/cursorCollection", ["require", "exports", "vs/
 
     e.prototype._mergeCursorsIfNecessary = function() {
       if (0 !== this.secondaryCursors.length) {
-        for (var e = this.getAll(), t = [], n = 0; n < e.length; n++) t.push({
-          index: n,
-          selection: e[n].getSelection()
-        });
+        for (var e = this.getAll(), t = [], n = 0; n < e.length; n++) {
+          t.push({
+            index: n,
+            selection: e[n].getSelection()
+          });
+        }
         t.sort(function(e, t) {
           return e.selection.startLineNumber === t.selection.startLineNumber ? e.selection.startColumn - t.selection
             .startColumn : e.selection.startLineNumber - t.selection.startLineNumber;
@@ -182,7 +201,9 @@ define("vs/editor/core/controller/cursorCollection", ["require", "exports", "vs/
 
               e[h].setSelection(_);
             }
-            for (var b = 0; b < t.length; b++) t[b].index > d && t[b].index--;
+            for (var b = 0; b < t.length; b++) {
+              t[b].index > d && t[b].index--;
+            }
             e.splice(d, 1);
 
             t.splice(c, 1);
@@ -214,7 +235,9 @@ define("vs/editor/core/controller/cursorCollection", ["require", "exports", "vs/
         t = null;
       }
       if (t)
-        for (e = 0; e < t.length; e++) n.electricChars[t[e]] = !0;
+        for (e = 0; e < t.length; e++) {
+          n.electricChars[t[e]] = !0;
+        }
       var r;
       if (this.model.getMode().characterPairSupport) try {
         r = this.model.getMode().characterPairSupport.getAutoClosingPairs();
@@ -224,9 +247,10 @@ define("vs/editor/core/controller/cursorCollection", ["require", "exports", "vs/
         r = null;
       }
       if (r)
-        for (e = 0; e < r.length; e++) n.autoClosingPairsOpen[r[e].open] = r[e].close;
-
-      n.autoClosingPairsClose[r[e].close] = r[e].open;
+        for (e = 0; e < r.length; e++) {
+          n.autoClosingPairsOpen[r[e].open] = r[e].close;
+          n.autoClosingPairsClose[r[e].close] = r[e].open;
+        }
       var s;
       if (this.model.getMode().characterPairSupport) try {
         s = this.model.getMode().characterPairSupport.getSurroundingPairs();
@@ -236,7 +260,9 @@ define("vs/editor/core/controller/cursorCollection", ["require", "exports", "vs/
         s = null;
       }
       if (s)
-        for (e = 0; e < s.length; e++) n.surroundingPairs[s[e].open] = s[e].close;
+        for (e = 0; e < s.length; e++) {
+          n.surroundingPairs[s[e].open] = s[e].close;
+        }
       return n;
     };
 

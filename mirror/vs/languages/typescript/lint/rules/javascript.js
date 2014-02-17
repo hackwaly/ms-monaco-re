@@ -56,21 +56,29 @@ define("vs/languages/typescript/lint/rules/javascript", ["require", "exports", "
     };
 
     e.prototype._isTrulyTypeScriptSpecific = function(e) {
-      if (!this._isTypeScriptSpecificToken(e)) return !1;
+      if (!this._isTypeScriptSpecificToken(e)) {
+        return !1;
+      }
       var t = [];
       do {
         for (var n = 0, r = e.childCount(); r > n; n++) {
           var i = e.childAt(n);
           i && t.push(i);
         }
-        if (e = t.shift(), this._isTypeScriptSpecificToken(e)) return !1;
+        if (e = t.shift(), this._isTypeScriptSpecificToken(e)) {
+          return !1;
+        }
       } while (t.length > 0);
       return !0;
     };
 
     e.prototype._isTypeScriptSpecificToken = function(e) {
-      if (!e) return !1;
-      if ("function" == typeof e.isTypeScriptSpecific && e.isTypeScriptSpecific()) return !0;
+      if (!e) {
+        return !1;
+      }
+      if ("function" == typeof e.isTypeScriptSpecific && e.isTypeScriptSpecific()) {
+        return !0;
+      }
       var t = e.kind();
       return t >= o.SyntaxKind.FirstTypeScriptKeyword && t <= o.SyntaxKind.LastTypeScriptKeyword ? !0 : o.SyntaxFacts
         .isFutureReservedKeyword(t) || o.SyntaxFacts.isFutureReservedKeyword(t) ? !0 : !1;
@@ -97,8 +105,10 @@ define("vs/languages/typescript/lint/rules/javascript", ["require", "exports", "
             c = n.trim(c, '"');
 
             l = !r.contains(e._AllowedStrings, c);
-          } else a.right.kind() === o.SyntaxKind.NullKeyword ? l = !0 : "undefined" === i.syntaxHelper.text(a.right) &&
-            (l = !0);
+          } else {
+            a.right.kind() === o.SyntaxKind.NullKeyword ? l = !0 : "undefined" === i.syntaxHelper.text(a.right) && (l = !
+              0);
+          }
           l && s.reportError(a, this.name, this.code);
         }
       }

@@ -1,6 +1,8 @@
 define("vs/base/dom/htmlContent", ["require", "exports", "vs/base/dom/dom"], function(e, t, n) {
   function i(e, n) {
-    if (e.isText) return document.createTextNode(e.text);
+    if (e.isText) {
+      return document.createTextNode(e.text);
+    }
     var i = e.tagName || "div";
 
     var s = document.createElement(i);
@@ -25,10 +27,13 @@ define("vs/base/dom/htmlContent", ["require", "exports", "vs/base/dom/dom"], fun
 
   function o(e, t, i) {
     var r;
-    if (2 === t.type) r = document.createTextNode(t.content);
-    else if (3 === t.type) r = document.createElement("b");
-    else if (4 === t.type) r = document.createElement("i");
-    else if (5 === t.type) {
+    if (2 === t.type) {
+      r = document.createTextNode(t.content);
+    } else if (3 === t.type) {
+      r = document.createElement("b");
+    } else if (4 === t.type) {
+      r = document.createElement("i");
+    } else if (5 === t.type) {
       var s = document.createElement("a");
       s.href = "#";
 
@@ -37,7 +42,9 @@ define("vs/base/dom/htmlContent", ["require", "exports", "vs/base/dom/dom"], fun
       });
 
       r = s;
-    } else 7 === t.type ? r = document.createElement("br") : 1 === t.type && (r = e);
+    } else {
+      7 === t.type ? r = document.createElement("br") : 1 === t.type && (r = e);
+    }
     e !== r && e.appendChild(r);
 
     Array.isArray(t.children) && t.children.forEach(function(e) {
@@ -56,8 +63,9 @@ define("vs/base/dom/htmlContent", ["require", "exports", "vs/base/dom/dom"], fun
 
         2 === i.type && (i = o.pop());
         var c = a(u);
-        if (i.type === c || 5 === i.type && 6 === c) i = o.pop();
-        else {
+        if (i.type === c || 5 === i.type && 6 === c) {
+          i = o.pop();
+        } else {
           var d = {
             type: c,
             children: []
@@ -70,12 +78,12 @@ define("vs/base/dom/htmlContent", ["require", "exports", "vs/base/dom/dom"], fun
 
           i = d;
         }
-      } else if ("\n" === u) 2 === i.type && (i = o.pop());
-
-      i.children.push({
-        type: 7
-      });
-      else if (2 !== i.type) {
+      } else if ("\n" === u) {
+        2 === i.type && (i = o.pop());
+        i.children.push({
+          type: 7
+        });
+      } else if (2 !== i.type) {
         var h = {
           type: 2,
           content: u
@@ -85,7 +93,9 @@ define("vs/base/dom/htmlContent", ["require", "exports", "vs/base/dom/dom"], fun
         o.push(i);
 
         i = h;
-      } else i.content += u;
+      } else {
+        i.content += u;
+      }
     }
     if (2 === i.type && (i = o.pop()), o.length) throw new Error("Incorrectly formatted string literal");
     return t;

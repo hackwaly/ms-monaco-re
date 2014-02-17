@@ -16,9 +16,10 @@ define("vs/editor/core/view/layout/lines/whitespaceComputer", ["require", "expor
       this.lastWhitespaceId = 0;
     }
     e.findInsertionIndex = function(e, t) {
-      for (var n, i = 0, o = e.length; o > i;) n = Math.floor((i + o) / 2);
-
-      t < e[n] ? o = n : i = n + 1;
+      for (var n, i = 0, o = e.length; o > i;) {
+        n = Math.floor((i + o) / 2);
+        t < e[n] ? o = n : i = n + 1;
+      }
       return i;
     };
 
@@ -42,8 +43,10 @@ define("vs/editor/core/view/layout/lines/whitespaceComputer", ["require", "expor
       var o;
 
       var r;
-      for (o in this.whitespaceId2Index) this.whitespaceId2Index.hasOwnProperty(o) && (r = this.whitespaceId2Index[o],
-        r >= t && (this.whitespaceId2Index[o] = r + 1));
+      for (o in this.whitespaceId2Index) {
+        this.whitespaceId2Index.hasOwnProperty(o) && (r = this.whitespaceId2Index[o], r >= t && (this.whitespaceId2Index[
+          o] = r + 1));
+      }
       this.whitespaceId2Index[e.toString()] = t;
 
       this.prefixSumValidIndex = Math.min(this.prefixSumValidIndex, t - 1);
@@ -53,11 +56,11 @@ define("vs/editor/core/view/layout/lines/whitespaceComputer", ["require", "expor
       var n = e.toString();
       if (this.whitespaceId2Index.hasOwnProperty(n)) {
         var i = this.whitespaceId2Index[n];
-        if (this.heights[i] !== t) this.heights[i] = t;
-
-        this.prefixSumValidIndex = Math.min(this.prefixSumValidIndex, i - 1);
-
-        return !0;
+        if (this.heights[i] !== t) {
+          this.heights[i] = t;
+          this.prefixSumValidIndex = Math.min(this.prefixSumValidIndex, i - 1);
+          return !0;
+        }
       }
       return !1;
     };
@@ -104,8 +107,10 @@ define("vs/editor/core/view/layout/lines/whitespaceComputer", ["require", "expor
       var t;
 
       var n;
-      for (t in this.whitespaceId2Index) this.whitespaceId2Index.hasOwnProperty(t) && (n = this.whitespaceId2Index[t],
-        n >= e && (this.whitespaceId2Index[t] = n - 1));
+      for (t in this.whitespaceId2Index) {
+        this.whitespaceId2Index.hasOwnProperty(t) && (n = this.whitespaceId2Index[t], n >= e && (this.whitespaceId2Index[
+          t] = n - 1));
+      }
     };
 
     e.prototype.onModelLinesDeleted = function(e, t) {
@@ -114,9 +119,10 @@ define("vs/editor/core/view/layout/lines/whitespaceComputer", ["require", "expor
       var i;
 
       var o;
-      for (i = 0, o = this.afterLineNumbers.length; o > i; i++) n = this.afterLineNumbers[i];
-
-      n >= e && t >= n ? this.afterLineNumbers[i] = e - 1 : n > t && (this.afterLineNumbers[i] -= t - e + 1);
+      for (i = 0, o = this.afterLineNumbers.length; o > i; i++) {
+        n = this.afterLineNumbers[i];
+        n >= e && t >= n ? this.afterLineNumbers[i] = e - 1 : n > t && (this.afterLineNumbers[i] -= t - e + 1);
+      }
     };
 
     e.prototype.onModelLinesInserted = function(e, t) {
@@ -125,9 +131,10 @@ define("vs/editor/core/view/layout/lines/whitespaceComputer", ["require", "expor
       var i;
 
       var o;
-      for (i = 0, o = this.afterLineNumbers.length; o > i; i++) n = this.afterLineNumbers[i];
-
-      n >= e && (this.afterLineNumbers[i] += t - e + 1);
+      for (i = 0, o = this.afterLineNumbers.length; o > i; i++) {
+        n = this.afterLineNumbers[i];
+        n >= e && (this.afterLineNumbers[i] += t - e + 1);
+      }
     };
 
     e.prototype.getTotalHeight = function() {
@@ -137,7 +144,9 @@ define("vs/editor/core/view/layout/lines/whitespaceComputer", ["require", "expor
     e.prototype.getAccumulatedHeight = function(e) {
       var t = Math.max(0, this.prefixSumValidIndex + 1);
       0 === t && (this.prefixSum[0] = this.heights[0], t++);
-      for (var n = t; e >= n; n++) this.prefixSum[n] = this.prefixSum[n - 1] + this.heights[n];
+      for (var n = t; e >= n; n++) {
+        this.prefixSum[n] = this.prefixSum[n - 1] + this.heights[n];
+      }
       this.prefixSumValidIndex = Math.max(this.prefixSumValidIndex, e);
 
       return this.prefixSum[e];
@@ -151,9 +160,13 @@ define("vs/editor/core/view/layout/lines/whitespaceComputer", ["require", "expor
     e.prototype.findLastWhitespaceBeforeLineNumber = function(e) {
       for (var t, n = this.afterLineNumbers, i = 0, o = n.length - 1; o >= i;)
         if (t = Math.floor((i + o) / 2), n[t] < e) {
-          if (t + 1 >= n.length || n[t + 1] >= e) return t;
+          if (t + 1 >= n.length || n[t + 1] >= e) {
+            return t;
+          }
           i = t + 1;
-        } else o = t - 1;
+        } else {
+          o = t - 1;
+        }
       return -1;
     };
 

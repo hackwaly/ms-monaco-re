@@ -58,9 +58,10 @@ define("vs/base/ui/widgets/contextview/contextview", ["require", "exports", "vs/
 
     t.prototype.layout = function() {
       if (this.isVisible()) {
-        if (this.delegate.canRelayout === !1) this.hide();
-
-        return void 0;
+        if (this.delegate.canRelayout === !1) {
+          this.hide();
+          return void 0;
+        }
         this.delegate.layout && this.delegate.layout();
 
         this.doLayout();
@@ -152,8 +153,9 @@ define("vs/base/ui/widgets/contextview/contextview", ["require", "exports", "vs/
 
     t.prototype.onDOMEvent = function(e) {
       if (this.delegate)
-        if (this.delegate.onDOMEvent) this.delegate.onDOMEvent(e, document.activeElement);
-        else {
+        if (this.delegate.onDOMEvent) {
+          this.delegate.onDOMEvent(e, document.activeElement);
+        } else {
           if (i.isAncestor(e.target, this.$container.getHTMLElement())) return;
           this.hide();
         }

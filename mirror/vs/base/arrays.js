@@ -6,18 +6,22 @@ define("vs/base/arrays", ["require", "exports"], function(e, t) {
   }
 
   function i(e, t) {
-    for (var n = 0, i = e.length; i > n; n++) t(e[n], function() {
-      e.splice(n, 1);
+    for (var n = 0, i = e.length; i > n; n++) {
+      t(e[n], function() {
+        e.splice(n, 1);
 
-      n--;
+        n--;
 
-      i--;
-    });
+        i--;
+      });
+    }
   }
 
   function o(e, t) {
     "undefined" == typeof t && (t = null);
-    for (var n = new Array(e); e-- > 0;) n.push(t);
+    for (var n = new Array(e); e-- > 0;) {
+      n.push(t);
+    }
     return n;
   }
 
@@ -26,9 +30,12 @@ define("vs/base/arrays", ["require", "exports"], function(e, t) {
       var r = Math.floor((i + o) / 2);
 
       var s = n(e[r], t);
-      if (0 > s) i = r + 1;
-      else {
-        if (!(s > 0)) return r;
+      if (0 > s) {
+        i = r + 1;
+      } else {
+        if (!(s > 0)) {
+          return r;
+        }
         o = r - 1;
       }
     }
@@ -36,14 +43,17 @@ define("vs/base/arrays", ["require", "exports"], function(e, t) {
   }
 
   function s(e) {
-    for (var t = new Array, n = 0, i = e.length; i > n; n++) t.push.apply(t, e[n]);
+    for (var t = new Array, n = 0, i = e.length; i > n; n++) {
+      t.push.apply(t, e[n]);
+    }
     return t;
   }
 
   function a(e, t) {
-    for (var n, i = 0, o = e.length - 1; o > i;) n = i + Math.ceil((o - i) / 2);
-
-    e[n].startIndex > t ? o = n - 1 : i = n;
+    for (var n, i = 0, o = e.length - 1; o > i;) {
+      n = i + Math.ceil((o - i) / 2);
+      e[n].startIndex > t ? o = n - 1 : i = n;
+    }
     return i;
   }
 

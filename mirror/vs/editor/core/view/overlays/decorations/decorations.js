@@ -122,40 +122,28 @@ define("vs/editor/core/view/overlays/decorations/decorations", ["require", "expo
         'px;">'), a = 0, u = f.length; u > a; a++)
         if (t = f[a], n = t.range, t.options.className)
           if (t.options.isWholeLine)
-            for (l = n.startLineNumber; l <= n.endLineNumber; l++) e.lineIsVisible(l) && (r = e.heightInPxForLine(l),
-              s = e.getViewportVerticalOffsetForLineNumber(l), m++, d.push('<div class="cdr '), d.push(t.options.className),
-              d.push('" style="top:'), d.push(s.toString()), d.push("px;left:0;width:100%;height:"), d.push(r.toString()),
-              d.push('px;"></div>'));
-          else if (i = e.visibleRangesForRange(n, !1))
-        for (l = 0, c = i.length; c > l; l++) o = i[l];
-
-      m++;
-
-      d.push('<div class="cdr ');
-
-      d.push(t.options.className);
-
-      d.push('" style="top:');
-
-      d.push(o.top.toString());
-
-      d.push("px;left:");
-
-      h.push(o.left);
-
-      p.push(d.length);
-
-      d.push((o.left - e.viewportLeft).toString());
-
-      d.push("px;width:");
-
-      d.push(o.width.toString());
-
-      d.push("px;height:");
-
-      d.push(g.toString());
-
-      d.push('px;"></div>');
+            for (l = n.startLineNumber; l <= n.endLineNumber; l++) {
+              e.lineIsVisible(l) && (r = e.heightInPxForLine(l), s = e.getViewportVerticalOffsetForLineNumber(l), m++,
+                d.push('<div class="cdr '), d.push(t.options.className), d.push('" style="top:'), d.push(s.toString()),
+                d.push("px;left:0;width:100%;height:"), d.push(r.toString()), d.push('px;"></div>'));
+            } else if (i = e.visibleRangesForRange(n, !1))
+              for (l = 0, c = i.length; c > l; l++) {
+                o = i[l];
+                m++;
+                d.push('<div class="cdr ');
+                d.push(t.options.className);
+                d.push('" style="top:');
+                d.push(o.top.toString());
+                d.push("px;left:");
+                h.push(o.left);
+                p.push(d.length);
+                d.push((o.left - e.viewportLeft).toString());
+                d.push("px;width:");
+                d.push(o.width.toString());
+                d.push("px;height:");
+                d.push(g.toString());
+                d.push('px;"></div>');
+              }
       d.push("</div>");
 
       return {
@@ -171,12 +159,11 @@ define("vs/editor/core/view/overlays/decorations/decorations", ["require", "expo
     };
 
     t.prototype.render = function(e, t) {
-      if (this.shouldRender) this._previousRender = this._actualRender(e);
-
-      this.shouldRender = !1;
-
-      this._horizontalScrollChanged = !1;
-      else if (this._horizontalScrollChanged) {
+      if (this.shouldRender) {
+        this._previousRender = this._actualRender(e);
+        this.shouldRender = !1;
+        this._horizontalScrollChanged = !1;
+      } else if (this._horizontalScrollChanged) {
         var n;
 
         var i;
@@ -186,7 +173,9 @@ define("vs/editor/core/view/overlays/decorations/decorations", ["require", "expo
         var r = this._previousRender.lefts;
 
         var s = this._previousRender.leftsIndices;
-        for (n = 0, i = r.length; i > n; n++) o[s[n]] = (r[n] - e.viewportLeft).toString();
+        for (n = 0, i = r.length; i > n; n++) {
+          o[s[n]] = (r[n] - e.viewportLeft).toString();
+        }
         this._horizontalScrollChanged = !1;
       }
       t && (t.renderedDecorationsPieces += this._previousRender.piecesCount);

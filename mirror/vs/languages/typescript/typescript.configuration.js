@@ -14,7 +14,9 @@ define("vs/languages/typescript/typescript.configuration", ["require", "exports"
   }
   t.impilictAnyClassifier = function(e) {
     var t = /.*?(\d+):.*?/.exec(e.message());
-    if (!t) return i.Severity.Error;
+    if (!t) {
+      return i.Severity.Error;
+    }
     var n = Number(t[1]);
     return isNaN(n) ? i.Severity.Error : n >= 7005 && 7015 >= n ? i.Severity.Warning : i.Severity.Error;
   };
@@ -61,8 +63,9 @@ define("vs/languages/typescript/typescript.configuration", ["require", "exports"
         if (this._raw.validationSettings) {
           Array.isArray(this._raw.validationSettings) || (this._raw.validationSettings = [this._raw.validationSettings]);
           var o = this._raw.validationSettings;
-          if (0 === o.length) this._raw.validationSettings = [t];
-          else {
+          if (0 === o.length) {
+            this._raw.validationSettings = [t];
+          } else {
             for (var s = !1, a = t, l = 0, c = o.length; c > l; l++) {
               var u = n.withDefaults(this._raw.validationSettings[l], a);
               u.scope = u.scope.replace(/\\/g, "/");
@@ -80,12 +83,16 @@ define("vs/languages/typescript/typescript.configuration", ["require", "exports"
             }
             s || this._raw.validationSettings.unshift(t);
           }
-        } else this._raw.validationSettings = [t];
+        } else {
+          this._raw.validationSettings = [t];
+        }
         this._raw.suggestSettings = this._raw.suggestSettings ? n.withDefaults(this._raw.suggestSettings, i) : i;
-      } else this._raw = {
-        validationSettings: [t],
-        suggestSettings: i
-      };
+      } else {
+        this._raw = {
+          validationSettings: [t],
+          suggestSettings: i
+        };
+      }
     }
     Object.defineProperty(e.prototype, "raw", {
       get: function() {

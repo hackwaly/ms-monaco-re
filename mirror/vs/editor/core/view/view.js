@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -279,7 +281,9 @@ define(["require", "exports", "vs/nls", "vs/base/dom/dom", "vs/base/eventEmitter
         },
         visibleRangeForPosition2: function(b, c) {
           var d = a.viewLines.visibleRangesForRange2(new U.Range(b, c, b, c), 0, 0, !1);
-          if (!d) return null;
+          if (!d) {
+            return null;
+          }
           d.next();
           var e = {
             top: d.getTop(),
@@ -305,7 +309,9 @@ define(["require", "exports", "vs/nls", "vs/base/dom/dom", "vs/base/eventEmitter
           var d = a.layoutProvider.getLinesViewportData(0);
 
           var e = a.viewLines.visibleRangesForRange2(new U.Range(b, c, b, c), d.visibleRangesDeltaTop, 0, !1);
-          if (!e) return null;
+          if (!e) {
+            return null;
+          }
           e.next();
           var f = {
             top: e.getTop(),
@@ -379,7 +385,9 @@ define(["require", "exports", "vs/nls", "vs/base/dom/dom", "vs/base/eventEmitter
       this.pointerHandler.dispose();
 
       this.viewLines.dispose();
-      for (var a = 0, b = this.viewParts.length; a < b; a++) this.viewParts[a].dispose();
+      for (var a = 0, b = this.viewParts.length; a < b; a++) {
+        this.viewParts[a].dispose();
+      }
       this.viewParts = [];
 
       this.layoutProvider.dispose();
@@ -547,7 +555,9 @@ define(["require", "exports", "vs/nls", "vs/base/dom/dom", "vs/base/eventEmitter
       var b = this;
 
       var c = 0;
-      if (V.browser.isFirefox || V.browser.isWebKit) c = this.viewLines.getInnerSpansTopOffset(a.startLineNumber);
+      if (V.browser.isFirefox || V.browser.isWebKit) {
+        c = this.viewLines.getInnerSpansTopOffset(a.startLineNumber);
+      }
       var d = this.layoutProvider.getCurrentViewport();
 
       var e = {
@@ -575,7 +585,9 @@ define(["require", "exports", "vs/nls", "vs/base/dom/dom", "vs/base/eventEmitter
         visibleRangeForPosition: function(d) {
           var e = b.viewLines.visibleRangesForRange2(new U.Range(d.lineNumber, d.column, d.lineNumber, d.column), a.visibleRangesDeltaTop,
             c, !1);
-          if (!e) return null;
+          if (!e) {
+            return null;
+          }
           e.next();
           var f = {
             top: e.getTop(),
@@ -587,7 +599,9 @@ define(["require", "exports", "vs/nls", "vs/base/dom/dom", "vs/base/eventEmitter
         },
         visibleRangeForPosition2: function(d, e) {
           var f = b.viewLines.visibleRangesForRange2(new U.Range(d, e, d, e), a.visibleRangesDeltaTop, c, !1);
-          if (!f) return null;
+          if (!f) {
+            return null;
+          }
           f.next();
           var g = {
             top: f.getTop(),
@@ -615,8 +629,12 @@ define(["require", "exports", "vs/nls", "vs/base/dom/dom", "vs/base/eventEmitter
       var d = [];
 
       var e = this.createRenderingContext(c);
-      for (a = 0, b = this.viewParts.length; a < b; a++) d[a] = this.viewParts[a].prepareRender(e);
-      for (a = 0, b = this.viewParts.length; a < b; a++) this.viewParts[a].render(d[a], e);
+      for (a = 0, b = this.viewParts.length; a < b; a++) {
+        d[a] = this.viewParts[a].prepareRender(e);
+      }
+      for (a = 0, b = this.viewParts.length; a < b; a++) {
+        this.viewParts[a].render(d[a], e);
+      }
     };
 
     b.prototype._setHasFocus = function(a) {

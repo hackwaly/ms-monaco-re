@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -104,13 +106,17 @@ define(["require", "exports", "vs/base/eventEmitter", "vs/base/types", "vs/platf
     };
 
     b.prototype.remove = function(a, b) {
-      if (!this.contains(a)) return !1;
+      if (!this.contains(a)) {
+        return !1;
+      }
       var c = a.toString();
 
       var d = this.data[c][0];
 
       var e = 1;
-      while (this.unbinds[c].length > 0) this.unbinds[c].pop()();
+      while (this.unbinds[c].length > 0) {
+        this.unbinds[c].pop()();
+      }
       for (var f in this.linked[c])
         if (this.linked.hasOwnProperty(f)) {
           var g = this.linked[c][f];

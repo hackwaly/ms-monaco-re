@@ -256,21 +256,22 @@ define("vs/base/ui/actions", ["require", "exports", "vs/base/lib/winjs.base", "v
 
     t.prototype.run = function(e, t) {
       var i = this;
-      if (e.enabled) this.emit(o.EventType.BEFORE_RUN, {
-        action: e
-      });
-
-      return n.Promise.as(e.run(t)).then(function(t) {
-        i.emit(o.EventType.RUN, {
-          action: e,
-          result: t
+      if (e.enabled) {
+        this.emit(o.EventType.BEFORE_RUN, {
+          action: e
         });
-      }, function(t) {
-        i.emit(o.EventType.RUN, {
-          action: e,
-          error: t
+        return n.Promise.as(e.run(t)).then(function(t) {
+          i.emit(o.EventType.RUN, {
+            action: e,
+            result: t
+          });
+        }, function(t) {
+          i.emit(o.EventType.RUN, {
+            action: e,
+            error: t
+          });
         });
-      });
+      }
     };
 
     return t;

@@ -4,7 +4,9 @@ var __extends = this.__extends || function(e, t) {
     function r() {
       this.constructor = e;
     }
-    for (var n in t) t.hasOwnProperty(n) && (e[n] = t[n]);
+    for (var n in t) {
+      t.hasOwnProperty(n) && (e[n] = t[n]);
+    }
     r.prototype = t.prototype;
 
     e.prototype = new r;

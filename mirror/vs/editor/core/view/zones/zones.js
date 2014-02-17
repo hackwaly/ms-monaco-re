@@ -2,7 +2,9 @@ var __extends = this.__extends || function(a, b) {
     function d() {
       this.constructor = a;
     }
-    for (var c in b) b.hasOwnProperty(c) && (a[c] = b[c]);
+    for (var c in b) {
+      b.hasOwnProperty(c) && (a[c] = b[c]);
+    }
     d.prototype = b.prototype;
 
     a.prototype = new d;
@@ -53,9 +55,11 @@ define(["require", "exports", "vs/base/types", "vs/editor/core/view/viewEventHan
       var b;
 
       var c;
-      for (a in this.zones) this.zones.hasOwnProperty(a) && (b = this.zones[a], c = this.heightInLinesToPixels(b.delegate
-          .heightInLines), e.isFunction(b.delegate.onComputedHeight) && b.delegate.onComputedHeight(c), b.delegate.domNode
-        .style.height = c + "px", this.whitespaceManager.changeWhitespace(parseInt(a, 10), c));
+      for (a in this.zones) {
+        this.zones.hasOwnProperty(a) && (b = this.zones[a], c = this.heightInLinesToPixels(b.delegate.heightInLines),
+          e.isFunction(b.delegate.onComputedHeight) && b.delegate.onComputedHeight(c), b.delegate.domNode.style.height =
+          c + "px", this.whitespaceManager.changeWhitespace(parseInt(a, 10), c));
+      }
       return !0;
     };
 
@@ -95,13 +99,16 @@ define(["require", "exports", "vs/base/types", "vs/editor/core/view/viewEventHan
     };
 
     b.prototype.computeWhitespaceAfterLineNumber = function(a) {
-      if (a.afterLineNumber === 0) return 0;
+      if (a.afterLineNumber === 0) {
+        return 0;
+      }
       var b;
-      if (typeof a.afterColumn != "undefined") b = this.context.model.validateModelPosition({
-        lineNumber: a.afterLineNumber,
-        column: a.afterColumn
-      });
-      else {
+      if (typeof a.afterColumn != "undefined") {
+        b = this.context.model.validateModelPosition({
+          lineNumber: a.afterLineNumber,
+          column: a.afterColumn
+        });
+      } else {
         var c = this.context.model.validateModelPosition({
           lineNumber: a.afterLineNumber,
           column: 1
@@ -175,18 +182,21 @@ define(["require", "exports", "vs/base/types", "vs/editor/core/view/viewEventHan
       var f;
 
       var g = !1;
-      for (d = 0, f = a.data.length; d < f; d++) c[a.data[d].id.toString()] = a.data[d];
-
-      g = !0;
+      for (d = 0, f = a.data.length; d < f; d++) {
+        c[a.data[d].id.toString()] = a.data[d];
+        g = !0;
+      }
       var h;
 
       var i;
-      for (h in this.zones) this.zones.hasOwnProperty(h) && (i = this.zones[h], c.hasOwnProperty(h) ? (i.delegate.domNode
-        .style.top = b.getScrolledTopFromAbsoluteTop(c[h].verticalOffset) + "px", i.delegate.domNode.style.height =
-        c[h].height + "px", i.isVisible || (i.delegate.domNode.style.display = "block", i.isVisible = !0), e.isFunction(
-          i.delegate.onDomNodeTop) && i.delegate.onDomNodeTop(b.getScrolledTopFromAbsoluteTop(c[h].verticalOffset))
-      ) : (i.isVisible && (i.delegate.domNode.style.display = "none", i.isVisible = !1), e.isFunction(i.delegate.onDomNodeTop) &&
-        i.delegate.onDomNodeTop(b.getScrolledTopFromAbsoluteTop(-1e6))));
+      for (h in this.zones) {
+        this.zones.hasOwnProperty(h) && (i = this.zones[h], c.hasOwnProperty(h) ? (i.delegate.domNode.style.top = b.getScrolledTopFromAbsoluteTop(
+            c[h].verticalOffset) + "px", i.delegate.domNode.style.height = c[h].height + "px", i.isVisible || (i.delegate
+            .domNode.style.display = "block", i.isVisible = !0), e.isFunction(i.delegate.onDomNodeTop) && i.delegate
+          .onDomNodeTop(b.getScrolledTopFromAbsoluteTop(c[h].verticalOffset))) : (i.isVisible && (i.delegate.domNode
+          .style.display = "none", i.isVisible = !1), e.isFunction(i.delegate.onDomNodeTop) && i.delegate.onDomNodeTop(
+          b.getScrolledTopFromAbsoluteTop(-1e6))));
+      }
       g && (this.domNode.style.width = b.scrollWidth + "px");
     };
 

@@ -62,7 +62,9 @@ define("vs/editor/modes/monarch/monarchCommon", ["require", "exports"], function
   function h(e, t) {
     for (; t && t.length > 0;) {
       var n = e.tokenizer[t];
-      if (n) return n;
+      if (n) {
+        return n;
+      }
       var i = t.lastIndexOf(".");
       t = 0 > i ? null : t.substr(0, i);
     }
@@ -72,7 +74,9 @@ define("vs/editor/modes/monarch/monarchCommon", ["require", "exports"], function
   function p(e, t) {
     for (; t && t.length > 0;) {
       var n = e.stateNames[t];
-      if (n) return !0;
+      if (n) {
+        return !0;
+      }
       var i = t.lastIndexOf(".");
       t = 0 > i ? null : t.substr(0, i);
     }

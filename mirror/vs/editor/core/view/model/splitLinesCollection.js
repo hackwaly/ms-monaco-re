@@ -96,19 +96,19 @@ define("vs/editor/core/view/model/splitLinesCollection", ["require", "exports",
     }
     e.prototype.constructLines = function() {
       this.lines = [];
-      for (var e, t, i = [], o = 0, r = this.model.getLineCount(); r > o; o++) t = this.linePositionMapperFactory.createLineMapper(
-        this.model.getLineContent(o + 1), this.tabSize, this.wrappingColumn);
-
-      e = new a(t);
-
-      i[o] = e.getOutputLineCount();
-
-      this.lines[o] = e;
+      for (var e, t, i = [], o = 0, r = this.model.getLineCount(); r > o; o++) {
+        t = this.linePositionMapperFactory.createLineMapper(this.model.getLineContent(o + 1), this.tabSize, this.wrappingColumn);
+        e = new a(t);
+        i[o] = e.getOutputLineCount();
+        this.lines[o] = e;
+      }
       this.prefixSumComputer = new n.PrefixSumComputer(i);
     };
 
     e.prototype.setTabSize = function(e, t) {
-      if (this.tabSize === e) return !1;
+      if (this.tabSize === e) {
+        return !1;
+      }
       this.tabSize = e;
       for (var n = 0; n < this.lines.length; n++) {
         this.lines[n].setTabSize(this.tabSize);
@@ -121,7 +121,9 @@ define("vs/editor/core/view/model/splitLinesCollection", ["require", "exports",
     };
 
     e.prototype.setWrappingColumn = function(e, t) {
-      if (this.wrappingColumn === e) return !1;
+      if (this.wrappingColumn === e) {
+        return !1;
+      }
       this.wrappingColumn = e;
       for (var n = 0; n < this.lines.length; n++) {
         this.lines[n].setWrappingColumn(this.wrappingColumn);
@@ -155,17 +157,14 @@ define("vs/editor/core/view/model/splitLinesCollection", ["require", "exports",
 
     e.prototype.onModelLinesInserted = function(e, t, n, i) {
       for (var o, s, u, l = 1 === e ? 1 : this.prefixSumComputer.getAccumulatedValue(e - 2) + 1, c = 0, d = n.length -
-          1; d >= 0; d--) u = this.linePositionMapperFactory.createLineMapper(n[d], this.tabSize, this.wrappingColumn);
-
-      o = new a(u);
-
-      this.lines.splice(e - 1, 0, o);
-
-      s = o.getOutputLineCount();
-
-      c += s;
-
-      this.prefixSumComputer.insertValue(e - 1, s);
+          1; d >= 0; d--) {
+        u = this.linePositionMapperFactory.createLineMapper(n[d], this.tabSize, this.wrappingColumn);
+        o = new a(u);
+        this.lines.splice(e - 1, 0, o);
+        s = o.getOutputLineCount();
+        c += s;
+        this.prefixSumComputer.insertValue(e - 1, s);
+      }
       var h = {
         fromLineNumber: l,
         toLineNumber: l + c - 1
@@ -207,11 +206,12 @@ define("vs/editor/core/view/model/splitLinesCollection", ["require", "exports",
 
       var v;
       if (l >= u)
-        for (var f = u; l >= f; f++) g = {
-          lineNumber: f
-        };
-
-      n(r.EventNames.LineChangedEvent, g);
+        for (var f = u; l >= f; f++) {
+          g = {
+            lineNumber: f
+          };
+          n(r.EventNames.LineChangedEvent, g);
+        }
       d >= c && (m = {
         fromLineNumber: c,
         toLineNumber: d

@@ -2,12 +2,16 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
   "vs/base/dom/mockDom", "vs/base/dom/mouseEvent", "vs/base/dom/keyboardEvent", "vs/base/errors"
 ], function(e, t, n, i, o, r, s, a, u) {
   function l(e) {
-    for (; e.firstChild;) e.removeChild(e.firstChild);
+    for (; e.firstChild;) {
+      e.removeChild(e.firstChild);
+    }
   }
 
   function c(e) {
     for (; e;) {
-      if (e === document.body) return !0;
+      if (e === document.body) {
+        return !0;
+      }
       e = e.parentNode;
     }
     return !1;
@@ -47,7 +51,9 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
 
   function g(e, n) {
     return t.addListener(e, "mouseout", function(t) {
-      for (var i = t.relatedTarget || t.toElement; i && i !== e;) i = i.parentNode;
+      for (var i = t.relatedTarget || t.toElement; i && i !== e;) {
+        i = i.parentNode;
+      }
       i !== e && n(t);
     });
   }
@@ -206,20 +212,30 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
   }
 
   function M(e, t) {
-    if (null === e) return 0;
-    for (var n = e.offsetLeft, i = e.parentNode; null !== i && (n -= i.offsetLeft, i !== t);) i = i.parentNode;
+    if (null === e) {
+      return 0;
+    }
+    for (var n = e.offsetLeft, i = e.parentNode; null !== i && (n -= i.offsetLeft, i !== t);) {
+      i = i.parentNode;
+    }
     return n;
   }
 
   function k(e, t) {
-    if (null === e) return 0;
-    for (var n = e.offsetTop, i = e.parentNode; null !== i && (n -= i.offsetTop, i !== t);) i = i.parentNode;
+    if (null === e) {
+      return 0;
+    }
+    for (var n = e.offsetTop, i = e.parentNode; null !== i && (n -= i.offsetTop, i !== t);) {
+      i = i.parentNode;
+    }
     return n;
   }
 
   function I(e, t) {
     for (; e;) {
-      if (e === t) return !0;
+      if (e === t) {
+        return !0;
+      }
       e = e.parentNode;
     }
     return !1;
@@ -244,12 +260,16 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
   }
 
   function P(e) {
-    if (!j) return null;
+    if (!j) {
+      return null;
+    }
     for (var t = O(), n = 0; n < t.length; n++) {
       var i = t[n];
 
       var o = i.selectorText.replace(/::/gi, ":");
-      if (o === e) return i;
+      if (o === e) {
+        return i;
+      }
     }
     return null;
   }
@@ -262,7 +282,9 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
         var r = o.selectorText.replace(/::/gi, ":");
         0 === r.indexOf(e) && n.push(i);
       }
-      for (var i = n.length - 1; i >= 0; i--) j.sheet.deleteRule(n[i]);
+      for (var i = n.length - 1; i >= 0; i--) {
+        j.sheet.deleteRule(n[i]);
+      }
     }
   }
 
@@ -303,7 +325,9 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
         return t;
       },
       dispose: function() {
-        for (; a.length > 0;) a.pop()();
+        for (; a.length > 0;) {
+          a.pop()();
+        }
       }
     };
     var l = function() {
@@ -338,41 +362,44 @@ define("vs/base/dom/dom", ["require", "exports", "vs/base/env", "vs/base/types",
   (function() {
     function e(e, t) {
       var r = e.className;
-      if (!r) n = -1;
-
-      return void 0;
+      if (!r) {
+        n = -1;
+        return void 0;
+      }
       t = t.trim();
       var s = r.length;
 
       var a = t.length;
-      if (0 === a) n = -1;
-
-      return void 0;
-      if (a > s) n = -1;
-
-      return void 0;
-      if (r === t) n = 0;
-
-      i = s;
-
-      return void 0;
+      if (0 === a) {
+        n = -1;
+        return void 0;
+      }
+      if (a > s) {
+        n = -1;
+        return void 0;
+      }
+      if (r === t) {
+        n = 0;
+        i = s;
+        return void 0;
+      }
       for (var u, l = -1;
         (l = r.indexOf(t, l + 1)) >= 0;) {
-        if (u = l + a, (0 === l || r.charCodeAt(l - 1) === o) && r.charCodeAt(u) === o) n = l;
-
-        i = u + 1;
-
-        return void 0;
-        if (l > 0 && r.charCodeAt(l - 1) === o && u === s) n = l - 1;
-
-        i = u;
-
-        return void 0;
-        if (0 === l && u === s) n = 0;
-
-        i = u;
-
-        return void 0;
+        if (u = l + a, (0 === l || r.charCodeAt(l - 1) === o) && r.charCodeAt(u) === o) {
+          n = l;
+          i = u + 1;
+          return void 0;
+        }
+        if (l > 0 && r.charCodeAt(l - 1) === o && u === s) {
+          n = l - 1;
+          i = u;
+          return void 0;
+        }
+        if (0 === l && u === s) {
+          n = 0;
+          i = u;
+          return void 0;
+        }
       }
       n = -1;
     }

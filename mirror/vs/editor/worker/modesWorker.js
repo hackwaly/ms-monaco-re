@@ -77,9 +77,11 @@ define("vs/editor/worker/modesWorker", ["require", "exports", "vs/base/lib/winjs
       });
 
       return n.Promise.join(o).then(function(e) {
-        for (var t = i.getSuggestionFilterMain(), n = 0; n < e.length; n++) e[n].forEach(function(e) {
-          t(s, e) && a.suggestions.push(e);
-        });
+        for (var t = i.getSuggestionFilterMain(), n = 0; n < e.length; n++) {
+          e[n].forEach(function(e) {
+            t(s, e) && a.suggestions.push(e);
+          });
+        }
         return a;
       }, function() {
         a.currentWord = "";
@@ -196,20 +198,23 @@ define("vs/editor/worker/modesWorker", ["require", "exports", "vs/base/lib/winjs
         range: null,
         value: null
       };
-      if (i) t.startColumn === t.endColumn && (t.endColumn += 1);
-
-      o = r.getValueInRange(t);
-
-      s.range = t;
-      else {
+      if (i) {
+        t.startColumn === t.endColumn && (t.endColumn += 1);
+        o = r.getValueInRange(t);
+        s.range = t;
+      } else {
         var a = {
           lineNumber: t.startLineNumber,
           column: t.startColumn
         };
 
         var u = r.getWordUntilPosition(a);
-        if (o = r.getWordAtPosition(a), 0 !== o.indexOf(u)) return null;
-        if (o.length < t.endColumn - t.startColumn) return null;
+        if (o = r.getWordAtPosition(a), 0 !== o.indexOf(u)) {
+          return null;
+        }
+        if (o.length < t.endColumn - t.startColumn) {
+          return null;
+        }
         s.range = t;
 
         s.range.startColumn = a.column - u.length;
@@ -217,11 +222,15 @@ define("vs/editor/worker/modesWorker", ["require", "exports", "vs/base/lib/winjs
         s.range.endColumn = s.range.startColumn + o.length;
       }
       var l = this.numberReplace(o, n);
-      if (null !== l) s.value = l;
-      else {
+      if (null !== l) {
+        s.value = l;
+      } else {
         var c = this.textReplace(o, n);
-        if (null !== c) s.value = c;
-        else if (i) return this.doNavigateValueSet(e, t, n, !1);
+        if (null !== c) {
+          s.value = c;
+        } else if (i) {
+          return this.doNavigateValueSet(e, t, n, !1);
+        }
       }
       return s;
     };
@@ -241,7 +250,9 @@ define("vs/editor/worker/modesWorker", ["require", "exports", "vs/base/lib/winjs
     };
 
     e.prototype.valueSetsReplace = function(e, t, n) {
-      for (var i = null; e.length > 0 && null === i;) i = this.valueSetReplace(e.pop(), t, n);
+      for (var i = null; e.length > 0 && null === i;) {
+        i = this.valueSetReplace(e.pop(), t, n);
+      }
       return i;
     };
 
@@ -327,10 +338,16 @@ define("vs/editor/worker/modesWorker", ["require", "exports", "vs/base/lib/winjs
       var d = [];
 
       var h = 0;
-      for (t = 0; t < c.length; t++) h = Math.max(h, c.charCodeAt(t));
+      for (t = 0; t < c.length; t++) {
+        h = Math.max(h, c.charCodeAt(t));
+      }
       h = Math.max("<".charCodeAt(0), "(".charCodeAt(0), "[".charCodeAt(0), "{".charCodeAt(0));
-      for (var t = 0; h >= t; t++) d[t] = String.fromCharCode(t);
-      for (t = 0; t < c.length; t++) d[c.charCodeAt(t)] = null;
+      for (var t = 0; h >= t; t++) {
+        d[t] = String.fromCharCode(t);
+      }
+      for (t = 0; t < c.length; t++) {
+        d[c.charCodeAt(t)] = null;
+      }
       d["<".charCodeAt(0)] = ">";
 
       d["(".charCodeAt(0)] = ")";
@@ -356,16 +373,14 @@ define("vs/editor/worker/modesWorker", ["require", "exports", "vs/base/lib/winjs
 
       var C;
       for (t = 1, i = o.getLineCount(); i >= t; t++) {
-        for (p = o.getLineContent(t), f = 0, g = p.length, m = null, v = 0, y = a; g > f;) _ = p.charAt(f);
-
-        C = !1;
-
-        y === l ? (" " === _ || "	" === _ || _ === m) && (r.push(this.createLink(p, t, v, f)), C = !0) : y === u ?
-          " " === _ || "	" === _ || _ === m ? C = !0 : y = l : s[y].hasOwnProperty(_) ? y = s[y][_] : C = !0;
-
-        C && (y = a, v = f + 1, b = p.charCodeAt(f), m = b < d.length ? d[b] : _);
-
-        f++;
+        for (p = o.getLineContent(t), f = 0, g = p.length, m = null, v = 0, y = a; g > f;) {
+          _ = p.charAt(f);
+          C = !1;
+          y === l ? (" " === _ || "	" === _ || _ === m) && (r.push(this.createLink(p, t, v, f)), C = !0) : y === u ?
+            " " === _ || "	" === _ || _ === m ? C = !0 : y = l : s[y].hasOwnProperty(_) ? y = s[y][_] : C = !0;
+          C && (y = a, v = f + 1, b = p.charCodeAt(f), m = b < d.length ? d[b] : _);
+          f++;
+        }
         y === l && r.push(this.createLink(p, t, v, g));
       }
       return n.TPromise.as(r);

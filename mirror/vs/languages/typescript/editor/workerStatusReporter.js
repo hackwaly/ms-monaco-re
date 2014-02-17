@@ -72,8 +72,9 @@ define("vs/languages/typescript/editor/workerStatusReporter", ["require", "expor
     e.prototype.getStatus = function(e) {
       if (!this.status) {
         this.status = [];
-        for (var t = e.getWorkers(), n = 0, i = t.length; i > n; n++) "vs/languages/typescript/typescriptWorker2" ===
-          t[n].moduleIdentifier && this.status.push(new l(t[n]));
+        for (var t = e.getWorkers(), n = 0, i = t.length; i > n; n++) {
+          "vs/languages/typescript/typescriptWorker2" === t[n].moduleIdentifier && this.status.push(new l(t[n]));
+        }
       }
       return this.status;
     };
@@ -109,7 +110,9 @@ define("vs/languages/typescript/editor/workerStatusReporter", ["require", "expor
     };
 
     e.prototype.dispose = function() {
-      for (; this.callOnDispose.length > 0;) this.callOnDispose.pop()();
+      for (; this.callOnDispose.length > 0;) {
+        this.callOnDispose.pop()();
+      }
     };
 
     e.prototype.onModelChange = function() {

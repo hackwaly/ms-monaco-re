@@ -18,7 +18,9 @@ define("vs/languages/typescript/resources/dependencyResolverFiles", ["require", 
           var c = o.lookupOrInsert(n.errors, l.path, []);
           c.push(u.createTextMarker(i.Severity.Error, 1, l.message, l.offset, l.length));
         }
-      } else n.resources.push(r.URL.fromValue(s));
+      } else {
+        n.resources.push(r.URL.fromValue(s));
+      }
     });
 
     return n;
@@ -31,8 +33,9 @@ define("vs/languages/typescript/resources/dependencyResolverFiles", ["require", 
     }
     e.prototype.load = function(e, t) {
       var i = this;
-      if (!(t instanceof l.TripleSlashReference)) return n.Promise.wrapError(
-        "only triple slash references are supported");
+      if (!(t instanceof l.TripleSlashReference)) {
+        return n.Promise.wrapError("only triple slash references are supported");
+      }
       var o = new r.URL(s.join(s.dirname(e), s.normalize(t.path)));
 
       var c = this._requestService.getPath("root", o);

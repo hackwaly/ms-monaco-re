@@ -92,11 +92,11 @@ define(["require", "exports", "vs/base/strings", "vs/editor/core/range", "vs/edi
           c += b;
 
           g += b.length;
-        } else c += a.charAt(e);
-
-      g++;
-
-      e++;
+        } else {
+          c += a.charAt(e);
+          g++;
+          e++;
+        }
       return {
         line: c,
         placeHolders: d
@@ -133,10 +133,11 @@ define(["require", "exports", "vs/base/strings", "vs/editor/core/range", "vs/edi
       var o;
 
       var p = [];
-      for (l = 0, m = this.lines.length; l < m; l++) h = this.lines[l];
-
-      l === 0 ? (p[l + 1] = c, e[l] = h) : (i = this.extractLineIndentation(h), j = h.substr(i.length), k = d.normalizeIndentation(
-        g + i), p[l + 1] = k.length - i.length, e[l] = k + j);
+      for (l = 0, m = this.lines.length; l < m; l++) {
+        h = this.lines[l];
+        l === 0 ? (p[l + 1] = c, e[l] = h) : (i = this.extractLineIndentation(h), j = h.substr(i.length), k = d.normalizeIndentation(
+          g + i), p[l + 1] = k.length - i.length, e[l] = k + j);
+      }
       var q;
 
       var r;
@@ -146,14 +147,15 @@ define(["require", "exports", "vs/base/strings", "vs/editor/core/range", "vs/edi
         q = this.placeHolders[l];
 
         s = [];
-        for (n = 0, o = q.occurences.length; n < o; n++) r = q.occurences[n];
-
-        s.push({
-          startLineNumber: r.startLineNumber + b,
-          startColumn: r.startColumn + p[r.startLineNumber],
-          endLineNumber: r.endLineNumber + b,
-          endColumn: r.endColumn + p[r.endLineNumber]
-        });
+        for (n = 0, o = q.occurences.length; n < o; n++) {
+          r = q.occurences[n];
+          s.push({
+            startLineNumber: r.startLineNumber + b,
+            startColumn: r.startColumn + p[r.startLineNumber],
+            endLineNumber: r.endLineNumber + b,
+            endColumn: r.endColumn + p[r.endLineNumber]
+          });
+        }
         f.push({
           value: q.value,
           occurences: s
@@ -206,7 +208,9 @@ define(["require", "exports", "vs/base/strings", "vs/editor/core/range", "vs/edi
         var h = a.placeHolders[e];
 
         var k = [];
-        for (var l = 0, m = h.occurences.length; l < m; l++) k.push(g.addTrackedRange(h.occurences[l]));
+        for (var l = 0, m = h.occurences.length; l < m; l++) {
+          k.push(g.addTrackedRange(h.occurences[l]));
+        }
         this.trackedPlaceHolders.push({
           ranges: k
         });
@@ -231,8 +235,9 @@ define(["require", "exports", "vs/base/strings", "vs/editor/core/range", "vs/edi
 
       this.listenersToRemove.push(this.editor.getModel().addListener(j.EventType.ModelContentChanged, function(a) {
         if (c.isFinished) return;
-        if (a.changeType === j.EventType.ModelContentChangedFlush) c.stopAll();
-        else if (a.changeType === j.EventType.ModelContentChangedLineChanged) {
+        if (a.changeType === j.EventType.ModelContentChangedFlush) {
+          c.stopAll();
+        } else if (a.changeType === j.EventType.ModelContentChangedLineChanged) {
           var b = a.lineNumber;
 
           var d = c.editor.getModel().getDecorationRange(c.highlightDecorationId);
@@ -281,8 +286,9 @@ define(["require", "exports", "vs/base/strings", "vs/editor/core/range", "vs/edi
             }
           }
         }
-        if (b) c.stopAll();
-        else if (c.finishPlaceHolderIndex !== -1) {
+        if (b) {
+          c.stopAll();
+        } else if (c.finishPlaceHolderIndex !== -1) {
           var h = c.placeHolderDecorations[c.finishPlaceHolderIndex];
 
           var i = c.editor.getModel().getDecorationRange(h);
@@ -348,7 +354,9 @@ define(["require", "exports", "vs/base/strings", "vs/editor/core/range", "vs/edi
     };
 
     a.prototype.onAccept = function() {
-      if (this.isFinished) return !1;
+      if (this.isFinished) {
+        return !1;
+      }
       if (this.finishPlaceHolderIndex !== -1) {
         var a = this.editor.getModel().getTrackedRange(this.trackedPlaceHolders[this.finishPlaceHolderIndex].ranges[0]);
         this.editor.setPosition({
@@ -393,7 +401,9 @@ define(["require", "exports", "vs/base/strings", "vs/editor/core/range", "vs/edi
       var b = this.editor.getModel();
       for (var c = 0; c < this.trackedPlaceHolders.length; c++) {
         var d = this.trackedPlaceHolders[c].ranges;
-        for (var e = 0; e < d.length; e++) b.removeTrackedRange(d[e]);
+        for (var e = 0; e < d.length; e++) {
+          b.removeTrackedRange(d[e]);
+        }
       }
       this.trackedPlaceHolders = [];
 
@@ -401,7 +411,9 @@ define(["require", "exports", "vs/base/strings", "vs/editor/core/range", "vs/edi
 
       this.editor.changeDecorations(function(b) {
         b.removeDecoration(a.highlightDecorationId);
-        for (var c = 0; c < a.placeHolderDecorations.length; c++) b.removeDecoration(a.placeHolderDecorations[c]);
+        for (var c = 0; c < a.placeHolderDecorations.length; c++) {
+          b.removeDecoration(a.placeHolderDecorations[c]);
+        }
         a.placeHolderDecorations = [];
 
         a.highlightDecorationId = null;
@@ -434,9 +446,13 @@ define(["require", "exports", "vs/base/strings", "vs/editor/core/range", "vs/edi
     };
 
     a._getSnippetCursorOnly = function(a) {
-      if (a.placeHolders.length !== 1) return null;
+      if (a.placeHolders.length !== 1) {
+        return null;
+      }
       var b = a.placeHolders[0];
-      if (b.value !== "" || b.occurences.length !== 1) return null;
+      if (b.value !== "" || b.occurences.length !== 1) {
+        return null;
+      }
       var c = b.occurences[0];
       return i.RangeUtils.isEmpty(c) ? {
         lineNumber: c.startLineNumber,

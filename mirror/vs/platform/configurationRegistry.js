@@ -33,11 +33,12 @@ define("vs/platform/configurationRegistry", ["require", "exports", "vs/nls!vs/ed
     };
 
     e.prototype.registerConfigurationNode = function(e, t, n) {
-      if (1 === t.length) e.properties[t[0]] = {
-        type: "ref",
-        $ref: n
-      };
-      else {
+      if (1 === t.length) {
+        e.properties[t[0]] = {
+          type: "ref",
+          $ref: n
+        };
+      } else {
         var i = t.shift();
         e.properties[i] || (e.properties[i] = {
           type: "object",

@@ -61,8 +61,9 @@ define("vs/editor/standalone/simpleServices", ["require", "exports", "vs/base/li
 
     e.prototype.openEditor = function(e) {
       var t = e;
-      if (this.editor._widget.getEditorType() === s.EditorType.ICodeEditor) return n.Promise.as(this.doOpenEditor(
-        this.editor._widget, t));
+      if (this.editor._widget.getEditorType() === s.EditorType.ICodeEditor) {
+        return n.Promise.as(this.doOpenEditor(this.editor._widget, t));
+      }
       var i = this.editor._widget;
       return n.Promise.as(this.doOpenEditor(i.getOriginalEditor(), t) || this.doOpenEditor(i.getModifiedEditor(), t));
     };
@@ -71,7 +72,9 @@ define("vs/editor/standalone/simpleServices", ["require", "exports", "vs/base/li
 
     e.prototype.doOpenEditor = function(e, t) {
       var n = this.findModel(e, t);
-      if (!n) return !1;
+      if (!n) {
+        return !1;
+      }
       var i = t.options.selection;
       i && (r.isUndefinedOrNull(i.endLineNumber) || r.isUndefinedOrNull(i.endColumn) ? e.setPosition({
         lineNumber: i.startLineNumber,
@@ -100,8 +103,9 @@ define("vs/editor/standalone/simpleServices", ["require", "exports", "vs/base/li
       var t;
 
       var i = e;
-      if (this.editor._widget.getEditorType() === s.EditorType.ICodeEditor) t = this.findModel(this.editor._widget, i);
-      else {
+      if (this.editor._widget.getEditorType() === s.EditorType.ICodeEditor) {
+        t = this.findModel(this.editor._widget, i);
+      } else {
         var o = this.editor._widget;
         t = this.findModel(o.getOriginalEditor(), i) || this.findModel(o.getModifiedEditor(), i);
       }

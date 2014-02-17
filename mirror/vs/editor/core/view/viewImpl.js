@@ -321,7 +321,9 @@ define("vs/editor/core/view/viewImpl", ["require", "exports", "vs/nls!vs/editor/
       this.pointerHandler.dispose();
 
       this.viewLines.dispose();
-      for (var e = 0, t = this.viewParts.length; t > e; e++) this.viewParts[e].dispose();
+      for (var e = 0, t = this.viewParts.length; t > e; e++) {
+        this.viewParts[e].dispose();
+      }
       this.viewParts = [];
 
       this.layoutProvider.dispose();
@@ -600,15 +602,20 @@ define("vs/editor/core/view/viewImpl", ["require", "exports", "vs/nls!vs/editor/
             };
           }
           var a = (new Date).getTime();
-          for (e = 0, t = this.viewParts.length; t > e; e++) this.viewParts[e].onBeforeForcedLayout();
+          for (e = 0, t = this.viewParts.length; t > e; e++) {
+            this.viewParts[e].onBeforeForcedLayout();
+          }
           var u = this.viewLines.render(n ? o.lines : null);
           n && (o.lines.time = (new Date).getTime() - a);
           var l = this.createRenderingContext(u);
 
           var c = (new Date).getTime();
-          for (e = 0, t = this.viewParts.length; t > e; e++) this.viewParts[e].onReadAfterForcedLayout(l, n ? o.parts :
-            null);
-          for (e = 0, t = this.viewParts.length; t > e; e++) this.viewParts[e].onWriteAfterForcedLayout();
+          for (e = 0, t = this.viewParts.length; t > e; e++) {
+            this.viewParts[e].onReadAfterForcedLayout(l, n ? o.parts : null);
+          }
+          for (e = 0, t = this.viewParts.length; t > e; e++) {
+            this.viewParts[e].onWriteAfterForcedLayout();
+          }
           n && (o.parts.time = (new Date).getTime() - c, o.time = (new Date).getTime() - r, o.time >= 100 && this.telemetryService &&
             this.telemetryService.publicLog("editorSlowRender", o));
         } catch (d) {

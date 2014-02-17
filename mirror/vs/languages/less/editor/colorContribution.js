@@ -59,7 +59,9 @@ define("vs/languages/less/editor/colorContribution", ["require", "exports", "vs/
     e.prototype.dispose = function() {
       var e = this;
       this._editor.changeDecorations(function(t) {
-        for (var n = 0; n < e._currentDecorations.length; n++) e._currentDecorations[n].dispose(t);
+        for (var n = 0; n < e._currentDecorations.length; n++) {
+          e._currentDecorations[n].dispose(t);
+        }
       });
 
       o.removeCSSRulesWithPrefix(this.getCSSRuleName(-1));
@@ -108,9 +110,12 @@ define("vs/languages/less/editor/colorContribution", ["require", "exports", "vs/
 
       var i = this;
       this._editor.changeDecorations(function(o) {
-        for (t = 0, n = i._currentDecorations.length; n > t; t++) i._currentDecorations[t].dispose(o);
-        for (i._currentDecorations = [], t = 0, n = e.length; n > t; t++) i._currentDecorations.push(new u(o, e[t].range,
-          i.getCSSRuleName(t)));
+        for (t = 0, n = i._currentDecorations.length; n > t; t++) {
+          i._currentDecorations[t].dispose(o);
+        }
+        for (i._currentDecorations = [], t = 0, n = e.length; n > t; t++) {
+          i._currentDecorations.push(new u(o, e[t].range, i.getCSSRuleName(t)));
+        }
       });
 
       this.onDecorationsChanged();
@@ -135,17 +140,17 @@ define("vs/languages/less/editor/colorContribution", ["require", "exports", "vs/
 
       var u = [];
       this._editor.changeDecorations(function(l) {
-        for (e = 0, t = s._currentDecorations.length; t > e; e++) r = s._currentDecorations[e];
-
-        n = a.getDecorationRange(r.trackingDecorationId);
-
-        n && !n.isEmpty() ? (u[e] = a.getValueInRange(n).replace(/[^%#a-z0-9.,()]/gi, ""), i = a.getDecorationRange(
-          r.renderingDecorationId), o = a.validateRange({
-          startLineNumber: n.startLineNumber,
-          startColumn: n.startColumn,
-          endLineNumber: n.startLineNumber,
-          endColumn: n.startColumn + 1
-        }), i && i.equalsRange(o) || l.changeDecoration(r.renderingDecorationId, o)) : u[e] = "";
+        for (e = 0, t = s._currentDecorations.length; t > e; e++) {
+          r = s._currentDecorations[e];
+          n = a.getDecorationRange(r.trackingDecorationId);
+          n && !n.isEmpty() ? (u[e] = a.getValueInRange(n).replace(/[^%#a-z0-9.,()]/gi, ""), i = a.getDecorationRange(
+            r.renderingDecorationId), o = a.validateRange({
+            startLineNumber: n.startLineNumber,
+            startColumn: n.startColumn,
+            endLineNumber: n.startLineNumber,
+            endColumn: n.startColumn + 1
+          }), i && i.equalsRange(o) || l.changeDecoration(r.renderingDecorationId, o)) : u[e] = "";
+        }
         s.ensureColors(u);
       });
     };
@@ -156,14 +161,14 @@ define("vs/languages/less/editor/colorContribution", ["require", "exports", "vs/
     };
 
     e.prototype.ensureColors = function(e) {
-      for (var t; this._currentDynamicColors.length > e.length;) o.removeCSSRulesWithPrefix(this.getCSSRuleName(this._currentDynamicColors
-        .length - 1));
-
-      this._currentDynamicColors.pop();
-      for (t = this._currentDynamicColors.length; t < e.length; t++) o.createCSSRule(this.getCSSRuleName(t), this.getCSSText(
-        e[t]));
-
-      this._currentDynamicColors.push(e[t]);
+      for (var t; this._currentDynamicColors.length > e.length;) {
+        o.removeCSSRulesWithPrefix(this.getCSSRuleName(this._currentDynamicColors.length - 1));
+        this._currentDynamicColors.pop();
+      }
+      for (t = this._currentDynamicColors.length; t < e.length; t++) {
+        o.createCSSRule(this.getCSSRuleName(t), this.getCSSText(e[t]));
+        this._currentDynamicColors.push(e[t]);
+      }
       for (t = Math.min(e.length, this._currentDynamicColors.length) - 1; t >= 0; t--) {
         if (this._currentDynamicColors[t] !== e[t]) {
           var n = o.getCSSRule(this.getCSSRuleName(t));

@@ -20,10 +20,12 @@ define("vs/editor/core/view/model/filteredLineTokens", ["require", "exports", "v
         for (this.tokens.push({
           startIndex: 0,
           type: o[u].type
-        }), s = u + 1, a = o.length; a > s && (r = o[s], !(r.startIndex >= i)); s++) this.tokens.push({
-          startIndex: r.startIndex - t,
-          type: r.type
-        });
+        }), s = u + 1, a = o.length; a > s && (r = o[s], !(r.startIndex >= i)); s++) {
+          this.tokens.push({
+            startIndex: r.startIndex - t,
+            type: r.type
+          });
+        }
       }
     }
     e.prototype.getTokens = function() {

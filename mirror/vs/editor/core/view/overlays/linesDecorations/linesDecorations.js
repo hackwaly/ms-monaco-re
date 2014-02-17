@@ -118,15 +118,15 @@ define("vs/editor/core/view/overlays/linesDecorations/linesDecorations", ["requi
       for (r = 0, s = f.length; s > r; r++)
         if (t = f[r], t.options.linesDecorationsClassName)
           if (i = t.range, t.options.isWholeLine)
-            for (c = i.startLineNumber; c <= i.endLineNumber; c++) e.lineIsVisible(c) && (a = e.getViewportVerticalOffsetForLineNumber(
-                c), m.hasOwnProperty(a.toString()) || (m[a.toString()] = {}), m[a.toString()][t.options.linesDecorationsClassName] = !
-              0);
-          else if (o = e.visibleRangesForRange(i, !1))
-        for (c = 0, d = o.length; d > c; c++) a = o[c].top;
-
-      m.hasOwnProperty(a.toString()) || (m[a.toString()] = {});
-
-      m[a.toString()][t.options.linesDecorationsClassName] = !0;
+            for (c = i.startLineNumber; c <= i.endLineNumber; c++) {
+              e.lineIsVisible(c) && (a = e.getViewportVerticalOffsetForLineNumber(c), m.hasOwnProperty(a.toString()) ||
+                (m[a.toString()] = {}), m[a.toString()][t.options.linesDecorationsClassName] = !0);
+            } else if (o = e.visibleRangesForRange(i, !1))
+              for (c = 0, d = o.length; d > c; c++) {
+                a = o[c].top;
+                m.hasOwnProperty(a.toString()) || (m[a.toString()] = {});
+                m[a.toString()][t.options.linesDecorationsClassName] = !0;
+              }
       h.push('<div class="');
 
       h.push(n.ClassNames.LINES_DECORATIONS);
@@ -146,11 +146,11 @@ define("vs/editor/core/view/overlays/linesDecorations/linesDecorations", ["requi
       h.push('px;">');
       for (u in m) {
         h.push('<div class="cldr');
-        for (l in m[u]) p++;
-
-        h.push(" ");
-
-        h.push(l);
+        for (l in m[u]) {
+          p++;
+          h.push(" ");
+          h.push(l);
+        }
         h.push('" style="top:');
 
         h.push(u);

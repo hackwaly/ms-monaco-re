@@ -2,14 +2,22 @@ define("vs/base/strings", ["require", "exports", "vs/nls!vs/editor/worker/editor
   "vs/base/types"
 ], function(e, t, n, i, o) {
   function r(e, t) {
-    for (var n = "" + e; n.length < t;) n = "0" + n;
+    for (var n = "" + e; n.length < t;) {
+      n = "0" + n;
+    }
     return n;
   }
 
   function s(e) {
-    for (var t = [], n = 0; n < arguments.length - 1; n++) t[n] = arguments[n + 1];
-    if (0 === t.length) return e;
-    for (var i = e, o = t.length, r = 0; o > r; r++) i = i.replace(new RegExp("\\{" + r + "\\}", "g"), t[r]);
+    for (var t = [], n = 0; n < arguments.length - 1; n++) {
+      t[n] = arguments[n + 1];
+    }
+    if (0 === t.length) {
+      return e;
+    }
+    for (var i = e, o = t.length, r = 0; o > r; r++) {
+      i = i.replace(new RegExp("\\{" + r + "\\}", "g"), t[r]);
+    }
     return i;
   }
 
@@ -64,9 +72,13 @@ define("vs/base/strings", ["require", "exports", "vs/nls!vs/editor/worker/editor
 
   function f(e, t) {
     var n = t.length;
-    if (0 === n || 0 === e.length) return e;
+    if (0 === n || 0 === e.length) {
+      return e;
+    }
     for (var i = 0, o = -1;
-      (o = e.indexOf(t, i)) === i;) i += n;
+      (o = e.indexOf(t, i)) === i;) {
+      i += n;
+    }
     return e.substring(i);
   }
 
@@ -74,10 +86,14 @@ define("vs/base/strings", ["require", "exports", "vs/nls!vs/editor/worker/editor
     var n = t.length;
 
     var i = e.length;
-    if (0 === n || 0 === i) return e;
+    if (0 === n || 0 === i) {
+      return e;
+    }
     for (var o = i, r = -1;;) {
       if (r = e.lastIndexOf(t, o - 1), -1 === r || r + n !== o) break;
-      if (0 === r) return "";
+      if (0 === r) {
+        return "";
+      }
       o = r;
     }
     return e.substring(0, o);
@@ -95,11 +111,17 @@ define("vs/base/strings", ["require", "exports", "vs/nls!vs/editor/worker/editor
     var t = (new Date).getTime();
 
     var i = (t - e) / 1e3;
-    if (60 > i) return n.localize("vs_base_strings", 2, Math.floor(i));
+    if (60 > i) {
+      return n.localize("vs_base_strings", 2, Math.floor(i));
+    }
     var o = i / 60;
-    if (60 > o) return n.localize("vs_base_strings", 3, Math.floor(o));
+    if (60 > o) {
+      return n.localize("vs_base_strings", 3, Math.floor(o));
+    }
     var r = o / 60;
-    if (24 > r) return n.localize("vs_base_strings", 4, Math.floor(r));
+    if (24 > r) {
+      return n.localize("vs_base_strings", 4, Math.floor(r));
+    }
     var s = r / 24;
     return n.localize("vs_base_strings", 5, Math.floor(s));
   }
@@ -110,14 +132,20 @@ define("vs/base/strings", ["require", "exports", "vs/nls!vs/editor/worker/editor
 
   function b(e, t) {
     for (var n = 0, i = t.length; i > n; n++)
-      if (e.charCodeAt(n) !== t.charCodeAt(n)) return !1;
+      if (e.charCodeAt(n) !== t.charCodeAt(n)) {
+        return !1;
+      }
     return !0;
   }
 
   function C(e, t) {
-    if (t.length > e.length) return !1;
+    if (t.length > e.length) {
+      return !1;
+    }
     for (var n = 0, i = e.length - t.length; n < t.length; n++, i++)
-      if (e.charCodeAt(i) !== t.charCodeAt(n)) return !1;
+      if (e.charCodeAt(i) !== t.charCodeAt(n)) {
+        return !1;
+      }
     return !0;
   }
 
@@ -144,9 +172,13 @@ define("vs/base/strings", ["require", "exports", "vs/nls!vs/editor/worker/editor
   }
 
   function L(e, t) {
-    if (!e) return e;
+    if (!e) {
+      return e;
+    }
     if (t) {
-      for (var n = e.split("/"), i = 0, o = n.length; o > i; i++) n[i] = encodeURIComponent(n[i]);
+      for (var n = e.split("/"), i = 0, o = n.length; o > i; i++) {
+        n[i] = encodeURIComponent(n[i]);
+      }
       return n.join("/");
     }
     return encodeURIComponent(e);
@@ -187,19 +219,25 @@ define("vs/base/strings", ["require", "exports", "vs/nls!vs/editor/worker/editor
 
   function O(e) {
     for (var t = 0, n = e.length; n > t; t++)
-      if (" " !== e.charAt(t) && "	" !== e.charAt(t)) return t;
+      if (" " !== e.charAt(t) && "	" !== e.charAt(t)) {
+        return t;
+      }
     return -1;
   }
 
   function R(e) {
     for (var t = 0, n = e.length; n > t; t++)
-      if (" " !== e.charAt(t) && "	" !== e.charAt(t)) return e.substring(0, t);
+      if (" " !== e.charAt(t) && "	" !== e.charAt(t)) {
+        return e.substring(0, t);
+      }
     return e;
   }
 
   function P(e) {
     for (var t = e.length - 1; t >= 0; t--)
-      if (" " !== e.charAt(t) && "	" !== e.charAt(t)) return t;
+      if (" " !== e.charAt(t) && "	" !== e.charAt(t)) {
+        return t;
+      }
     return -1;
   }
 
@@ -219,7 +257,9 @@ define("vs/base/strings", ["require", "exports", "vs/nls!vs/editor/worker/editor
     var n = e.length;
 
     var i = t.length;
-    if (n !== i) return !1;
+    if (n !== i) {
+      return !1;
+    }
     for (var o = 0; n > o; o++) {
       var r = e.charCodeAt(o);
 
@@ -227,9 +267,12 @@ define("vs/base/strings", ["require", "exports", "vs/nls!vs/editor/worker/editor
       if (r !== s)
         if (W(r) && W(s)) {
           var a = Math.abs(r - s);
-          if (0 !== a && 32 !== a) return !1;
-        } else if (String.fromCharCode(r).toLocaleLowerCase() !== String.fromCharCode(s).toLocaleLowerCase()) return !
-        1;
+          if (0 !== a && 32 !== a) {
+            return !1;
+          }
+        } else if (String.fromCharCode(r).toLocaleLowerCase() !== String.fromCharCode(s).toLocaleLowerCase()) {
+        return !1;
+      }
     }
     return !0;
   }
@@ -237,7 +280,9 @@ define("vs/base/strings", ["require", "exports", "vs/nls!vs/editor/worker/editor
   function V(e, t, n) {
     "undefined" == typeof n && (n = 4);
     var i = Math.abs(e.length - t.length);
-    if (i > n) return 0;
+    if (i > n) {
+      return 0;
+    }
     var o;
 
     var r;
@@ -245,11 +290,16 @@ define("vs/base/strings", ["require", "exports", "vs/nls!vs/editor/worker/editor
     var s = [];
 
     var a = [];
-    for (o = 0; o < t.length + 1; ++o) a.push(0);
-    for (o = 0; o < e.length + 1; ++o) s.push(a);
+    for (o = 0; o < t.length + 1; ++o) {
+      a.push(0);
+    }
+    for (o = 0; o < e.length + 1; ++o) {
+      s.push(a);
+    }
     for (o = 1; o < e.length + 1; ++o)
-      for (r = 1; r < t.length + 1; ++r) s[o][r] = e[o - 1] === t[r - 1] ? s[o - 1][r - 1] + 1 : Math.max(s[o - 1][r],
-        s[o][r - 1]);
+      for (r = 1; r < t.length + 1; ++r) {
+        s[o][r] = e[o - 1] === t[r - 1] ? s[o - 1][r - 1] + 1 : Math.max(s[o - 1][r], s[o][r - 1]);
+      }
     return s[e.length][t.length] - Math.sqrt(i);
   }
 
@@ -258,25 +308,35 @@ define("vs/base/strings", ["require", "exports", "vs/nls!vs/editor/worker/editor
       ch: 0,
       children: []
     }, n = 0, i = e.length; i > n; n++)
-      for (var o = t, r = e[n], s = 0, a = r.length; a > s; s++) o = B(o, r.charCodeAt(s));
+      for (var o = t, r = e[n], s = 0, a = r.length; a > s; s++) {
+        o = B(o, r.charCodeAt(s));
+      }
     return function(e) {
       for (var n = t, i = 0, o = e.length; n.children && o > i; i++)
-        if (n = U(n, e.charCodeAt(i)), !n) return !1;
+        if (n = U(n, e.charCodeAt(i)), !n) {
+          return !1;
+        }
       return !n.children;
     };
   }
 
   function U(e, t) {
-    if (!e.children) return null;
+    if (!e.children) {
+      return null;
+    }
     for (var n = 0, i = e.children.length; i > n; n++)
-      if (e.children[n].ch === t) return e.children[n];
+      if (e.children[n].ch === t) {
+        return e.children[n];
+      }
     return null;
   }
 
   function B(e, t) {
     if (e.children) {
       for (var n = e.children.length, i = 0; n > i; i++)
-        if (e.children[i].ch === t) return e.children[i];
+        if (e.children[i].ch === t) {
+          return e.children[i];
+        }
       e.children.push({
         ch: t,
         children: null

@@ -89,10 +89,12 @@ define("vs/editor/core/view/overlays/glyphMargin/glyphMargin", ["require", "expo
       var t = [];
 
       var i = 0;
-      if (!this._context.configuration.editor.glyphMargin) return {
-        html: t,
-        count: i
-      };
+      if (!this._context.configuration.editor.glyphMargin) {
+        return {
+          html: t,
+          count: i
+        };
+      }
       var o;
 
       var r;
@@ -121,15 +123,15 @@ define("vs/editor/core/view/overlays/glyphMargin/glyphMargin", ["require", "expo
       for (a = 0, u = f.length; u > a; a++)
         if (o = f[a], o.options.glyphMarginClassName)
           if (r = o.range, o.options.isWholeLine)
-            for (h = r.startLineNumber; h <= r.endLineNumber; h++) e.lineIsVisible(h) && (l = e.getViewportVerticalOffsetForLineNumber(
-                h), m.hasOwnProperty(l.toString()) || (m[l.toString()] = {}), m[l.toString()][o.options.glyphMarginClassName] = !
-              0);
-          else if (s = e.visibleRangesForRange(r, !1))
-        for (h = 0, p = s.length; p > h; h++) l = s[h].top;
-
-      m.hasOwnProperty(l.toString()) || (m[l.toString()] = {});
-
-      m[l.toString()][o.options.glyphMarginClassName] = !0;
+            for (h = r.startLineNumber; h <= r.endLineNumber; h++) {
+              e.lineIsVisible(h) && (l = e.getViewportVerticalOffsetForLineNumber(h), m.hasOwnProperty(l.toString()) ||
+                (m[l.toString()] = {}), m[l.toString()][o.options.glyphMarginClassName] = !0);
+            } else if (s = e.visibleRangesForRange(r, !1))
+              for (h = 0, p = s.length; p > h; h++) {
+                l = s[h].top;
+                m.hasOwnProperty(l.toString()) || (m[l.toString()] = {});
+                m[l.toString()][o.options.glyphMarginClassName] = !0;
+              }
       t.push('<div class="');
 
       t.push(n.ClassNames.GLYPH_MARGIN);
@@ -149,11 +151,11 @@ define("vs/editor/core/view/overlays/glyphMargin/glyphMargin", ["require", "expo
       t.push('px;">');
       for (c in m) {
         t.push('<div class="cgmr');
-        for (d in m[c]) i++;
-
-        t.push(" ");
-
-        t.push(d);
+        for (d in m[c]) {
+          i++;
+          t.push(" ");
+          t.push(d);
+        }
         t.push('" style="top:');
 
         t.push(c);

@@ -121,8 +121,9 @@ define("vs/base/ui/widgets/tree/treeDefaults", ["require", "exports", "vs/base/e
         origin: "keyboard",
         originalEvent: t
       };
-      if (e.getHighlight()) e.clearHighlight(n);
-      else {
+      if (e.getHighlight()) {
+        e.clearHighlight(n);
+      } else {
         var i = e.getFocus();
         e.collapse(i).done(function(t) {
           i && !t && e.focusParent(n);
@@ -136,8 +137,9 @@ define("vs/base/ui/widgets/tree/treeDefaults", ["require", "exports", "vs/base/e
         origin: "keyboard",
         originalEvent: t
       };
-      if (e.getHighlight()) e.clearHighlight(n);
-      else {
+      if (e.getHighlight()) {
+        e.clearHighlight(n);
+      } else {
         var o = e.getFocus();
         e.expand(o).done(null, i.onUnexpectedError);
       }
@@ -149,7 +151,9 @@ define("vs/base/ui/widgets/tree/treeDefaults", ["require", "exports", "vs/base/e
         origin: "keyboard",
         originalEvent: t
       };
-      if (e.getHighlight()) return !1;
+      if (e.getHighlight()) {
+        return !1;
+      }
       var i = e.getFocus();
       i && e.setSelection([i], n);
 
@@ -157,7 +161,9 @@ define("vs/base/ui/widgets/tree/treeDefaults", ["require", "exports", "vs/base/e
     };
 
     e.prototype.onSpace = function(e) {
-      if (e.getHighlight()) return !1;
+      if (e.getHighlight()) {
+        return !1;
+      }
       var t = e.getFocus();
       t && e.toggleExpansion(t);
 
