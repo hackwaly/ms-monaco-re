@@ -1,176 +1,178 @@
-define("vs/base/ui/widgets/quickopen/quickOpenModel", ["require", "exports", "vs/base/types"], function(e, t, n) {
-  ! function(e) {
-    e[e.PREVIEW = 0] = "PREVIEW";
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
+    }
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
+    }
+    d.prototype = b.prototype;
 
-    e[e.OPEN = 1] = "OPEN";
-  }(t.Mode || (t.Mode = {}));
-  var i = (t.Mode, 0);
+    a.prototype = new d;
+  };
 
-  var o = function() {
-    function e() {
-      this.id = (i++).toString();
+define(["require", "exports", "vs/base/types"], function(a, b, c) {
+  var d = c;
+  (function(a) {
+    a[a.PREVIEW = 0] = "PREVIEW";
+
+    a[a.OPEN = 1] = "OPEN";
+  })(b.Mode || (b.Mode = {}));
+  var e = b.Mode;
+
+  var f = 0;
+
+  var g = function() {
+    function a() {
+      this.id = (f++).toString();
 
       this.highlights = [];
     }
-    e.prototype.getId = function() {
+    a.prototype.getId = function() {
       return this.id;
     };
 
-    e.prototype.getLabel = function() {
+    a.prototype.getLabel = function() {
       return null;
     };
 
-    e.prototype.getMeta = function() {
+    a.prototype.getIcon = function() {
       return null;
     };
 
-    e.prototype.getIcon = function() {
+    a.prototype.getDescription = function() {
       return null;
     };
 
-    e.prototype.getDescription = function() {
+    a.prototype.getPath = function() {
       return null;
     };
 
-    e.prototype.getPath = function() {
-      return null;
+    a.prototype.setHighlights = function(a) {
+      this.highlights = a;
     };
 
-    e.prototype.setHighlights = function(e) {
-      this.highlights = e;
-    };
-
-    e.prototype.getHighlights = function() {
+    a.prototype.getHighlights = function() {
       return this.highlights;
     };
 
-    e.prototype.run = function() {
+    a.prototype.run = function(a) {
       return !1;
     };
 
-    return e;
+    return a;
   }();
-  t.QuickOpenEntry = o;
-  var r = function(e) {
-    function t() {
-      e.apply(this, arguments);
+  b.QuickOpenEntry = g;
+  var h = function(a) {
+    function b() {
+      a.apply(this, arguments);
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.getHeight = function() {
+    b.prototype.getHeight = function() {
       return 0;
     };
 
-    t.prototype.render = function() {
+    b.prototype.render = function(a, b, c) {
       return null;
     };
 
-    return t;
-  }(o);
-  t.QuickOpenEntryItem = r;
-  var s = function(e) {
-    function t(t, n, i) {
-      e.call(this);
+    return b;
+  }(g);
+  b.QuickOpenEntryItem = h;
+  var i = function(a) {
+    function b(b, c, d) {
+      a.call(this);
 
-      this.entry = t;
+      this.entry = b;
 
-      this.groupLabel = n;
+      this.groupLabel = c;
 
-      this.withBorder = i;
+      this.withBorder = d;
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.getGroupLabel = function() {
+    b.prototype.getGroupLabel = function() {
       return this.groupLabel;
     };
 
-    t.prototype.setGroupLabel = function(e) {
-      this.groupLabel = e;
+    b.prototype.setGroupLabel = function(a) {
+      this.groupLabel = a;
     };
 
-    t.prototype.showBorder = function() {
+    b.prototype.showBorder = function() {
       return this.withBorder;
     };
 
-    t.prototype.setShowBorder = function(e) {
-      this.withBorder = e;
+    b.prototype.setShowBorder = function(a) {
+      this.withBorder = a;
     };
 
-    t.prototype.getLabel = function() {
-      return this.entry ? this.entry.getLabel() : e.prototype.getLabel.call(this);
+    b.prototype.getLabel = function() {
+      return this.entry ? this.entry.getLabel() : a.prototype.getLabel.call(this);
     };
 
-    t.prototype.getMeta = function() {
-      return this.entry ? this.entry.getMeta() : e.prototype.getMeta.call(this);
+    b.prototype.getPath = function() {
+      return this.entry ? this.entry.getPath() : a.prototype.getPath.call(this);
     };
 
-    t.prototype.getPath = function() {
-      return this.entry ? this.entry.getPath() : e.prototype.getPath.call(this);
+    b.prototype.getIcon = function() {
+      return this.entry ? this.entry.getIcon() : a.prototype.getIcon.call(this);
     };
 
-    t.prototype.getIcon = function() {
-      return this.entry ? this.entry.getIcon() : e.prototype.getIcon.call(this);
+    b.prototype.getDescription = function() {
+      return this.entry ? this.entry.getDescription() : a.prototype.getDescription.call(this);
     };
 
-    t.prototype.getDescription = function() {
-      return this.entry ? this.entry.getDescription() : e.prototype.getDescription.call(this);
+    b.prototype.getHighlights = function() {
+      return this.entry ? this.entry.getHighlights() : a.prototype.getHighlights.call(this);
     };
 
-    t.prototype.getEntry = function() {
-      return this.entry;
-    };
-
-    t.prototype.getHighlights = function() {
-      return this.entry ? this.entry.getHighlights() : e.prototype.getHighlights.call(this);
-    };
-
-    t.prototype.setHighlights = function(t) {
+    b.prototype.setHighlights = function(b) {
       if (this.entry) {
-        this.entry.setHighlights(t);
+        this.entry.setHighlights(b);
       } else {
-        e.prototype.setHighlights.call(this, t);
+        a.prototype.setHighlights.call(this, b);
       }
     };
 
-    t.prototype.run = function(t, n) {
-      return this.entry ? this.entry.run(t, n) : e.prototype.run.call(this, t, n);
+    b.prototype.run = function(b) {
+      return this.entry ? this.entry.run(b) : a.prototype.run.call(this, b);
     };
 
-    return t;
-  }(o);
-  t.QuickOpenEntryGroup = s;
-  var a = function() {
-    function e() {
+    return b;
+  }(g);
+  b.QuickOpenEntryGroup = i;
+  var j = function() {
+    function a() {
       this._entries = [];
     }
-    Object.defineProperty(e.prototype, "entries", {
+    Object.defineProperty(a.prototype, "entries", {
       get: function() {
         return this._entries;
-      },
-      set: function(e) {
-        this._entries = e;
       },
       enumerable: !0,
       configurable: !0
     });
 
-    e.prototype.addEntries = function(e) {
-      if (n.isArray(e)) {
-        this._entries = this._entries.concat(e);
+    a.prototype.addEntries = function(a) {
+      if (d.isArray(a)) {
+        this._entries = this._entries.concat(a);
       }
     };
 
-    e.prototype.setEntries = function(e) {
-      if (n.isArray(e)) {
-        this._entries = e;
+    a.prototype.setEntries = function(a) {
+      if (d.isArray(a)) {
+        this._entries = a;
       }
     };
 
-    e.prototype.getEntries = function() {
+    a.prototype.getEntries = function() {
       return this._entries;
     };
 
-    return e;
+    return a;
   }();
-  t.QuickOpenModel = a;
+  b.QuickOpenModel = j;
 });

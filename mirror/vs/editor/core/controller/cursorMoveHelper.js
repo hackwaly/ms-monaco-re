@@ -1,96 +1,108 @@
-define("vs/editor/core/controller/cursorMoveHelper", ["require", "exports"], function(e, t) {
-  var n = function() {
-    function e(e) {
-      this.configuration = e;
+define(["require", "exports"], function(a, b) {
+  var c = function() {
+    function a(a) {
+      this.configuration = a;
     }
-    e.prototype.getLeftOfPosition = function(e, t, n) {
-      n > 1 ? n -= 1 : t > 1 && (t -= 1, n = e.getLineMaxColumn(t));
+    a.prototype.getLeftOfPosition = function(a, b, c) {
+      c > 1 ? c -= 1 : b > 1 && (b -= 1, c = a.getLineMaxColumn(b));
 
       return {
-        lineNumber: t,
-        column: n
+        lineNumber: b,
+        column: c
       };
     };
 
-    e.prototype.getRightOfPosition = function(e, t, n) {
-      n < e.getLineMaxColumn(t) ? n += 1 : t < e.getLineCount() && (t += 1, n = 1);
+    a.prototype.getRightOfPosition = function(a, b, c) {
+      c < a.getLineMaxColumn(b) ? c += 1 : b < a.getLineCount() && (b += 1, c = 1);
 
       return {
-        lineNumber: t,
-        column: n
+        lineNumber: b,
+        column: c
       };
     };
 
-    e.prototype.getPositionUp = function(e, t, n, i, o) {
-      var r = this.visibleColumnFromColumn(e, t, n) + i;
-      t -= o;
+    a.prototype.getPositionUp = function(a, b, c, d, e) {
+      var f = this.visibleColumnFromColumn(a, b, c) + d;
+      b -= e;
 
-      1 > t && (t = 1);
+      b < 1 && (b = 1);
 
-      n = this.columnFromVisibleColumn(e, t, r);
+      c = this.columnFromVisibleColumn(a, b, f);
 
-      i = r - this.visibleColumnFromColumn(e, t, n);
+      d = f - this.visibleColumnFromColumn(a, b, c);
 
       return {
-        lineNumber: t,
-        column: n,
-        leftoverVisibleColumns: i
+        lineNumber: b,
+        column: c,
+        leftoverVisibleColumns: d
       };
     };
 
-    e.prototype.getPositionDown = function(e, t, n, i, o) {
-      var r = this.visibleColumnFromColumn(e, t, n) + i;
-      t += o;
-      var s = e.getLineCount();
-      t > s && (t = s);
+    a.prototype.getPositionDown = function(a, b, c, d, e) {
+      var f = this.visibleColumnFromColumn(a, b, c) + d;
+      b += e;
+      var g = a.getLineCount();
+      b > g && (b = g);
 
-      n = this.columnFromVisibleColumn(e, t, r);
+      c = this.columnFromVisibleColumn(a, b, f);
 
-      i = r - this.visibleColumnFromColumn(e, t, n);
+      d = f - this.visibleColumnFromColumn(a, b, c);
 
       return {
-        lineNumber: t,
-        column: n,
-        leftoverVisibleColumns: i
+        lineNumber: b,
+        column: c,
+        leftoverVisibleColumns: d
       };
     };
 
-    e.prototype.getColumnAtBeginningOfLine = function(e, t, n) {
-      var i = e.getLineFirstNonWhitespaceColumn(t) || 1;
-      return n = 1 !== n && i >= n ? 1 : i;
+    a.prototype.getColumnAtBeginningOfLine = function(a, b, c) {
+      var d = a.getLineFirstNonWhitespaceColumn(b) || 1;
+      c !== 1 && c <= d ? c = 1 : c = d;
+
+      return c;
     };
 
-    e.prototype.getColumnAtEndOfLine = function(e, t, n) {
-      var i = e.getLineMaxColumn(t);
+    a.prototype.getColumnAtEndOfLine = function(a, b, c) {
+      var d = a.getLineMaxColumn(b);
 
-      var o = e.getLineLastNonWhitespaceColumn(t) || i;
-      return n = n !== i && n >= o ? i : o;
+      var e = a.getLineLastNonWhitespaceColumn(b) || d;
+      c !== d && c >= e ? c = d : c = e;
+
+      return c;
     };
 
-    e.prototype.visibleColumnFromColumn = function(e, t, n) {
-      for (var i = e.getLineContent(t), o = 0, r = 0; n - 1 > r; r++) {
-        o = "	" === i.charAt(r) ? this.nextTabColumn(o) : o + 1;
+    a.prototype.visibleColumnFromColumn = function(a, b, c) {
+      var d = a.getLineContent(b);
+
+      var e = 0;
+      for (var f = 0; f < c - 1; f++) {
+        e = d.charAt(f) === "	" ? this.nextTabColumn(e) : e + 1;
       }
-      return o;
+      return e;
     };
 
-    e.prototype.columnFromVisibleColumn = function(e, t, n) {
-      for (var i = e.getLineContent(t), o = -1, r = 0, s = 0; s < i.length && n >= r; s++) {
-        o = r;
-        r = "	" === i.charAt(s) ? this.nextTabColumn(r) : r + 1;
+    a.prototype.columnFromVisibleColumn = function(a, b, c) {
+      var d = a.getLineContent(b);
+
+      var e = -1;
+
+      var f = 0;
+      for (var g = 0; g < d.length && f <= c; g++) {
+        e = f;
+        f = d.charAt(g) === "	" ? this.nextTabColumn(f) : f + 1;
       }
-      r = Math.abs(n - r);
+      f = Math.abs(c - f);
 
-      o = Math.abs(n - o);
+      e = Math.abs(c - e);
 
-      return o > r ? s + 1 : s;
+      return f < e ? g + 1 : g;
     };
 
-    e.prototype.nextTabColumn = function(e) {
-      return e + this.configuration.getIndentationOptions().tabSize - e % this.configuration.getIndentationOptions().tabSize;
+    a.prototype.nextTabColumn = function(a) {
+      return a + this.configuration.editor.tabSize - a % this.configuration.editor.tabSize;
     };
 
-    return e;
+    return a;
   }();
-  t.ModelCursorMoveHelper = n;
+  b.ModelCursorMoveHelper = c;
 });

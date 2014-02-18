@@ -1,171 +1,173 @@
-define("vs/editor/core/view/viewController", ["require", "exports", "vs/editor/core/internalConstants",
-  "vs/editor/core/constants", "vs/editor/core/position"
-], function(e, t, n, i, o) {
-  var r = function() {
-    function e(e, t, n) {
-      this.viewModel = e;
+define(["require", "exports", "vs/editor/core/constants", "vs/editor/core/position"], function(a, b, c, d) {
+  var e = c;
 
-      this.configuration = t;
+  var f = d;
 
-      this.outgoingEventBus = n;
+  var g = function() {
+    function a(a, b, c) {
+      this.viewModel = a;
+
+      this.configuration = b;
+
+      this.outgoingEventBus = c;
     }
-    e.prototype.paste = function(e, t, i) {
-      this.configuration.handlerDispatcher.trigger(e, n.Handler.Paste, {
-        text: t,
-        pasteOnNewLine: i
+    a.prototype.paste = function(a, b, c) {
+      this.configuration.handlerDispatcher.trigger(a, e.Handler.Paste, {
+        text: b,
+        sameSource: c
       });
     };
 
-    e.prototype.type = function(e, t) {
-      this.configuration.handlerDispatcher.trigger(e, n.Handler.Type, {
-        text: t
+    a.prototype.type = function(a, b) {
+      this.configuration.handlerDispatcher.trigger(a, e.Handler.Type, {
+        text: b
       });
     };
 
-    e.prototype.cut = function(e) {
-      this.configuration.handlerDispatcher.trigger(e, n.Handler.Cut, null);
+    a.prototype.cut = function(a) {
+      this.configuration.handlerDispatcher.trigger(a, e.Handler.Cut, null);
     };
 
-    e.prototype.moveTo = function(e, t, i) {
-      this.configuration.handlerDispatcher.trigger(e, n.Handler.MoveTo, {
-        position: this.convertViewToModelPosition(t, i),
-        viewPosition: new o.Position(t, i)
+    a.prototype.moveTo = function(a, b, c) {
+      this.configuration.handlerDispatcher.trigger(a, e.Handler.MoveTo, {
+        position: this.convertViewToModelPosition(b, c),
+        viewPosition: new f.Position(b, c)
       });
     };
 
-    e.prototype.moveToSelect = function(e, t, i) {
-      this.configuration.handlerDispatcher.trigger(e, n.Handler.MoveToSelect, {
-        position: this.convertViewToModelPosition(t, i),
-        viewPosition: new o.Position(t, i)
+    a.prototype.moveToSelect = function(a, b, c) {
+      this.configuration.handlerDispatcher.trigger(a, e.Handler.MoveToSelect, {
+        position: this.convertViewToModelPosition(b, c),
+        viewPosition: new f.Position(b, c)
       });
     };
 
-    e.prototype.createCursor = function(e, t, i, r) {
-      this.configuration.handlerDispatcher.trigger(e, n.Handler.CreateCursor, {
-        position: this.convertViewToModelPosition(t, i),
-        viewPosition: new o.Position(t, i),
-        wholeLine: r
+    a.prototype.createCursor = function(a, b, c, d) {
+      this.configuration.handlerDispatcher.trigger(a, e.Handler.CreateCursor, {
+        position: this.convertViewToModelPosition(b, c),
+        viewPosition: new f.Position(b, c),
+        wholeLine: d
       });
     };
 
-    e.prototype.lastCursorMoveToSelect = function(e, t, i) {
-      this.configuration.handlerDispatcher.trigger(e, n.Handler.LastCursorMoveToSelect, {
-        position: this.convertViewToModelPosition(t, i),
-        viewPosition: new o.Position(t, i)
+    a.prototype.lastCursorMoveToSelect = function(a, b, c) {
+      this.configuration.handlerDispatcher.trigger(a, e.Handler.LastCursorMoveToSelect, {
+        position: this.convertViewToModelPosition(b, c),
+        viewPosition: new f.Position(b, c)
       });
     };
 
-    e.prototype.wordSelect = function(e, t, i, o) {
-      this.configuration.handlerDispatcher.trigger(e, n.Handler.WordSelect, {
-        position: this.convertViewToModelPosition(t, i),
-        preference: o
+    a.prototype.wordSelect = function(a, b, c, d) {
+      this.configuration.handlerDispatcher.trigger(a, e.Handler.WordSelect, {
+        position: this.convertViewToModelPosition(b, c),
+        preference: d
       });
     };
 
-    e.prototype.wordSelectDrag = function(e, t, i, o) {
-      this.configuration.handlerDispatcher.trigger(e, n.Handler.WordSelectDrag, {
-        position: this.convertViewToModelPosition(t, i),
-        preference: o
+    a.prototype.wordSelectDrag = function(a, b, c, d) {
+      this.configuration.handlerDispatcher.trigger(a, e.Handler.WordSelectDrag, {
+        position: this.convertViewToModelPosition(b, c),
+        preference: d
       });
     };
 
-    e.prototype.lastCursorWordSelect = function(e, t, i, o) {
-      this.configuration.handlerDispatcher.trigger(e, n.Handler.LastCursorWordSelect, {
-        position: this.convertViewToModelPosition(t, i),
-        preference: o
+    a.prototype.lastCursorWordSelect = function(a, b, c, d) {
+      this.configuration.handlerDispatcher.trigger(a, e.Handler.LastCursorWordSelect, {
+        position: this.convertViewToModelPosition(b, c),
+        preference: d
       });
     };
 
-    e.prototype.lineSelect = function(e, t, i) {
-      this.configuration.handlerDispatcher.trigger(e, n.Handler.LineSelect, {
-        position: this.convertViewToModelPosition(t, i),
-        viewPosition: new o.Position(t, i)
+    a.prototype.lineSelect = function(a, b, c) {
+      this.configuration.handlerDispatcher.trigger(a, e.Handler.LineSelect, {
+        position: this.convertViewToModelPosition(b, c),
+        viewPosition: new f.Position(b, c)
       });
     };
 
-    e.prototype.lineSelectDrag = function(e, t, i) {
-      this.configuration.handlerDispatcher.trigger(e, n.Handler.LineSelectDrag, {
-        position: this.convertViewToModelPosition(t, i),
-        viewPosition: new o.Position(t, i)
+    a.prototype.lineSelectDrag = function(a, b, c) {
+      this.configuration.handlerDispatcher.trigger(a, e.Handler.LineSelectDrag, {
+        position: this.convertViewToModelPosition(b, c),
+        viewPosition: new f.Position(b, c)
       });
     };
 
-    e.prototype.lastCursorLineSelect = function(e, t, i) {
-      this.configuration.handlerDispatcher.trigger(e, n.Handler.LastCursorLineSelect, {
-        position: this.convertViewToModelPosition(t, i),
-        viewPosition: new o.Position(t, i)
+    a.prototype.lastCursorLineSelect = function(a, b, c) {
+      this.configuration.handlerDispatcher.trigger(a, e.Handler.LastCursorLineSelect, {
+        position: this.convertViewToModelPosition(b, c),
+        viewPosition: new f.Position(b, c)
       });
     };
 
-    e.prototype.lastCursorLineSelectDrag = function(e, t, i) {
-      this.configuration.handlerDispatcher.trigger(e, n.Handler.LastCursorLineSelectDrag, {
-        position: this.convertViewToModelPosition(t, i),
-        viewPosition: new o.Position(t, i)
+    a.prototype.lastCursorLineSelectDrag = function(a, b, c) {
+      this.configuration.handlerDispatcher.trigger(a, e.Handler.LastCursorLineSelectDrag, {
+        position: this.convertViewToModelPosition(b, c),
+        viewPosition: new f.Position(b, c)
       });
     };
 
-    e.prototype.selectAll = function(e) {
-      this.configuration.handlerDispatcher.trigger(e, n.Handler.SelectAll, null);
+    a.prototype.selectAll = function(a) {
+      this.configuration.handlerDispatcher.trigger(a, e.Handler.SelectAll, null);
     };
 
-    e.prototype.convertViewToModelPosition = function(e, t) {
-      return this.viewModel.convertViewPositionToModelPosition(e, t);
+    a.prototype.convertViewToModelPosition = function(a, b) {
+      return this.viewModel.convertViewPositionToModelPosition(a, b);
     };
 
-    e.prototype.convertViewToModelRange = function(e) {
-      return this.viewModel.convertViewRangeToModelRange(e);
+    a.prototype.convertViewToModelRange = function(a) {
+      return this.viewModel.convertViewRangeToModelRange(a);
     };
 
-    e.prototype.convertViewToModelMouseEvent = function(e) {
-      if (e.target) {
-        if (e.target.position) {
-          e.target.position = this.convertViewToModelPosition(e.target.position.lineNumber, e.target.position.column);
+    a.prototype.convertViewToModelMouseEvent = function(a) {
+      if (a.target) {
+        if (a.target.position) {
+          a.target.position = this.convertViewToModelPosition(a.target.position.lineNumber, a.target.position.column);
         }
-        if (e.target.range) {
-          e.target.range = this.convertViewToModelRange(e.target.range);
+        if (a.target.range) {
+          a.target.range = this.convertViewToModelRange(a.target.range);
         }
       }
     };
 
-    e.prototype.emitKeyDown = function(e) {
-      this.outgoingEventBus.emit(i.EventType.KeyDown, e);
+    a.prototype.emitKeyDown = function(a) {
+      this.outgoingEventBus.emit(e.EventType.KeyDown, a);
     };
 
-    e.prototype.emitKeyUp = function(e) {
-      this.outgoingEventBus.emit(i.EventType.KeyUp, e);
+    a.prototype.emitKeyUp = function(a) {
+      this.outgoingEventBus.emit(e.EventType.KeyUp, a);
     };
 
-    e.prototype.emitContextMenu = function(e) {
-      this.convertViewToModelMouseEvent(e);
+    a.prototype.emitContextMenu = function(a) {
+      this.convertViewToModelMouseEvent(a);
 
-      this.outgoingEventBus.emit(i.EventType.ContextMenu, e);
+      this.outgoingEventBus.emit(e.EventType.ContextMenu, a);
     };
 
-    e.prototype.emitMouseMove = function(e) {
-      this.convertViewToModelMouseEvent(e);
+    a.prototype.emitMouseMove = function(a) {
+      this.convertViewToModelMouseEvent(a);
 
-      this.outgoingEventBus.emit(i.EventType.MouseMove, e);
+      this.outgoingEventBus.emit(e.EventType.MouseMove, a);
     };
 
-    e.prototype.emitMouseLeave = function(e) {
-      this.convertViewToModelMouseEvent(e);
+    a.prototype.emitMouseLeave = function(a) {
+      this.convertViewToModelMouseEvent(a);
 
-      this.outgoingEventBus.emit(i.EventType.MouseLeave, e);
+      this.outgoingEventBus.emit(e.EventType.MouseLeave, a);
     };
 
-    e.prototype.emitMouseUp = function(e) {
-      this.convertViewToModelMouseEvent(e);
+    a.prototype.emitMouseUp = function(a) {
+      this.convertViewToModelMouseEvent(a);
 
-      this.outgoingEventBus.emit(i.EventType.MouseUp, e);
+      this.outgoingEventBus.emit(e.EventType.MouseUp, a);
     };
 
-    e.prototype.emitMouseDown = function(e) {
-      this.convertViewToModelMouseEvent(e);
+    a.prototype.emitMouseDown = function(a) {
+      this.convertViewToModelMouseEvent(a);
 
-      this.outgoingEventBus.emit(i.EventType.MouseDown, e);
+      this.outgoingEventBus.emit(e.EventType.MouseDown, a);
     };
 
-    return e;
+    return a;
   }();
-  t.ViewController = r;
+  b.ViewController = g;
 });

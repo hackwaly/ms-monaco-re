@@ -1,100 +1,88 @@
-define("vs/base/async", ["require", "exports", "vs/base/errors", "vs/base/lib/winjs.base"], function(e, t, n, i) {
-  function o(e, t) {
-    return new i.Promise(function(i, o, r) {
-      e.done(function(e) {
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
+    }
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
+    }
+    d.prototype = b.prototype;
+
+    a.prototype = new d;
+  };
+
+define(["require", "exports", "vs/base/errors", "vs/base/lib/winjs.base"], function(a, b, c, d) {
+  function j(a, b) {
+    return new f.Promise(function(c, d, f) {
+      a.done(function(a) {
         try {
-          t(e);
-        } catch (o) {
-          n.onUnexpectedError(o);
+          b(a);
+        } catch (d) {
+          e.onUnexpectedError(d);
         }
-        i(e);
-      }, function(e) {
+        c(a);
+      }, function(a) {
         try {
-          t(e);
-        } catch (i) {
-          n.onUnexpectedError(i);
+          b(a);
+        } catch (c) {
+          e.onUnexpectedError(c);
         }
-        o(e);
-      }, function(e) {
-        r(e);
+        c(a);
+      }, function(a) {
+        f(a);
       });
-    }, function() {
-      e.cancel();
     });
   }
+  var e = c;
 
-  function r(e) {
-    function t() {
-      return e.length ? e.pop()() : null;
-    }
+  var f = d;
 
-    function n(e) {
-      if (e) {
-        o.push(e);
-      }
-      var r = t();
-      return r ? r.then(n) : i.Promise.as(o);
-    }
-    var o = [];
-    e = e.reverse();
-
-    return i.Promise.as(null).then(n);
-  }
-
-  function s(e) {
-    var t;
-
-    var n = this;
-
-    var i = !1;
-    return function() {
-      return i ? t : (i = !0, t = e.apply(n, arguments));
-    };
-  }
-  var a = function() {
-    function e() {
+  var g = function() {
+    function a() {
       this.activePromise = null;
 
       this.queuedPromise = null;
 
       this.queuedPromiseFactory = null;
     }
-    e.prototype.queue = function(e) {
-      var t = this;
+    a.prototype.queue = function(a) {
+      var b = this;
       if (this.activePromise) {
-        if (this.queuedPromiseFactory = e, !this.queuedPromise) {
-          var n = function() {
-            t.queuedPromise = null;
-            var e = t.queue(t.queuedPromiseFactory);
-            t.queuedPromiseFactory = null;
+        this.queuedPromiseFactory = a;
+        if (!this.queuedPromise) {
+          var c = function() {
+            b.queuedPromise = null;
+            var a = b.queue(b.queuedPromiseFactory);
+            b.queuedPromiseFactory = null;
 
-            return e;
+            return a;
           };
-          this.queuedPromise = this.activePromise.then(n, n);
+          this.queuedPromise = this.activePromise.then(c, c);
         }
-        return new i.Promise(function(e, n) {
-          t.queuedPromise.then(e, n);
-        }, function() {});
+        return new f.Promise(function(a, c) {
+          b.queuedPromise.then(a, c);
+        });
       }
-      this.activePromise = e();
+      this.activePromise = a();
 
-      return this.activePromise.then(function(e) {
-        t.activePromise = null;
+      return this.activePromise.then(function(a) {
+        b.activePromise = null;
 
-        return e;
-      }, function(e) {
-        t.activePromise = null;
+        return a;
+      }, function(a) {
+        b.activePromise = null;
 
-        return i.Promise.wrapError(e);
+        return f.Promise.wrapError(a);
       });
     };
 
-    return e;
+    return a;
   }();
-  t.Throttler = a;
-  var u = function() {
-    function e(e) {
-      this.defaultDelay = e;
+  b.Throttler = g;
+  var h = function() {
+    function a(a) {
+      this.defaultDelay = a;
 
       this.timeoutPromise = null;
 
@@ -104,43 +92,43 @@ define("vs/base/async", ["require", "exports", "vs/base/errors", "vs/base/lib/wi
 
       this.task = null;
     }
-    e.prototype.trigger = function(e, t) {
-      if ("undefined" == typeof t) {
-        t = this.defaultDelay;
+    a.prototype.trigger = function(a, b) {
+      if (typeof b == "undefined") {
+        b = this.defaultDelay;
       }
-      var n = this;
-      this.task = e;
+      var c = this;
+      this.task = a;
 
       this.cancelTimeout();
 
-      this.completionPromise || (this.completionPromise = (new i.Promise(function(e) {
-        n.onSuccess = e;
-      }, function() {})).then(function() {
-        n.completionPromise = null;
+      this.completionPromise || (this.completionPromise = (new f.Promise(function(a) {
+        c.onSuccess = a;
+      })).then(function() {
+        c.completionPromise = null;
 
-        n.onSuccess = null;
-        var e = n.task();
-        n.task = null;
+        c.onSuccess = null;
+        var a = c.task();
+        c.task = null;
 
-        return e;
+        return a;
       }));
 
-      this.timeoutPromise = i.Promise.timeout(t);
+      this.timeoutPromise = f.Promise.timeout(b);
 
       this.timeoutPromise.then(function() {
-        n.timeoutPromise = null;
+        c.timeoutPromise = null;
 
-        n.onSuccess(null);
+        c.onSuccess(null);
       });
 
       return this.completionPromise;
     };
 
-    e.prototype.isTriggered = function() {
+    a.prototype.isTriggered = function() {
       return !!this.timeoutPromise;
     };
 
-    e.prototype.cancel = function() {
+    a.prototype.cancel = function() {
       this.cancelTimeout();
 
       if (this.completionPromise) {
@@ -149,38 +137,34 @@ define("vs/base/async", ["require", "exports", "vs/base/errors", "vs/base/lib/wi
       }
     };
 
-    e.prototype.cancelTimeout = function() {
+    a.prototype.cancelTimeout = function() {
       if (this.timeoutPromise) {
         this.timeoutPromise.cancel();
         this.timeoutPromise = null;
       }
     };
 
-    return e;
+    return a;
   }();
-  t.Delayer = u;
-  var l = function(e) {
-    function t(t) {
-      e.call(this, t);
+  b.Delayer = h;
+  var i = function(a) {
+    function b(b) {
+      a.call(this, b);
 
-      this.throttler = new a;
+      this.throttler = new g;
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.trigger = function(t, n) {
-      var i = this;
-      return e.prototype.trigger.call(this, function() {
-        return i.throttler.queue(t);
-      }, n);
+    b.prototype.trigger = function(b, c) {
+      var d = this;
+      return a.prototype.trigger.call(this, function() {
+        return d.throttler.queue(b);
+      }, c);
     };
 
-    return t;
-  }(u);
-  t.ThrottledDelayer = l;
+    return b;
+  }(h);
+  b.ThrottledDelayer = i;
 
-  t.always = o;
-
-  t.sequence = r;
-
-  t.once = s;
+  b.always = j;
 });

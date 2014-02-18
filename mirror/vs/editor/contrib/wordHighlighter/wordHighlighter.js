@@ -1,9 +1,17 @@
-define("vs/editor/contrib/wordHighlighter/wordHighlighter", ["require", "exports", "vs/platform/platform",
-  "vs/editor/core/constants", "vs/editor/core/range", "vs/editor/editorExtensions", "vs/editor/editor"
-], function(e, t, n, i, o, r) {
-  var s = function() {
-    function e(e) {
-      var t = this;
+define(["require", "exports", "vs/platform/platform", "vs/editor/core/constants", "vs/editor/core/range",
+  "vs/editor/editorExtensions"
+], function(a, b, c, d, e, f) {
+  var g = c;
+
+  var h = d;
+
+  var i = e;
+
+  var j = f;
+
+  var k = function() {
+    function a(a) {
+      var b = this;
       this.workerRequestTokenId = 0;
 
       this.workerRequest = null;
@@ -16,24 +24,24 @@ define("vs/editor/contrib/wordHighlighter/wordHighlighter", ["require", "exports
 
       this.renderDecorationsTimer = -1;
 
-      this.editor = e;
+      this.editor = a;
 
       this.model = this.editor.getModel();
 
       this.toUnhook = [];
 
-      this.toUnhook.push(e.addListener(i.EventType.CursorPositionChanged, function(e) {
-        t._onPositionChanged(e);
+      this.toUnhook.push(a.addListener(h.EventType.CursorPositionChanged, function(a) {
+        b._onPositionChanged(a);
       }));
 
-      this.toUnhook.push(e.addListener(i.EventType.ModelChanged, function() {
-        t._stopAll();
+      this.toUnhook.push(a.addListener(h.EventType.ModelChanged, function(a) {
+        b._stopAll();
 
-        t.model = t.editor.getModel();
+        b.model = b.editor.getModel();
       }));
 
-      this.toUnhook.push(e.addListener("change", function() {
-        t._stopAll();
+      this.toUnhook.push(a.addListener("change", function(a) {
+        b._stopAll();
       }));
 
       this._lastWordRange = null;
@@ -52,23 +60,29 @@ define("vs/editor/contrib/wordHighlighter/wordHighlighter", ["require", "exports
 
       this.renderDecorationsTimer = -1;
     }
-    e.prototype._removeDecorations = function() {
+    a.prototype._removeDecorations = function() {
+      var a = this;
       if (this._decorationIds.length > 0) {
-        this._decorationIds = this.editor.deltaDecorations(this._decorationIds, []);
+        this.editor.changeDecorations(function(b) {
+          for (var c = 0, d = a._decorationIds.length; c < d; c++) {
+            b.removeDecoration(a._decorationIds[c]);
+          }
+        });
+        this._decorationIds = [];
       }
     };
 
-    e.prototype._stopAll = function() {
+    a.prototype._stopAll = function() {
       this._lastWordRange = null;
 
       this._removeDecorations();
 
-      if (-1 !== this.renderDecorationsTimer) {
+      if (this.renderDecorationsTimer !== -1) {
         window.clearTimeout(this.renderDecorationsTimer);
         this.renderDecorationsTimer = -1;
       }
 
-      if (null !== this.workerRequest) {
+      if (this.workerRequest !== null) {
         this.workerRequest.cancel();
         this.workerRequest = null;
       }
@@ -79,138 +93,143 @@ define("vs/editor/contrib/wordHighlighter/wordHighlighter", ["require", "exports
       }
     };
 
-    e.prototype._onPositionChanged = function(e) {
-      var t = this;
-      if ("explicit" !== e.reason) {
+    a.prototype._onPositionChanged = function(a) {
+      var b = this;
+      if (a.reason !== "explicit") {
         this._stopAll();
-        return void 0;
+        return;
+      }
+      if (this.editor.getConfiguration().readOnly) {
+        this._stopAll();
+        return;
       }
       if (!this.model.getMode().occurrencesSupport) {
         this._stopAll();
-        return void 0;
+        return;
       }
-      var n = this.editor.getSelection();
-      if (n.startLineNumber !== n.endLineNumber) {
+      var c = this.editor.getSelection();
+      if (c.startLineNumber !== c.endLineNumber) {
         this._stopAll();
-        return void 0;
+        return;
       }
-      var i = n.startLineNumber;
+      var d = c.startLineNumber;
 
-      var r = n.startColumn;
+      var e = c.startColumn;
 
-      var s = n.endColumn;
+      var f = c.endColumn;
 
-      var a = this.model.getWordAtPosition({
-        lineNumber: i,
-        column: r
-      }, !0, !0);
-      if (!a || a.startColumn > r || a.endColumn < s) {
+      var g = this.model.getWordAtPosition({
+        lineNumber: d,
+        column: e
+      }, !0);
+      if (!g || g.startColumn > e || g.endColumn < f) {
         this._stopAll();
-        return void 0;
+        return;
       }
-      for (var u = new o.Range(i, a.startColumn, i, a.endColumn), l = this._lastWordRange && this._lastWordRange.equalsRange(
-          u), c = 0, d = this._decorationIds.length; !l && d > c; c++) {
-        var h = this.model.getDecorationRange(this._decorationIds[c]);
-        if (h && h.startLineNumber === i && h.startColumn <= r && h.endColumn >= s) {
-          l = !0;
+      var h = new i.Range(d, g.startColumn, d, g.endColumn);
+
+      var j = this._lastWordRange && this._lastWordRange.equalsRange(h);
+      for (var k = 0, l = this._decorationIds.length; !j && k < l; k++) {
+        var m = this.model.getDecorationRange(this._decorationIds[k]);
+        if (m && m.startLineNumber === d && m.startColumn <= e && m.endColumn >= f) {
+          j = !0;
         }
       }
-      if (this.lastCursorPositionChangeTime = (new Date).getTime(), l) {
-        if (this.workerRequestCompleted && -1 !== this.renderDecorationsTimer) {
+      this.lastCursorPositionChangeTime = (new Date).getTime();
+      if (j) {
+        if (this.workerRequestCompleted && this.renderDecorationsTimer !== -1) {
           window.clearTimeout(this.renderDecorationsTimer);
           this.renderDecorationsTimer = -1;
           this._beginRenderDecorations();
         }
       } else {
         this._stopAll();
-        var p = ++this.workerRequestTokenId;
+        var n = ++this.workerRequestTokenId;
         this.workerRequestCompleted = !1;
 
         this.workerRequest = this.model.getMode().occurrencesSupport.findOccurrences(this.model.getAssociatedResource(),
           this.editor.getPosition());
 
-        this.workerRequest.then(function(e) {
-          if (p === t.workerRequestTokenId) {
-            t.workerRequestCompleted = !0;
-            t.workerRequestValue = e;
-            t._beginRenderDecorations();
+        this.workerRequest.then(function(a) {
+          if (n === b.workerRequestTokenId) {
+            b.workerRequestCompleted = !0;
+            b.workerRequestValue = a;
+            b._beginRenderDecorations();
           }
         }).done();
       }
-      this._lastWordRange = u;
+      this._lastWordRange = h;
     };
 
-    e.prototype._beginRenderDecorations = function() {
-      var e = this;
+    a.prototype._beginRenderDecorations = function() {
+      var a = this;
 
-      var t = (new Date).getTime();
+      var b = (new Date).getTime();
 
-      var n = this.lastCursorPositionChangeTime + 250;
-      if (t >= n) {
+      var c = this.lastCursorPositionChangeTime + 250;
+      if (b >= c) {
         this.renderDecorationsTimer = -1;
         this.renderDecorations();
       } else {
         this.renderDecorationsTimer = window.setTimeout(function() {
-          e.renderDecorations();
-        }, n - t);
+          a.renderDecorations();
+        }, c - b);
       }
     };
 
-    e.prototype.renderDecorations = function() {
+    a.prototype.renderDecorations = function() {
       this.renderDecorationsTimer = -1;
-      for (var e = [], t = 0, n = this.workerRequestValue.length; n > t; t++) {
-        var i = this.workerRequestValue[t];
+      var a = [];
+      for (var b = 0, c = this.workerRequestValue.length; b < c; b++) {
+        var d = this.workerRequestValue[b];
 
-        var o = "wordHighlight";
+        var e = "wordHighlight";
 
-        var r = "rgba(246, 185, 77, 0.7)";
-        if (i.kind && "write" === i.kind) {
-          o += "Strong";
-          r = "rgba(249, 206, 130, 0.7)";
+        var f = "rgba(246, 185, 77, 0.7)";
+        if (d.kind && d.kind === "write") {
+          e += "Strong";
+          f = "rgba(249, 206, 130, 0.7)";
         }
 
-        e.push({
-          range: i.range,
+        a.push({
+          range: d.range,
           options: {
-            stickiness: 1,
             isOverlay: !1,
-            className: o,
-            overviewRuler: {
-              color: r,
-              position: 2
-            }
+            className: e,
+            showInOverviewRuler: f
           }
         });
       }
-      this._decorationIds = this.editor.deltaDecorations(this._decorationIds, e);
+      this._decorationIds = this.editor.deltaDecorations(this._decorationIds, a);
     };
 
-    e.prototype.destroy = function() {
-      for (this._stopAll(); this.toUnhook.length > 0;) {
+    a.prototype.destroy = function() {
+      this._stopAll();
+      while (this.toUnhook.length > 0) {
         this.toUnhook.pop()();
       }
     };
 
-    return e;
+    return a;
   }();
 
-  var a = function() {
-    function e(e) {
-      this.wordHighligher = new s(e);
+  var l = function() {
+    function a(a) {
+      this.wordHighligher = new k(a);
     }
-    e.prototype.getId = function() {
-      return e.ID;
+    a.prototype.getId = function() {
+      return a.ID;
     };
 
-    e.prototype.dispose = function() {
+    a.prototype.dispose = function() {
       this.wordHighligher.destroy();
     };
 
-    e.ID = "editor.contrib.wordHighlighter";
+    a.ID = "editor.contrib.wordHighlighter";
 
-    return e;
+    return a;
   }();
 
-  var u = n.Registry.as(r.Extensions.EditorContributions);
-  u.registerEditorContribution(new n.BaseDescriptor(a));
+  var m = g.Registry.as(j.Extensions.EditorContributions);
+  m.registerEditorContribution(new g.BaseDescriptor(l));
 });

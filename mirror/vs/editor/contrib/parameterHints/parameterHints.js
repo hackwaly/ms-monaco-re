@@ -1,51 +1,84 @@
-define("vs/editor/contrib/parameterHints/parameterHints", ["require", "exports", "vs/nls!vs/editor/editor.main",
-  "./parameterHintsModel", "./parameterHintsWidget", "vs/base/lib/winjs.base", "vs/editor/editorExtensions",
-  "vs/platform/platform", "vs/platform/actionRegistry"
-], function(e, t, n, i, o, r, s, a, u) {
-  var l = function(e) {
-    function t(t, n) {
-      e.call(this, t, n);
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
     }
-    __extends(t, e);
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
+    }
+    d.prototype = b.prototype;
 
-    t.prototype.injectInstantiationService = function(e) {
-      this.model = new i.ParameterHintsModel(this.editor);
+    a.prototype = new d;
+  };
 
-      this.widget = e.createInstance(o.ParameterHintsWidget, this.model, this.editor);
-    };
+define(["require", "exports", "vs/nls", "./parameterHintsModel", "./parameterHintsWidget", "vs/base/lib/winjs.base",
+  "vs/editor/editorExtensions", "vs/platform/platform", "vs/platform/actionRegistry"
+], function(a, b, c, d, e, f, g, h, i) {
+  var j = c;
 
-    t.prototype.getModel = function() {
+  var k = d;
+
+  var l = e;
+
+  var m = f;
+
+  var n = g;
+
+  var o = h;
+
+  var p = i;
+
+  var q = function(a) {
+    function b(b, c) {
+      a.call(this, b, c);
+
+      this.model = new k.ParameterHintsModel(this.editor);
+
+      this.parameterHintsWidget = null;
+    }
+    __extends(b, a);
+
+    b.prototype.getModel = function() {
       return this.model;
     };
 
-    t.prototype.getEnablementState = function() {
-      return e.prototype.getEnablementState.call(this) && !! this.editor.getModel().getMode().parameterHintsSupport;
+    b.prototype.injectHandlerService = function(b) {
+      a.prototype.injectHandlerService.call(this, b);
+
+      if (!this.parameterHintsWidget) {
+        this.parameterHintsWidget = new l.ParameterHintsWidget(this.model, this.editor, this.handlerService);
+      }
     };
 
-    t.prototype.run = function() {
-      return r.TPromise.as(!1);
+    b.prototype.getEnablementState = function() {
+      return a.prototype.getEnablementState.call(this) && !! this.editor.getModel().getMode().parameterHintsSupport;
     };
 
-    t.prototype.dispose = function() {
+    b.prototype.run = function() {
+      return m.Promise.as(!1);
+    };
+
+    b.prototype.dispose = function() {
+      a.prototype.dispose.call(this);
+
       if (this.model) {
         this.model.dispose();
         this.model = null;
       }
 
-      if (this.widget) {
-        this.widget.destroy();
-        this.widget = null;
+      if (this.parameterHintsWidget) {
+        this.parameterHintsWidget.destroy();
+        this.parameterHintsWidget = null;
       }
-
-      e.prototype.dispose.call(this);
     };
 
-    t.ID = "editor.contrib.parameterHints.trigger";
+    b.ID = "editor.contrib.parameterHints.trigger";
 
-    return t;
-  }(s.EditorAction);
-  t.TriggerParameterHintsAction = l;
-  var c = a.Registry.as(s.Extensions.EditorContributions);
-  c.registerEditorContribution(new u.ActionDescriptor(l, l.ID, n.localize(
-    "vs_editor_contrib_parameterHints_parameterHints", 0)));
+    return b;
+  }(n.EditorAction);
+  b.TriggerParameterHintsAction = q;
+  var r = o.Registry.as(n.Extensions.EditorContributions);
+  r.registerEditorContribution(new p.ActionDescriptor(q, q.ID, j.localize("parameterHints.trigger.label",
+    "Trigger parameter hints")));
 });

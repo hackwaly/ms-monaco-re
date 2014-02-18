@@ -1,346 +1,408 @@
-define("vs/editor/contrib/inEditorActions/inEditorActions", ["require", "exports", "vs/nls!vs/editor/editor.main",
-  "vs/base/lib/winjs.base", "vs/platform/platform", "vs/platform/actionRegistry", "vs/platform/handlerService",
-  "vs/base/dom/dom", "vs/base/eventEmitter", "vs/base/types", "vs/editor/editorExtensions",
-  "vs/editor/core/editorState", "vs/editor/core/constants", "vs/base/ui/actions", "vs/base/ui/widgets/actionbar",
-  "vs/base/dom/builder", "vs/base/ui/events", "vs/base/dom/mouseEvent", "vs/editor/editor",
-  "vs/css!./inEditorActions"
-], function(e, t, n, i, o, r, s, a, u, l, c, d, h, p, f, g, m, v) {
-  {
-    var y = g.$;
-
-    var _ = function(e) {
-      function t(n) {
-        e.call(this, [t.Events.Updated]);
-
-        this.editor = n;
-
-        this.request = i.TPromise.as(null);
-
-        this.delayedRequest = i.TPromise.as(null);
-
-        this.state = null;
-
-        this.actions = [];
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
+    }
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
       }
-      __extends(t, e);
+    }
+    d.prototype = b.prototype;
 
-      t.prototype.hasActions = function() {
-        return this.actions.length > 0;
-      };
+    a.prototype = new d;
+  };
 
-      t.prototype.getActions = function() {
-        return this.actions;
-      };
+define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/platform", "vs/platform/actionRegistry",
+  "vs/platform/handlerService", "vs/base/dom/dom", "vs/base/eventEmitter", "vs/base/types",
+  "vs/editor/editorExtensions", "vs/editor/core/editorState", "vs/editor/core/constants", "vs/base/ui/actions",
+  "vs/base/ui/widgets/actionbar", "vs/base/dom/builder", "vs/base/ui/events", "vs/base/dom/mouseEvent",
+  "vs/editor/editor", "vs/css!./inEditorActions"
+], function(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s) {
+  var t = c;
 
-      t.prototype.deferredUpdate = function() {
-        var e = this;
-        this.delayedRequest.cancel();
+  var u = d;
 
-        this.delayedRequest = i.TPromise.timeout(500);
+  var v = e;
 
-        this.delayedRequest.then(function() {
-          return e.update();
-        });
-      };
+  var w = f;
 
-      t.prototype.update = function() {
-        var e = this;
-        if (null !== this.state && this.state.validate()) {
-          this.emit(t.Events.Updated, this);
-          return i.TPromise.as(null);
+  var x = g;
+
+  var y = h;
+
+  var z = i;
+
+  var A = j;
+
+  var B = k;
+
+  var C = l;
+
+  var D = m;
+
+  var E = n;
+
+  var F = o;
+
+  var G = p;
+
+  var H = q;
+
+  var I = r;
+
+  var J = s;
+
+  var K = function(a) {
+    function b(b) {
+      a.call(this);
+
+      this.editor = b;
+
+      this.request = u.Promise.as(!0);
+
+      this.delayedRequest = u.Promise.as(!0);
+
+      this.state = null;
+
+      this.actions = [];
+    }
+    __extends(b, a);
+
+    b.prototype.hasActions = function() {
+      return this.actions.length > 0;
+    };
+
+    b.prototype.getActions = function() {
+      return this.actions;
+    };
+
+    b.prototype.deferredUpdate = function() {
+      var a = this;
+      this.delayedRequest.cancel();
+
+      this.delayedRequest = u.Promise.timeout(500);
+
+      this.delayedRequest.then(function() {
+        return a.update();
+      });
+    };
+
+    b.prototype.update = function() {
+      var a = this;
+      if (this.state !== null && this.state.validate()) {
+        this.emit(b.Events.Updated, this);
+        return u.Promise.as(null);
+      }
+      var c = this.editor.getModel();
+      if (!c || !c.getMode().inEditorActionsSupport) {
+        this.actions = [];
+        this.emit(b.Events.Updated, this);
+        return u.Promise.as(null);
+      }
+      this.request.cancel();
+
+      this.state = C.capture(this.editor, C.Flag.Position);
+      var d = c.getMode().inEditorActionsSupport;
+      this.request = d.getActionsAtPosition(this.editor.getModel().getAssociatedResource(), this.editor.getPosition());
+
+      return this.request.then(function(c) {
+        if (a.state.validate()) {
+          a.actions = c;
+        } else {
+          a.actions = [];
         }
-        var n = this.editor.getModel();
-        if (!n || !n.getMode().inEditorActionsSupport) {
-          this.actions = [];
-          this.emit(t.Events.Updated, this);
-          return i.TPromise.as(null);
-        }
-        this.request.cancel();
 
-        this.state = d.capture(this.editor, 2);
-        var o = n.getMode().inEditorActionsSupport;
-        this.request = o.getActionsAtPosition(this.editor.getModel().getAssociatedResource(), this.editor.getPosition());
+        a.emit(b.Events.Updated, a);
+      });
+    };
 
-        return this.request.then(function(n) {
-          e.actions = e.state.validate() ? n : [];
+    b.Events = {
+      Updated: "inEditorAction.model.update"
+    };
 
-          e.emit(t.Events.Updated, e);
+    return b;
+  }(z.EventEmitter);
+
+  var L = function() {
+    function a(a, b, c) {
+      this.editor = a;
+
+      this.handlerService = b;
+
+      this.model = c;
+
+      this.toUnhook = [];
+
+      this.domNode = document.createElement("div");
+
+      this.trigger = null;
+
+      this.details = null;
+
+      this.actionBar = null;
+
+      this.expanded = !1;
+
+      this.isVisible = !1;
+
+      this.create();
+
+      this.add();
+
+      this.hide();
+    }
+    a.prototype.create = function() {
+      var a = this;
+
+      var b = G.Build.withElement(this.domNode).addClass("in-editor-actions");
+      b.div({
+        "class": "arrow"
+      }, function(b) {
+        b.attr({
+          role: "button",
+          "aria-haspopup": "true",
+          "aria-label": t.localize("editorActionArrowAccessibleLabel", "Open editor actions")
         });
-      };
 
-      t.Events = {
-        Updated: "inEditorAction.model.update"
-      };
+        a.trigger = b;
 
-      return t;
-    }(u.EventEmitter);
+        a.trigger.on(y.EventType.CLICK, function(b) {
+          a.setExpanded(!a.expanded);
 
-    var b = function() {
-      function e(e, t, n) {
-        this.editor = e;
+          (new I.MouseEvent(b)).preventDefault();
+        }, a.toUnhook);
+      });
 
-        this.handlerService = t;
+      b.div({
+        "class": "menu"
+      }, function(b) {
+        a.details = b;
 
-        this.model = n;
+        a.actionBar = new F.ActionBar(a.details, {
+          orientation: F.ActionsOrientation.VERTICAL,
+          context: a.editor
+        });
 
-        this.toUnhook = [];
+        a.toUnhook.push(a.actionBar.addListener(H.EventType.BEFORE_RUN, function(b) {
+          a.hide();
+        }));
 
-        this.domNode = document.createElement("div");
+        a.toUnhook.push(a.actionBar.addListener(H.EventType.RUN, function(b) {
+          if (b.result && A.isFunction(b.result.focus)) {
+            b.result.focus();
+          } else {
+            a.editor.focus();
+          }
+        }));
 
-        this.trigger = null;
+        a.details.hide();
+      });
+    };
 
-        this.details = null;
+    a.prototype.show = function() {
+      if (!this.isVisible) {
+        this.isVisible = !0;
+        this.domNode.style.display = "block";
+        this.editor.layoutContentWidget(this);
+      }
+    };
 
-        this.actionBar = null;
-
-        this.expanded = !1;
-
+    a.prototype.hide = function() {
+      if (this.isVisible) {
+        this.setExpanded(!1);
         this.isVisible = !1;
+        this.domNode.style.display = "none";
+        this.editor.layoutContentWidget(this);
+      }
+    };
 
-        this.create();
+    a.prototype.getPosition = function() {
+      return this.isVisible ? {
+        position: this.editor.getPosition(),
+        preference: [J.ContentWidgetPositionPreference.BELOW]
+      } : null;
+    };
 
-        this.add();
+    a.prototype.fillActionBar = function() {
+      var a = this;
+      this.actionBar.clear();
+      var b = v.Registry.as(B.Extensions.EditorContributions);
 
+      var c = b.getEditorContributions();
+
+      var d = {};
+      for (var e = 0; e < c.length; e++) {
+        var f = c[e];
+        if (f instanceof w.ActionDescriptor) {
+          var g = f;
+          if (g.keybindings && g.keybindings.length > 0) {
+            d[g.id] = x.asString(g.keybindings[0]);
+          }
+        }
+      }
+      var h = this.model.getActions();
+      h.forEach(function(b) {
+        var c = a.editor.getAction(b);
+        if (c) {
+          if (c.enabled) {
+            var e;
+            if (d[c.id]) {
+              e = t.localize("ineditor.menu.keybinding", "{0} ({1})", c.label, d[c.id]);
+            } else {
+              e = c.label;
+            }
+
+            a.actionBar.push(new E.Action(c.id, e, c.class, !0, function(a) {
+              return c.run(a);
+            }));
+          }
+        } else {
+          console.warn("NO action found for " + b);
+        }
+      });
+
+      if (h.length > 0) {
+        this.show();
+      } else {
         this.hide();
       }
-      e.prototype.create = function() {
-        var e = this;
+    };
 
-        var t = y(this.domNode).addClass("in-editor-actions");
-        t.div({
-          "class": "arrow no-user-selection"
-        }, function(t) {
-          t.attr({
-            role: "button",
-            "aria-haspopup": "true",
-            "aria-label": n.localize("vs_editor_contrib_inEditorActions_inEditorActions", 0)
-          });
-
-          e.trigger = t;
-
-          e.trigger.on(a.EventType.CLICK, function(t) {
-            e.setExpanded(!e.expanded);
-
-            (new v.StandardMouseEvent(t)).preventDefault();
-          }, e.toUnhook);
-        });
-
-        t.div({
-          "class": "menu no-user-selection"
-        }, function(t) {
-          e.details = t;
-
-          e.actionBar = new f.ActionBar(e.details, {
-            orientation: 2,
-            context: e.editor
-          });
-
-          e.toUnhook.push(e.actionBar.addListener(m.EventType.BEFORE_RUN, function() {
-            e.hide();
-          }));
-
-          e.toUnhook.push(e.actionBar.addListener(m.EventType.RUN, function(t) {
-            if (t.result && l.isFunction(t.result.focus)) {
-              t.result.focus();
-            } else {
-              e.editor.focus();
-            }
-          }));
-
-          e.details.hide();
-        });
-      };
-
-      e.prototype.show = function() {
-        if (!this.isVisible) {
-          this.isVisible = !0;
-          this.domNode.style.display = "block";
-          this.editor.layoutContentWidget(this);
-        }
-      };
-
-      e.prototype.hide = function() {
-        if (this.isVisible) {
-          this.setExpanded(!1);
-          this.isVisible = !1;
-          this.domNode.style.display = "none";
-          this.editor.layoutContentWidget(this);
-        }
-      };
-
-      e.prototype.getPosition = function() {
-        return this.isVisible ? {
-          position: this.editor.getPosition(),
-          preference: [2]
-        } : null;
-      };
-
-      e.prototype.fillActionBar = function() {
-        var e = this;
-        this.actionBar.clear();
-        for (var t = o.Registry.as(c.Extensions.EditorContributions), i = t.getEditorContributions(), a = {}, u = 0; u <
-          i.length; u++) {
-          var l = i[u];
-          if (l instanceof r.ActionDescriptor) {
-            var d = l;
-            if (d.keybindings && d.keybindings.length > 0) {
-              a[d.id] = s.asString(d.keybindings[0]);
-            }
-          }
-        }
-        var h = this.model.getActions();
-        h.forEach(function(t) {
-          var i = e.editor.getAction(t);
-          if (i) {
-            if (i.enabled) {
-              var o;
-              o = a[i.id] ? n.localize("vs_editor_contrib_inEditorActions_inEditorActions", 1, i.label, a[i.id]) :
-                i.label;
-
-              e.actionBar.push(new p.Action(i.id, o, i.class, !0, function(e) {
-                return i.run(e);
-              }));
-            }
-          } else {
-            console.warn("NO action found for " + t);
-          }
-        });
-
-        if (h.length > 0) {
-          this.show();
+    a.prototype.setExpanded = function(a) {
+      if (this.isVisible) {
+        this.expanded = a;
+        if (this.expanded) {
+          this.details.show();
+          this.trigger.addClass("active");
+          this.actionBar.focus();
         } else {
-          this.hide();
+          this.details.hide();
+          this.trigger.removeClass("active");
         }
-      };
-
-      e.prototype.setExpanded = function(e) {
-        if (this.isVisible) {
-          this.expanded = e;
-          if (this.expanded) {
-            this.details.show();
-            this.trigger.addClass("active");
-            this.actionBar.focus(!0);
-          } else {
-            this.details.hide();
-            this.trigger.removeClass("active");
-          }
-        }
-      };
-
-      e.prototype.getDomNode = function() {
-        return this.domNode;
-      };
-
-      e.prototype.getId = function() {
-        return e.ID;
-      };
-
-      e.prototype.add = function() {
-        var e = this;
-        this.editor.addContentWidget(this);
-
-        this.toUnhook.push(this.model.addListener(_.Events.Updated, function() {
-          return e.fillActionBar();
-        }));
-
-        this.toUnhook.push(this.editor.addListener(h.EventType.CursorPositionChanged, function() {
-          return e.hide();
-        }));
-
-        this.toUnhook.push(this.editor.addListener(h.EventType.ModelChanged, function() {
-          return e.hide();
-        }));
-
-        this.toUnhook.push(this.handlerService.bind({
-          key: "Escape"
-        }, function() {
-          return e.isVisible ? (e.hide(), e.editor.focus(), !0) : !1;
-        }).dispose);
-
-        this.toUnhook.push(this.handlerService.bind({
-          key: "Tab"
-        }, function() {
-          e.isVisible && e.hide();
-
-          return !1;
-        }).dispose);
-      };
-
-      e.prototype.dispose = function() {
-        for (; this.toUnhook.length > 0;) {
-          this.toUnhook.pop()();
-        }
-        if (this.domNode && this.domNode.parentElement) {
-          this.domNode.parentElement.removeChild(this.domNode);
-        }
-
-        this.actionBar.dispose();
-
-        this.domNode = null;
-      };
-
-      e.ID = "editor.contrib.triggerWidget";
-
-      return e;
-    }();
-    ! function(e) {
-      function t(t, n) {
-        var i = this;
-        e.call(this, t, n, c.Precondition.WidgetFocus);
-
-        this.model = new _(t);
-
-        this.widget = null;
-
-        this.toUnhook.push(t.addListener(h.EventType.CursorPositionChanged, function(e) {
-          if (i.enabled && "explicit" === e.reason && "mouse" === e.source) {
-            var t = i.editor.getSelection();
-            if (t.startLineNumber === t.endLineNumber) {
-              var n = i.editor.getModel().getWordAtPosition({
-                lineNumber: t.startLineNumber,
-                column: t.startColumn
-              }, !0, !0);
-              if (!(!n || n.startColumn > t.startColumn || n.endColumn < t.endColumn)) {
-                i.model.deferredUpdate();
-              }
-            }
-          }
-        }));
       }
-      __extends(t, e);
+    };
 
-      t.prototype.injectHandlerService = function(t) {
-        e.prototype.injectHandlerService.call(this, t);
+    a.prototype.getDomNode = function() {
+      return this.domNode;
+    };
 
-        if (!this.widget) {
-          this.widget = new b(this.editor, this.handlerService, this.model);
-        }
-      };
+    a.prototype.getId = function() {
+      return a.ID;
+    };
 
-      t.prototype.run = function() {
-        var e = this;
-        return this.model.update().then(function() {
-          e.widget.setExpanded(!0);
-        });
-      };
+    a.prototype.add = function() {
+      var a = this;
+      this.editor.addContentWidget(this);
 
-      t.prototype.dispose = function() {
-        e.prototype.dispose.call(this);
+      this.toUnhook.push(this.model.addListener(K.Events.Updated, function() {
+        return a.fillActionBar();
+      }));
 
-        if (this.model) {
-          this.model.dispose();
-          this.model = null;
-        }
+      this.toUnhook.push(this.editor.addListener(D.EventType.CursorPositionChanged, function() {
+        return a.hide();
+      }));
 
-        if (this.widget) {
-          this.widget.dispose();
-          this.widget = null;
-        }
-      };
+      this.toUnhook.push(this.editor.addListener(D.EventType.ModelChanged, function() {
+        return a.hide();
+      }));
 
-      t.ID = "editor.action.inEditorActions.now";
+      this.toUnhook.push(this.handlerService.bind({
+        key: "Escape"
+      }, function() {
+        return a.isVisible ? (a.hide(), a.editor.focus(), !0) : !1;
+      }).dispose);
 
-      return t;
-    }(c.EditorAction);
-  }
+      this.toUnhook.push(this.handlerService.bind({
+        key: "Tab"
+      }, function() {
+        a.isVisible && a.hide();
+
+        return !1;
+      }).dispose);
+    };
+
+    a.prototype.dispose = function() {
+      while (this.toUnhook.length > 0) {
+        this.toUnhook.pop()();
+      }
+      if (this.domNode) {
+        this.domNode.parentElement.removeChild(this.domNode);
+      }
+
+      this.actionBar.dispose();
+
+      this.domNode = null;
+    };
+
+    a.ID = "editor.contrib.triggerWidget";
+
+    return a;
+  }();
+
+  var M = function(a) {
+    function b(b, c) {
+      var d = this;
+      a.call(this, b, c, B.Precondition.WidgetFocus);
+
+      this.model = new K(b);
+
+      this.widget = null;
+
+      this.toUnhook.push(b.addListener(D.EventType.CursorPositionChanged, function(a) {
+        if (!d.enabled) return;
+        if (a.reason !== "explicit") return;
+        if (a.source !== "mouse") return;
+        var b = d.editor.getSelection();
+        if (b.startLineNumber !== b.endLineNumber) return;
+        var c = d.editor.getModel().getWordAtPosition({
+          lineNumber: b.startLineNumber,
+          column: b.startColumn
+        }, !0);
+        if (!c || c.startColumn > b.startColumn || c.endColumn < b.endColumn) return;
+        d.model.deferredUpdate();
+      }));
+    }
+    __extends(b, a);
+
+    b.prototype.injectHandlerService = function(b) {
+      a.prototype.injectHandlerService.call(this, b);
+
+      if (!this.widget) {
+        this.widget = new L(this.editor, this.handlerService, this.model);
+      }
+    };
+
+    b.prototype.run = function() {
+      var a = this;
+      return this.model.update().then(function() {
+        a.widget.setExpanded(!0);
+      });
+    };
+
+    b.prototype.dispose = function() {
+      a.prototype.dispose.call(this);
+
+      if (this.model) {
+        this.model.dispose();
+        this.model = null;
+      }
+
+      if (this.widget) {
+        this.widget.dispose();
+        this.widget = null;
+      }
+    };
+
+    b.ID = "editor.action.inEditorActions.now";
+
+    return b;
+  }(B.EditorAction);
+
+  var N = new w.ActionDescriptor(M, M.ID, t.localize("action.inEditorActions.label", "Show editor actions"), {
+    ctrlCmd: !0,
+    key: "."
+  });
+
+  var O = v.Registry.as(B.Extensions.EditorContributions);
+  O.registerEditorContribution(N);
 });

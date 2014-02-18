@@ -1,53 +1,86 @@
-define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/editor/editor.main",
-  "vs/editor/core/internalConstants", "vs/editor/core/constants", "vs/editor/core/range", "vs/editor/core/selection",
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
+    }
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
+    }
+    d.prototype = b.prototype;
+
+    a.prototype = new d;
+  };
+
+define(["require", "exports", "vs/nls", "vs/editor/core/constants", "vs/editor/core/range", "vs/editor/core/selection",
   "vs/base/eventEmitter", "vs/editor/core/handlerDispatcher", "vs/editor/editor",
   "vs/editor/core/controller/cursorCollection", "vs/base/errors", "vs/editor/core/position"
-], function(e, t, n, i, o, r, s, a, u, l, c, d, h) {
-  var p = function(e) {
-    function t(t, n, i, r, s) {
-      var a = this;
-      e.call(this, [o.EventType.CursorPositionChanged, o.EventType.CursorSelectionChanged, o.EventType.CursorRevealRange]);
+], function(a, b, c, d, e, f, g, h, i, j, k, l) {
+  var m = c;
 
-      this.editorId = t;
+  var n = d;
 
-      this.configuration = n;
+  var o = e;
 
-      this.model = i;
+  var p = f;
 
-      this.renderOnce = r;
+  var q = g;
 
-      this.viewModelHelper = s;
+  var r = h;
+
+  var s = i;
+
+  var t = j;
+
+  var u = k;
+
+  var v = l;
+
+  var w = function(a) {
+    function b(b, c, d, e, f) {
+      var g = this;
+      a.call(this);
+
+      this.editorId = b;
+
+      this.configuration = c;
+
+      this.model = d;
+
+      this.renderOnce = e;
+
+      this.viewModelHelper = f;
 
       if (!this.viewModelHelper) {
         this.viewModelHelper = {
           viewModel: this.model,
-          convertModelPositionToViewPosition: function(e, t) {
-            return new h.Position(e, t);
+          convertModelPositionToViewPosition: function(a, b) {
+            return new v.Position(a, b);
           },
-          convertViewToModelPosition: function(e, t) {
-            return new h.Position(e, t);
+          convertViewToModelPosition: function(a, b) {
+            return new v.Position(a, b);
           },
-          validateViewPosition: function(e, t, n) {
-            return n;
+          validateViewPosition: function(a, b, c) {
+            return c;
           }
         };
       }
 
-      this.cursors = new c.CursorCollection(this.editorId, this.model, this.configuration, this.viewModelHelper);
+      this.cursors = new t.CursorCollection(this.editorId, this.model, this.configuration, this.viewModelHelper);
 
       this.typingListeners = {};
 
       this._isHandling = !1;
 
-      this.modelUnbind = this.model.addListener(o.EventType.ModelContentChanged, function(e) {
-        a._onModelContentChanged(e);
+      this.modelUnbind = this.model.addListener(n.EventType.ModelContentChanged, function(a) {
+        g._onModelContentChanged(a);
       });
 
       this._registerHandlers();
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.dispose = function() {
+    b.prototype.dispose = function() {
       this.modelUnbind();
 
       this.modelUnbind = null;
@@ -66,327 +99,346 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
 
       this.viewModelHelper = null;
 
-      e.prototype.dispose.call(this);
+      a.prototype.dispose.call(this);
     };
 
-    t.prototype.saveState = function() {
-      for (var e, t = this.cursors.getSelections(), n = [], i = 0; i < t.length; i++) {
-        e = t[i];
-        n.push({
-          inSelectionMode: !e.isEmpty(),
+    b.prototype.saveState = function() {
+      var a = this.cursors.getSelections();
+
+      var b = [];
+
+      var c;
+      for (var d = 0; d < a.length; d++) {
+        c = a[d];
+        b.push({
+          inSelectionMode: !c.isEmpty(),
           selectionStart: {
-            lineNumber: e.selectionStartLineNumber,
-            column: e.selectionStartColumn
+            lineNumber: c.selectionStartLineNumber,
+            column: c.selectionStartColumn
           },
           position: {
-            lineNumber: e.positionLineNumber,
-            column: e.positionColumn
+            lineNumber: c.positionLineNumber,
+            column: c.positionColumn
           }
         });
       }
-      return n;
+      return b;
     };
 
-    t.prototype.restoreState = function(e) {
-      for (var t, n = this, i = [], o = 0; o < e.length; o++) {
-        t = e[o];
-        var r = 1;
+    b.prototype.restoreState = function(a) {
+      var b = this;
 
-        var s = 1;
-        if (t.position && t.position.lineNumber) {
-          r = t.position.lineNumber;
+      var c = [];
+
+      var d;
+      for (var e = 0; e < a.length; e++) {
+        d = a[e];
+        var f = d.inSelectionMode;
+
+        var g = 1;
+
+        var h = 1;
+        if (d.position && d.position.lineNumber) {
+          g = d.position.lineNumber;
         }
 
-        if (t.position && t.position.column) {
-          s = t.position.column;
+        if (d.position && d.position.column) {
+          h = d.position.column;
         }
-        var a = r;
+        var i = g;
 
-        var l = s;
-        if (t.selectionStart && t.selectionStart.lineNumber) {
-          a = t.selectionStart.lineNumber;
-        }
-
-        if (t.selectionStart && t.selectionStart.column) {
-          l = t.selectionStart.column;
+        var j = h;
+        if (d.selectionStart && d.selectionStart.lineNumber) {
+          i = d.selectionStart.lineNumber;
         }
 
-        i.push({
-          selectionStartLineNumber: a,
-          selectionStartColumn: l,
-          positionLineNumber: r,
-          positionColumn: s
+        if (d.selectionStart && d.selectionStart.column) {
+          j = d.selectionStart.column;
+        }
+
+        c.push({
+          selectionStartLineNumber: i,
+          selectionStartColumn: j,
+          positionLineNumber: g,
+          positionColumn: h
         });
       }
-      this._onHandler("restoreState", function() {
-        n.cursors.setSelections(i);
+      this._onHandler("restoreState", function(a) {
+        b.cursors.setSelections(c);
 
         return !1;
-      }, new u.DispatcherEvent("restoreState", null));
+      }, new r.DispatcherEvent("restoreState", null));
     };
 
-    t.prototype.setEditableRange = function(e) {
-      this.model.setEditableRange(e);
+    b.prototype.setEditableRange = function(a) {
+      this.model.setEditableRange(a);
     };
 
-    t.prototype.getEditableRange = function() {
+    b.prototype.getEditableRange = function() {
       return this.model.getEditableRange();
     };
 
-    t.prototype.addTypingListener = function(e, t) {
-      if (!this.typingListeners.hasOwnProperty(e)) {
-        this.typingListeners[e] = [];
+    b.prototype.addTypingListener = function(a, b) {
+      if (!this.typingListeners.hasOwnProperty(a)) {
+        this.typingListeners[a] = [];
       }
 
-      this.typingListeners[e].push(t);
+      this.typingListeners[a].push(b);
     };
 
-    t.prototype.removeTypingListener = function(e, t) {
-      if (this.typingListeners.hasOwnProperty(e))
-        for (var n = this.typingListeners[e], i = 0; i < n.length; i++)
-          if (n[i] === t) {
-            n.splice(i, 1);
-            return void 0;
+    b.prototype.removeTypingListener = function(a, b) {
+      if (this.typingListeners.hasOwnProperty(a)) {
+        var c = this.typingListeners[a];
+        for (var d = 0; d < c.length; d++)
+          if (c[d] === b) {
+            c.splice(d, 1);
+            return;
           }
+      }
     };
 
-    t.prototype._onModelContentChanged = function(e) {
-      var t = this;
-      if (e.changeType === o.EventType.ModelContentChangedFlush) {
+    b.prototype._onModelContentChanged = function(a) {
+      var b = this;
+      if (a.changeType === n.EventType.ModelContentChangedFlush) {
         this.cursors.dispose();
-        this.cursors = new c.CursorCollection(this.editorId, this.model, this.configuration, this.viewModelHelper);
+        this.cursors = new t.CursorCollection(this.editorId, this.model, this.configuration, this.viewModelHelper);
         this.emitCursorPositionChanged("", "");
         this.emitCursorSelectionChanged("", "");
         this.emitCursorRevealRange(!1, !0);
       } else {
         if (!this._isHandling) {
-          this._onHandler("recoverSelectionFromMarkers", function(e) {
-            var n = t._invokeForAll(e, function(e, t, n) {
-              return t.recoverSelectionFromMarkers(n);
+          this._onHandler("recoverSelectionFromMarkers", function(a) {
+            var c = b._invokeForAll(a, function(a, b, c) {
+              return b.recoverSelectionFromMarkers(c);
             });
-            e.shouldPushStackElementBefore = !1;
+            a.shouldPushStackElementBefore = !1;
 
-            e.shouldPushStackElementAfter = !1;
+            a.shouldPushStackElementAfter = !1;
 
-            return n;
-          }, new u.DispatcherEvent("modelChange", null));
+            return c;
+          }, new r.DispatcherEvent("modelChange", null));
         }
       }
     };
 
-    t.prototype.getSelection = function() {
+    b.prototype.getSelection = function() {
       return this.cursors.getSelection(0);
     };
 
-    t.prototype.getSelections = function() {
+    b.prototype.getSelections = function() {
       return this.cursors.getSelections();
     };
 
-    t.prototype.getPosition = function() {
+    b.prototype.getPosition = function() {
       return this.cursors.getPosition(0);
     };
 
-    t.prototype.setSelections = function(e, t) {
-      var n = this;
-      this._onHandler("setSelections", function(e) {
-        e.shouldReveal = !1;
+    b.prototype.setSelections = function(a, b) {
+      var c = this;
+      this._onHandler("setSelections", function(a) {
+        a.shouldReveal = !1;
 
-        n.cursors.setSelections(t);
+        c.cursors.setSelections(b);
 
         return !1;
-      }, new u.DispatcherEvent(e, null));
+      }, new r.DispatcherEvent(a, null));
     };
 
-    t.prototype._createAndInterpretHandlerCtx = function(e, t, n) {
-      var i = {
+    b.prototype._createAndInterpretHandlerCtx = function(a, b, c) {
+      var d = {
         cursorPositionChangeReason: "",
         shouldReveal: !0,
         shouldRevealVerticalInCenter: !1,
         shouldRevealHorizontal: !0,
-        eventSource: e,
-        eventData: t,
+        eventSource: a,
+        eventData: b,
         executeCommands: [],
         postOperationRunnables: [],
         shouldPushStackElementBefore: !1,
         shouldPushStackElementAfter: !1
       };
-      n(i);
+      c(d);
 
-      this._interpretHandlerContext(i);
+      this._interpretHandlerContext(d);
 
       this.cursors.normalize();
     };
 
-    t.prototype._onHandler = function(e, t, n) {
-      var i = this;
+    b.prototype._onHandler = function(a, b, c) {
+      var d = this;
       if (this._isHandling) throw new Error("Why am I recursive?");
       this._isHandling = !0;
 
       this.charactersTyped = "";
-      var o = !1;
-      try {
-        this.renderOnce(function() {
-          var e;
+      var e = !1;
+      this.renderOnce(function() {
+        var a = d.cursors.getSelections();
 
-          var r;
+        var f = d.cursors.getViewSelections();
 
-          var s;
+        var g = c.getSource();
 
-          var a;
+        var h;
 
-          var u = i.cursors.getSelections();
+        var i;
 
-          var l = i.cursors.getViewSelections();
+        var j;
 
-          var c = n.getSource();
-          i._createAndInterpretHandlerCtx(c, n.getData(), function(n) {
-            o = t(n);
+        var k;
+        d._createAndInterpretHandlerCtx(g, c.getData(), function(a) {
+          e = b(a);
 
-            e = n.cursorPositionChangeReason;
+          h = a.cursorPositionChangeReason;
 
-            r = n.shouldReveal;
+          i = a.shouldReveal;
 
-            s = n.shouldRevealVerticalInCenter;
+          j = a.shouldRevealVerticalInCenter;
 
-            a = n.shouldRevealHorizontal;
-          });
-          for (var d = 0; d < i.charactersTyped.length; d++) {
-            var h = i.charactersTyped.charAt(d);
-            if (i.typingListeners.hasOwnProperty(h))
-              for (var p = i.typingListeners[h].slice(0), f = 0, g = p.length; g > f; f++) {
-                p[f]();
-              }
-          }
-          var m = i.cursors.getSelections();
-
-          var v = i.cursors.getViewSelections();
-
-          var y = !1;
-          if (u.length !== m.length) {
-            y = !0;
-          } else {
-            for (var d = 0, _ = u.length; !y && _ > d; d++) {
-              if (!u[d].equalsSelection(m[d])) {
-                y = !0;
-              }
-            }
-            for (var d = 0, _ = l.length; !y && _ > d; d++) {
-              if (!l[d].equalsSelection(v[d])) {
-                y = !0;
-              }
-            }
-          }
-          if (y) {
-            i.emitCursorPositionChanged(c, e);
-            if (r) {
-              i.emitCursorRevealRange(s, a);
-            }
-            i.emitCursorSelectionChanged(c, e);
-          }
+          k = a.shouldRevealHorizontal;
         });
-      } catch (r) {
-        d.onUnexpectedError(r);
-      }
+        for (var l = 0; l < d.charactersTyped.length; l++) {
+          var m = d.charactersTyped.charAt(l);
+          if (d.typingListeners.hasOwnProperty(m)) {
+            var n = d.typingListeners[m].slice(0);
+            for (var o = 0, p = n.length; o < p; o++) {
+              n[o]();
+            }
+          }
+        }
+        var q = d.cursors.getSelections();
+
+        var r = d.cursors.getViewSelections();
+
+        var s = !1;
+        if (a.length !== q.length) {
+          s = !0;
+        } else {
+          for (var l = 0, t = a.length; !s && l < t; l++) {
+            if (!a[l].equalsSelection(q[l])) {
+              s = !0;
+            }
+          }
+          for (var l = 0, t = f.length; !s && l < t; l++) {
+            if (!f[l].equalsSelection(r[l])) {
+              s = !0;
+            }
+          }
+        }
+        if (s) {
+          d.emitCursorPositionChanged(g, h);
+          if (i) {
+            d.emitCursorRevealRange(j, k);
+          }
+          d.emitCursorSelectionChanged(g, h);
+        }
+      });
+
       this._isHandling = !1;
 
-      return o;
+      return e;
     };
 
-    t.prototype._interpretHandlerContext = function(e) {
-      if (e.shouldPushStackElementBefore) {
+    b.prototype._interpretHandlerContext = function(a) {
+      if (a.shouldPushStackElementBefore) {
         this.model.pushStackElement();
-        e.shouldPushStackElementBefore = !1;
+        a.shouldPushStackElementBefore = !1;
       }
 
-      this._internalExecuteCommands(e.executeCommands, e.postOperationRunnables);
+      this._internalExecuteCommands(a.executeCommands, a.postOperationRunnables);
 
-      e.executeCommands = [];
+      a.executeCommands = [];
 
-      if (e.shouldPushStackElementAfter) {
+      if (a.shouldPushStackElementAfter) {
         this.model.pushStackElement();
-        e.shouldPushStackElementAfter = !1;
+        a.shouldPushStackElementAfter = !1;
       }
-      for (var t = !1, n = 0, i = e.postOperationRunnables.length; i > n; n++)
-        if (e.postOperationRunnables[n]) {
-          t = !0;
+      var b = !1;
+      for (var c = 0, d = a.postOperationRunnables.length; c < d; c++)
+        if (a.postOperationRunnables[c]) {
+          b = !0;
           break;
         }
-      if (t) {
-        var o = e.postOperationRunnables.slice(0);
-        e.postOperationRunnables = [];
+      if (b) {
+        var e = a.postOperationRunnables.slice(0);
+        a.postOperationRunnables = [];
 
-        this._invokeForAll(e, function(e, t, n) {
-          o[e] && o[e](n);
+        this._invokeForAll(a, function(a, b, c) {
+          e[a] && e[a](c);
 
           return !1;
         });
 
-        this._interpretHandlerContext(e);
+        this._interpretHandlerContext(a);
       }
     };
 
-    t.prototype._interpretCommandResult = function(e) {
-      return e ? (this.cursors.setSelections(e), !0) : !1;
+    b.prototype._interpretCommandResult = function(a) {
+      return a ? (this.cursors.setSelections(a), !0) : !1;
     };
 
-    t.prototype._getEditOperationsFromCommand = function(e, t, i) {
-      var o = this;
+    b.prototype._getEditOperationsFromCommand = function(a, b, c) {
+      var d = this;
 
-      var r = [];
+      var e = [];
 
-      var s = 0;
+      var f = [];
 
-      var a = function(e, n) {
-        r.push({
-          identifier: {
-            major: t,
-            minor: s++
-          },
-          range: e,
-          text: n
-        });
+      var g = 0;
+
+      var h = function(a, c) {
+        if (!a.isEmpty() || c) {
+          e.push({
+            identifier: {
+              major: b,
+              minor: g++
+            },
+            range: a,
+            text: c
+          });
+        }
       };
 
-      var u = !1;
+      var i = !1;
 
-      var l = function(t) {
-        var n;
+      var j = function(b) {
+        var c;
 
-        var i;
-        if (t.isEmpty()) {
-          var r = o.model.getLineMaxColumn(t.startLineNumber);
-          if (t.startColumn === r) {
-            n = !0;
-            i = !0;
+        var e;
+        i = !0;
+        if (b.isEmpty()) {
+          var f = d.model.getLineMaxColumn(b.startLineNumber);
+          if (b.startColumn === f) {
+            c = "start";
+            e = "start";
           } else {
-            n = !1;
-            i = !1;
+            c = "end";
+            e = "end";
           }
         } else {
-          if (0 === t.getDirection()) {
-            n = !1;
-            i = !0;
+          if (b.getDirection() === s.SelectionDirection.LTR) {
+            c = "end";
+            e = "start";
           } else {
-            n = !0;
-            i = !1;
+            c = "start";
+            e = "end";
           }
         }
-        var s = e.selectionStartMarkers.length;
-        e.selectionStartMarkers[s] = o.model._addMarker(t.selectionStartLineNumber, t.selectionStartColumn, n);
+        var g = a.selectionStartMarkers.length;
+        a.selectionStartMarkers[g] = d.model._addMarker(b.selectionStartLineNumber - 1, b.selectionStartColumn, c);
 
-        e.positionMarkers[s] = o.model._addMarker(t.positionLineNumber, t.positionColumn, i);
+        a.positionMarkers[g] = d.model._addMarker(b.positionLineNumber - 1, b.positionColumn, e);
 
-        return s.toString();
+        return g.toString();
       };
 
-      var c = {
-        addEditOperation: a,
-        trackSelection: l
+      var k = {
+        addEditOperation: h,
+        trackSelection: j
       };
       try {
-        i.getEditOperations(this.model, c);
-      } catch (h) {
-        d.onUnexpectedError(h, n.localize("vs_editor_core_controller_cursor", 0));
+        c.getEditOperations(this.model, k);
+      } catch (l) {
+        u.onUnexpectedError(l, m.localize("corrupt.commands", "Unexpected exception while executing command."));
 
         return {
           operations: [],
@@ -394,499 +446,535 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
         };
       }
       return {
-        operations: r,
-        hadTrackedRange: u
+        operations: e,
+        hadTrackedRange: i
       };
     };
 
-    t.prototype._getEditOperations = function(e, t) {
-      for (var n, i, o = [], r = [], s = 0; s < t.length; s++) {
-        if (t[s]) {
-          n = this._getEditOperationsFromCommand(e, s, t[s]);
-          o = o.concat(n.operations);
-          r[s] = n.hadTrackedRange;
-          i = i || r[s];
+    b.prototype._getEditOperations = function(a, b) {
+      var c;
+
+      var d = [];
+
+      var e = [];
+
+      var f;
+      for (var g = 0; g < b.length; g++) {
+        if (b[g]) {
+          c = this._getEditOperationsFromCommand(a, g, b[g]);
+          d = d.concat(c.operations);
+          e[g] = c.hadTrackedRange;
+          f = f || e[g];
         } else {
-          r[s] = !1;
+          e[g] = !1;
         }
       }
       return {
-        operations: o,
-        hadTrackedRanges: r,
-        anyoneHadTrackedRange: i
+        operations: d,
+        hadTrackedRanges: e,
+        anyoneHadTrackedRange: f
       };
     };
 
-    t.prototype._getLoserCursorMap = function(e) {
-      e = e.slice(0);
+    b.prototype._getLooserCursorMap = function(a) {
+      a = a.slice(0);
 
-      e.sort(function(e, t) {
-        return -r.compareRangesUsingEnds(e.range, t.range);
+      a.sort(function(a, b) {
+        return -o.RangeUtils.compareRangesUsingEnds(a.range, b.range);
       });
-      for (var t, n, i, o = {}, s = 1; s < e.length; s++)
-        if (t = e[s - 1], n = e[s], t.range.getStartPosition().isBeforeOrEqual(n.range.getEndPosition())) {
-          i = t.identifier.major > n.identifier.major ? t.identifier.major : n.identifier.major;
+      var b = {};
 
-          o[i.toString()] = !0;
-          for (var a = 0; a < e.length; a++) {
-            if (e[a].identifier.major === i) {
-              e.splice(a, 1);
-              if (s > a) {
-                s--;
+      var c;
+
+      var d;
+
+      var e;
+      for (var f = 1; f < a.length; f++) {
+        c = a[f - 1];
+
+        d = a[f];
+        if (c.range.getStartPosition().isBeforeOrEqual(d.range.getEndPosition())) {
+          if (c.identifier.major > d.identifier.major) {
+            e = c.identifier.major;
+          } else {
+            e = d.identifier.major;
+          }
+
+          b[e.toString()] = !0;
+          for (var g = 0; g < a.length; g++) {
+            if (a[g].identifier.major === e) {
+              a.splice(g, 1);
+              if (g < f) {
+                f--;
               }
-              a--;
+              g--;
             }
           }
-          if (s > 0) {
-            s--;
+          if (f > 0) {
+            f--;
           }
         }
-      return o;
+      }
+      return b;
     };
 
-    t.prototype._internalExecuteCommands = function(e, t) {
-      for (var n = {
+    b.prototype._internalExecuteCommands = function(a, b) {
+      var c = {
         selectionStartMarkers: [],
         positionMarkers: []
-      }, i = this._innerExecuteCommands(n, e, t), o = 0; o < n.selectionStartMarkers.length; o++) {
-        this.model._removeMarker(n.selectionStartMarkers[o]);
-        this.model._removeMarker(n.positionMarkers[o]);
+      };
+
+      var d = this._innerExecuteCommands(c, a, b);
+      for (var e = 0; e < c.selectionStartMarkers.length; e++) {
+        this.model._removeMarker(c.selectionStartMarkers[e]);
+        this.model._removeMarker(c.positionMarkers[e]);
       }
-      return i;
+      return d;
     };
 
-    t.prototype._arrayIsEmpty = function(e) {
-      var t;
+    b.prototype._arrayIsEmpty = function(a) {
+      var b;
 
-      var n;
-      for (t = 0, n = e.length; n > t; t++)
-        if (e[t]) {
+      var c;
+      for (b = 0, c = a.length; b < c; b++)
+        if (a[b]) {
           return !1;
         }
       return !0;
     };
 
-    t.prototype._innerExecuteCommands = function(e, t, n) {
-      var i = this;
+    b.prototype._innerExecuteCommands = function(a, b, c) {
+      var d = this;
       if (this.configuration.editor.readOnly) {
         return !1;
       }
-      if (this._arrayIsEmpty(t)) {
+      if (this._arrayIsEmpty(b)) {
         return !1;
       }
-      var o = this.cursors.getSelections();
+      var e = this.cursors.getSelections();
 
-      var r = this._getEditOperations(e, t);
-      if (0 === r.operations.length && !r.anyoneHadTrackedRange) {
+      var f = this._getEditOperations(a, b);
+      if (f.operations.length === 0 && !f.anyoneHadTrackedRange) {
         return !1;
       }
-      for (var a = r.operations, u = this.model.getEditableRange(), l = u.getStartPosition(), c = u.getEndPosition(),
-          d = 0; d < a.length; d++) {
-        var h = a[d].range;
-        if (!l.isBeforeOrEqual(h.getStartPosition()) || !h.getEndPosition().isBeforeOrEqual(c)) {
+      var g = f.operations;
+
+      var h = this.model.getEditableRange();
+
+      var i = h.getStartPosition();
+
+      var j = h.getEndPosition();
+      for (var k = 0; k < g.length; k++) {
+        var l = g[k].range;
+        if (!i.isBeforeOrEqual(l.getStartPosition()) || !l.getEndPosition().isBeforeOrEqual(j)) {
           return !1;
         }
       }
-      var p = this._getLoserCursorMap(a);
-      if (p.hasOwnProperty("0")) {
+      var m = this._getLooserCursorMap(g);
+      if (m.hasOwnProperty("0")) {
         console.warn("Ignoring commands");
         return !1;
       }
-      for (var f = [], d = 0; d < a.length; d++) {
-        if (!p.hasOwnProperty(a[d].identifier.major.toString())) {
-          f.push(a[d]);
+      var n = [];
+      for (var k = 0; k < g.length; k++) {
+        if (!m.hasOwnProperty(g[k].identifier.major.toString())) {
+          n.push(g[k]);
         }
       }
-      var g;
+      var o = this.model.pushEditOperations(e, n, function(c) {
+        var g = [];
+        for (var h = 0; h < e.length; h++) {
+          g[h] = [];
+        }
+        for (var h = 0; h < c.length; h++) {
+          var i = c[h];
+          g[i.identifier.major].push(i);
+        }
+        var j = function(a, b) {
+          return a.identifier.minor - b.identifier.minor;
+        };
 
-      var m = this.model.pushEditOperations(o, f, function(n) {
-        for (var a = [], u = 0; u < o.length; u++) {
-          a[u] = [];
-        }
-        for (var u = 0; u < n.length; u++) {
-          var l = n[u];
-          a[l.identifier.major].push(l);
-        }
-        for (var c = function(e, t) {
-          return e.identifier.minor - t.identifier.minor;
-        }, d = [], u = 0; u < o.length; u++) {
-          if (a[u].length > 0 || r.hadTrackedRanges[u]) {
-            a[u].sort(c);
-            d[u] = t[u].computeCursorState(i.model, {
+        var k = [];
+        for (var h = 0; h < e.length; h++) {
+          if (g[h].length > 0 || f.hadTrackedRanges[h]) {
+            g[h].sort(j);
+            k[h] = b[h].computeCursorState(d.model, {
               getInverseEditOperations: function() {
-                return a[u];
+                return g[h];
               },
-              getTrackedSelection: function(t) {
-                var n = parseInt(t, 10);
+              getTrackedSelection: function(b) {
+                var c = parseInt(b, 10);
 
-                var o = i.model._getMarker(e.selectionStartMarkers[n]);
+                var e = d.model._getMarker(a.selectionStartMarkers[c]);
 
-                var r = i.model._getMarker(e.positionMarkers[n]);
-                return new s.Selection(o.lineNumber, o.column, r.lineNumber, r.column);
+                var f = d.model._getMarker(a.positionMarkers[c]);
+                return new p.Selection(e.lineNumber, e.column, f.lineNumber, f.column);
               }
             });
           } else {
-            d[u] = o[u];
+            k[h] = e[h];
           }
         }
-        return d;
+        return k;
       });
 
-      var v = [];
-      for (g in p) {
-        if (p.hasOwnProperty(g)) {
-          v.push(parseInt(g, 10));
+      var q;
+
+      var r = [];
+      for (q in m) {
+        if (m.hasOwnProperty(q)) {
+          r.push(parseInt(q, 10));
         }
       }
-      v.sort(function(e, t) {
-        return t - e;
+      r.sort(function(a, b) {
+        return b - a;
       });
-      for (var d = 0; d < v.length; d++) {
-        m.splice(v[d], 1);
-        n.splice(v[d], 1);
+      for (var k = 0; k < r.length; k++) {
+        o.splice(r[k], 1);
+        c.splice(r[k], 1);
       }
-      return this._interpretCommandResult(m);
+      return this._interpretCommandResult(o);
     };
 
-    t.prototype.emitCursorPositionChanged = function(e, t) {
-      var n = this.cursors.getPositions();
+    b.prototype.emitCursorPositionChanged = function(a, b) {
+      var c = this.cursors.getPositions();
 
-      var i = n[0];
+      var d = c[0];
 
-      var r = n.slice(1);
+      var e = c.slice(1);
 
-      var s = this.cursors.getViewPositions();
+      var f = this.cursors.getViewPositions();
 
-      var a = s[0];
+      var g = f[0];
 
-      var u = s.slice(1);
+      var h = f.slice(1);
 
-      var l = !0;
+      var i = !0;
       if (this.model.hasEditableRange()) {
-        var c = this.model.getEditableRange();
-        if (!c.containsPosition(i)) {
-          l = !1;
+        var j = this.model.getEditableRange();
+        if (!j.containsPosition(d)) {
+          i = !1;
         }
       }
-      var d = {
-        position: i,
-        viewPosition: a,
-        secondaryPositions: r,
-        secondaryViewPositions: u,
-        reason: t,
-        source: e,
-        isInEditableRange: l
+      var k = {
+        position: d,
+        viewPosition: g,
+        secondaryPositions: e,
+        secondaryViewPositions: h,
+        reason: b,
+        source: a,
+        isInEditableRange: i
       };
-      this.emit(o.EventType.CursorPositionChanged, d);
+      this.emit(n.EventType.CursorPositionChanged, k);
     };
 
-    t.prototype.emitCursorSelectionChanged = function(e, t) {
-      var n = this.cursors.getSelections();
+    b.prototype.emitCursorSelectionChanged = function(a, b) {
+      var c = this.cursors.getSelections();
 
-      var i = n[0];
+      var d = c[0];
 
-      var r = n.slice(1);
+      var e = c.slice(1);
 
-      var s = {
-        selection: i,
-        secondarySelections: r,
-        source: e,
-        reason: t
+      var f = {
+        selection: d,
+        secondarySelections: e,
+        source: a,
+        reason: b
       };
-      this.emit(o.EventType.CursorSelectionChanged, s);
+      this.emit(n.EventType.CursorSelectionChanged, f);
     };
 
-    t.prototype.emitCursorRevealRange = function(e, t) {
-      var n = this.cursors.getPosition(0);
+    b.prototype.emitCursorRevealRange = function(a, b) {
+      var c = this.cursors.getPosition(0);
 
-      var i = this.cursors.getViewPosition(0);
+      var d = this.cursors.getViewPosition(0);
 
-      var s = new r.Range(n.lineNumber, n.column, n.lineNumber, n.column);
+      var e = new o.Range(c.lineNumber, c.column, c.lineNumber, c.column);
 
-      var a = new r.Range(i.lineNumber, i.column, i.lineNumber, i.column);
+      var f = new o.Range(d.lineNumber, d.column, d.lineNumber, d.column);
 
-      var u = {
-        range: s,
-        viewRange: a,
-        revealVerticalInCenter: e,
-        revealHorizontal: t
+      var g = {
+        range: e,
+        viewRange: f,
+        revealVerticalInCenter: a,
+        revealHorizontal: b
       };
-      this.emit(o.EventType.CursorRevealRange, u);
+      this.emit(n.EventType.CursorRevealRange, g);
     };
 
-    t.prototype._registerHandlers = function() {
-      var e = this;
+    b.prototype._registerHandlers = function() {
+      var a = this;
 
-      var t = i.Handler;
+      var b = n.Handler;
 
-      var n = {};
-      n[t.JumpToBracket] = function(t) {
-        return e._jumpToBracket(t);
+      var c = {};
+      c[b.JumpToBracket] = function(b) {
+        return a._jumpToBracket(b);
       };
 
-      n[t.MoveTo] = function(t) {
-        return e._moveTo(!1, t);
+      c[b.MoveTo] = function(b) {
+        return a._moveTo(!1, b);
       };
 
-      n[t.MoveToSelect] = function(t) {
-        return e._moveTo(!0, t);
+      c[b.MoveToSelect] = function(b) {
+        return a._moveTo(!0, b);
       };
 
-      n[t.AddCursorUp] = function(t) {
-        return e._addCursorUp(t);
+      c[b.AddCursorUp] = function(b) {
+        return a._addCursorUp(b);
       };
 
-      n[t.AddCursorDown] = function(t) {
-        return e._addCursorDown(t);
+      c[b.AddCursorDown] = function(b) {
+        return a._addCursorDown(b);
       };
 
-      n[t.CreateCursor] = function(t) {
-        return e._createCursor(t);
+      c[b.CreateCursor] = function(b) {
+        return a._createCursor(b);
       };
 
-      n[t.LastCursorMoveToSelect] = function(t) {
-        return e._lastCursorMoveTo(t);
+      c[b.LastCursorMoveToSelect] = function(b) {
+        return a._lastCursorMoveTo(b);
       };
 
-      n[t.CursorLeft] = function(t) {
-        return e._moveLeft(!1, t);
+      c[b.CursorLeft] = function(b) {
+        return a._moveLeft(!1, b);
       };
 
-      n[t.CursorLeftSelect] = function(t) {
-        return e._moveLeft(!0, t);
+      c[b.CursorLeftSelect] = function(b) {
+        return a._moveLeft(!0, b);
       };
 
-      n[t.CursorWordLeft] = function(t) {
-        return e._moveWordLeft(!1, t);
+      c[b.CursorWordLeft] = function(b) {
+        return a._moveWordLeft(!1, b);
       };
 
-      n[t.CursorWordLeftSelect] = function(t) {
-        return e._moveWordLeft(!0, t);
+      c[b.CursorWordLeftSelect] = function(b) {
+        return a._moveWordLeft(!0, b);
       };
 
-      n[t.CursorRight] = function(t) {
-        return e._moveRight(!1, t);
+      c[b.CursorRight] = function(b) {
+        return a._moveRight(!1, b);
       };
 
-      n[t.CursorRightSelect] = function(t) {
-        return e._moveRight(!0, t);
+      c[b.CursorRightSelect] = function(b) {
+        return a._moveRight(!0, b);
       };
 
-      n[t.CursorWordRight] = function(t) {
-        return e._moveWordRight(!1, t);
+      c[b.CursorWordRight] = function(b) {
+        return a._moveWordRight(!1, b);
       };
 
-      n[t.CursorWordRightSelect] = function(t) {
-        return e._moveWordRight(!0, t);
+      c[b.CursorWordRightSelect] = function(b) {
+        return a._moveWordRight(!0, b);
       };
 
-      n[t.CursorUp] = function(t) {
-        return e._moveUp(!1, !1, t);
+      c[b.CursorUp] = function(b) {
+        return a._moveUp(!1, !1, b);
       };
 
-      n[t.CursorUpSelect] = function(t) {
-        return e._moveUp(!0, !1, t);
+      c[b.CursorUpSelect] = function(b) {
+        return a._moveUp(!0, !1, b);
       };
 
-      n[t.CursorDown] = function(t) {
-        return e._moveDown(!1, !1, t);
+      c[b.CursorDown] = function(b) {
+        return a._moveDown(!1, !1, b);
       };
 
-      n[t.CursorDownSelect] = function(t) {
-        return e._moveDown(!0, !1, t);
+      c[b.CursorDownSelect] = function(b) {
+        return a._moveDown(!0, !1, b);
       };
 
-      n[t.CursorPageUp] = function(t) {
-        return e._moveUp(!1, !0, t);
+      c[b.CursorPageUp] = function(b) {
+        return a._moveUp(!1, !0, b);
       };
 
-      n[t.CursorPageUpSelect] = function(t) {
-        return e._moveUp(!0, !0, t);
+      c[b.CursorPageUpSelect] = function(b) {
+        return a._moveUp(!0, !0, b);
       };
 
-      n[t.CursorPageDown] = function(t) {
-        return e._moveDown(!1, !0, t);
+      c[b.CursorPageDown] = function(b) {
+        return a._moveDown(!1, !0, b);
       };
 
-      n[t.CursorPageDownSelect] = function(t) {
-        return e._moveDown(!0, !0, t);
+      c[b.CursorPageDownSelect] = function(b) {
+        return a._moveDown(!0, !0, b);
       };
 
-      n[t.CursorHome] = function(t) {
-        return e._moveToBeginningOfLine(!1, t);
+      c[b.CursorHome] = function(b) {
+        return a._moveToBeginningOfLine(!1, b);
       };
 
-      n[t.CursorHomeSelect] = function(t) {
-        return e._moveToBeginningOfLine(!0, t);
+      c[b.CursorHomeSelect] = function(b) {
+        return a._moveToBeginningOfLine(!0, b);
       };
 
-      n[t.CursorEnd] = function(t) {
-        return e._moveToEndOfLine(!1, t);
+      c[b.CursorEnd] = function(b) {
+        return a._moveToEndOfLine(!1, b);
       };
 
-      n[t.CursorEndSelect] = function(t) {
-        return e._moveToEndOfLine(!0, t);
+      c[b.CursorEndSelect] = function(b) {
+        return a._moveToEndOfLine(!0, b);
       };
 
-      n[t.CursorTop] = function(t) {
-        return e._moveToBeginningOfBuffer(!1, t);
+      c[b.CursorTop] = function(b) {
+        return a._moveToBeginningOfBuffer(!1, b);
       };
 
-      n[t.CursorTopSelect] = function(t) {
-        return e._moveToBeginningOfBuffer(!0, t);
+      c[b.CursorTopSelect] = function(b) {
+        return a._moveToBeginningOfBuffer(!0, b);
       };
 
-      n[t.CursorBottom] = function(t) {
-        return e._moveToEndOfBuffer(!1, t);
+      c[b.CursorBottom] = function(b) {
+        return a._moveToEndOfBuffer(!1, b);
       };
 
-      n[t.CursorBottomSelect] = function(t) {
-        return e._moveToEndOfBuffer(!0, t);
+      c[b.CursorBottomSelect] = function(b) {
+        return a._moveToEndOfBuffer(!0, b);
       };
 
-      n[t.SelectAll] = function(t) {
-        return e._selectAll(t);
+      c[b.SelectAll] = function(b) {
+        return a._selectAll(b);
       };
 
-      n[t.LineSelect] = function(t) {
-        return e._line(!1, t);
+      c[b.LineSelect] = function(b) {
+        return a._line(!1, b);
       };
 
-      n[t.LineSelectDrag] = function(t) {
-        return e._line(!0, t);
+      c[b.LineSelectDrag] = function(b) {
+        return a._line(!0, b);
       };
 
-      n[t.LastCursorLineSelect] = function(t) {
-        return e._lastCursorLine(!1, t);
+      c[b.LastCursorLineSelect] = function(b) {
+        return a._lastCursorLine(!1, b);
       };
 
-      n[t.LastCursorLineSelectDrag] = function(t) {
-        return e._lastCursorLine(!0, t);
+      c[b.LastCursorLineSelectDrag] = function(b) {
+        return a._lastCursorLine(!0, b);
       };
 
-      n[t.LineInsertBefore] = function(t) {
-        return e._lineInsertBefore(t);
+      c[b.LineInsertBefore] = function(b) {
+        return a._lineInsertBefore(b);
       };
 
-      n[t.LineInsertAfter] = function(t) {
-        return e._lineInsertAfter(t);
+      c[b.LineInsertAfter] = function(b) {
+        return a._lineInsertAfter(b);
       };
 
-      n[t.LineBreakInsert] = function(t) {
-        return e._lineBreakInsert(t);
+      c[b.LineBreakInsert] = function(b) {
+        return a._lineBreakInsert(b);
       };
 
-      n[t.WordSelect] = function(t) {
-        return e._word(!1, t);
+      c[b.WordSelect] = function(b) {
+        return a._word(!1, b);
       };
 
-      n[t.WordSelectDrag] = function(t) {
-        return e._word(!0, t);
+      c[b.WordSelectDrag] = function(b) {
+        return a._word(!0, b);
       };
 
-      n[t.LastCursorWordSelect] = function(t) {
-        return e._lastCursorWord(t);
+      c[b.LastCursorWordSelect] = function(b) {
+        return a._lastCursorWord(b);
       };
 
-      n[t.Escape] = function(t) {
-        return e._cancelSelection(t);
+      c[b.Escape] = function(b) {
+        return a._cancelSelection(b);
       };
 
-      n[t.Type] = function(t) {
-        return e._type(t);
+      c[b.Type] = function(b) {
+        return a._type(b);
       };
 
-      n[t.Tab] = function(t) {
-        return e._tab(t);
+      c[b.Tab] = function(b) {
+        return a._tab(b);
       };
 
-      n[t.Indent] = function(t) {
-        return e._indent(t);
+      c[b.Indent] = function(b) {
+        return a._indent(b);
       };
 
-      n[t.Outdent] = function(t) {
-        return e._outdent(t);
+      c[b.Outdent] = function(b) {
+        return a._outdent(b);
       };
 
-      n[t.Paste] = function(t) {
-        return e._paste(t);
+      c[b.Paste] = function(b) {
+        return a._paste(b);
       };
 
-      n[t.DeleteLeft] = function(t) {
-        return e._deleteLeft(t);
+      c[b.DeleteLeft] = function(b) {
+        return a._deleteLeft(b);
       };
 
-      n[t.DeleteWordLeft] = function(t) {
-        return e._deleteWordLeft(t);
+      c[b.DeleteWordLeft] = function(b) {
+        return a._deleteWordLeft(b);
       };
 
-      n[t.DeleteRight] = function(t) {
-        return e._deleteRight(t);
+      c[b.DeleteRight] = function(b) {
+        return a._deleteRight(b);
       };
 
-      n[t.DeleteWordRight] = function(t) {
-        return e._deleteWordRight(t);
+      c[b.DeleteWordRight] = function(b) {
+        return a._deleteWordRight(b);
       };
 
-      n[t.DeleteAllLeft] = function(t) {
-        return e._deleteAllLeft(t);
+      c[b.DeleteAllLeft] = function(b) {
+        return a._deleteAllLeft(b);
       };
 
-      n[t.DeleteAllRight] = function(t) {
-        return e._deleteAllRight(t);
+      c[b.DeleteAllRight] = function(b) {
+        return a._deleteAllRight(b);
       };
 
-      n[t.Cut] = function(t) {
-        return e._cut(t);
+      c[b.Cut] = function(b) {
+        return a._cut(b);
       };
 
-      n[t.Undo] = function(t) {
-        return e._undo(t);
+      c[b.Undo] = function(b) {
+        return a._undo(b);
       };
 
-      n[t.Redo] = function(t) {
-        return e._redo(t);
+      c[b.Redo] = function(b) {
+        return a._redo(b);
       };
 
-      n[t.ExecuteCommand] = function(t) {
-        return e._externalExecuteCommand(t);
+      c[b.ExecuteCommand] = function(b) {
+        return a._externalExecuteCommand(b);
       };
 
-      n[t.ExecuteCommands] = function(t) {
-        return e._externalExecuteCommands(t);
+      c[b.ExecuteCommands] = function(b) {
+        return a._externalExecuteCommands(b);
       };
-      var o;
-
-      var r = function(t, n) {
-        return function(i) {
-          return e._onHandler(t, n, i);
+      var d = function(b, c) {
+        return function(d) {
+          return a._onHandler(b, c, d);
         };
       };
-      for (o in n) {
-        if (n.hasOwnProperty(o)) {
-          this.configuration.handlerDispatcher.setHandler(o, r(o, n[o]));
+
+      var e;
+      for (e in c) {
+        if (c.hasOwnProperty(e)) {
+          this.configuration.handlerDispatcher.setHandler(e, d(e, c[e]));
         }
       }
     };
 
-    t.prototype._invokeForAll = function(e, t, n, i) {
-      if ("undefined" == typeof n) {
-        n = !0;
+    b.prototype._invokeForAll = function(a, b, c, d) {
+      if (typeof c == "undefined") {
+        c = !0;
       }
 
-      if ("undefined" == typeof i) {
-        i = !0;
+      if (typeof d == "undefined") {
+        d = !0;
       }
-      var o;
+      var e = !1;
 
-      var r = !1;
+      var f = this.cursors.getAll();
 
-      var s = this.cursors.getAll();
-      e.shouldPushStackElementBefore = n;
+      var g;
+      a.shouldPushStackElementBefore = c;
 
-      e.shouldPushStackElementAfter = i;
-      for (var a = 0; a < s.length; a++) {
-        o = {
+      a.shouldPushStackElementAfter = d;
+      for (var h = 0; h < f.length; h++) {
+        g = {
           cursorPositionChangeReason: "",
           cursorPositionChangeSource: "",
           shouldReveal: !0,
@@ -897,38 +985,38 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
           shouldPushStackElementBefore: !1,
           shouldPushStackElementAfter: !1
         };
-        r = t(a, s[a], o) || r;
-        if (0 === a) {
-          e.cursorPositionChangeReason = o.cursorPositionChangeReason;
-          e.shouldRevealHorizontal = o.shouldRevealHorizontal;
-          e.shouldReveal = o.shouldReveal;
-          e.shouldRevealVerticalInCenter = o.shouldRevealVerticalInCenter;
+        e = b(h, f[h], g) || e;
+        if (h === 0) {
+          a.cursorPositionChangeReason = g.cursorPositionChangeReason;
+          a.shouldRevealHorizontal = g.shouldRevealHorizontal;
+          a.shouldReveal = g.shouldReveal;
+          a.shouldRevealVerticalInCenter = g.shouldRevealVerticalInCenter;
         }
-        e.shouldPushStackElementBefore = e.shouldPushStackElementBefore || o.shouldPushStackElementBefore;
-        e.shouldPushStackElementAfter = e.shouldPushStackElementAfter || o.shouldPushStackElementAfter;
-        e.executeCommands[a] = o.executeCommand;
-        e.postOperationRunnables[a] = o.postOperationRunnable;
+        a.shouldPushStackElementBefore = a.shouldPushStackElementBefore || g.shouldPushStackElementBefore;
+        a.shouldPushStackElementAfter = a.shouldPushStackElementAfter || g.shouldPushStackElementAfter;
+        a.executeCommands[h] = g.executeCommand;
+        a.postOperationRunnables[h] = g.postOperationRunnable;
       }
-      return r;
+      return e;
     };
 
-    t.prototype._jumpToBracket = function(e) {
+    b.prototype._jumpToBracket = function(a) {
       this.cursors.killSecondaryCursors();
 
-      return this._invokeForAll(e, function(e, t, n) {
-        return t.jumpToBracket(n);
+      return this._invokeForAll(a, function(a, b, c) {
+        return b.jumpToBracket(c);
       });
     };
 
-    t.prototype._moveTo = function(e, t) {
+    b.prototype._moveTo = function(a, b) {
       this.cursors.killSecondaryCursors();
 
-      return this._invokeForAll(t, function(n, i, o) {
-        return i.moveTo(e, t.eventData.position, t.eventData.viewPosition, t.eventSource, o);
+      return this._invokeForAll(b, function(c, d, e) {
+        return d.moveTo(a, b.eventData.position, b.eventData.viewPosition, b.eventSource, e);
       });
     };
 
-    t.prototype._createCursor = function(e) {
+    b.prototype._createCursor = function(a) {
       if (this.configuration.editor.readOnly || this.model.hasEditableRange()) {
         return !1;
       }
@@ -938,343 +1026,353 @@ define("vs/editor/core/controller/cursor", ["require", "exports", "vs/nls!vs/edi
         positionLineNumber: 1,
         positionColumn: 1
       });
-      var t = this.cursors.getLastAddedCursor();
-      this._invokeForAll(e, function(n, i, o) {
-        return i === t ? e.eventData.wholeLine ? i.line(!1, e.eventData.position, e.eventData.viewPosition, o) : i.moveTo(!
-          1, e.eventData.position, e.eventData.viewPosition, e.eventSource, o) : !1;
+      var b = this.cursors.getLastAddedCursor();
+      this._invokeForAll(a, function(c, d, e) {
+        return d === b ? a.eventData.wholeLine ? d.line(!1, a.eventData.position, a.eventData.viewPosition, e) : d.moveTo(!
+          1, a.eventData.position, a.eventData.viewPosition, a.eventSource, e) : !1;
       });
 
-      e.shouldReveal = !1;
+      a.shouldReveal = !1;
 
-      e.shouldRevealHorizontal = !1;
+      a.shouldRevealHorizontal = !1;
 
       return !0;
     };
 
-    t.prototype._lastCursorMoveTo = function(e) {
+    b.prototype._lastCursorMoveTo = function(a) {
       if (this.configuration.editor.readOnly || this.model.hasEditableRange()) {
         return !1;
       }
-      var t = this.cursors.getLastAddedCursor();
-      this._invokeForAll(e, function(n, i, o) {
-        return i === t ? i.moveTo(!0, e.eventData.position, e.eventData.viewPosition, e.eventSource, o) : !1;
+      var b = this.cursors.getLastAddedCursor();
+      this._invokeForAll(a, function(c, d, e) {
+        return d === b ? d.moveTo(!0, a.eventData.position, a.eventData.viewPosition, a.eventSource, e) : !1;
       });
 
-      e.shouldReveal = !1;
+      a.shouldReveal = !1;
 
-      e.shouldRevealHorizontal = !1;
+      a.shouldRevealHorizontal = !1;
 
       return !0;
     };
 
-    t.prototype._addCursorUp = function(e) {
+    b.prototype._addCursorUp = function(a) {
       if (this.configuration.editor.readOnly) {
         return !1;
       }
-      var t = this.cursors.getSelections().length;
-      this.cursors.duplicateCursors();
+      var b = this.cursors.getSelections();
 
-      return this._invokeForAll(e, function(e, n, i) {
-        return e >= t ? n.translateUp(i) : !1;
+      var c = b.length;
+      for (var d = 0; d < c; d++) {
+        this.cursors.addSecondaryCursor(b[d]);
+      }
+      return this._invokeForAll(a, function(a, b, d) {
+        return a >= c ? b.moveUp(!1, !1, d) : !1;
       });
     };
 
-    t.prototype._addCursorDown = function(e) {
+    b.prototype._addCursorDown = function(a) {
       if (this.configuration.editor.readOnly) {
         return !1;
       }
-      var t = this.cursors.getSelections().length;
-      this.cursors.duplicateCursors();
+      var b = this.cursors.getSelections();
 
-      return this._invokeForAll(e, function(e, n, i) {
-        return e >= t ? n.translateDown(i) : !1;
+      var c = b.length;
+      for (var d = 0; d < c; d++) {
+        this.cursors.addSecondaryCursor(b[d]);
+      }
+      return this._invokeForAll(a, function(a, b, d) {
+        return a >= c ? b.moveDown(!1, !1, d) : !1;
       });
     };
 
-    t.prototype._moveLeft = function(e, t) {
-      return this._invokeForAll(t, function(t, n, i) {
-        return n.moveLeft(e, i);
+    b.prototype._moveLeft = function(a, b) {
+      return this._invokeForAll(b, function(b, c, d) {
+        return c.moveLeft(a, d);
       });
     };
 
-    t.prototype._moveWordLeft = function(e, t) {
-      return this._invokeForAll(t, function(t, n, i) {
-        return n.moveWordLeft(e, i);
+    b.prototype._moveWordLeft = function(a, b) {
+      return this._invokeForAll(b, function(b, c, d) {
+        return c.moveWordLeft(a, d);
       });
     };
 
-    t.prototype._moveRight = function(e, t) {
-      return this._invokeForAll(t, function(t, n, i) {
-        return n.moveRight(e, i);
+    b.prototype._moveRight = function(a, b) {
+      return this._invokeForAll(b, function(b, c, d) {
+        return c.moveRight(a, d);
       });
     };
 
-    t.prototype._moveWordRight = function(e, t) {
-      return this._invokeForAll(t, function(t, n, i) {
-        return n.moveWordRight(e, i);
+    b.prototype._moveWordRight = function(a, b) {
+      return this._invokeForAll(b, function(b, c, d) {
+        return c.moveWordRight(a, d);
       });
     };
 
-    t.prototype._moveDown = function(e, t, n) {
-      return this._invokeForAll(n, function(n, i, o) {
-        return i.moveDown(e, t, o);
+    b.prototype._moveDown = function(a, b, c) {
+      return this._invokeForAll(c, function(c, d, e) {
+        return d.moveDown(a, b, e);
       });
     };
 
-    t.prototype._moveUp = function(e, t, n) {
-      return this._invokeForAll(n, function(n, i, o) {
-        return i.moveUp(e, t, o);
+    b.prototype._moveUp = function(a, b, c) {
+      return this._invokeForAll(c, function(c, d, e) {
+        return d.moveUp(a, b, e);
       });
     };
 
-    t.prototype._moveToBeginningOfLine = function(e, t) {
-      return this._invokeForAll(t, function(t, n, i) {
-        return n.moveToBeginningOfLine(e, i);
+    b.prototype._moveToBeginningOfLine = function(a, b) {
+      return this._invokeForAll(b, function(b, c, d) {
+        return c.moveToBeginningOfLine(a, d);
       });
     };
 
-    t.prototype._moveToEndOfLine = function(e, t) {
-      return this._invokeForAll(t, function(t, n, i) {
-        return n.moveToEndOfLine(e, i);
+    b.prototype._moveToEndOfLine = function(a, b) {
+      return this._invokeForAll(b, function(b, c, d) {
+        return c.moveToEndOfLine(a, d);
       });
     };
 
-    t.prototype._moveToBeginningOfBuffer = function(e, t) {
-      return this._invokeForAll(t, function(t, n, i) {
-        return n.moveToBeginningOfBuffer(e, i);
+    b.prototype._moveToBeginningOfBuffer = function(a, b) {
+      return this._invokeForAll(b, function(b, c, d) {
+        return c.moveToBeginningOfBuffer(a, d);
       });
     };
 
-    t.prototype._moveToEndOfBuffer = function(e, t) {
-      return this._invokeForAll(t, function(t, n, i) {
-        return n.moveToEndOfBuffer(e, i);
+    b.prototype._moveToEndOfBuffer = function(a, b) {
+      return this._invokeForAll(b, function(b, c, d) {
+        return c.moveToEndOfBuffer(a, d);
       });
     };
 
-    t.prototype._selectAll = function(e) {
+    b.prototype._selectAll = function(a) {
       this.cursors.killSecondaryCursors();
 
-      return this._invokeForAll(e, function(e, t, n) {
-        return t.selectAll(n);
+      return this._invokeForAll(a, function(a, b, c) {
+        return b.selectAll(c);
       });
     };
 
-    t.prototype._line = function(e, t) {
+    b.prototype._line = function(a, b) {
       this.cursors.killSecondaryCursors();
 
-      return this._invokeForAll(t, function(n, i, o) {
-        return i.line(e, t.eventData.position, t.eventData.viewPosition, o);
+      return this._invokeForAll(b, function(c, d, e) {
+        return d.line(a, b.eventData.position, b.eventData.viewPosition, e);
       });
     };
 
-    t.prototype._lastCursorLine = function(e, t) {
+    b.prototype._lastCursorLine = function(a, b) {
       if (this.configuration.editor.readOnly || this.model.hasEditableRange()) {
         return !1;
       }
-      var n = this.cursors.getLastAddedCursor();
-      this._invokeForAll(t, function(i, o, r) {
-        return o === n ? o.line(e, t.eventData.position, t.eventData.viewPosition, r) : !1;
+      var c = this.cursors.getLastAddedCursor();
+      this._invokeForAll(b, function(d, e, f) {
+        return e === c ? e.line(a, b.eventData.position, b.eventData.viewPosition, f) : !1;
       });
 
-      t.shouldReveal = !1;
+      b.shouldReveal = !1;
 
-      t.shouldRevealHorizontal = !1;
+      b.shouldRevealHorizontal = !1;
 
       return !0;
     };
 
-    t.prototype._lineInsertBefore = function(e) {
-      return this._invokeForAll(e, function(e, t, n) {
-        return t.lineInsertBefore(n);
+    b.prototype._lineInsertBefore = function(a) {
+      return this._invokeForAll(a, function(a, b, c) {
+        return b.lineInsertBefore(c);
       });
     };
 
-    t.prototype._lineInsertAfter = function(e) {
-      return this._invokeForAll(e, function(e, t, n) {
-        return t.lineInsertAfter(n);
+    b.prototype._lineInsertAfter = function(a) {
+      return this._invokeForAll(a, function(a, b, c) {
+        return b.lineInsertAfter(c);
       });
     };
 
-    t.prototype._lineBreakInsert = function(e) {
-      return this._invokeForAll(e, function(e, t, n) {
-        return t.lineBreakInsert(n);
+    b.prototype._lineBreakInsert = function(a) {
+      return this._invokeForAll(a, function(a, b, c) {
+        return b.lineBreakInsert(c);
       });
     };
 
-    t.prototype._word = function(e, t) {
+    b.prototype._word = function(a, b) {
       this.cursors.killSecondaryCursors();
 
-      return this._invokeForAll(t, function(n, i, o) {
-        return i.word(e, t.eventData.position, t.eventData.preference || "none", o);
+      return this._invokeForAll(b, function(c, d, e) {
+        return d.word(a, b.eventData.position, b.eventData.preference || "none", e);
       });
     };
 
-    t.prototype._lastCursorWord = function(e) {
+    b.prototype._lastCursorWord = function(a) {
       if (this.configuration.editor.readOnly || this.model.hasEditableRange()) {
         return !1;
       }
-      var t = this.cursors.getLastAddedCursor();
-      this._invokeForAll(e, function(n, i, o) {
-        return i === t ? i.word(!0, e.eventData.position, e.eventData.preference || "none", o) : !1;
+      var b = this.cursors.getLastAddedCursor();
+      this._invokeForAll(a, function(c, d, e) {
+        return d === b ? d.word(!0, a.eventData.position, a.eventData.preference || "none", e) : !1;
       });
 
-      e.shouldReveal = !1;
+      a.shouldReveal = !1;
 
-      e.shouldRevealHorizontal = !1;
+      a.shouldRevealHorizontal = !1;
 
       return !0;
     };
 
-    t.prototype._cancelSelection = function(e) {
-      return this.cursors.killSecondaryCursors() ? !0 : this._invokeForAll(e, function(e, t, n) {
-        return t.cancelSelection(n);
+    b.prototype._cancelSelection = function(a) {
+      return this.cursors.killSecondaryCursors() ? !0 : this._invokeForAll(a, function(a, b, c) {
+        return b.cancelSelection(c);
       });
     };
 
-    t.prototype._type = function(e) {
-      var t = this;
+    b.prototype._type = function(a) {
+      var b = this;
 
-      var n = e.eventData.text;
-      if ("keyboard" === e.eventSource) {
-        var i;
+      var c = a.eventData.text;
+      if (a.eventSource === "keyboard") {
+        var d;
 
-        var o;
+        var e;
 
-        var r;
-        for (i = 0, o = n.length; o > i; i++) {
-          r = n.charAt(i);
-          this.charactersTyped += r;
-          this._createAndInterpretHandlerCtx(e.eventSource, e.eventData, function(n) {
-            t._invokeForAll(n, function(e, t, n) {
-              return t.type(r, n);
+        var f;
+
+        var g;
+
+        var h;
+        for (d = 0, f = c.length; d < f; d++) {
+          h = c.charAt(d);
+          this.charactersTyped += h;
+          this._createAndInterpretHandlerCtx(a.eventSource, a.eventData, function(c) {
+            b._invokeForAll(c, function(a, b, c) {
+              return b.type(h, c);
             }, !1, !1);
 
-            e.cursorPositionChangeReason = n.cursorPositionChangeReason;
+            a.cursorPositionChangeReason = c.cursorPositionChangeReason;
 
-            e.shouldReveal = n.shouldReveal;
+            a.shouldReveal = c.shouldReveal;
 
-            e.shouldRevealVerticalInCenter = n.shouldRevealVerticalInCenter;
+            a.shouldRevealVerticalInCenter = c.shouldRevealVerticalInCenter;
 
-            e.shouldRevealHorizontal = n.shouldRevealHorizontal;
+            a.shouldRevealHorizontal = c.shouldRevealHorizontal;
           });
         }
       } else {
-        this._invokeForAll(e, function(e, t, i) {
-          return t.actualType(n, !1, i);
+        this._invokeForAll(a, function(a, b, d) {
+          return b.actualType(c, !1, d);
         });
       }
       return !0;
     };
 
-    t.prototype._tab = function(e) {
-      return this._invokeForAll(e, function(e, t, n) {
-        return t.tab(n);
+    b.prototype._tab = function(a) {
+      return this._invokeForAll(a, function(a, b, c) {
+        return b.tab(c);
       }, !1, !1);
     };
 
-    t.prototype._indent = function(e) {
-      return this._invokeForAll(e, function(e, t, n) {
-        return t.indent(n);
+    b.prototype._indent = function(a) {
+      return this._invokeForAll(a, function(a, b, c) {
+        return b.indent(c);
       });
     };
 
-    t.prototype._outdent = function(e) {
-      return this._invokeForAll(e, function(e, t, n) {
-        return t.outdent(n);
+    b.prototype._outdent = function(a) {
+      return this._invokeForAll(a, function(a, b, c) {
+        return b.outdent(c);
       });
     };
 
-    t.prototype._paste = function(e) {
-      return this._invokeForAll(e, function(t, n, i) {
-        return n.paste(e.eventData.text, e.eventData.pasteOnNewLine, i);
+    b.prototype._paste = function(a) {
+      return this._invokeForAll(a, function(b, c, d) {
+        return c.paste(a.eventData.text, a.eventData.sameSource, d);
       });
     };
 
-    t.prototype._deleteLeft = function(e) {
-      return this._invokeForAll(e, function(e, t, n) {
-        return t.deleteLeft(n);
+    b.prototype._deleteLeft = function(a) {
+      return this._invokeForAll(a, function(a, b, c) {
+        return b.deleteLeft(c);
       }, !1, !1);
     };
 
-    t.prototype._deleteWordLeft = function(e) {
-      return this._invokeForAll(e, function(e, t, n) {
-        return t.deleteWordLeft(n);
+    b.prototype._deleteWordLeft = function(a) {
+      return this._invokeForAll(a, function(a, b, c) {
+        return b.deleteWordLeft(c);
       }, !1, !1);
     };
 
-    t.prototype._deleteRight = function(e) {
-      return this._invokeForAll(e, function(e, t, n) {
-        return t.deleteRight(n);
+    b.prototype._deleteRight = function(a) {
+      return this._invokeForAll(a, function(a, b, c) {
+        return b.deleteRight(c);
       }, !1, !1);
     };
 
-    t.prototype._deleteWordRight = function(e) {
-      return this._invokeForAll(e, function(e, t, n) {
-        return t.deleteWordRight(n);
+    b.prototype._deleteWordRight = function(a) {
+      return this._invokeForAll(a, function(a, b, c) {
+        return b.deleteWordRight(c);
       }, !1, !1);
     };
 
-    t.prototype._deleteAllLeft = function(e) {
-      return this._invokeForAll(e, function(e, t, n) {
-        return t.deleteAllLeft(n);
+    b.prototype._deleteAllLeft = function(a) {
+      return this._invokeForAll(a, function(a, b, c) {
+        return b.deleteAllLeft(c);
       }, !1, !1);
     };
 
-    t.prototype._deleteAllRight = function(e) {
-      return this._invokeForAll(e, function(e, t, n) {
-        return t.deleteAllRight(n);
+    b.prototype._deleteAllRight = function(a) {
+      return this._invokeForAll(a, function(a, b, c) {
+        return b.deleteAllRight(c);
       }, !1, !1);
     };
 
-    t.prototype._cut = function(e) {
-      return this._invokeForAll(e, function(e, t, n) {
-        return t.cut(n);
+    b.prototype._cut = function(a) {
+      return this._invokeForAll(a, function(a, b, c) {
+        return b.cut(c);
       });
     };
 
-    t.prototype._undo = function(e) {
-      e.cursorPositionChangeReason = "undo";
+    b.prototype._undo = function(a) {
+      a.cursorPositionChangeReason = "undo";
 
       this._interpretCommandResult(this.model.undo());
 
       return !0;
     };
 
-    t.prototype._redo = function(e) {
-      e.cursorPositionChangeReason = "redo";
+    b.prototype._redo = function(a) {
+      a.cursorPositionChangeReason = "redo";
 
       this._interpretCommandResult(this.model.redo());
 
       return !0;
     };
 
-    t.prototype._externalExecuteCommand = function(e) {
+    b.prototype._externalExecuteCommand = function(a) {
       this.cursors.killSecondaryCursors();
 
-      return this._invokeForAll(e, function(t, n, i) {
-        i.shouldPushStackElementBefore = !0;
+      return this._invokeForAll(a, function(b, c, d) {
+        d.shouldPushStackElementBefore = !0;
 
-        i.shouldPushStackElementAfter = !0;
+        d.shouldPushStackElementAfter = !0;
 
-        i.executeCommand = e.eventData;
-
-        return !1;
-      });
-    };
-
-    t.prototype._externalExecuteCommands = function(e) {
-      return this._invokeForAll(e, function(t, n, i) {
-        i.shouldPushStackElementBefore = !0;
-
-        i.shouldPushStackElementAfter = !0;
-
-        i.executeCommand = e.eventData[t];
+        d.executeCommand = a.eventData;
 
         return !1;
       });
     };
 
-    return t;
-  }(a.EventEmitter);
-  t.Cursor = p;
+    b.prototype._externalExecuteCommands = function(a) {
+      return this._invokeForAll(a, function(b, c, d) {
+        d.shouldPushStackElementBefore = !0;
+
+        d.shouldPushStackElementAfter = !0;
+
+        d.executeCommand = a.eventData[b];
+
+        return !1;
+      });
+    };
+
+    return b;
+  }(q.EventEmitter);
+  b.Cursor = w;
 });

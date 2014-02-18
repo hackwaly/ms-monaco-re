@@ -1,128 +1,139 @@
-define("vs/editor/core/view/viewOverlays", ["require", "exports", "vs/base/dom/dom", "vs/editor/core/view/viewPart"],
-  function(e, t, n, i) {
-    var o = function(e) {
-      function t(t) {
-        e.call(this, t);
-
-        this._dynamicOverlays = [];
-
-        this._overlays = [];
-
-        this.domNode = document.createElement("div");
-
-        this.domNode.className = "view-overlays";
-
-        this.domNode.style.position = "absolute";
-
-        this.domNode.setAttribute("role", "presentation");
-
-        this.domNode.setAttribute("aria-hidden", "true");
-
-        this._backgroundDomNode = document.createElement("div");
-
-        this._backgroundDomNode.className = "background";
-
-        this.domNode.appendChild(this._backgroundDomNode);
-
-        this._staticDomNode = document.createElement("div");
-
-        this._staticDomNode.className = "static";
-
-        this.domNode.appendChild(this._staticDomNode);
-
-        this._dynamicDomNode = document.createElement("div");
-
-        this._dynamicDomNode.className = "dynamic";
-
-        this.domNode.appendChild(this._dynamicDomNode);
-
-        this._scrollHeight = 0;
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
+    }
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
       }
-      __extends(t, e);
+    }
+    d.prototype = b.prototype;
 
-      t.prototype.dispose = function() {
-        e.prototype.dispose.call(this);
-        for (var t = 0; t < this._dynamicOverlays.length; t++) {
-          this._dynamicOverlays[t].dispose();
+    a.prototype = new d;
+  };
+
+define(["require", "exports", "vs/base/dom/dom", "vs/editor/core/view/viewEventHandler"], function(a, b, c, d) {
+  var e = c;
+
+  var f = d;
+
+  var g = function(a) {
+    function b(b) {
+      a.call(this);
+
+      this.context = b;
+
+      this.dynamicOverlays = [];
+
+      this.overlays = [];
+
+      this.domNode = document.createElement("div");
+
+      this.domNode.className = "view-overlays";
+
+      this.domNode.style.position = "absolute";
+
+      this.domNode.setAttribute("role", "presentation");
+
+      this.domNode.setAttribute("aria-hidden", "true");
+
+      this.backgroundDomNode = document.createElement("div");
+
+      this.backgroundDomNode.className = "background";
+
+      this.domNode.appendChild(this.backgroundDomNode);
+
+      this.staticDomNode = document.createElement("div");
+
+      this.staticDomNode.className = "static";
+
+      this.domNode.appendChild(this.staticDomNode);
+
+      this.dynamicDomNode = document.createElement("div");
+
+      this.dynamicDomNode.className = "dynamic";
+
+      this.domNode.appendChild(this.dynamicDomNode);
+
+      this.scrollHeight = 0;
+
+      this.context.addEventHandler(this);
+    }
+    __extends(b, a);
+
+    b.prototype.dispose = function() {
+      this.context.removeEventHandler(this);
+
+      this.context = null;
+      for (var a = 0; a < this.dynamicOverlays.length; a++) {
+        this.dynamicOverlays[a].dispose();
+      }
+      this.dynamicOverlays = null;
+      for (var a = 0; a < this.overlays.length; a++) {
+        this.overlays[a].dispose();
+      }
+      this.overlays = null;
+    };
+
+    b.prototype.onViewFocusChanged = function(a) {
+      e.toggleClass(this.dynamicDomNode, "focused", a);
+
+      return !1;
+    };
+
+    b.prototype.onLayoutChanged = function(a) {
+      this.backgroundDomNode.style.width = a.width + "px";
+
+      return !1;
+    };
+
+    b.prototype.addDynamicOverlay = function(a) {
+      this.dynamicOverlays.push(a);
+    };
+
+    b.prototype.addOverlay = function(a) {
+      this.overlays.push(a);
+
+      this.staticDomNode.appendChild(a.getDomNode());
+    };
+
+    b.prototype.prepareRender = function(a) {
+      var b = !1;
+      for (var c = 0; !b && c < this.dynamicOverlays.length; c++) {
+        b = this.dynamicOverlays[c].shouldCallRender() || b;
+      }
+      var d = null;
+      if (b) {
+        d = [];
+        for (var c = 0; c < this.dynamicOverlays.length; c++) {
+          d = d.concat(this.dynamicOverlays[c].render(a));
         }
-        this._dynamicOverlays = null;
-        for (var t = 0; t < this._overlays.length; t++) {
-          this._overlays[t].dispose();
-        }
-        this._overlays = null;
+      }
+      for (var c = 0; c < this.overlays.length; c++) {
+        this.overlays[c].prepareRender(a);
+      }
+      return {
+        pieces: d
       };
+    };
 
-      t.prototype.onViewFocusChanged = function(e) {
-        var t = this;
-        this._requestModificationFrame(function() {
-          n.toggleClass(t._dynamicDomNode, "focused", e);
-        });
+    b.prototype.render = function(a, b) {
+      if (a.pieces) {
+        this.dynamicDomNode.innerHTML = a.pieces.join("");
+      }
+      for (var c = 0; c < this.overlays.length; c++) {
+        this.overlays[c].render(b);
+      }
+      if (this.scrollHeight !== b.scrollHeight) {
+        this.scrollHeight = b.scrollHeight;
+        this.backgroundDomNode.style.height = this.scrollHeight + "px";
+      }
 
-        return !1;
-      };
+      this.backgroundDomNode.style.top = b.getViewportVerticalOffsetForLineNumber(b.visibleRange.startLineNumber) +
+        "px";
+    };
 
-      t.prototype.onLayoutChanged = function(e) {
-        var t = this;
-        this._requestModificationFrame(function() {
-          t._backgroundDomNode.style.width = e.width + "px";
-        });
-
-        return !1;
-      };
-
-      t.prototype.addDynamicOverlay = function(e) {
-        this._dynamicOverlays.push(e);
-      };
-
-      t.prototype.addOverlay = function(e) {
-        this._overlays.push(e);
-
-        this._staticDomNode.appendChild(e.getDomNode());
-      };
-
-      t.prototype._render = function(e, t) {
-        for (var n = this, i = !1, o = 0; !i && o < this._dynamicOverlays.length; o++) {
-          i = this._dynamicOverlays[o].shouldCallRender() || i;
-        }
-        var r = null;
-        if (i) {
-          r = [];
-          for (var o = 0; o < this._dynamicOverlays.length; o++) {
-            r = r.concat(this._dynamicOverlays[o].render(e, t));
-          }
-        }
-        for (var o = 0; o < this._overlays.length; o++) {
-          this._overlays[o].prepareRender(e);
-        }
-        this._requestModificationFrame(function() {
-          if (r) {
-            n._dynamicDomNode.innerHTML = r.join("");
-          }
-          for (var t = 0; t < n._overlays.length; t++) {
-            n._overlays[t].render(e);
-          }
-          if (n._scrollHeight !== e.scrollHeight) {
-            n._scrollHeight = e.scrollHeight;
-            n._backgroundDomNode.style.height = n._scrollHeight + "px";
-          }
-          var i = e.getViewportVerticalOffsetForLineNumber(e.visibleRange.startLineNumber) + "px";
-          if (n._backgroundDomNode.style.top !== i) {
-            n._backgroundDomNode.style.top = i;
-          }
-        });
-      };
-
-      t.prototype.onReadAfterForcedLayout = function(e, t) {
-        this._render(e, t);
-
-        return null;
-      };
-
-      t.prototype.onWriteAfterForcedLayout = function() {
-        this._executeModificationRunners();
-      };
-
-      return t;
-    }(i.ViewPart);
-    t.ViewOverlays = o;
-  });
+    return b;
+  }(f.ViewEventHandler);
+  b.ViewOverlays = g;
+});

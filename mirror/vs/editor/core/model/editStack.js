@@ -1,8 +1,9 @@
-define("vs/editor/core/model/editStack", ["require", "exports", "vs/editor/core/model/modelEditOperation"], function(e,
-  t, n) {
-  var i = function() {
-    function e(e) {
-      this.model = e;
+define(["require", "exports", "vs/editor/core/model/modelEditOperation"], function(a, b, c) {
+  var d = c;
+
+  var e = function() {
+    function a(a) {
+      this.model = a;
 
       this.currentOpenStackElement = null;
 
@@ -10,14 +11,14 @@ define("vs/editor/core/model/editStack", ["require", "exports", "vs/editor/core/
 
       this.future = [];
     }
-    e.prototype.pushStackElement = function() {
-      if (null !== this.currentOpenStackElement) {
+    a.prototype.pushStackElement = function() {
+      if (this.currentOpenStackElement !== null) {
         this.past.push(this.currentOpenStackElement);
         this.currentOpenStackElement = null;
       }
     };
 
-    e.prototype.clear = function() {
+    a.prototype.clear = function() {
       this.currentOpenStackElement = null;
 
       this.past = [];
@@ -25,52 +26,55 @@ define("vs/editor/core/model/editStack", ["require", "exports", "vs/editor/core/
       this.future = [];
     };
 
-    e.prototype.pushEditOperation = function(e, t, i) {
+    a.prototype.pushEditOperation = function(a, b, c) {
       this.future = [];
 
       if (!this.currentOpenStackElement) {
         this.currentOpenStackElement = {
-          beforeCursorState: e,
+          beforeCursorState: a,
           editOperations: [],
           afterCursorState: null
         };
       }
-      var o = n.ModelEditOperation.execute(this.model, {
-        operations: t
+      var e = d.ModelEditOperation.execute(this.model, {
+        operations: b
       });
-      this.currentOpenStackElement.editOperations.push(o);
+      this.currentOpenStackElement.editOperations.push(e);
 
-      this.currentOpenStackElement.afterCursorState = i ? i(o.operations) : null;
+      this.currentOpenStackElement.afterCursorState = c ? c(e.operations) : null;
 
       return this.currentOpenStackElement.afterCursorState;
     };
 
-    e.prototype.undo = function() {
-      if (this.pushStackElement(), this.past.length > 0) {
-        for (var e = this.past.pop(), t = e.editOperations.length - 1; t >= 0; t--) {
-          e.editOperations[t] = n.ModelEditOperation.execute(this.model, e.editOperations[t]);
+    a.prototype.undo = function() {
+      this.pushStackElement();
+      if (this.past.length > 0) {
+        var a = this.past.pop();
+        for (var b = a.editOperations.length - 1; b >= 0; b--) {
+          a.editOperations[b] = d.ModelEditOperation.execute(this.model, a.editOperations[b]);
         }
-        this.future.push(e);
+        this.future.push(a);
 
-        return e.beforeCursorState;
+        return a.beforeCursorState;
       }
       return null;
     };
 
-    e.prototype.redo = function() {
+    a.prototype.redo = function() {
       if (this.future.length > 0) {
         if (this.currentOpenStackElement) throw new Error("How is this possible?");
-        for (var e = this.future.pop(), t = 0; t < e.editOperations.length; t++) {
-          e.editOperations[t] = n.ModelEditOperation.execute(this.model, e.editOperations[t]);
+        var a = this.future.pop();
+        for (var b = 0; b < a.editOperations.length; b++) {
+          a.editOperations[b] = d.ModelEditOperation.execute(this.model, a.editOperations[b]);
         }
-        this.past.push(e);
+        this.past.push(a);
 
-        return e.afterCursorState;
+        return a.afterCursorState;
       }
       return null;
     };
 
-    return e;
+    return a;
   }();
-  t.EditStack = i;
+  b.EditStack = e;
 });

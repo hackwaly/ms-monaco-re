@@ -1,197 +1,211 @@
-define("vs/editor/core/view/model/characterHardWrappingLineMapper", ["require", "exports",
-  "vs/editor/core/view/model/prefixSumComputer"
-], function(e, t, n) {
-  function i(e, t, n) {
-    var i;
+define(["require", "exports", "vs/editor/core/view/model/prefixSumComputer"], function(a, b, c) {
+  function j(a, b, c) {
+    var d = [];
 
-    var o = [];
+    var e = 0;
 
-    var u = 0;
+    var f = a + b + c;
 
-    var l = e + t + n;
-    for (i = 0; i < l.length; i++) {
-      u = Math.max(u, l.charCodeAt(i));
+    var j;
+    for (j = 0; j < f.length; j++) {
+      e = Math.max(e, f.charCodeAt(j));
     }
-    for (i = 0; u >= i; i++) {
-      o[i] = 0;
+    for (j = 0; j <= e; j++) {
+      d[j] = 0;
     }
-    for (i = 0; i < e.length; i++) {
-      o[e.charCodeAt(i)] = r;
+    for (j = 0; j < a.length; j++) {
+      d[a.charCodeAt(j)] = g;
     }
-    for (i = 0; i < t.length; i++) {
-      o[t.charCodeAt(i)] = s;
+    for (j = 0; j < b.length; j++) {
+      d[b.charCodeAt(j)] = h;
     }
-    for (i = 0; i < n.length; i++) {
-      o[n.charCodeAt(i)] = a;
+    for (j = 0; j < c.length; j++) {
+      d[c.charCodeAt(j)] = i;
     }
-    return o;
+    return d;
   }
-  var o = {
+  var d = c;
+
+  var e = {
     index: -1,
     remainder: -1
   };
 
-  var r = 1;
+  var f = "	".charCodeAt(0);
 
-  var s = 2;
+  var g = 1;
 
-  var a = 3;
+  var h = 2;
 
-  var u = function() {
-    function e(e, t, n, i) {
-      this.characterClasses = e;
+  var i = 3;
 
-      this.lineText = t;
+  var k = function() {
+    function a(a, b, c, d) {
+      this.characterClasses = a;
 
-      this.tabSize = n;
+      this.lineText = b;
 
-      this.wrappingColumn = i;
+      this.tabSize = c;
+
+      this.wrappingColumn = d;
 
       this.prefixSums = null;
 
       this.computeMapping();
     }
-    e.prototype.setLineText = function(e) {
-      this.lineText = e;
+    a.prototype.setLineText = function(a) {
+      this.lineText = a;
 
       this.computeMapping();
     };
 
-    e.prototype.setWrappingColumn = function(e) {
-      this.wrappingColumn = e;
+    a.prototype.setWrappingColumn = function(a) {
+      this.wrappingColumn = a;
 
       this.computeMapping();
     };
 
-    e.prototype.setTabSize = function(e) {
-      this.tabSize = e;
+    a.prototype.setTabSize = function(a) {
+      this.tabSize = a;
 
       this.computeMapping();
     };
 
-    e.nextVisibleColumn = function(e, t, n) {
-      return n ? e + (t - e % t) : e + 1;
+    a.nextVisibleColumn = function(a, b, c) {
+      return c ? a + (b - a % b) : a + 1;
     };
 
-    e.prototype.computeMapping = function() {
-      if (-1 === this.wrappingColumn) {
+    a.prototype.computeMapping = function() {
+      if (this.wrappingColumn === -1) {
         this.prefixSums = null;
-        return void 0;
+        return;
       }
-      var t;
+      var b = this.characterClasses;
 
-      var i;
+      var c = this.lineText;
+
+      var e = this.tabSize;
+
+      var f = this.wrappingColumn;
+
+      var j = "	".charCodeAt(0);
+
+      var k = 0;
+
+      var l = [];
+
+      var m = 0;
+
+      var n;
 
       var o;
 
+      var p;
+
+      var q;
+
+      var r;
+
+      var s;
+
+      var t;
+
       var u;
 
-      var l;
-
-      var c;
-
-      var d;
-
-      var h;
-
-      var p = this.characterClasses;
-
-      var f = this.lineText;
-
-      var g = this.tabSize;
-
-      var m = this.wrappingColumn;
-
-      var v = "	".charCodeAt(0);
-
-      var y = 0;
-
-      var _ = [];
-
-      var b = 0;
-
-      var C = -1;
+      var v = -1;
 
       var w = 0;
 
-      var E = -1;
+      var x = -1;
 
-      var S = 0;
-      for (o = 0, t = 0, i = f.length; i > t; t++) {
-        u = f.charCodeAt(t);
-        l = u === v;
-        c = u < p.length ? p[u] : 0;
-        if (c === r) {
-          C = t;
+      var y = 0;
+      p = 0;
+      for (n = 0, o = c.length; n < o; n++) {
+        q = c.charCodeAt(n);
+        r = q === j;
+        s = q < b.length ? b[q] : 0;
+        if (s === g) {
+          v = n;
           w = 0;
         }
-        o = e.nextVisibleColumn(o, g, l);
-        if (o > m && 0 !== t) {
-          if (-1 !== C) {
-            d = C;
-            h = w;
+        p = a.nextVisibleColumn(p, e, r);
+        if (p > f && n !== 0) {
+          if (v !== -1) {
+            t = v;
+            u = w;
           } else {
-            if (-1 !== E) {
-              d = E;
-              h = S;
+            if (x !== -1) {
+              t = x;
+              u = y;
             } else {
-              d = t;
-              h = 0;
+              t = n;
+              u = 0;
             }
           }
-          _[b++] = d - y;
-          y = d;
-          o = e.nextVisibleColumn(h, g, l);
-          C = -1;
+          l[m++] = t - k;
+          k = t;
+          p = a.nextVisibleColumn(u, e, r);
+          v = -1;
           w = 0;
-          E = -1;
-          S = 0;
+          x = -1;
+          y = 0;
         }
-        if (-1 !== C) {
-          w = e.nextVisibleColumn(w, g, l);
+        if (v !== -1) {
+          w = a.nextVisibleColumn(w, e, r);
         }
-        if (-1 !== E) {
-          S = e.nextVisibleColumn(S, g, l);
+        if (x !== -1) {
+          y = a.nextVisibleColumn(y, e, r);
         }
-        if (c === s) {
-          C = t + 1;
+        if (s === h) {
+          v = n + 1;
           w = 0;
         }
-        if (c === a) {
-          E = t + 1;
-          S = 0;
+        if (s === i) {
+          x = n + 1;
+          y = 0;
         }
       }
-      _[b++] = i - y;
+      l[m++] = o - k;
 
-      this.prefixSums = new n.PrefixSumComputer(_);
+      this.prefixSums = new d.PrefixSumComputer(l);
     };
 
-    e.prototype.getOutputLineCount = function() {
-      return -1 === this.wrappingColumn ? 1 : this.prefixSums.getCount();
+    a.prototype.getOutputLineCount = function() {
+      return this.wrappingColumn === -1 ? 1 : this.prefixSums.getCount();
     };
 
-    e.prototype.getInputOffsetOfOutputPosition = function(e, t) {
-      return -1 === this.wrappingColumn ? t : 0 === e ? t : this.prefixSums.getAccumulatedValue(e - 1) + t;
+    a.prototype.getInputOffsetOfOutputPosition = function(a, b) {
+      return this.wrappingColumn === -1 ? b : a === 0 ? b : this.prefixSums.getAccumulatedValue(a - 1) + b;
     };
 
-    e.prototype.getOutputPositionOfInputOffset = function(e, t) {
-      return -1 === this.wrappingColumn ? (t.outputLineIndex = 0, t.outputOffset = e, void 0) : (this.prefixSums.getIndexOf(
-        e, o), t.outputLineIndex = o.index, t.outputOffset = o.remainder, void 0);
+    a.prototype.getOutputPositionOfInputOffset = function(a, b) {
+      if (this.wrappingColumn === -1) {
+        b.outputLineIndex = 0;
+
+        b.outputOffset = a;
+        return;
+      }
+      this.prefixSums.getIndexOf(a, e);
+
+      b.outputLineIndex = e.index;
+
+      b.outputOffset = e.remainder;
     };
 
-    return e;
+    a.SEARCH_RANGE_RATIO = .2;
+
+    return a;
   }();
-  t.CharacterHardWrappingLineMapper = u;
+  b.CharacterHardWrappingLineMapper = k;
   var l = function() {
-    function e(e, t, n) {
-      this.characterClasses = i(e, t, n);
+    function a(a, b, c) {
+      this.characterClasses = j(a, b, c);
     }
-    e.prototype.createLineMapper = function(e, t, n) {
-      return new u(this.characterClasses, e, t, n);
+    a.prototype.createLineMapper = function(a, b, c) {
+      return new k(this.characterClasses, a, b, c);
     };
 
-    return e;
+    return a;
   }();
-  t.CharacterHardWrappingLineMapperFactory = l;
+  b.CharacterHardWrappingLineMapperFactory = l;
 });

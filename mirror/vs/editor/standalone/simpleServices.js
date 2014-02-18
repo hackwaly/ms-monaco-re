@@ -1,141 +1,102 @@
-define("vs/editor/standalone/simpleServices", ["require", "exports", "vs/base/lib/winjs.base", "vs/platform/services",
-  "vs/base/errors", "vs/base/types", "vs/editor/core/constants"
-], function(e, t, n, i, o, r, s) {
-  var a = function() {
-    function e(e) {
-      this._widget = e;
-    }
-    e.prototype.getId = function() {
-      return "editor";
-    };
+define(["require", "exports", "vs/base/lib/winjs.base", "vs/platform/services", "vs/base/errors", "vs/base/types"],
+  function(a, b, c, d, e, f) {
+    var g = c;
 
-    e.prototype.getControl = function() {
-      return this._widget;
-    };
+    var h = d;
 
-    e.prototype.getSelection = function() {
-      return this._widget.getSelection();
-    };
+    var i = e;
 
-    e.prototype.focus = function() {
-      this._widget.focus();
-    };
+    var j = f;
 
-    return e;
-  }();
-  t.SimpleEditor = a;
-  var u = function() {
-    function e(e) {
-      this.model = e;
-    }
-    Object.defineProperty(e.prototype, "textEditorModel", {
-      get: function() {
+    var k = function() {
+      function a(a) {
+        this.editor = a;
+      }
+      a.prototype.getId = function() {
+        return "editor";
+      };
+
+      a.prototype.getControl = function() {
+        return this.editor;
+      };
+
+      a.prototype.getSelection = function() {
+        return this.editor.getSelection();
+      };
+
+      a.prototype.focus = function() {
+        this.editor.focus();
+      };
+
+      return a;
+    }();
+    b.SimpleEditor = k;
+    var l = function() {
+      function a(a) {
+        this.model = a;
+      }
+      a.prototype.getTextEditorModel = function() {
         return this.model;
-      },
-      enumerable: !0,
-      configurable: !0
-    });
+      };
 
-    return e;
-  }();
-  t.SimpleModel = u;
-  var l = function() {
-    function e(e) {
-      if (e) {
-        this.setEditor(e);
+      return a;
+    }();
+    b.SimpleModel = l;
+    var m = function() {
+      function a(a) {
+        this.editor = a;
       }
-    }
-    e.prototype.setEditor = function(e) {
-      this.editor = new a(e);
-    };
+      a.prototype.getActiveEditor = function() {
+        return new k(this.editor);
+      };
 
-    e.prototype.getActiveEditor = function() {
-      return this.editor;
-    };
+      a.prototype.getActiveEditorInput = function() {
+        return null;
+      };
 
-    e.prototype.getVisibleEditors = function() {
-      return [this.editor];
-    };
+      a.prototype.openEditor = function(a) {
+        var b = this.editor.getModel();
+        if (b.id !== a.path && b.getAssociatedResource().toExternal() !== a.path) {
+          return g.Promise.as(!1);
+        }
+        var c = a.options.selection;
+        c && (!j.isUndefinedOrNull(c.endLineNumber) && !j.isUndefinedOrNull(c.endColumn) ? this.editor.setSelection(c, !
+          0, !0, !0) : this.editor.setPosition({
+          lineNumber: c.startLineNumber,
+          column: c.startColumn
+        }, !0, !0, !0));
 
-    e.prototype.getActiveEditorInput = function() {
-      return null;
-    };
+        return g.Promise.as(!0);
+      };
 
-    e.prototype.openEditor = function(e) {
-      var t = e;
-      if (this.editor._widget.getEditorType() === s.EditorType.ICodeEditor) {
-        return n.Promise.as(this.doOpenEditor(this.editor._widget, t));
-      }
-      var i = this.editor._widget;
-      return n.Promise.as(this.doOpenEditor(i.getOriginalEditor(), t) || this.doOpenEditor(i.getModifiedEditor(), t));
-    };
+      a.prototype.resolveEditorModel = function(a) {
+        var b = this.editor.getModel();
+        return b.id !== a.path && b.getAssociatedResource().toExternal() !== a.path ? g.Promise.as(null) : g.Promise.as(
+          new l(b));
+      };
 
-    e.prototype.moveEditor = function() {};
+      return a;
+    }();
+    b.SimpleEditorService = m;
+    var n = function() {};
 
-    e.prototype.doOpenEditor = function(e, t) {
-      var n = this.findModel(e, t);
-      if (!n) {
-        return !1;
-      }
-      var i = t.options.selection;
-      i && (r.isUndefinedOrNull(i.endLineNumber) || r.isUndefinedOrNull(i.endColumn) ? e.setPosition({
-        lineNumber: i.startLineNumber,
-        column: i.startColumn
-      }, !0, !0, !0) : e.setSelection(i, !0, !0, !0));
+    var o = function() {
+      function a() {}
+      a.prototype.show = function(a, b) {
+        switch (a) {
+          case h.Severity.Error:
+            console.error(i.toErrorMessage(b, !0));
+            break;
+          case h.Severity.Warning:
+            console.warn(b);
+            break;
+          default:
+            console.log(b);
+        }
+        return n;
+      };
 
-      return !0;
-    };
-
-    e.prototype.findModel = function(e, t) {
-      var n = e.getModel();
-      return n.getAssociatedResource().equals(t.resource) ? n : null;
-    };
-
-    e.prototype.closeEditor = function() {
-      return n.TPromise.as(this.editor);
-    };
-
-    e.prototype.focusEditor = function() {
-      this.editor.focus();
-
-      return n.TPromise.as(this.editor);
-    };
-
-    e.prototype.resolveEditorModel = function(e) {
-      var t;
-
-      var i = e;
-      if (this.editor._widget.getEditorType() === s.EditorType.ICodeEditor) {
-        t = this.findModel(this.editor._widget, i);
-      } else {
-        var o = this.editor._widget;
-        t = this.findModel(o.getOriginalEditor(), i) || this.findModel(o.getModifiedEditor(), i);
-      }
-      return t ? n.Promise.as(new u(t)) : n.Promise.as(null);
-    };
-
-    return e;
-  }();
-  t.SimpleEditorService = l;
-  var c = function() {
-    function e() {}
-    e.prototype.show = function(t, n) {
-      switch (t) {
-        case 2:
-          console.error(o.toErrorMessage(n, !0));
-          break;
-        case 1:
-          console.warn(n);
-          break;
-        default:
-          console.log(n);
-      }
-      return e.Empty;
-    };
-
-    e.Empty = function() {};
-
-    return e;
-  }();
-  t.SimpleMessageService = c;
-});
+      return a;
+    }();
+    b.SimpleMessageService = o;
+  });

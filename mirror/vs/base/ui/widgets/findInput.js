@@ -1,99 +1,86 @@
-define("vs/base/ui/widgets/findInput", ["require", "exports", "vs/nls!vs/editor/editor.main", "vs/base/dom/builder",
-  "vs/base/dom/mouseEvent", "vs/base/dom/keyboardEvent", "vs/base/ui/widgets/inputBox", "vs/css!./findInput"
-], function(e, t, n, i, o, r, s) {
-  var a = i.$;
+define(["require", "exports", "vs/nls", "vs/base/dom/builder", "vs/base/dom/dom", "vs/base/dom/mouseEvent",
+  "vs/base/strings", "vs/css!./findInput"
+], function(a, b, c, d, e, f, g) {
+  var h = c;
 
-  var u = function() {
-    function e(e, t, n, i) {
-      var s = this;
-      this.actionClassName = e;
+  var i = d;
 
-      this.title = t;
+  var j = e;
 
-      this.isChecked = n;
+  var k = f;
 
-      this.onChange = i;
+  var l = g;
+
+  var m = function() {
+    function a(a, b, c, d) {
+      var e = this;
+      this.actionClassName = a;
+
+      this.title = b;
+
+      this.isChecked = c;
+
+      this.onChange = d;
 
       this.listenersToRemove = [];
 
       this.domNode = document.createElement("div");
 
-      this.domNode.title = t;
+      this.domNode.title = b;
 
       this.render();
 
-      a(this.domNode).attr({
-        "aria-checked": "false",
-        "aria-label": this.title,
-        tabindex: 0,
-        role: "checkbox"
-      });
+      i.Build.withElement(this.domNode).on("click", function(a) {
+        var b = new k.MouseEvent(a);
+        e.isChecked = !e.isChecked;
 
-      a(this.domNode).on("click", function(e) {
-        var t = new o.StandardMouseEvent(e);
-        s.isChecked = !s.isChecked;
+        e.render();
 
-        s.render();
+        e.onChange();
 
-        s.onChange();
-
-        t.preventDefault();
-      }, this.listenersToRemove);
-
-      a(this.domNode).on("keydown", function(e) {
-        var t = new r.KeyboardEvent(e);
-        if ("Space" === t.key || "Enter" === t.key) {
-          s.isChecked = !s.isChecked;
-          s.render();
-          s.onChange();
-          t.preventDefault();
-        }
+        b.preventDefault();
       }, this.listenersToRemove);
     }
-    e.prototype.render = function() {
+    a.prototype.render = function() {
       this.domNode.className = this.className();
     };
 
-    e.prototype.setChecked = function(e) {
-      this.isChecked = e;
-
-      a(this.domNode).attr("aria-checked", this.isChecked);
+    a.prototype.setChecked = function(a) {
+      this.isChecked = a;
 
       this.render();
     };
 
-    e.prototype.className = function() {
+    a.prototype.className = function() {
       return "custom-checkbox " + this.actionClassName + " " + (this.isChecked ? "checked" : "unchecked");
     };
 
-    e.prototype.width = function() {
-      return 22;
+    a.prototype.width = function() {
+      return 23;
     };
 
-    e.prototype.destroy = function() {
-      this.listenersToRemove.forEach(function(e) {
-        e();
+    a.prototype.destroy = function() {
+      this.listenersToRemove.forEach(function(a) {
+        a();
       });
 
       this.listenersToRemove = [];
     };
 
-    return e;
+    return a;
   }();
-  t.CustomCheckbox = u;
-  var l = function() {
-    function e(e, t, i) {
-      this.contextViewProvider = t;
-
+  b.CustomCheckbox = m;
+  var n = function() {
+    function a(a, b) {
       this.onOptionChange = null;
 
-      this.width = i.width || 100;
+      this.width = b.width || 100;
 
-      this.placeholder = i.placeholder || "";
+      this.placeholder = b.placeholder || "";
 
-      this.validation = i.validation;
+      this.validation = b.validation;
 
-      this.label = i.label || n.localize("vs_base_ui_widgets_findInput", 0);
+      this.label = b.label || h.localize("defaultLabel", "input");
 
       this.listenersToRemove = [];
 
@@ -107,215 +94,207 @@ define("vs/base/ui/widgets/findInput", ["require", "exports", "vs/nls!vs/editor/
 
       this.inputNode = null;
 
-      this.inputBox = null;
-
       this.validationNode = null;
 
       this.buildDomNode();
 
-      if (Boolean(e)) {
-        e.appendChild(this.domNode);
+      if (Boolean(a)) {
+        a.appendChild(this.domNode);
       }
     }
-    e.prototype.destroy = function() {
+    a.prototype.destroy = function() {
       this.regex.destroy();
 
       this.wholeWords.destroy();
 
       this.caseSensitive.destroy();
 
-      this.listenersToRemove.forEach(function(e) {
-        e();
+      this.listenersToRemove.forEach(function(a) {
+        a();
       });
 
       this.listenersToRemove = [];
     };
 
-    e.prototype.on = function(t, n) {
-      switch (t) {
+    a.prototype.on = function(b, c) {
+      switch (b) {
         case "keydown":
         case "keyup":
-          a(this.inputBox.inputElement).on(t, n);
+          i.Build.withElement(this.inputNode).on(b, c, this.listenersToRemove);
           break;
-        case "click":
-          a(this.inputBox.inputElement).on(t, n);
-          break;
-        case e.OPTION_CHANGE:
-          this.onOptionChange = n;
+        case a.OPTION_CHANGE:
+          this.onOptionChange = c;
       }
       return this;
     };
 
-    e.prototype.enable = function() {
-      a(this.domNode).removeClass("disabled");
-
-      this.inputBox.enable();
+    a.prototype.enable = function() {
+      this.inputNode.disabled = !1;
     };
 
-    e.prototype.disable = function() {
-      a(this.domNode).addClass("disabled");
-
-      this.inputBox.disable();
+    a.prototype.disable = function() {
+      this.inputNode.disabled = !0;
     };
 
-    e.prototype.clear = function() {
-      this.clearValidation();
-
-      this.setValue("");
-
-      this.focus();
-    };
-
-    e.prototype.setWidth = function(e) {
-      this.width = e;
+    a.prototype.setWidth = function(a) {
+      this.width = a;
 
       this.domNode.style.width = this.width + "px";
 
-      this.contextViewProvider.layout();
-
       this.setInputWidth();
     };
 
-    e.prototype.cursorIsAtBeginning = function() {
-      return this.inputBox.cursorIsAtBeginning();
+    a.prototype.getValue = function() {
+      return this.inputNode.value;
     };
 
-    e.prototype.cursorIsAtEnd = function() {
-      return this.inputBox.cursorIsAtEnd();
+    a.prototype.setValue = function(a) {
+      this.inputNode.value = a;
     };
 
-    e.prototype.getValue = function() {
-      return this.inputBox.value;
+    a.prototype.select = function() {
+      this.inputNode.select();
     };
 
-    e.prototype.setValue = function(e) {
-      if (this.inputBox.value !== e) {
-        this.inputBox.value = e;
-      }
+    a.prototype.focus = function() {
+      this.inputNode.focus();
     };
 
-    e.prototype.select = function() {
-      this.inputBox.select();
-    };
-
-    e.prototype.focus = function() {
-      this.inputBox.focus();
-    };
-
-    e.prototype.getCaseSensitive = function() {
+    a.prototype.getCaseSensitive = function() {
       return this.caseSensitive.isChecked;
     };
 
-    e.prototype.setCaseSensitive = function(e) {
-      this.caseSensitive.setChecked(e);
+    a.prototype.setCaseSensitive = function(a) {
+      this.caseSensitive.setChecked(a);
 
       this.setInputWidth();
     };
 
-    e.prototype.getWholeWords = function() {
+    a.prototype.getWholeWords = function() {
       return this.wholeWords.isChecked;
     };
 
-    e.prototype.setWholeWords = function(e) {
-      this.wholeWords.setChecked(e);
+    a.prototype.setWholeWords = function(a) {
+      this.wholeWords.setChecked(a);
 
       this.setInputWidth();
     };
 
-    e.prototype.getRegex = function() {
+    a.prototype.getRegex = function() {
       return this.regex.isChecked;
     };
 
-    e.prototype.setRegex = function(e) {
-      this.regex.setChecked(e);
+    a.prototype.setRegex = function(a) {
+      this.regex.setChecked(a);
 
       this.setInputWidth();
     };
 
-    e.prototype.setInputWidth = function() {
-      var e = this.width - this.caseSensitive.width() - this.wholeWords.width() - this.regex.width();
-      this.inputBox.width = e;
+    a.prototype.setInputWidth = function() {
+      var a = this.width - this.caseSensitive.width() - this.wholeWords.width() - this.regex.width() - 4;
+      this.inputNode.style.width = a + "px";
     };
 
-    e.prototype.buildDomNode = function() {
-      var e = this;
+    a.prototype.buildDomNode = function() {
+      var a = this;
+      this.inputNode = document.createElement("input");
+
+      i.Build.withElement(this.inputNode).addClass("input").attr({
+        placeholder: this.placeholder || "",
+        wrap: "off",
+        autocorrect: "off",
+        autocapitalize: "off",
+        spellcheck: "false",
+        "aria-label": this.label
+      }).type("text").on(j.EventType.KEY_UP, function(b, c) {
+        if (Boolean(a.validation)) {
+          a.validate();
+        }
+      });
+
       this.domNode = document.createElement("div");
 
       this.domNode.style.width = this.width + "px";
 
-      a(this.domNode).addClass("monaco-findInput");
+      i.Build.withElement(this.domNode).addClass("monaco-findInput");
 
-      this.inputBox = new s.InputBox(this.domNode, this.contextViewProvider, {
-        placeholder: this.placeholder || "",
-        ariaLabel: this.label || "",
-        validationOptions: {
-          validation: this.validation || null,
-          showMessage: !0
-        }
+      this.regex = new m("regex", h.localize("regexDescription", "Use regular expression"), !1, function() {
+        a.onOptionChange(null);
+
+        a.inputNode.focus();
+
+        a.setInputWidth();
+
+        a.validate();
       });
 
-      this.regex = new u("regex", n.localize("vs_base_ui_widgets_findInput", 1), !1, function() {
-        e.onOptionChange(null);
+      this.wholeWords = new m("whole-word", h.localize("wordsDescription", "Match whole word"), !1, function() {
+        a.onOptionChange(null);
 
-        e.inputBox.focus();
+        a.inputNode.focus();
 
-        e.setInputWidth();
+        a.setInputWidth();
 
-        e.validate();
+        a.validate();
       });
 
-      this.wholeWords = new u("whole-word", n.localize("vs_base_ui_widgets_findInput", 2), !1, function() {
-        e.onOptionChange(null);
+      this.caseSensitive = new m("case-sensitive", h.localize("caseDescription", "Match case"), !1, function() {
+        a.onOptionChange(null);
 
-        e.inputBox.focus();
+        a.inputNode.focus();
 
-        e.setInputWidth();
+        a.setInputWidth();
 
-        e.validate();
-      });
-
-      this.caseSensitive = new u("case-sensitive", n.localize("vs_base_ui_widgets_findInput", 3), !1, function() {
-        e.onOptionChange(null);
-
-        e.inputBox.focus();
-
-        e.setInputWidth();
-
-        e.validate();
+        a.validate();
       });
 
       this.setInputWidth();
-      var t = document.createElement("div");
-      t.className = "controls";
 
-      t.appendChild(this.caseSensitive.domNode);
+      this.domNode.appendChild(this.inputNode);
 
-      t.appendChild(this.wholeWords.domNode);
+      this.domNode.appendChild(this.regex.domNode);
 
-      t.appendChild(this.regex.domNode);
+      this.domNode.appendChild(this.wholeWords.domNode);
 
-      this.domNode.appendChild(t);
+      this.domNode.appendChild(this.caseSensitive.domNode);
     };
 
-    e.prototype.validate = function() {
-      this.inputBox.validate();
+    a.prototype.validate = function() {
+      var a = l.trim(this.inputNode.value);
+
+      var b = this.validation(l.trim(a));
+      if (b === "") {
+        if (this.validationNode) {
+          i.$(this.domNode).removeChild(this.validationNode);
+        }
+        this.validationNode = null;
+        this.inputNode.setAttribute("title", "");
+      } else {
+        var c = document.createElement("span");
+        c.className = "text-measure";
+
+        c.textContent = a;
+
+        this.domNode.appendChild(c);
+        if (!this.validationNode) {
+          var d = document.createElement("div");
+          d.className = "validation-decoration";
+
+          this.domNode.insertBefore(d, this.inputNode);
+
+          this.validationNode = i.$(d);
+
+          this.inputNode.setAttribute("title", b);
+        }
+        this.validationNode.size(c.offsetWidth, c.offsetHeight);
+
+        this.domNode.removeChild(c);
+      }
     };
 
-    e.prototype.showMessage = function(e) {
-      this.inputBox.showMessage(e);
-    };
+    a.OPTION_CHANGE = "optionChange";
 
-    e.prototype.clearMessage = function() {
-      this.inputBox.hideMessage();
-    };
-
-    e.prototype.clearValidation = function() {
-      this.inputBox.hideMessage();
-    };
-
-    e.OPTION_CHANGE = "optionChange";
-
-    return e;
+    return a;
   }();
-  t.FindInput = l;
+  b.FindInput = n;
 });

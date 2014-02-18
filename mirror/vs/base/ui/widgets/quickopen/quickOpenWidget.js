@@ -1,93 +1,133 @@
-define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "vs/base/lib/winjs.base", "vs/base/env",
-  "vs/base/ui/events", "vs/base/types", "vs/base/errors", "vs/base/strings",
-  "vs/base/ui/widgets/quickopen/quickOpenViewer", "vs/base/ui/widgets/quickopen/quickOpenModel",
-  "vs/base/dom/builder", "vs/base/ui/widgets/inputBox", "vs/base/ui/widgets/tree/treeImpl",
+define(["require", "exports", "vs/base/lib/winjs.base", "vs/base/env", "vs/base/ui/events", "vs/base/types",
+  "vs/base/errors", "vs/base/strings", "vs/base/ui/widgets/quickopen/quickOpenViewer",
+  "vs/base/ui/widgets/quickopen/quickOpenModel", "vs/base/dom/builder", "vs/base/ui/widgets/tree/treeImpl",
   "vs/base/ui/widgets/progressbar", "vs/base/dom/keyboardEvent", "vs/base/dom/dom", "vs/css!./quickopen"
-], function(e, t, n, i, o, r, s, a, u, l, c, d, h, p, f, g) {
-  var m = 150;
+], function(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o) {
+  var p = c;
 
-  var v = c.$;
+  var q = d;
 
-  var y = function() {
-    function e(e, t, n, i) {
+  var r = e;
+
+  var s = f;
+
+  var t = g;
+
+  var u = h;
+
+  var v = i;
+
+  var w = j;
+
+  var x = k;
+
+  var y = l;
+
+  var z = m;
+
+  var A = n;
+
+  var B = o;
+
+  var C = 110;
+
+  var D = x.$;
+
+  var E = function() {
+    function a(a, b, c, d) {
       this.toUnbind = [];
 
-      this.container = e;
+      this.container = a;
 
-      this.callbacks = t;
+      this.callbacks = b;
 
-      this.configuration = n;
+      this.configuration = c;
 
-      this.usageLogger = i;
+      this.usageLogger = d;
     }
-    e.prototype.create = function() {
-      var e = this;
-      this.builder = v().div(function(t) {
-        t.on(g.EventType.KEY_DOWN, function(t) {
-          var n = new f.KeyboardEvent(t);
-          if ("Escape" === n.key) {
-            g.EventHelper.stop(t, !0);
-            e.hide(!0);
+    a.prototype.create = function() {
+      var a = this;
+
+      var b = D(window.document.body).getClientArea();
+      this.builder = D().div(function(b) {
+        b.on(B.EventType.KEY_DOWN, function(b) {
+          var c = new A.KeyboardEvent(b);
+          if (c.key === "Escape") {
+            B.EventHelper.stop(b, !0);
+            a.hide(!0);
           }
-        }).on(g.EventType.FOCUS, function() {
-          return e.gainingFocus();
-        }, null, !0).on(g.EventType.CONTEXT_MENU, function(e) {
-          return g.EventHelper.stop(e, !0);
-        }).on(g.EventType.BLUR, function() {
-          return e.loosingFocus();
+        }).on(B.EventType.FOCUS, function(b) {
+          return a.gainingFocus();
+        }, null, !0).on(B.EventType.CONTEXT_MENU, function(a) {
+          return B.EventHelper.stop(a, !0);
+        }).on(B.EventType.BLUR, function(b) {
+          return a.loosingFocus();
         }, null, !0);
 
-        e.progressBar = new p.ProgressBar(t.clone());
+        a.progressBar = new z.ProgressBar(b.clone());
 
-        e.progressBar.getContainer().hide();
+        a.progressBar.getContainer().hide();
 
-        t.div({
-          "class": "quick-open-input"
-        }, function(t) {
-          e.inputContainer = t;
-
-          e.inputBox = new d.InputBox(t.getHTMLElement(), null, {
-            placeholder: e.configuration.inputPlaceHolder || ""
-          });
-
-          e.inputBox.$input.on(g.EventType.KEY_DOWN, function(t) {
-            var n = new f.KeyboardEvent(t);
-            if ("Tab" === n.key || "DownArrow" === n.key || "UpArrow" === n.key || "PageDown" === n.key ||
-              "PageUp" === n.key) {
-              g.EventHelper.stop(t, !0);
-              e.navigateInTree(n.key, n.shiftKey);
+        a.inputField = b.element("input", {
+          type: "text",
+          id: "monaco-workbench-quick-open-input"
+        }).attr("placeholder", q.browser.isIE10 ? "" : a.configuration.inputPlaceHolder || "").on(B.EventType.KEY_DOWN,
+          function(b) {
+            var c = new A.KeyboardEvent(b);
+            if (c.key === "Tab" || c.key === "DownArrow" || c.key === "UpArrow" || c.key === "PageDown" || c.key ===
+              "PageUp") {
+              B.EventHelper.stop(b, !0);
+              a.navigateInTree(c.key, c.shiftKey);
+            } else {
+              if (b.keyCode === A.KEYS.Ctrl) {
+                a.builder.addClass("transparent");
+              }
             }
-          }).on(g.EventType.KEY_UP, function(t) {
-            var n = new f.KeyboardEvent(t);
-            if ("Enter" === n.key) {
-              var o = e.tree.getFocus();
-              if (o) {
-                e.elementSelected(o, t);
+          }).on(B.EventType.KEY_UP, function(b) {
+          var c = new A.KeyboardEvent(b);
+          if (c.key === "Enter") {
+            var d = a.tree.getFocus();
+            if (d) {
+              a.elementSelected(d);
+            }
+          } else {
+            if (!q.browser.isIE9 || c.key !== "Backspace" && c.key !== "Delete") {
+              if (b.keyCode === A.KEYS.Ctrl) {
+                a.builder.removeClass("transparent");
               }
             } else {
-              if (!(!i.browser.isIE9 || "Backspace" !== n.key && "Delete" !== n.key)) {
-                e.onType();
-              }
+              a.onType();
             }
-          }).on(g.EventType.INPUT, function() {
-            e.onType();
-          }).attr({
-            wrap: "off",
-            autocorrect: "off",
-            autocapitalize: "off",
-            spellcheck: "false"
-          }).clone();
-        });
-        var n = new u.DataSource;
-        e.renderer = new u.Renderer(e.configuration.actionProvider);
+          }
+        }).on(B.EventType.INPUT, function(b) {
+          a.onType();
+        }).attr({
+          wrap: "off",
+          autocorrect: "off",
+          autocapitalize: "off",
+          spellcheck: "false"
+        }).addClass("quick-open-input").clone();
 
-        e.treeContainer = t.div({
+        if (a.configuration.inputPlaceHolder && q.browser.isIE10) {
+          a.helpText = b.element("label", {
+            text: a.configuration.inputPlaceHolder,
+            "for": "monaco-workbench-quick-open-input"
+          }).on(B.EventType.CLICK, function(b) {
+            B.EventHelper.stop(b, !0);
+
+            a.inputField.domFocus();
+          }).addClass("quick-open-help-shim").clone();
+        }
+
+        a.renderer = new v.Renderer;
+
+        a.treeContainer = b.div({
           "class": "quick-open-tree"
-        }, function(t) {
-          e.tree = new h.Tree(t.getHTMLElement(), {
-            dataSource: n,
-            controller: new u.Controller,
-            renderer: e.renderer
+        }, function(b) {
+          a.tree = new y.Tree(b.getHTMLElement(), {
+            dataSource: new v.DataSource,
+            controller: new v.Controller,
+            renderer: a.renderer
           }, {
             twistiePixels: 11,
             indentPixels: 0,
@@ -95,66 +135,71 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
             verticalScrollMode: "visible"
           });
 
-          e.toUnbind.push(e.tree.addListener(o.EventType.FOCUS, function(t) {
-            e.elementFocused(t.focus, t);
+          a.toUnbind.push(a.tree.addListener(r.EventType.FOCUS, function(b) {
+            a.elementFocused(b.focus);
           }));
 
-          e.toUnbind.push(e.tree.addListener(o.EventType.SELECTION, function(t) {
-            if (t.selection && t.selection.length > 0) {
-              e.elementSelected(t.selection[0], t);
+          a.toUnbind.push(a.tree.addListener(r.EventType.SELECTION, function(b) {
+            if (b.selection && b.selection.length > 0) {
+              a.elementSelected(b.selection[0]);
             }
           }));
-        }).on(g.EventType.KEY_DOWN, function(t) {
-          var n = new f.KeyboardEvent(t);
-          if (e.quickNavigateConfiguration) {
-            if (e.quickNavigateConfiguration.keybinding.keys.some(function(e) {
-              return e === n.key;
-            })) {
-              g.EventHelper.stop(t, !0);
-              e.navigateInTree(n.shiftKey ? "UpArrow" : "DownArrow");
-            } else {
-              if ("DownArrow" === n.key || "UpArrow" === n.key || "PageDown" === n.key || "PageUp" === n.key) {
-                g.EventHelper.stop(t, !0);
-                e.navigateInTree(n.key);
-              }
-            }
+        }).on(B.EventType.KEY_DOWN, function(b) {
+          var c = new A.KeyboardEvent(b);
+          if (!a.quickNavigateKey) return;
+          if (c.key === a.quickNavigateKey.key) {
+            B.EventHelper.stop(b, !0);
+            a.navigateInTree(c.shiftKey ? "UpArrow" : "DownArrow");
+          } else if (c.key === "DownArrow" || c.key === "UpArrow" || c.key === "PageDown" || c.key === "PageUp") {
+            B.EventHelper.stop(b, !0);
+            a.navigateInTree(c.key);
           }
-        }).on(g.EventType.KEY_UP, function(t) {
-          var n = new f.KeyboardEvent(t);
-          if (e.quickNavigateConfiguration && ((e.quickNavigateConfiguration.keybinding.ctrlCmd || e.quickNavigateConfiguration
-            .keybinding.winCtrl) && "Ctrl" === n.key || "Enter" === n.key)) {
-            var i = e.tree.getFocus();
-            if (i) {
-              e.elementSelected(i, t);
+        }).on(B.EventType.KEY_UP, function(b) {
+          var c = new A.KeyboardEvent(b);
+          if (!a.quickNavigateKey) return;
+          if ((a.quickNavigateKey.ctrlCmd || a.quickNavigateKey.winCtrl) && c.key === "Ctrl" || c.key === "Enter") {
+            var d = a.tree.getFocus();
+            if (d) {
+              a.elementSelected(d);
             }
           }
         }).clone();
-      }).addClass("quick-open-widget").addClass(i.browser.isIE10orEarlier ? " no-shadow" : "").build(this.container);
+      }).addClass("quick-open-widget").build(this.container);
     };
 
-    e.prototype.onType = function() {
-      var e = this.inputBox.value;
+    a.prototype.onType = function() {
+      var a = this.inputField.getHTMLElement().value;
       if (this.helpText) {
-        if (e) {
+        if (a) {
           this.helpText.hide();
         } else {
           this.helpText.show();
         }
       }
 
-      this.callbacks.onType(e);
+      this.callbacks.onType(a);
     };
 
-    e.prototype.navigateInTree = function(e, t) {
-      var n = this.tree.getInput() ? this.tree.getInput().getEntries() : [];
+    a.prototype.navigateInTree = function(a, b) {
+      var c = this.tree.getInput() ? this.tree.getInput().getEntries() : [];
 
-      var i = this.tree.getFocus();
+      var d = this.tree.getFocus();
 
-      var o = !1;
+      var e = !1;
 
-      var r = !1;
-      if (n.length > 1 && ("UpArrow" !== e || i !== n[0] && i ? "DownArrow" === e && i === n[n.length - 1] && (this.tree
-        .setFocus(n[0]), o = !0) : (this.tree.setFocus(n[n.length - 1]), o = !0)), !o) switch (e) {
+      var f = !1;
+      if (c.length > 1) {
+        if (a !== "UpArrow" || d !== c[0] && !! d) {
+          if (a === "DownArrow" && d === c[c.length - 1]) {
+            this.tree.setFocus(c[0]);
+            e = !0;
+          }
+        } else {
+          this.tree.setFocus(c[c.length - 1]);
+          e = !0;
+        }
+      }
+      if (!e) switch (a) {
         case "DownArrow":
           this.tree.focusNext();
           break;
@@ -168,14 +213,14 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
           this.tree.focusPreviousPage();
           break;
         case "Tab":
-          this.cycleThroughEntryGroups(n, i, t);
+          this.cycleThroughEntryGroups(c, d, b);
 
-          r = !0;
+          f = !0;
       }
-      i = this.tree.getFocus();
+      d = this.tree.getFocus();
 
-      if (i) {
-        if (r) {
+      if (d) {
+        if (f) {
           this.tree.reveal(this.tree.getFocus(), 0);
         } else {
           this.tree.reveal(this.tree.getFocus());
@@ -183,309 +228,296 @@ define("vs/base/ui/widgets/quickopen/quickOpenWidget", ["require", "exports", "v
       }
     };
 
-    e.prototype.cycleThroughEntryGroups = function(e, t, n) {
-      if (0 !== e.length) {
-        var i = t ? e.indexOf(t) : -1;
-        if (i >= 0)
-          if (n)
-            for (var o = i - 1; o >= 0; o--) {
-              var r = e[o];
-              if (r instanceof l.QuickOpenEntryGroup && r.getGroupLabel()) {
-                this.tree.setFocus(r);
-                return void 0;
+    a.prototype.cycleThroughEntryGroups = function(a, b, c) {
+      if (a.length === 0) return;
+      var d = b ? a.indexOf(b) : -1;
+      if (d >= 0)
+        if (!c)
+          for (var e = d + 1; e < a.length; e++) {
+            var f = a[e];
+            if (f instanceof w.QuickOpenEntryGroup && f.getGroupLabel()) {
+              this.tree.setFocus(f);
+              return;
+            }
+          } else
+            for (var e = d - 1; e >= 0; e--) {
+              var g = a[e];
+              if (g instanceof w.QuickOpenEntryGroup && g.getGroupLabel()) {
+                this.tree.setFocus(g);
+                return;
               }
-            } else
-              for (var o = i + 1; o < e.length; o++) {
-                var s = e[o];
-                if (s instanceof l.QuickOpenEntryGroup && s.getGroupLabel()) {
-                  this.tree.setFocus(s);
-                  return void 0;
-                }
-              }
-        if (!n) {
-          this.tree.setFocus(e[0]);
-          return void 0;
-        }
-        for (var o = e.length - 1; o >= 0; o--) {
-          var r = e[o];
-          if (r instanceof l.QuickOpenEntryGroup && r.getGroupLabel()) {
-            this.tree.setFocus(r);
-            return void 0;
-          }
+            }
+      if (!c) {
+        this.tree.setFocus(a[0]);
+        return;
+      }
+      for (var e = a.length - 1; e >= 0; e--) {
+        var g = a[e];
+        if (g instanceof w.QuickOpenEntryGroup && g.getGroupLabel()) {
+          this.tree.setFocus(g);
+          return;
         }
       }
     };
 
-    e.prototype.elementFocused = function(e, t) {
-      if (e instanceof l.QuickOpenEntry && this.isVisible()) {
-        var n = {
-          event: t,
-          quickNavigateConfiguration: this.quickNavigateConfiguration
-        };
-        e.run(0, n);
+    a.prototype.elementFocused = function(a) {
+      if (a instanceof w.QuickOpenEntry && this.isVisible()) {
+        var b = a;
+        a.run(w.Mode.PREVIEW);
       }
     };
 
-    e.prototype.elementSelected = function(e, t) {
-      var n = !0;
-      if (e instanceof l.QuickOpenEntry && this.isVisible()) {
-        var i = {
-          event: t,
-          quickNavigateConfiguration: this.quickNavigateConfiguration
-        };
-        n = e.run(1, i);
+    a.prototype.elementSelected = function(a) {
+      var b = !0;
+      if (a instanceof w.QuickOpenEntry && this.isVisible()) {
+        var c = a;
+        b = a.run(w.Mode.OPEN);
       }
-      if (this.usageLogger) {
-        var o = this.tree.getInput().entries.indexOf(e);
+      var d = this.tree.getInput().entries.indexOf(a);
 
-        var r = this.tree.getInput().entries.length;
-        this.usageLogger.publicLog("quickOpenWidgetItemAccepted", {
-          index: o,
-          count: r,
-          isQuickNavigate: this.quickNavigateConfiguration ? !0 : !1
-        });
-      }
-      if (n) {
+      var e = this.tree.getInput().entries.length;
+      this.usageLogger.publicLog("quickOpenWidgetItemAccepted", {
+        index: d,
+        count: e,
+        isQuickNavigate: this.quickNavigateKey ? !0 : !1
+      });
+
+      if (b) {
         this.hide();
       }
     };
 
-    e.prototype.show = function(e, t, n) {
-      if (r.isUndefined(t)) {
-        t = {};
+    a.prototype.show = function(a, b, c) {
+      if (typeof b == "undefined") {
+        b = {};
       }
 
       this.visible = !0;
 
       this.isLoosingFocus = !1;
 
-      this.quickNavigateConfiguration = n;
+      this.quickNavigateKey = c;
 
-      if (this.quickNavigateConfiguration) {
-        this.inputContainer.hide();
+      this.builder.removeClass("transparent");
+
+      if (this.quickNavigateKey) {
+        this.inputField.hide();
         this.treeContainer.removeClass("transition");
         this.builder.show();
         this.tree.DOMFocus();
       } else {
-        this.inputContainer.show();
+        this.inputField.show();
         this.treeContainer.addClass("transition");
         this.builder.show();
-        this.inputBox.$input.domFocus();
+        this.inputField.domFocus();
       }
 
       if (this.helpText) {
-        if (this.quickNavigateConfiguration || r.isString(e)) {
+        if (this.quickNavigateKey || s.isString(a)) {
           this.helpText.hide();
         } else {
           this.helpText.show();
         }
       }
 
-      if (r.isString(e)) {
-        this.doShowWithPrefix(e);
+      if (s.isString(a)) {
+        this.doShowWithPrefix(a);
       } else {
-        this.doShowWithInput(e, t);
+        this.doShowWithInput(a, b);
       }
     };
 
-    e.prototype.doShowWithPrefix = function(e) {
-      this.inputBox.value = e;
+    a.prototype.doShowWithPrefix = function(a) {
+      this.inputField.getHTMLElement().value = a;
 
-      this.callbacks.onType(e);
+      this.callbacks.onType(a);
     };
 
-    e.prototype.doShowWithInput = function(e, t) {
-      this.setInput(e, t);
+    a.prototype.doShowWithInput = function(a, b) {
+      this.setInput(a, b);
     };
 
-    e.prototype.setInputAndLayout = function(e, t) {
-      var n = this;
+    a.prototype.setInputAndLayout = function(a, b) {
+      var c = this;
 
-      var i = a.generateUuid();
-      this.currentInputToken = i;
+      var d = u.generateUuid();
+      this.currentInputToken = d;
 
       this.treeContainer.style({
-        height: this.getHeight(e) + "px"
+        height: this.getHeight(a) + "px"
       });
 
       this.getAnimationPromise().then(function() {
-        if (n.currentInputToken === i) {
-          n.tree.setInput(e).done(function() {
-            n.tree.layout();
+        if (c.currentInputToken === d) {
+          c.tree.setInput(a).done(function() {
+            c.tree.layout();
 
-            if (e && e.getEntries().length > 0) {
-              n.autoFocus(e, t);
+            if (a && a.getEntries().length > 0) {
+              c.autoFocus(a, b);
             }
-          }, s.onUnexpectedError);
+          }, t.onUnexpectedError);
         }
       });
     };
 
-    e.prototype.autoFocus = function(e, t) {
-      if (t.autoFocusPrefixMatch) {
-        for (var n, i, o = e.getEntries(), r = t.autoFocusPrefixMatch, s = r.toLowerCase(), a = 0; a < o.length; a++) {
-          var u = o[a];
-          if (n || 0 !== u.getLabel().indexOf(r) ? i || 0 !== u.getLabel().toLowerCase().indexOf(s) || (i = u) : n =
-            u, n && i) break;
+    a.prototype.autoFocus = function(a, b) {
+      if (b.autoFocusPrefixMatch) {
+        var c = a.getEntries();
+
+        var d;
+
+        var e;
+
+        var f = b.autoFocusPrefixMatch;
+
+        var g = f.toLowerCase();
+        for (var h = 0; h < c.length; h++) {
+          var i = c[h];
+          if (!d && i.getLabel().indexOf(f) === 0) {
+            d = i;
+          } else {
+            if (!e && i.getLabel().toLowerCase().indexOf(g) === 0) {
+              e = i;
+            }
+          }
+          if (d && e) break;
         }
-        var l = n || i;
-        if (l) {
-          this.tree.setFocus(l);
-          this.tree.reveal(l, 0);
-          return void 0;
+        var j = d || e;
+        if (j) {
+          this.tree.setFocus(j);
+
+          this.tree.reveal(j, .5);
+          return;
         }
       }
-      if (t.autoFocusFirstEntry) {
+      if (b.autoFocusFirstEntry) {
         this.tree.focusNext();
         this.tree.reveal(this.tree.getFocus(), 0);
-      } else if (t.autoFocusSecondEntry) {
-        var o = e.getEntries();
-        if (o.length > 1) {
-          this.tree.setFocus(o[1]);
-        }
       }
     };
 
-    e.prototype.refreshAndLayout = function(e, t) {
-      var n = this;
-      if (this.isVisible()) {
-        this.treeContainer.style({
-          height: this.getHeight(e) + "px"
-        });
-        this.getAnimationPromise().then(function() {
-          n.tree.refresh().done(function() {
-            n.tree.layout();
+    a.prototype.refreshAndLayout = function(a, b) {
+      var c = this;
+      if (!this.isVisible()) return;
+      this.treeContainer.style({
+        height: this.getHeight(a) + "px"
+      });
 
-            if (!n.tree.getFocus() && e && e.getEntries().length > 0) {
-              n.autoFocus(e, t);
-            }
-          }, s.onUnexpectedError);
-        });
-      }
-    };
+      this.getAnimationPromise().then(function() {
+        c.tree.refresh().done(function() {
+          c.tree.layout();
 
-    e.prototype.getAnimationPromise = function() {
-      return this.treeContainer.hasClass("transition") ? n.Promise.timeout(m) : n.Promise.as(null);
-    };
-
-    e.prototype.getHeight = function(e) {
-      var t = this.renderer.getHeight(this.tree, null);
-
-      var n = this.configuration.minItemsToShow;
-      if (e) {
-        var i = e.getEntries();
-        n = i.length;
-      }
-      return Math.min(this.configuration.maxItemsToShow * t, n * t);
-    };
-
-    e.prototype.hide = function(e) {
-      if ("undefined" == typeof e && (e = !1), this.isVisible()) {
-        if (this.visible = !1, this.builder.hide(), this.builder.domBlur(), e) {
-          var t = this.tree.getInput();
-          if (t) {
-            var n = t.entries.length;
-            if (this.usageLogger) {
-              this.usageLogger.publicLog("quickOpenWidgetCancelled", {
-                count: n,
-                isQuickNavigate: this.quickNavigateConfiguration ? !0 : !1
-              });
-            }
+          if (!c.tree.getFocus() && a && a.getEntries().length > 0) {
+            c.autoFocus(a, b);
           }
-        }
-        this.inputBox.value = "";
+        }, t.onUnexpectedError);
+      });
+    };
 
-        this.tree.setInput(null);
-        var i = this.renderer.getHeight(this.tree, null);
-        this.treeContainer.style({
-          height: this.configuration.minItemsToShow * i + "px"
+    a.prototype.getAnimationPromise = function() {
+      return this.treeContainer.hasClass("transition") ? p.Promise.timeout(C) : p.Promise.as(null);
+    };
+
+    a.prototype.getHeight = function(a) {
+      var b = this.renderer.getHeight(this.tree, null);
+
+      var c = this.configuration.minItemsToShow;
+      if (a) {
+        var d = a.getEntries();
+        c = d.length;
+      }
+      return Math.min(this.configuration.maxItemsToShow * b, c * b);
+    };
+
+    a.prototype.hide = function(a) {
+      if (typeof a == "undefined") {
+        a = !1;
+      }
+      if (!this.isVisible()) return;
+      this.visible = !1;
+
+      this.builder.hide();
+
+      this.builder.domBlur();
+      if (a) {
+        var b = this.tree.getInput().entries.length;
+        this.usageLogger.publicLog("quickOpenWidgetCancelled", {
+          count: b,
+          isQuickNavigate: this.quickNavigateKey ? !0 : !1
         });
+      }
+      this.inputField.getHTMLElement().value = "";
 
-        this.progressBar.stop().getContainer().hide();
+      this.tree.setInput(null);
+      var c = this.renderer.getHeight(this.tree, null);
+      this.treeContainer.style({
+        height: this.configuration.minItemsToShow * c + "px"
+      });
 
-        if (this.tree.isDOMFocused()) {
-          this.tree.DOMBlur();
-        } else {
-          if (this.inputBox.$input.hasFocus()) {
-            this.inputBox.$input.domBlur();
-          }
+      this.progressBar.stop().getContainer().hide();
+
+      if (this.tree.isDOMFocused()) {
+        this.tree.DOMBlur();
+      } else {
+        if (this.inputField.hasFocus()) {
+          this.inputField.domBlur();
         }
+      }
 
-        if (e) {
-          this.callbacks.onCancel();
-        } else {
-          this.callbacks.onOk();
-        }
+      if (a) {
+        this.callbacks.onCancel();
+      } else {
+        this.callbacks.onOk();
       }
     };
 
-    e.prototype.setInput = function(e, t) {
-      if (this.isVisible()) {
-        this.setInputAndLayout(e, t);
-      }
+    a.prototype.setInput = function(a, b) {
+      if (!this.isVisible()) return;
+      this.setInputAndLayout(a, b);
     };
 
-    e.prototype.getInput = function() {
+    a.prototype.getInput = function() {
       return this.tree.getInput();
     };
 
-    e.prototype.runFocus = function() {
-      var e = this.tree.getFocus();
-      return e ? (this.elementSelected(e), !0) : !1;
+    a.prototype.runFocus = function() {
+      var a = this.tree.getFocus();
+      return a ? (this.elementSelected(a), !0) : !1;
     };
 
-    e.prototype.getProgressBar = function() {
+    a.prototype.getProgressBar = function() {
       return this.progressBar;
     };
 
-    e.prototype.setExtraClass = function(e) {
-      var t = this.builder.getProperty("extra-class");
-      if (t) {
-        this.builder.removeClass(t);
-      }
-
-      if (e) {
-        this.builder.addClass(e);
-        this.builder.setProperty("extra-class", e);
-      } else {
-        if (t) {
-          this.builder.removeProperty("extra-class");
-        }
-      }
-    };
-
-    e.prototype.isVisible = function() {
+    a.prototype.isVisible = function() {
       return this.visible;
     };
 
-    e.prototype.gainingFocus = function() {
+    a.prototype.gainingFocus = function() {
       this.isLoosingFocus = !1;
     };
 
-    e.prototype.loosingFocus = function() {
-      var e = this;
-      if (this.isVisible()) {
-        this.isLoosingFocus = !0;
-        n.Promise.timeout(0).then(function() {
-          if (e.isLoosingFocus) {
-            e.hide(!1);
-          }
-        });
-      }
+    a.prototype.loosingFocus = function() {
+      var a = this;
+      if (!this.isVisible()) return;
+      this.isLoosingFocus = !0;
+
+      p.Promise.timeout(0).then(function() {
+        if (!a.isLoosingFocus) return;
+        a.hide(!1);
+      });
     };
 
-    e.prototype.dispose = function() {
-      for (; this.toUnbind.length;) {
+    a.prototype.dispose = function() {
+      while (this.toUnbind.length) {
         this.toUnbind.pop()();
       }
       this.progressBar.dispose();
 
-      this.inputBox.dispose();
-
       this.tree.dispose();
     };
 
-    return e;
+    return a;
   }();
-  t.QuickOpenWidget = y;
+  b.QuickOpenWidget = E;
 });

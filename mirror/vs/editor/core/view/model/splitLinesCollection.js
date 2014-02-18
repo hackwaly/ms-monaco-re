@@ -1,91 +1,98 @@
-define("vs/editor/core/view/model/splitLinesCollection", ["require", "exports",
-  "vs/editor/core/view/model/prefixSumComputer", "vs/editor/core/view/model/filteredLineTokens",
-  "vs/editor/core/position", "vs/editor/core/view/viewContext"
-], function(e, t, n, i, o, r) {
-  var s = {
+define(["require", "exports", "vs/editor/core/view/model/prefixSumComputer",
+  "vs/editor/core/view/model/filteredLineTokens", "vs/editor/core/position", "vs/editor/core/view/viewContext"
+], function(a, b, c, d, e, f) {
+  var g = c;
+
+  var h = d;
+
+  var i = e;
+
+  var j = f;
+
+  var k = {
     outputLineIndex: 0,
     outputOffset: 0
   };
 
-  var a = function() {
-    function e(e) {
-      this.positionMapper = e;
+  var l = function() {
+    function a(a) {
+      this.positionMapper = a;
 
       this.outputLineCount = this.positionMapper.getOutputLineCount();
     }
-    e.prototype.setLineText = function(e) {
-      this.positionMapper.setLineText(e);
+    a.prototype.setLineText = function(a) {
+      this.positionMapper.setLineText(a);
 
       this.outputLineCount = this.positionMapper.getOutputLineCount();
     };
 
-    e.prototype.setTabSize = function(e) {
-      this.positionMapper.setTabSize(e);
+    a.prototype.setTabSize = function(a) {
+      this.positionMapper.setTabSize(a);
 
       this.outputLineCount = this.positionMapper.getOutputLineCount();
     };
 
-    e.prototype.setWrappingColumn = function(e) {
-      this.positionMapper.setWrappingColumn(e);
+    a.prototype.setWrappingColumn = function(a) {
+      this.positionMapper.setWrappingColumn(a);
 
       this.outputLineCount = this.positionMapper.getOutputLineCount();
     };
 
-    e.prototype.getOutputLineCount = function() {
+    a.prototype.getOutputLineCount = function() {
       return this.outputLineCount;
     };
 
-    e.prototype.getInputStartOffsetOfOutputLineIndex = function(e) {
-      return this.positionMapper.getInputOffsetOfOutputPosition(e, 0);
+    a.prototype.getInputStartOffsetOfOutputLineIndex = function(a) {
+      return this.positionMapper.getInputOffsetOfOutputPosition(a, 0);
     };
 
-    e.prototype.getInputEndOffsetOfOutputLineIndex = function(e, t, n) {
-      return n + 1 === this.outputLineCount ? e.getLineMaxColumn(t) - 1 : this.positionMapper.getInputOffsetOfOutputPosition(
-        n + 1, 0);
+    a.prototype.getInputEndOffsetOfOutputLineIndex = function(a, b, c) {
+      return c + 1 === this.outputLineCount ? a.getLineMaxColumn(b) - 1 : this.positionMapper.getInputOffsetOfOutputPosition(
+        c + 1, 0);
     };
 
-    e.prototype.getOutputLineContent = function(e, t, n) {
-      var i = this.getInputStartOffsetOfOutputLineIndex(n);
+    a.prototype.getOutputLineContent = function(a, b, c) {
+      var d = this.getInputStartOffsetOfOutputLineIndex(c);
 
-      var o = this.getInputEndOffsetOfOutputLineIndex(e, t, n);
-      return e.getLineContent(t).substring(i, o);
+      var e = this.getInputEndOffsetOfOutputLineIndex(a, b, c);
+      return a.getLineContent(b).substring(d, e);
     };
 
-    e.prototype.getOutputLineMaxColumn = function(e, t, n) {
-      return this.getOutputLineContent(e, t, n).length + 1;
+    a.prototype.getOutputLineMaxColumn = function(a, b, c) {
+      return this.getOutputLineContent(a, b, c).length + 1;
     };
 
-    e.prototype.getOutputLineTokens = function(e, t, n) {
-      var o = this.getInputStartOffsetOfOutputLineIndex(n);
+    a.prototype.getOutputLineTokens = function(a, b, c) {
+      var d = this.getInputStartOffsetOfOutputLineIndex(c);
 
-      var r = this.getInputEndOffsetOfOutputLineIndex(e, t, n);
-      return new i.FilteredLineTokens(e.getLineTokens(t, !0), o, r);
+      var e = this.getInputEndOffsetOfOutputLineIndex(a, b, c);
+      return new h.FilteredLineTokens(a.getLineTokens(b), d, e);
     };
 
-    e.prototype.getInputColumnOfOutputPosition = function(e, t) {
-      return this.positionMapper.getInputOffsetOfOutputPosition(e, t - 1) + 1;
+    a.prototype.getInputColumnOfOutputPosition = function(a, b) {
+      return this.positionMapper.getInputOffsetOfOutputPosition(a, b - 1) + 1;
     };
 
-    e.prototype.getOutputPositionOfInputPosition = function(e, t) {
-      this.positionMapper.getOutputPositionOfInputOffset(t - 1, s);
-      var n = s.outputLineIndex;
+    a.prototype.getOutputPositionOfInputPosition = function(a, b) {
+      this.positionMapper.getOutputPositionOfInputOffset(b - 1, k);
+      var c = k.outputLineIndex;
 
-      var i = s.outputOffset + 1;
-      return new o.Position(e + n, i);
+      var d = k.outputOffset + 1;
+      return new i.Position(a + c, d);
     };
 
-    return e;
+    return a;
   }();
 
-  var u = function() {
-    function e(e, t, n, i) {
-      this.model = e;
+  var m = function() {
+    function a(a, b, c, d) {
+      this.model = a;
 
-      this.tabSize = n;
+      this.tabSize = c;
 
-      this.wrappingColumn = i;
+      this.wrappingColumn = d;
 
-      this.linePositionMapperFactory = t;
+      this.linePositionMapperFactory = b;
 
       this.constructLines();
 
@@ -94,197 +101,210 @@ define("vs/editor/core/view/model/splitLinesCollection", ["require", "exports",
         remainder: 0
       };
     }
-    e.prototype.constructLines = function() {
+    a.prototype.constructLines = function() {
       this.lines = [];
-      for (var e, t, i = [], o = 0, r = this.model.getLineCount(); r > o; o++) {
-        t = this.linePositionMapperFactory.createLineMapper(this.model.getLineContent(o + 1), this.tabSize, this.wrappingColumn);
-        e = new a(t);
-        i[o] = e.getOutputLineCount();
-        this.lines[o] = e;
+      var a;
+
+      var b = [];
+
+      var c;
+      for (var d = 0, e = this.model.getLineCount(); d < e; d++) {
+        c = this.linePositionMapperFactory.createLineMapper(this.model.getLineContent(d + 1), this.tabSize, this.wrappingColumn);
+        a = new l(c);
+        b[d] = a.getOutputLineCount();
+        this.lines[d] = a;
       }
-      this.prefixSumComputer = new n.PrefixSumComputer(i);
+      this.prefixSumComputer = new g.PrefixSumComputer(b);
     };
 
-    e.prototype.setTabSize = function(e, t) {
-      if (this.tabSize === e) {
+    a.prototype.setTabSize = function(a, b) {
+      if (this.tabSize === a) {
         return !1;
       }
-      this.tabSize = e;
-      for (var n = 0; n < this.lines.length; n++) {
-        this.lines[n].setTabSize(this.tabSize);
-        var i = this.lines[n].getOutputLineCount();
-        this.prefixSumComputer.changeValue(n, i);
+      this.tabSize = a;
+      for (var c = 0; c < this.lines.length; c++) {
+        this.lines[c].setTabSize(this.tabSize);
+        var d = this.lines[c].getOutputLineCount();
+        this.prefixSumComputer.changeValue(c, d);
       }
-      t(r.EventNames.ModelFlushedEvent, null);
+      b(j.EventNames.ModelFlushedEvent, null);
 
       return !0;
     };
 
-    e.prototype.setWrappingColumn = function(e, t) {
-      if (this.wrappingColumn === e) {
+    a.prototype.setWrappingColumn = function(a, b) {
+      if (this.wrappingColumn === a) {
         return !1;
       }
-      this.wrappingColumn = e;
-      for (var n = 0; n < this.lines.length; n++) {
-        this.lines[n].setWrappingColumn(this.wrappingColumn);
-        var i = this.lines[n].getOutputLineCount();
-        this.prefixSumComputer.changeValue(n, i);
+      this.wrappingColumn = a;
+      for (var c = 0; c < this.lines.length; c++) {
+        this.lines[c].setWrappingColumn(this.wrappingColumn);
+        var d = this.lines[c].getOutputLineCount();
+        this.prefixSumComputer.changeValue(c, d);
       }
-      t(r.EventNames.ModelFlushedEvent, null);
+      b(j.EventNames.ModelFlushedEvent, null);
 
       return !0;
     };
 
-    e.prototype.onModelFlushed = function(e) {
+    a.prototype.onModelFlushed = function(a) {
       this.constructLines();
 
-      e(r.EventNames.ModelFlushedEvent, null);
+      a(j.EventNames.ModelFlushedEvent, null);
     };
 
-    e.prototype.onModelLinesDeleted = function(e, t, n) {
-      var i = 1 === e ? 1 : this.prefixSumComputer.getAccumulatedValue(e - 2) + 1;
+    a.prototype.onModelLinesDeleted = function(a, b, c) {
+      var d = a === 1 ? 1 : this.prefixSumComputer.getAccumulatedValue(a - 2) + 1;
 
-      var o = this.prefixSumComputer.getAccumulatedValue(t - 1);
-      this.lines.splice(e - 1, t - e + 1);
+      var e = this.prefixSumComputer.getAccumulatedValue(b - 1);
+      this.lines.splice(a - 1, b - a + 1);
 
-      this.prefixSumComputer.removeValues(e - 1, t - e + 1);
-      var s = {
-        fromLineNumber: i,
-        toLineNumber: o
+      this.prefixSumComputer.removeValues(a - 1, b - a + 1);
+      var f = {
+        fromLineNumber: d,
+        toLineNumber: e
       };
-      n(r.EventNames.LinesDeletedEvent, s);
+      c(j.EventNames.LinesDeletedEvent, f);
     };
 
-    e.prototype.onModelLinesInserted = function(e, t, n, i) {
-      for (var o, s, u, l = 1 === e ? 1 : this.prefixSumComputer.getAccumulatedValue(e - 2) + 1, c = 0, d = n.length -
-          1; d >= 0; d--) {
-        u = this.linePositionMapperFactory.createLineMapper(n[d], this.tabSize, this.wrappingColumn);
-        o = new a(u);
-        this.lines.splice(e - 1, 0, o);
-        s = o.getOutputLineCount();
-        c += s;
-        this.prefixSumComputer.insertValue(e - 1, s);
-      }
-      var h = {
-        fromLineNumber: l,
-        toLineNumber: l + c - 1
-      };
-      i(r.EventNames.LinesInsertedEvent, h);
-    };
+    a.prototype.onModelLinesInserted = function(a, b, c, d) {
+      var e = a === 1 ? 1 : this.prefixSumComputer.getAccumulatedValue(a - 2) + 1;
 
-    e.prototype.onModelLineChanged = function(e, t, n) {
-      var i = e - 1;
-
-      var o = this.lines[i].getOutputLineCount();
-      this.lines[i].setLineText(t);
-      var s = this.lines[i].getOutputLineCount();
-
-      var a = !1;
-
-      var u = 0;
-
-      var l = -1;
-
-      var c = 0;
-
-      var d = -1;
-
-      var h = 0;
-
-      var p = -1;
-      if (o > s) {
-        u = 1 === e ? 1 : this.prefixSumComputer.getAccumulatedValue(e - 2) + 1;
-        l = u + s - 1;
-        h = l + 1;
-        p = h + (o - s) - 1;
-        a = !0;
-      } else {
-        if (s > o) {
-          u = 1 === e ? 1 : this.prefixSumComputer.getAccumulatedValue(e - 2) + 1;
-          l = u + o - 1;
-          c = l + 1;
-          d = c + (s - o) - 1;
-          a = !0;
-        } else {
-          u = 1 === e ? 1 : this.prefixSumComputer.getAccumulatedValue(e - 2) + 1;
-          l = u + s - 1;
-        }
-      }
-
-      this.prefixSumComputer.changeValue(i, s);
       var f;
 
       var g;
 
-      var m;
+      var h = 0;
 
-      var v;
-      if (l >= u)
-        for (var f = u; l >= f; f++) {
-          g = {
-            lineNumber: f
-          };
-          n(r.EventNames.LineChangedEvent, g);
-        }
-      d >= c && (m = {
-        fromLineNumber: c,
-        toLineNumber: d
-      }, n(r.EventNames.LinesInsertedEvent, m));
-
-      p >= h && (v = {
-        fromLineNumber: h,
-        toLineNumber: p
-      }, n(r.EventNames.LinesDeletedEvent, v));
-
-      return a;
+      var i;
+      for (var k = c.length - 1; k >= 0; k--) {
+        i = this.linePositionMapperFactory.createLineMapper(c[k], this.tabSize, this.wrappingColumn);
+        f = new l(i);
+        this.lines.splice(a - 1, 0, f);
+        g = f.getOutputLineCount();
+        h += g;
+        this.prefixSumComputer.insertValue(a - 1, g);
+      }
+      var m = {
+        fromLineNumber: e,
+        toLineNumber: e + h - 1
+      };
+      d(j.EventNames.LinesInsertedEvent, m);
     };
 
-    e.prototype.getOutputLineCount = function() {
+    a.prototype.onModelLineChanged = function(a, b, c) {
+      var d = a - 1;
+
+      var e = this.lines[d].getOutputLineCount();
+      this.lines[d].setLineText(b);
+      var f = this.lines[d].getOutputLineCount();
+
+      var g = !1;
+
+      var h = 0;
+
+      var i = -1;
+
+      var k = 0;
+
+      var l = -1;
+
+      var m = 0;
+
+      var n = -1;
+      if (e > f) {
+        h = a === 1 ? 1 : this.prefixSumComputer.getAccumulatedValue(a - 2) + 1;
+        i = h + f - 1;
+        m = i + 1;
+        n = m + (e - f) - 1;
+        g = !0;
+      } else {
+        if (e < f) {
+          h = a === 1 ? 1 : this.prefixSumComputer.getAccumulatedValue(a - 2) + 1;
+          i = h + e - 1;
+          k = i + 1;
+          l = k + (f - e) - 1;
+          g = !0;
+        } else {
+          h = a === 1 ? 1 : this.prefixSumComputer.getAccumulatedValue(a - 2) + 1;
+          i = h + f - 1;
+        }
+      }
+
+      this.prefixSumComputer.changeValue(d, f);
+      var o;
+
+      var p;
+
+      var q;
+
+      var r;
+      if (h <= i)
+        for (var o = h; o <= i; o++) {
+          p = {
+            lineNumber: o
+          };
+          c(j.EventNames.LineChangedEvent, p);
+        }
+      k <= l && (q = {
+        fromLineNumber: k,
+        toLineNumber: l
+      }, c(j.EventNames.LinesInsertedEvent, q));
+
+      m <= n && (r = {
+        fromLineNumber: m,
+        toLineNumber: n
+      }, c(j.EventNames.LinesDeletedEvent, r));
+
+      return g;
+    };
+
+    a.prototype.getOutputLineCount = function() {
       return this.prefixSumComputer.getTotalValue();
     };
 
-    e.prototype.getOutputLineContent = function(e) {
-      this.prefixSumComputer.getIndexOf(e - 1, this.tmpIndexOfResult);
-      var t = this.tmpIndexOfResult.index;
+    a.prototype.getOutputLineContent = function(a) {
+      this.prefixSumComputer.getIndexOf(a - 1, this.tmpIndexOfResult);
+      var b = this.tmpIndexOfResult.index;
 
-      var n = this.tmpIndexOfResult.remainder;
-      return this.lines[t].getOutputLineContent(this.model, t + 1, n);
+      var c = this.tmpIndexOfResult.remainder;
+      return this.lines[b].getOutputLineContent(this.model, b + 1, c);
     };
 
-    e.prototype.getOutputLineMaxColumn = function(e) {
-      this.prefixSumComputer.getIndexOf(e - 1, this.tmpIndexOfResult);
-      var t = this.tmpIndexOfResult.index;
+    a.prototype.getOutputLineMaxColumn = function(a) {
+      this.prefixSumComputer.getIndexOf(a - 1, this.tmpIndexOfResult);
+      var b = this.tmpIndexOfResult.index;
 
-      var n = this.tmpIndexOfResult.remainder;
-      return this.lines[t].getOutputLineMaxColumn(this.model, t + 1, n);
+      var c = this.tmpIndexOfResult.remainder;
+      return this.lines[b].getOutputLineMaxColumn(this.model, b + 1, c);
     };
 
-    e.prototype.getOutputLineTokens = function(e) {
-      this.prefixSumComputer.getIndexOf(e - 1, this.tmpIndexOfResult);
-      var t = this.tmpIndexOfResult.index;
+    a.prototype.getOutputLineTokens = function(a) {
+      this.prefixSumComputer.getIndexOf(a - 1, this.tmpIndexOfResult);
+      var b = this.tmpIndexOfResult.index;
 
-      var n = this.tmpIndexOfResult.remainder;
-      return this.lines[t].getOutputLineTokens(this.model, t + 1, n);
+      var c = this.tmpIndexOfResult.remainder;
+      return this.lines[b].getOutputLineTokens(this.model, b + 1, c);
     };
 
-    e.prototype.convertOutputPositionToInputPosition = function(e, t) {
-      this.prefixSumComputer.getIndexOf(e - 1, this.tmpIndexOfResult);
-      var n = this.tmpIndexOfResult.index;
+    a.prototype.convertOutputPositionToInputPosition = function(a, b) {
+      this.prefixSumComputer.getIndexOf(a - 1, this.tmpIndexOfResult);
+      var c = this.tmpIndexOfResult.index;
 
-      var i = this.tmpIndexOfResult.remainder;
+      var d = this.tmpIndexOfResult.remainder;
 
-      var r = this.lines[n].getInputColumnOfOutputPosition(i, t);
-      return new o.Position(n + 1, r);
+      var e = this.lines[c].getInputColumnOfOutputPosition(d, b);
+      return new i.Position(c + 1, e);
     };
 
-    e.prototype.convertInputPositionToOutputPosition = function(e, t) {
-      var n = 1 + (1 === e ? 0 : this.prefixSumComputer.getAccumulatedValue(e - 2));
+    a.prototype.convertInputPositionToOutputPosition = function(a, b) {
+      var c = 1 + (a === 1 ? 0 : this.prefixSumComputer.getAccumulatedValue(a - 2));
 
-      var i = this.lines[e - 1].getOutputPositionOfInputPosition(n, t);
-      return i;
+      var d = this.lines[a - 1].getOutputPositionOfInputPosition(c, b);
+      return d;
     };
 
-    return e;
+    return a;
   }();
-  t.SplitLinesCollection = u;
+  b.SplitLinesCollection = m;
 });

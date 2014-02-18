@@ -1,7 +1,9 @@
-define("vs/editor/core/view/viewEventDispatcher", ["require", "exports", "vs/base/eventEmitter"], function(e, t, n) {
-  var i = function() {
-    function e(e) {
-      this.eventHandlerGateKeeper = e;
+define(["require", "exports", "vs/base/eventEmitter"], function(a, b, c) {
+  var d = c;
+
+  var e = function() {
+    function a(a) {
+      this.eventHandlerGateKeeper = a;
 
       this.eventHandlers = [];
 
@@ -9,50 +11,63 @@ define("vs/editor/core/view/viewEventDispatcher", ["require", "exports", "vs/bas
 
       this.isConsumingQueue = !1;
     }
-    e.prototype.addEventHandler = function(e) {
-      this.eventHandlers.push(e);
+    a.prototype.addEventHandler = function(a) {
+      this.eventHandlers.push(a);
     };
 
-    e.prototype.removeEventHandler = function(e) {
-      for (var t = 0; t < this.eventHandlers.length; t++)
-        if (this.eventHandlers[t] === e) {
-          this.eventHandlers.splice(t, 1);
+    a.prototype.removeEventHandler = function(a) {
+      for (var b = 0; b < this.eventHandlers.length; b++)
+        if (this.eventHandlers[b] === a) {
+          this.eventHandlers.splice(b, 1);
           break;
         }
     };
 
-    e.prototype.emit = function(e, t) {
-      this.eventQueue.push(new n.EmitterEvent(e, t));
+    a.prototype.emit = function(a, b) {
+      this.eventQueue.push(new d.EmitterEvent(a, b));
 
       if (!this.isConsumingQueue) {
         this.consumeQueue();
       }
     };
 
-    e.prototype.emitMany = function(e) {
-      this.eventQueue = this.eventQueue.concat(e);
+    a.prototype.emitMany = function(a) {
+      this.eventQueue = this.eventQueue.concat(a);
 
       if (!this.isConsumingQueue) {
         this.consumeQueue();
       }
     };
 
-    e.prototype.consumeQueue = function() {
-      var e = this;
+    a.prototype.consumeQueue = function() {
+      var a = this;
       this.eventHandlerGateKeeper(function() {
         try {
-          e.isConsumingQueue = !0;
-          for (var t, n, i, o; e.eventQueue.length > 0;)
-            for (o = e.eventQueue, e.eventQueue = [], i = e.eventHandlers.slice(0), t = 0, n = i.length; n > t; t++) {
-              i[t].handleEvents(o);
+          a.isConsumingQueue = !0;
+          var b;
+
+          var c;
+
+          var d;
+
+          var e;
+          while (a.eventQueue.length > 0) {
+            e = a.eventQueue;
+
+            a.eventQueue = [];
+
+            d = a.eventHandlers.slice(0);
+            for (b = 0, c = d.length; b < c; b++) {
+              d[b].handleEvents(e);
             }
+          }
         } finally {
-          e.isConsumingQueue = !1;
+          a.isConsumingQueue = !1;
         }
       });
     };
 
-    return e;
+    return a;
   }();
-  t.ViewEventDispatcher = i;
+  b.ViewEventDispatcher = e;
 });

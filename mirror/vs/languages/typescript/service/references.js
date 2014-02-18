@@ -1,517 +1,509 @@
-define("vs/languages/typescript/service/references", ["require", "exports", "../lib/typescriptServices",
-  "vs/base/objects", "vs/base/lib/winjs.base"
-], function(e, t, n, r, i) {
-  function o(e, t) {
-    var n = e.nodes().filter(function(e) {
-      return !t.hasOwnProperty(e.getName());
-    });
-    return 0 === n.length ? null : (n.sort(function(e, t) {
-      var n = e.getIncoming().length - t.getIncoming().length;
-      0 === n && (n = t.getOutgoing().length - e.getOutgoing().length);
+var __extends = this.__extends || function(d, b) {
+    for (var p in b)
+      if (b.hasOwnProperty(p)) {
+        d[p] = b[p];
+      }
 
-      0 === n && (n = e.getName().localeCompare(t.getName()));
-
-      return n;
-    }), n[0]);
-  }
-
-  function s(e) {
-    for (var t, n, r = [], i = {}; null !== (t = o(e, i));) {
-      e.traverse(t.getName(), function(e) {
-        n = e.getName();
-
-        if (!i[n]) {
-          i[n] = !0;
-          r.unshift(e);
-        }
-      });
+    function __() {
+      this.constructor = d;
     }
-    return r;
-  }
+    __.prototype = b.prototype;
+    d.prototype = new __;
+  };
 
-  function a(e, n, r) {
-    var o;
-
-    var s;
-
-    var a = new p;
-
-    var l = new y;
-    n = n.slice(0);
-
-    n.sort(function(e, t) {
-      return t.references.length - e.references.length;
-    });
-
-    return new i.Promise(function(i) {
-      function c() {
-        return 0 === n.length ? (i(a), void 0) : (o = n.shift(), (s = a.hasNode(r.nodeName(o.path))) ? c() : (o.resolve(
-          e, l.consume.bind(l), r).then(function() {
-          t.fillGraph(a, a.insertNode(r.nodeName(o.path)), r, o);
-
-          c();
-        }), void 0));
-      }
-      c();
-    });
-  }
-
-  function l(e, n, r, i) {
-    i.references.forEach(function(o) {
-      if (o.error && !o.file) {
-        var s = {
-          message: o.error.message,
-          path: r.nodeName(i.path),
-          offset: o.offset,
-          length: o.length,
-          referenceType: o instanceof d ? 1 : 2
-        };
-        e.insertEdge(n.getName(), "error:" + JSON.stringify(s));
-      } else if (o.file) {
-        var a = e.insertEdge(n.getName(), r.nodeName(o.file.path));
-        if (!o.error) {
-          t.fillGraph(e, a, r, o.file);
-        }
-      }
-    });
-  }
-
-  function c(e) {
-    return (new y).consume(e);
-  }
-  var u = function() {
-    function e(e) {
-      this.name = e;
-
+define(["require", "exports", "../lib/typescriptServices", "vs/base/objects", "vs/base/lib/winjs.base"], function(
+  require, exports, __typescriptServices__, __objects__, __winjs__) {
+  "use strict";
+  var typescriptServices = __typescriptServices__;
+  var objects = __objects__;
+  var winjs = __winjs__;
+  var Node = function() {
+    function Node(name) {
+      this.name = name;
       this.outgoing = {};
-
       this.incoming = {};
     }
-    e.prototype.getName = function() {
+    Node.prototype.getName = function() {
       return this.name;
     };
-
-    e.prototype.getOutgoing = function() {
+    Node.prototype.getOutgoing = function() {
       return Object.keys(this.outgoing);
     };
-
-    e.prototype.getIncoming = function() {
+    Node.prototype.getIncoming = function() {
       return Object.keys(this.incoming);
     };
-
-    return e;
+    return Node;
   }();
-
-  var p = function() {
-    function e() {
+  var Graph = function() {
+    function Graph() {
       this.store = {};
     }
-    e.prototype.clone = function() {
-      var t = new e;
-      t.store = r.clone(this.store);
-
-      return t;
+    Graph.prototype.clone = function() {
+      var graph = new Graph;
+      graph.store = objects.clone(this.store);
+      return graph;
     };
-
-    e.prototype.merge = function(e) {
-      var t = this;
-      if (this !== e) {
-        var n = Object.keys(e.store);
-        n.forEach(function(e) {
-          if (!t.hasNode(e)) {
-            t.insertNode(e);
-          }
-        });
-
-        n.forEach(function(n) {
-          var r = e.store[n];
-          r.getOutgoing().forEach(function(e) {
-            t.insertEdge(n, e);
-          });
-        });
+    Graph.prototype.merge = function(other) {
+      var _this = this;
+      if (this === other) {
+        return;
       }
-    };
-
-    e.prototype.isEmpty = function() {
-      return 0 === Object.keys(this.store).length;
-    };
-
-    e.prototype.hasNode = function(e) {
-      return this.store.hasOwnProperty(e);
-    };
-
-    e.prototype.insertNode = function(e) {
-      var t = new u(e);
-      this.store[e] = t;
-
-      return t;
-    };
-
-    e.prototype.insertEdge = function(e, t) {
-      this.hasNode(e) || this.insertNode(e);
-
-      this.hasNode(t) || this.insertNode(t);
-
-      this.store[e].outgoing[t] = !0;
-
-      this.store[t].incoming[e] = !0;
-
-      return this.store[t];
-    };
-
-    e.prototype.removeEdges = function(e) {
-      for (var t = [], n = 0; n < arguments.length - 1; n++) {
-        t[n] = arguments[n + 1];
-      }
-      if (this.hasNode(e)) {
-        var r;
-
-        var i;
-
-        var o = this.store[e];
-
-        var s = t.length;
-        for (0 === t.length && (t = Object.keys(o.outgoing), s = t.length), r = 0; s > r; r++) {
-          if (this.store.hasOwnProperty(t[r])) {
-            i = this.store[t[r]];
-            delete o.outgoing[i.name];
-            delete i.incoming[e];
-          }
+      var keys = Object.keys(other.store);
+      keys.forEach(function(name) {
+        if (!_this.hasNode(name)) {
+          _this.insertNode(name);
         }
-      }
-    };
-
-    e.prototype.removeNode = function(e) {
-      var t = this;
-      return this.store.hasOwnProperty(e) ? (delete this.store[e], Object.keys(this.store).forEach(function(n) {
-        var r = t.store[n];
-        delete r.incoming[e];
-
-        delete r.outgoing[e];
-      }), !0) : !1;
-    };
-
-    e.prototype.nodes = function() {
-      var e = this;
-      return Object.keys(this.store).map(function(t) {
-        return e.store[t];
+      });
+      keys.forEach(function(name) {
+        var otherNode = other.store[name];
+        otherNode.getOutgoing().forEach(function(outgoing) {
+          _this.insertEdge(name, outgoing);
+        });
       });
     };
-
-    e.prototype.node = function(e) {
-      return this.store.hasOwnProperty(e) ? this.store[e] : null;
+    Graph.prototype.isEmpty = function() {
+      return Object.keys(this.store).length === 0;
     };
-
-    e.prototype.traverse = function(e, t, n) {
-      if ("undefined" == typeof n) {
-        n = {};
+    Graph.prototype.hasNode = function(name) {
+      return this.store.hasOwnProperty(name);
+    };
+    Graph.prototype.insertNode = function(name) {
+      var node = new Node(name);
+      this.store[name] = node;
+      return node;
+    };
+    Graph.prototype.insertEdge = function(from, to) {
+      if (!this.hasNode(from)) {
+        this.insertNode(from);
       }
-      var r = this;
-      if (this.store.hasOwnProperty(e) && n[e] !== !0) {
-        n[e] = !0;
-        var i = this.store[e];
-        t(i);
+      if (!this.hasNode(to)) {
+        this.insertNode(to);
+      }
+      this.store[from].outgoing[to] = true;
+      this.store[to].incoming[from] = true;
+      return this.store[to];
+    };
+    Graph.prototype.removeEdges = function(from) {
+      var to = [];
+      for (var _i = 0; _i < arguments.length - 1; _i++) {
+        to[_i] = arguments[_i + 1];
+      }
+      if (!this.hasNode(from)) {
+        return;
+      }
+      var node = this.store[from];
 
-        Object.keys(i.outgoing).forEach(function(e) {
-          r.traverse(e, t, n);
-        });
+      var len = to.length;
+
+      var i;
+
+      var target;
+      if (to.length === 0) {
+        to = Object.keys(node.outgoing);
+        len = to.length;
+      }
+      for (i = 0; i < len; i++) {
+        if (!this.store.hasOwnProperty(to[i])) {
+          continue;
+        }
+        target = this.store[to[i]];
+        delete node.outgoing[target.name];
+        delete target.incoming[from];
       }
     };
-
-    e.prototype.toJSON = function() {
-      for (var e = Object.keys(this.store), t = {}, n = {}, r = [], i = 0; i < e.length; i++) {
-        var o = e[i];
-        t[o] = i;
-
-        n[i] = o;
+    Graph.prototype.removeNode = function(name) {
+      var _this = this;
+      if (!this.store.hasOwnProperty(name)) {
+        return false;
       }
-      for (var i = 0; i < e.length; i++) {
-        var o = e[i];
+      delete this.store[name];
+      Object.keys(this.store).forEach(function(n) {
+        var node = _this.store[n];
+        delete node.incoming[name];
+        delete node.outgoing[name];
+      });
+      return true;
+    };
+    Graph.prototype.nodes = function() {
+      var _this = this;
+      return Object.keys(this.store).map(function(name) {
+        return _this.store[name];
+      });
+    };
+    Graph.prototype.node = function(name) {
+      if (!this.store.hasOwnProperty(name)) {
+        return null;
+      }
+      return this.store[name];
+    };
+    Graph.prototype.traverse = function(name, callback, seen) {
+      if (typeof seen === "undefined") {
+        seen = {};
+      }
+      var _this = this;
+      if (!this.store.hasOwnProperty(name)) {
+        return;
+      }
+      if (seen[name] === true) {
+        return;
+      }
+      seen[name] = true;
+      var node = this.store[name];
+      callback(node);
+      Object.keys(node.outgoing).forEach(function(name) {
+        _this.traverse(name, callback, seen);
+      });
+    };
+    Graph.prototype.toJSON = function() {
+      var keys = Object.keys(this.store);
 
-        var s = this.store[o].getOutgoing();
-        r.push(i);
+      var index = {};
 
-        r.push(s.length);
-        for (var a = 0; a < s.length; a++) {
-          var l = s[a];
+      var inverseIndex = {};
 
-          var c = t[l];
-          r.push(c);
+      var graph = [];
+      for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        index[key] = i;
+        inverseIndex[i] = key;
+      }
+      for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+
+        var outgoing = this.store[key].getOutgoing();
+        graph.push(i);
+        graph.push(outgoing.length);
+        for (var j = 0; j < outgoing.length; j++) {
+          var pathOutgoing = outgoing[j];
+
+          var indexOutgoing = index[pathOutgoing];
+          graph.push(indexOutgoing);
         }
       }
       return {
-        i: n,
-        g: r
+        i: inverseIndex,
+        g: graph
       };
     };
+    Graph.fromJSON = function(data) {
+      var graph = new Graph;
 
-    e.fromJSON = function(t) {
-      var n;
+      var name;
 
-      var r;
-
-      var i = new e;
-      for (var o in t.i) {
-        if (t.i.hasOwnProperty(o)) {
-          n = t.i[o];
-          i.insertNode(n);
+      var edgeCount;
+      for (var key in data.i) {
+        if (data.i.hasOwnProperty(key)) {
+          name = data.i[key];
+          graph.insertNode(name);
         }
       }
-      for (var s = 0, a = t.g.length; a > s; s++)
-        for (n = t.i[t.g[s]], r = t.g[++s]; r > 0;) {
-          i.insertEdge(n, t.i[t.g[++s]]);
-          r -= 1;
+      for (var i = 0, len = data.g.length; i < len; i++) {
+        name = data.i[data.g[i]];
+        edgeCount = data.g[++i];
+        while (edgeCount > 0) {
+          graph.insertEdge(name, data.i[data.g[++i]]);
+          edgeCount -= 1;
         }
-      return i;
+      }
+      return graph;
     };
-
-    return e;
+    return Graph;
   }();
-  t.Graph = p;
+  exports.Graph = Graph;
 
-  t.computeTransitiveClosure = s;
-
-  t.buildDependencyGraph = a;
-
-  t.fillGraph = l;
-  var h = function() {
-    function e(e, t, n) {
-      this.offset = e;
-
-      this.length = t;
-
-      this.path = n;
+  function findRootAlike(graph, seen) {
+    var nodes = graph.nodes().filter(function(node) {
+      return !seen.hasOwnProperty(node.getName());
+    });
+    if (nodes.length === 0) {
+      return null;
     }
-    return e;
+    nodes.sort(function(a, b) {
+      var diff = a.getIncoming().length - b.getIncoming().length;
+      if (diff === 0) {
+        diff = b.getOutgoing().length - a.getOutgoing().length;
+      }
+      if (diff === 0) {
+        diff = a.getName().localeCompare(b.getName());
+      }
+      return diff;
+    });
+    return nodes[0];
+  }
+
+  function computeTransitiveClosure(graph) {
+    var root;
+
+    var nodes = [];
+
+    var name;
+
+    var seen = {};
+    while ((root = findRootAlike(graph, seen)) !== null) {
+      graph.traverse(root.getName(), function(node) {
+        name = node.getName();
+        if (!seen[name]) {
+          seen[name] = true;
+          nodes.unshift(node);
+        }
+      });
+    }
+    return nodes;
+  }
+  exports.computeTransitiveClosure = computeTransitiveClosure;
+
+  function buildDependencyGraph(loader, files, options) {
+    var graph = new Graph;
+
+    var collector = new ScannerBasedCollector;
+
+    var file;
+
+    var alreadyInGraph;
+    files = files.slice(0);
+    files.sort(function(a, b) {
+      return b.references.length - a.references.length;
+    });
+    return new winjs.Promise(function(c, e, p) {
+      function f() {
+        if (files.length === 0) {
+          c(graph);
+          return;
+        }
+        file = files.shift();
+        alreadyInGraph = graph.hasNode(options.nodeName(file.path));
+        if (alreadyInGraph) {
+          return f();
+        }
+        file.resolve(loader, collector.consume.bind(collector), options).then(function() {
+          exports.fillGraph(graph, graph.insertNode(options.nodeName(file.path)), options, file);
+          f();
+        });
+      }
+      f();
+    });
+  }
+  exports.buildDependencyGraph = buildDependencyGraph;
+
+  function fillGraph(graph, from, options, file) {
+    file.references.forEach(function(reference) {
+      if (reference.error && !reference.file) {
+        var error = {
+          message: reference.error.message,
+          path: options.nodeName(file.path),
+          offset: reference.offset,
+          length: reference.length,
+          referenceType: reference instanceof TripleSlashReference ? 1 << 0 : 1 << 1
+        };
+        graph.insertEdge(from.getName(), "error:" + JSON.stringify(error));
+      } else if (reference.file) {
+        var node = graph.insertEdge(from.getName(), options.nodeName(reference.file.path));
+        if (!reference.error) {
+          exports.fillGraph(graph, node, options, reference.file);
+        }
+      }
+    });
+  }
+  exports.fillGraph = fillGraph;
+  var Reference = function() {
+    function Reference(offset, length, path) {
+      this.offset = offset;
+      this.length = length;
+      this.path = path;
+    }
+    return Reference;
   }();
-  t.Reference = h;
-  var d = function(e) {
-    function t() {
-      e.apply(this, arguments);
+  exports.Reference = Reference;
+  var TripleSlashReference = function(_super) {
+    __extends(TripleSlashReference, _super);
+
+    function TripleSlashReference() {
+      _super.apply(this, arguments);
     }
-    __extends(t, e);
+    TripleSlashReference.REGEXP = /^(\/\/\/\s*<reference\s+path=)('|")(.+?)\2\s*(static=('|")(.+?)\2\s*)*\/>/im;
+    return TripleSlashReference;
+  }(Reference);
+  exports.TripleSlashReference = TripleSlashReference;
+  var ImportReference = function(_super) {
+    __extends(ImportReference, _super);
 
-    t.REGEXP = /^(\/\/\/\s*<reference\s+path=)('|")(.+?)\2\s*(static=('|")(.+?)\2\s*)*/im;
-
-    return t;
-  }(h);
-  t.TripleSlashReference = d;
-  var m = function(e) {
-    function t(t, n, r) {
-      e.call(this, t, n, r);
-
-      this.isRelative = 0 === this.path.indexOf("./") || 0 === this.path.indexOf("../");
-
-      this.isRooted = 0 === this.path.indexOf("/");
-
+    function ImportReference(offset, length, path) {
+      _super.call(this, offset, length, path);
+      this.isRelative = this.path.indexOf("./") === 0 || this.path.indexOf("../") === 0;
+      this.isRooted = this.path.indexOf("/") === 0;
       this.isAbsolute = !this.isRelative && !this.isRooted;
     }
-    __extends(t, e);
-
-    t.TS = ".ts";
-
-    t.DTS = ".d.ts";
-
-    t.JS = ".js";
-
-    return t;
-  }(h);
-  t.ImportReference = m;
-  var f = function(e) {
-    function t() {
-      e.apply(this, arguments);
-    }
-    __extends(t, e);
-
-    return t;
-  }(m);
-  t.RequireReference = f;
-  var g = function() {
-    function e(e, t) {
-      this.path = e;
-
-      this.content = t;
-
+    ImportReference.TS = ".ts";
+    ImportReference.DTS = ".d.ts";
+    return ImportReference;
+  }(Reference);
+  exports.ImportReference = ImportReference;
+  var File = function() {
+    function File(path, content) {
+      this.path = path;
+      this.content = content;
       this.references = [];
     }
-    e.prototype.resolve = function(t, n, r, o) {
-      if ("undefined" == typeof o) {
-        o = {};
+    File.prototype.resolve = function(loader, collect, options, seen) {
+      if (typeof seen === "undefined") {
+        seen = {};
       }
-      var s = this;
-      this.references = n(this.content);
+      var _this = this;
+      this.references = collect(this.content);
+      seen[this.path] = true;
+      return new winjs.Promise(function(success, error, progress) {
+        var c = _this.references.length;
 
-      o[this.path] = !0;
-
-      return new i.Promise(function(i, a) {
-        var l = s.references.length;
-
-        var c = function() {
-          if (0 === --l) {
-            i(null);
+        var less = function() {
+          if (--c === 0) {
+            success(null);
           }
         };
 
-        var u = function() {
-          l += 1;
+        var more = function() {
+          c += 1;
         };
-        return 0 === l ? (i(null), void 0) : (s.references.forEach(function(i) {
-          t.load(s.path, i, r).then(function(s) {
-            if (s && o[s.path]) {
-              i.file = s;
-              i.error = {
+        if (c === 0) {
+          success(null);
+          return;
+        }
+        _this.references.forEach(function(reference) {
+          loader.load(_this.path, reference, options).then(function(file) {
+            if (file && seen[file.path]) {
+              reference.file = file;
+              reference.error = {
                 message: "cyclic reference",
-                path: s.path
+                path: file.path
               };
             } else {
-              i.file = s;
-              if (r.recursive && i.file instanceof e) {
-                u();
-                s.resolve(t, n, r, o).then(function() {
-                  c();
-                }, a);
+              reference.file = file;
+              if (options.recursive && reference.file instanceof File) {
+                more();
+                file.resolve(loader, collect, options, seen).then(function() {
+                  less();
+                }, error);
               }
             }
-
-            c();
-          }, function(e) {
-            i.error = e;
-
-            c();
+            less();
+          }, function(err) {
+            reference.error = err;
+            less();
           });
-        }), void 0);
+        });
       });
     };
-
-    return e;
+    return File;
   }();
-  t.File = g;
-  var v = function() {
-    function e(e) {
-      this.value = e;
-      var t = n.SimpleText.fromString(e);
-      this.scanner = new n.Scanner(null, t, 1);
-
+  exports.File = File;
+  var Scanner = function() {
+    function Scanner(value) {
+      this.value = value;
+      var simpleText = typescriptServices.TypeScript.SimpleText.fromString(value);
+      this.scanner = new typescriptServices.TypeScript.Scanner(null, simpleText, typescriptServices.TypeScript.LanguageVersion
+        .EcmaScript5);
       this.nextTokens = [];
-
       this.offset = 0;
     }
-    e.prototype.next = function() {
-      if (0 === this.nextTokens.length) {
-        for (var e = this.scanner.scan([], !0), t = e.leadingTrivia(), n = e.trailingTrivia(), r = 0, i = t.count(); i >
-          r; r++) {
-          var o = t.syntaxTriviaAt(r);
-          this.add(o.kind(), this.offset, o.fullWidth(), o.fullText());
+    Scanner.prototype.next = function() {
+      if (this.nextTokens.length === 0) {
+        var token = this.scanner.scan([], true);
 
-          this.offset += o.fullWidth();
+        var leadingTrivia = token.leadingTrivia();
+
+        var trailingTrivia = token.trailingTrivia();
+
+        var currentOffset = this.scanner.absoluteIndex();
+        for (var i = 0, len = leadingTrivia.count(); i < len; i++) {
+          var trivia = leadingTrivia.syntaxTriviaAt(i);
+          this.add(trivia.kind(), this.offset, trivia.fullWidth(), trivia.fullText());
+          this.offset += trivia.fullWidth();
         }
-        this.add(e.kind(), this.offset, e.width(), e.valueText());
-
-        this.offset += e.width();
-        for (var r = 0, i = n.count(); i > r; r++) {
-          var o = n.syntaxTriviaAt(r);
-          this.add(o.kind(), this.offset, o.fullWidth(), o.fullText());
-
-          this.offset += o.fullWidth();
+        this.add(token.kind(), this.offset, token.width(), token.valueText());
+        this.offset += token.width();
+        for (var i = 0, len = trailingTrivia.count(); i < len; i++) {
+          var trivia = trailingTrivia.syntaxTriviaAt(i);
+          this.add(trivia.kind(), this.offset, trivia.fullWidth(), trivia.fullText());
+          this.offset += trivia.fullWidth();
         }
       }
       return this.nextTokens.shift();
     };
-
-    e.prototype.add = function(e, t, r, i) {
-      switch (e) {
-        case n.SyntaxKind.WhitespaceTrivia:
-        case n.SyntaxKind.NewLineTrivia:
+    Scanner.prototype.add = function(kind, offset, length, text) {
+      switch (kind) {
+        case typescriptServices.TypeScript.SyntaxKind.WhitespaceTrivia:
+        case typescriptServices.TypeScript.SyntaxKind.NewLineTrivia:
           return;
       }
       this.nextTokens.push({
-        kind: e,
-        offset: t,
-        length: r,
-        text: i
+        kind: kind,
+        offset: offset,
+        length: length,
+        text: text
       });
     };
-
-    return e;
+    return Scanner;
   }();
-
-  var y = function() {
-    function e() {
+  var ScannerBasedCollector = function() {
+    function ScannerBasedCollector() {
       this.references = [];
     }
-    e.prototype.consume = function(e) {
-      function t(e) {
-        if ("undefined" == typeof e) {
-          e = !0;
-        }
+    ScannerBasedCollector.prototype.consume = function(value) {
+      var idx = this.references.length;
 
-        i = r;
-        do {
-          r = s.next();
-        } while (!e && (r.kind === n.SyntaxKind.SingleLineCommentTrivia || r.kind === n.SyntaxKind.MultiLineCommentTrivia));
-        return r;
+      var scanner = new Scanner(value);
+
+      var token;
+
+      function nextToken() {
+        token = scanner.next();
+        return token;
       }
-      for (var r, i, o = this.references.length, s = new v(e); t().kind !== n.SyntaxKind.EndOfFileToken;) {
-        var a = !1;
-        if (r.kind === n.SyntaxKind.SingleLineCommentTrivia) {
-          var l = r.text;
-
-          var c = r.offset;
-
-          var u = r.length;
-
-          var p = d.REGEXP.exec(l);
-          if (p) {
-            this.references.push(new d(c + p[1].length + p[2].length, p[3].length, p[3]));
-          }
-        } else {
-          if (r.kind === n.SyntaxKind.ImportKeyword) {
-            t();
-            if (r.kind === n.SyntaxKind.IdentifierName) {
-              t();
-              if (r.kind === n.SyntaxKind.EqualsToken) {
-                t();
-                a = !0;
+      while (nextToken().kind !== typescriptServices.TypeScript.SyntaxKind.EndOfFileToken) {
+        if (token.kind === typescriptServices.TypeScript.SyntaxKind.ImportKeyword) {
+          nextToken();
+          if (token.kind === typescriptServices.TypeScript.SyntaxKind.IdentifierName) {
+            nextToken();
+            if (token.kind === typescriptServices.TypeScript.SyntaxKind.EqualsToken) {
+              nextToken();
+              if (token.kind === typescriptServices.TypeScript.SyntaxKind.ModuleKeyword) {
+                nextToken();
+                if (token.kind === typescriptServices.TypeScript.SyntaxKind.OpenParenToken) {
+                  nextToken();
+                  if (token.kind === typescriptServices.TypeScript.SyntaxKind.StringLiteral) {
+                    var moduleId = token.text;
+                    var offset = token.offset;
+                    var length = token.length;
+                    nextToken();
+                    if (token.kind === typescriptServices.TypeScript.SyntaxKind.CloseParenToken) {
+                      this.references.push(new ImportReference(offset + 1, -2 + length, moduleId));
+                    }
+                  }
+                }
               }
             }
           }
-        }
-        if ((a || !i || i.kind !== n.SyntaxKind.DotToken) && r.kind === n.SyntaxKind.RequireKeyword && (t(), r.kind ===
-          n.SyntaxKind.OpenParenToken && (t(), r.kind === n.SyntaxKind.StringLiteral))) {
-          var h = r.text;
+        } else if (token.kind === typescriptServices.TypeScript.SyntaxKind.SingleLineCommentTrivia) {
+          var comment = token.text;
 
-          var c = r.offset;
+          var offset = token.offset;
 
-          var u = r.length;
-          t();
+          var length = token.length;
 
-          if (r.kind === n.SyntaxKind.CloseParenToken) {
-            if (a) {
-              this.references.push(new m(c + 1, -2 + u, h));
-            } else {
-              this.references.push(new f(c + 1, -2 + u, h));
-            }
+          var match = TripleSlashReference.REGEXP.exec(comment);
+          if (match) {
+            this.references.push(new TripleSlashReference(offset + match[1].length + match[2].length, match[3].length,
+              match[3]));
           }
         }
-        if (r.kind === n.SyntaxKind.IdentifierName && "define" === r.text && (t(), r.kind === n.SyntaxKind.OpenParenToken &&
-          (t(!1), r.kind === n.SyntaxKind.StringLiteral && (t(!1), r.kind === n.SyntaxKind.CommaToken && t(!1)), r.kind ===
-            n.SyntaxKind.OpenBracketToken)))
-          for (t(!1); r.kind === n.SyntaxKind.StringLiteral;) {
-            if ("exports" !== r.text && "require" !== r.text && "module" !== r.text) {
-              this.references.push(new f(r.offset + 1, -2 + r.length, r.text));
-            }
-            t(!1);
-            if (r.kind === n.SyntaxKind.CommaToken) {
-              t(!1);
-            }
-          }
       }
-      return this.references.slice(o);
+      return this.references.slice(idx);
     };
-
-    return e;
+    return ScannerBasedCollector;
   }();
-  t.ScannerBasedCollector = y;
+  exports.ScannerBasedCollector = ScannerBasedCollector;
 
-  t.collect = c;
+  function collect(value) {
+    return (new ScannerBasedCollector).consume(value);
+  }
+  exports.collect = collect;
 });

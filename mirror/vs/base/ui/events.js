@@ -1,58 +1,71 @@
-define("vs/base/ui/events", ["require", "exports"], function(e, t) {
-  var n = function() {
-    function e(e) {
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
+    }
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
+    }
+    d.prototype = b.prototype;
+
+    a.prototype = new d;
+  };
+
+define(["require", "exports"], function(a, b) {
+  var c = function() {
+    function a(a) {
       this.time = (new Date).getTime();
 
-      this.originalEvent = e;
+      this.originalEvent = a;
 
       this.source = null;
     }
-    return e;
+    return a;
   }();
-  t.Event = n;
-  var i = function(e) {
-    function t(t, n) {
-      e.call(this, n);
+  b.Event = c;
+  var d = function(a) {
+    function b(b, c) {
+      a.call(this, c);
 
-      this.message = t;
+      this.message = b;
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    return t;
-  }(n);
-  t.MessageEvent = i;
-  var o = function(e) {
-    function t(t, n, i, o) {
-      e.call(this, o);
+    return b;
+  }(c);
+  b.MessageEvent = d;
+  var e = function(a) {
+    function b(b, c, d, e) {
+      a.call(this, e);
 
-      this.key = t;
+      this.key = b;
 
-      this.oldValue = n;
+      this.oldValue = c;
 
-      this.newValue = i;
+      this.newValue = d;
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    return t;
-  }(n);
-  t.PropertyChangeEvent = o;
-  var r = function(e) {
-    function t(t, n) {
-      e.call(this, n);
+    return b;
+  }(c);
+  b.PropertyChangeEvent = e;
+  var f = function(a) {
+    function b(b, c) {
+      a.call(this, c);
 
-      this.element = t;
+      this.element = b;
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    return t;
-  }(n);
-  t.ViewerEvent = r;
+    return b;
+  }(c);
+  b.ViewerEvent = f;
 
-  t.EventType = {
+  b.EventType = {
     PROPERTY_CHANGED: "propertyChanged",
     SELECTION: "selection",
     FOCUS: "focus",
-    BLUR: "blur",
     HIGHLIGHT: "highlight",
     EXPAND: "expand",
     COLLAPSE: "collapse",

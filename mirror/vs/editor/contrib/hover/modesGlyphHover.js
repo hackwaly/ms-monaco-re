@@ -1,135 +1,151 @@
-define("vs/editor/contrib/hover/modesGlyphHover", ["require", "exports", "vs/editor/contrib/hover/hoverOperation",
-  "vs/editor/contrib/hover/hoverWidgets"
-], function(e, t, n, i) {
-  var o = function() {
-    function e(e) {
-      this._editor = e;
-
-      this._lineNumber = -1;
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
     }
-    e.prototype.setLineNumber = function(e) {
-      this._lineNumber = e;
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
+    }
+    d.prototype = b.prototype;
 
-      this._result = [];
-    };
+    a.prototype = new d;
+  };
 
-    e.prototype.clearResult = function() {
-      this._result = [];
-    };
+define(["require", "exports", "vs/editor/contrib/hover/hoverOperation", "vs/editor/contrib/hover/hoverWidgets"],
+  function(a, b, c, d) {
+    var e = c;
 
-    e.prototype.computeSync = function() {
-      var e;
+    var f = d;
 
-      var t;
+    var g = function() {
+      function a(a) {
+        this._editor = a;
 
-      var n;
+        this._lineNumber = -1;
+      }
+      a.prototype.setLineNumber = function(a) {
+        this._lineNumber = a;
 
-      var i = [];
+        this._result = [];
+      };
 
-      var o = this._editor.getLineDecorations(this._lineNumber);
-      for (e = 0, t = o.length; t > e; e++) {
-        n = o[e];
-        if (n.options.glyphMarginClassName && n.options.hoverMessage) {
-          i.push({
-            value: n.options.hoverMessage
-          });
+      a.prototype.computeSync = function() {
+        var a = [];
+
+        var b = this._editor.getLineDecorations(this._lineNumber);
+
+        var c;
+
+        var d;
+
+        var e;
+        for (c = 0, d = b.length; c < d; c++) {
+          e = b[c];
+          if (e.options.glyphMarginClassName && e.options.hoverMessage) {
+            a.push({
+              value: e.options.hoverMessage
+            });
+          }
         }
+        return a;
+      };
+
+      a.prototype.onResult = function(a, b) {
+        this._result = this._result.concat(a);
+      };
+
+      a.prototype.getResult = function() {
+        return this._result;
+      };
+
+      return a;
+    }();
+
+    var h = function(a) {
+      function b(c) {
+        var d = this;
+        a.call(this, b.ID, c);
+
+        this._lastLineNumber === -1;
+
+        this._computer = new g(this._editor);
+
+        this._hoverOperation = new e.HoverOperation(this._computer, function(a) {
+          return d._withResult(a);
+        }, null, function(a) {
+          return d._withResult(a);
+        });
       }
-      return i;
-    };
+      __extends(b, a);
 
-    e.prototype.onResult = function(e) {
-      this._result = this._result.concat(e);
-    };
-
-    e.prototype.getResult = function() {
-      return this._result;
-    };
-
-    return e;
-  }();
-
-  var r = function(e) {
-    function t(i) {
-      var r = this;
-      e.call(this, t.ID, i);
-
-      - 1 === this._lastLineNumber;
-
-      this._computer = new o(this._editor);
-
-      this._hoverOperation = new n.HoverOperation(this._computer, function(e) {
-        return r._withResult(e);
-      }, null, function(e) {
-        return r._withResult(e);
-      });
-    }
-    __extends(t, e);
-
-    t.prototype.onModelDecorationsChanged = function() {
-      if (this._isVisible) {
+      b.prototype.startShowingAt = function(a) {
+        if (this._lastLineNumber === a) return;
         this._hoverOperation.cancel();
-        this._computer.clearResult();
-        this._hoverOperation.start();
-      }
-    };
 
-    t.prototype.startShowingAt = function(e) {
-      if (this._lastLineNumber !== e) {
+        this.hide();
+
+        this._lastLineNumber = a;
+
+        this._computer.setLineNumber(a);
+
+        this._hoverOperation.start();
+      };
+
+      b.prototype.hide = function() {
+        this._lastLineNumber = -1;
+
         this._hoverOperation.cancel();
-        this.hide();
-        this._lastLineNumber = e;
-        this._computer.setLineNumber(e);
-        this._hoverOperation.start();
-      }
-    };
 
-    t.prototype.hide = function() {
-      this._lastLineNumber = -1;
+        a.prototype.hide.call(this);
+      };
 
-      this._hoverOperation.cancel();
+      b.prototype._withResult = function(a) {
+        this._messages = a;
 
-      e.prototype.hide.call(this);
-    };
-
-    t.prototype._withResult = function(e) {
-      this._messages = e;
-
-      if (this._messages.length > 0) {
-        this._renderMessages(this._lastLineNumber, this._messages);
-      } else {
-        this.hide();
-      }
-    };
-
-    t.prototype._renderMessages = function(e, t) {
-      var n = document.createDocumentFragment();
-      t.forEach(function(e) {
-        var t = document.createElement("div");
-
-        var i = null;
-        if (e.className) {
-          i = document.createElement("span");
-          i.textContent = e.value;
-          i.className = e.className;
-          t.appendChild(i);
+        if (this._messages.length > 0) {
+          this._renderMessages(this._lastLineNumber, this._messages);
         } else {
-          t.textContent = e.value;
+          this.hide();
         }
+      };
 
-        n.appendChild(t);
-      });
+      b.prototype._renderMessages = function(a, b) {
+        var c;
 
-      this._domNode.textContent = "";
+        var d;
 
-      this._domNode.appendChild(n);
+        var e;
 
-      this.showAt(e);
-    };
+        var f = [];
 
-    t.ID = "editor.contrib.modesGlyphHoverWidget";
+        var g = document.createDocumentFragment();
+        b.forEach(function(a) {
+          var b = document.createElement("div");
 
-    return t;
-  }(i.GlyphHoverWidget);
-  t.ModesGlyphHoverWidget = r;
-});
+          var c = null;
+          if (a.className) {
+            c = document.createElement("span");
+            c.textContent = a.value;
+            c.className = a.className;
+            b.appendChild(c);
+          } else {
+            b.textContent = a.value;
+          }
+
+          g.appendChild(b);
+        });
+
+        this._domNode.textContent = "";
+
+        this._domNode.appendChild(g);
+
+        this.showAt(a);
+      };
+
+      b.ID = "editor.contrib.modesGlyphHoverWidget";
+
+      return b;
+    }(f.GlyphHoverWidget);
+    b.ModesGlyphHoverWidget = h;
+  });

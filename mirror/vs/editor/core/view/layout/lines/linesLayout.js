@@ -1,84 +1,113 @@
-define("vs/editor/core/view/layout/lines/linesLayout", ["require", "exports",
-  "vs/editor/core/view/layout/lines/verticalObjects"
-], function(e, t, n) {
-  var i = function() {
-    function e(e, t) {
-      this.configuration = e;
+define(["require", "exports", "vs/editor/core/view/layout/lines/verticalObjects"], function(a, b, c) {
+  var d = c;
 
-      this.model = t;
+  var e = function() {
+    function a(a, b, c) {
+      this.configuration = a;
 
-      this.verticalObjects = new n.VerticalObjects;
+      this.model = b;
 
-      this.verticalObjects.replaceLines(t.getLineCount());
+      this.verticalObjects = new d.VerticalObjects;
+
+      this.wrappingWidth = c;
+
+      this.verticalObjects.replaceLines(b, a.editor.viewWordWrap);
     }
-    e.prototype.insertWhitespace = function(e, t) {
-      return this.verticalObjects.insertWhitespace(e, t);
+    a.prototype.addWhitespace = function(a, b) {
+      return this.verticalObjects.insertWhitespace(a, b);
     };
 
-    e.prototype.changeWhitespace = function(e, t) {
-      return this.verticalObjects.changeWhitespace(e, t);
+    a.prototype.changeWhitespace = function(a, b) {
+      return this.verticalObjects.changeWhitespace(a, b);
     };
 
-    e.prototype.changeAfterLineNumberForWhitespace = function(e, t) {
-      return this.verticalObjects.changeAfterLineNumberForWhitespace(e, t);
+    a.prototype.changeAfterLineNumberForWhitespace = function(a, b) {
+      return this.verticalObjects.changeAfterLineNumberForWhitespace(a, b);
     };
 
-    e.prototype.removeWhitespace = function(e) {
-      return this.verticalObjects.removeWhitespace(e);
+    a.prototype.removeWhitespace = function(a) {
+      return this.verticalObjects.removeWhitespace(a);
     };
 
-    e.prototype.onModelFlushed = function() {
-      this.verticalObjects.replaceLines(this.model.getLineCount());
+    a.prototype.onConfigurationChanged = function(a) {
+      if (a.viewWordWrapChanged) {
+        if (this.configuration.editor.viewWordWrap) {
+          this.verticalObjects.invalidateLineHeights();
+        } else {
+          this.verticalObjects.resetLineHeightsAndMarkAsValid();
+        }
+      }
     };
 
-    e.prototype.onModelLinesDeleted = function(e) {
-      this.verticalObjects.onModelLinesDeleted(e.fromLineNumber, e.toLineNumber);
+    a.prototype.onWrappingWidthChanged = function(a) {
+      if (this.wrappingWidth !== a) {
+        this.wrappingWidth = a;
+        if (this.configuration.editor.viewWordWrap) {
+          this.verticalObjects.invalidateLineHeights();
+        }
+      }
     };
 
-    e.prototype.onModelLinesInserted = function(e) {
-      this.verticalObjects.onModelLinesInserted(e.fromLineNumber, e.toLineNumber);
+    a.prototype.onModelFlushed = function() {
+      this.verticalObjects.replaceLines(this.model, this.configuration.editor.viewWordWrap);
     };
 
-    e.prototype.getVerticalOffsetForLineNumber = function(e) {
-      return this.verticalObjects.getVerticalOffsetForLineNumber(e, this.configuration.editor.lineHeight);
+    a.prototype.onModelLinesDeleted = function(a) {
+      this.verticalObjects.onModelLinesDeleted(a.fromLineNumber, a.toLineNumber);
     };
 
-    e.prototype.getLinesTotalHeight = function() {
+    a.prototype.onModelLineChanged = function(a) {
+      this.verticalObjects.onModelLineChanged(a.lineNumber, this.configuration.editor.viewWordWrap);
+    };
+
+    a.prototype.onModelLinesInserted = function(a) {
+      this.verticalObjects.onModelLinesInserted(a.fromLineNumber, a.toLineNumber, this.configuration.editor.viewWordWrap);
+    };
+
+    a.prototype.updateLineHeights = function(a, b) {
+      this.verticalObjects.changeLines(a, b);
+    };
+
+    a.prototype.getVerticalOffsetForLineNumber = function(a) {
+      return this.verticalObjects.getVerticalOffsetForLineNumber(a, this.configuration.editor.lineHeight);
+    };
+
+    a.prototype.getLinesTotalHeight = function() {
       return this.verticalObjects.getTotalHeight(this.configuration.editor.lineHeight);
     };
 
-    e.prototype.getTotalHeight = function(e, t) {
-      var n = this.getLinesTotalHeight();
-      n += this.configuration.editor.scrollBeyondLastLine ? e.height - this.configuration.editor.lineHeight : t;
+    a.prototype.getTotalHeight = function(a, b) {
+      var c = this.getLinesTotalHeight();
+      this.configuration.editor.scrollBeyondLastLine ? c += a.height - this.configuration.editor.lineHeight : c += b;
 
-      return Math.max(e.height, n);
+      return Math.max(a.height, c);
     };
 
-    e.prototype.getLineNumberAtOrAfterVerticalOffset = function(e) {
-      return this.verticalObjects.getLineNumberAtOrAfterVerticalOffset(e, this.configuration.editor.lineHeight);
+    a.prototype.getLineNumberAtVerticalOffset = function(a) {
+      return this.verticalObjects.getLineNumberAtOrAfterVerticalOffset(a, this.configuration.editor.lineHeight);
     };
 
-    e.prototype.getHeightForLineNumber = function() {
-      return this.configuration.editor.lineHeight;
+    a.prototype.heightInPxForLine = function(a) {
+      return this.verticalObjects.getHeightForLineNumber(a, this.configuration.editor.lineHeight);
     };
 
-    e.prototype.getWhitespaceViewportData = function(e) {
-      return this.verticalObjects.getWhitespaceViewportData(e.top, e.top + e.height, this.configuration.editor.lineHeight);
+    a.prototype.getWhitespaceViewportData = function(a) {
+      return this.verticalObjects.getWhitespacesInViewport(a.top, a.top + a.height, this.configuration.editor.lineHeight);
     };
 
-    e.prototype.getWhitespaceAtVerticalOffset = function(e) {
-      return this.verticalObjects.getWhitespaceAtVerticalOffset(e, this.configuration.editor.lineHeight);
+    a.prototype.getWhitespaceAtVerticalOffset = function(a) {
+      return this.verticalObjects.getWhitespaceAtVerticalOffset(a, this.configuration.editor.lineHeight);
     };
 
-    e.prototype.getLinesViewportData = function(e) {
-      return this.verticalObjects.getLinesViewportData(e.top, e.top + e.height, this.configuration.editor.lineHeight);
+    a.prototype.getLinesViewportData = function(a, b) {
+      return this.verticalObjects.getLinesViewportData(a, b.top, b.top + b.height, this.configuration.editor.lineHeight,
+        this.model, this.wrappingWidth, this.configuration.editor.thinnestCharacterWidth, this.configuration.editor.stopRenderingLineAfter
+      );
     };
 
-    e.prototype.getCenteredLineInViewport = function(e) {
-      return this.verticalObjects.getCenteredLineInViewport(e.top, e.top + e.height, this.configuration.editor.lineHeight);
-    };
+    a.VIRTUAL_LINES_AROUND = 0;
 
-    return e;
+    return a;
   }();
-  t.LinesLayout = i;
+  b.LinesLayout = e;
 });

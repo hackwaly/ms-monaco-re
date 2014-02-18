@@ -177,8 +177,13 @@ define(["require", "exports"], function(a, b) {
 
           c.fillStyle = n;
           for (e = 1, f = o.length; e < f; e++) {
-            q >= o[e].from ? q = Math.max(q, o[e].to) : (c.fillRect(0, p, this.width, q - p), p = o[e].from, q = o[e]
-              .to);
+            if (q >= o[e].from) {
+              q = Math.max(q, o[e].to);
+            } else {
+              c.fillRect(0, p, this.width, q - p);
+              p = o[e].from;
+              q = o[e].to;
+            }
           }
           c.fillRect(0, p, this.width, q - p);
         }

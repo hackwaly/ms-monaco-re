@@ -1,74 +1,100 @@
-define("vs/editor/core/view/lines/viewLineParts", ["require", "exports", "vs/base/arrays"], function(e, t, n) {
-  function i(e, t, n) {
-    return n.length > 0 ? new r(e, t, n) : new o(t);
+define(["require", "exports", "vs/base/arrays"], function(a, b, c) {
+  function f(a, b, c) {
+    return c.length > 0 ? new h(a, b, c) : new g(b);
   }
-  t.createLineParts = i;
-  var o = function() {
-    function e(e) {
-      this.lineTokens = e;
+  var d = c;
+
+  var e = 1e6;
+  b.createLineParts = f;
+  var g = function() {
+    function a(a) {
+      this.lineTokens = a;
     }
-    e.prototype.getParts = function() {
+    a.prototype.getParts = function() {
       return this.lineTokens.getTokens();
     };
 
-    e.prototype.equals = function(t) {
-      if (t instanceof e) {
-        var n = t;
-        return this.lineTokens.equals(n.lineTokens);
+    a.prototype.equals = function(b) {
+      if (b instanceof a) {
+        var c = b;
+        return this.lineTokens.equals(c.lineTokens);
       }
       return !1;
     };
 
-    e.prototype.findIndexOfOffset = function(e) {
-      return this.lineTokens.findIndexOfOffset(e);
+    a.prototype.findIndexOfOffset = function(a) {
+      return this.lineTokens.findIndexOfOffset(a);
     };
 
-    return e;
+    return a;
   }();
-  t.FastViewLineParts = o;
-  var r = function() {
-    function e(e, t, n) {
-      for (var i, o, r, a = l.normalize(e, n), u = 0, c = a.length, d = t.getTokens(), h = [], p = 0, f = d.length; f >
-        p; p++) {
-        for (i = d[p].startIndex, o = f > p + 1 ? d[p + 1].startIndex : t.getTextLength(), r = d[p].type; c > u && a[
-          u].startOffset < o;) {
-          if (a[u].startOffset > i && (h.push(new s(i, r)), i = a[u].startOffset), h.push(new s(i, r + " " + a[u].className)),
-            a[u].endOffset >= o) {
-            i = o;
+  b.FastViewLineParts = g;
+  var h = function() {
+    function a(a, b, c) {
+      var d = l.normalize(a, c);
+
+      var e = 0;
+
+      var f = d.length;
+
+      var g = b.getTokens();
+
+      var h;
+
+      var j;
+
+      var k;
+
+      var m = [];
+      for (var n = 0, o = g.length; n < o; n++) {
+        h = g[n].startIndex;
+
+        j = n + 1 < o ? g[n + 1].startIndex : b.getTextLength();
+
+        k = g[n].type;
+        while (e < f && d[e].startOffset < j) {
+          if (d[e].startOffset > h) {
+            m.push(new i(h, k));
+            h = d[e].startOffset;
+          }
+
+          m.push(new i(h, k + " " + d[e].className));
+          if (d[e].endOffset >= j) {
+            h = j;
             break;
           }
-          i = a[u].endOffset + 1;
+          h = d[e].endOffset + 1;
 
-          u++;
+          e++;
         }
-        if (o > i) {
-          h.push(new s(i, r));
+        if (h < j) {
+          m.push(new i(h, k));
         }
       }
-      this.parts = h;
+      this.parts = m;
 
-      this.lastPartIndex = h.length - 1;
+      this.lastPartIndex = m.length - 1;
 
-      this.lastEndOffset = o;
+      this.lastEndOffset = j;
     }
-    e.prototype.getParts = function() {
+    a.prototype.getParts = function() {
       return this.parts;
     };
 
-    e.prototype.equals = function(t) {
-      if (t instanceof e) {
-        var n = t;
-        if (this.lastPartIndex !== n.lastPartIndex) {
+    a.prototype.equals = function(b) {
+      if (b instanceof a) {
+        var c = b;
+        if (this.lastPartIndex !== c.lastPartIndex) {
           return !1;
         }
-        if (this.lastEndOffset !== n.lastEndOffset) {
+        if (this.lastEndOffset !== c.lastEndOffset) {
           return !1;
         }
-        for (var i = 0, o = this.parts.length; o > i; i++) {
-          if (this.parts[i].startIndex !== n.parts[i].startIndex) {
+        for (var d = 0, e = this.parts.length; d < e; d++) {
+          if (this.parts[d].startIndex !== c.parts[d].startIndex) {
             return !1;
           }
-          if (this.parts[i].type !== n.parts[i].type) {
+          if (this.parts[d].type !== c.parts[d].type) {
             return !1;
           }
         }
@@ -77,121 +103,119 @@ define("vs/editor/core/view/lines/viewLineParts", ["require", "exports", "vs/bas
       return !1;
     };
 
-    e.prototype.findIndexOfOffset = function(e) {
-      return n.findIndexInSegmentsArray(this.parts, e);
+    a.prototype.findIndexOfOffset = function(a) {
+      return d.findIndexInSegmentsArray(this.parts, a);
     };
 
-    return e;
+    return a;
   }();
-  t.ViewLineParts = r;
-  var s = function() {
-    function e(e, t) {
-      this.startIndex = e;
+  b.ViewLineParts = h;
+  var i = function() {
+    function a(a, b) {
+      this.startIndex = a;
 
-      this.type = t;
+      this.type = b;
     }
-    return e;
+    return a;
   }();
 
-  var a = function() {
-    function e(e, t, n) {
-      this.startOffset = e;
+  var j = function() {
+    function a(a, b, c) {
+      this.startOffset = a;
 
-      this.endOffset = t;
+      this.endOffset = b;
 
-      this.className = n;
+      this.className = c;
     }
-    return e;
+    return a;
   }();
-  t.DecorationSegment = a;
-  var u = function() {
-    function e() {
+
+  var k = function() {
+    function a() {
       this.stopOffsets = [];
 
       this.classNames = [];
 
       this.count = 0;
     }
-    e.prototype.consumeLowerThan = function(e, t, n) {
-      for (; this.count > 0 && this.stopOffsets[0] < e;) {
-        for (var i = 0; i + 1 < this.count && this.stopOffsets[i] === this.stopOffsets[i + 1];) {
-          i++;
+    a.prototype.consumeLowerThan = function(a, b, c) {
+      while (this.count > 0 && this.stopOffsets[0] < a) {
+        var d = 0;
+        while (d + 1 < this.count && this.stopOffsets[d] === this.stopOffsets[d + 1]) {
+          d++;
         }
-        n.push(new a(t, this.stopOffsets[i], this.classNames.join(" ")));
+        c.push(new j(b, this.stopOffsets[d], this.classNames.join(" ")));
 
-        t = this.stopOffsets[i] + 1;
+        b = this.stopOffsets[d] + 1;
 
-        this.stopOffsets.splice(0, i + 1);
+        this.stopOffsets.splice(0, d + 1);
 
-        this.classNames.splice(0, i + 1);
+        this.classNames.splice(0, d + 1);
 
-        this.count -= i + 1;
+        this.count -= d + 1;
       }
-      this.count > 0 && e > t && (n.push(new a(t, e - 1, this.classNames.join(" "))), t = e);
-
-      return t;
+      return b;
     };
 
-    e.prototype.insert = function(e, t) {
-      if (0 === this.count || this.stopOffsets[this.count - 1] <= e) {
-        this.stopOffsets.push(e);
-        this.classNames.push(t);
+    a.prototype.insert = function(a, b) {
+      if (this.count === 0 || this.stopOffsets[this.count - 1] <= a) {
+        this.stopOffsets.push(a);
+        this.classNames.push(b);
       } else
-        for (var n = 0; n < this.count; n++)
-          if (this.stopOffsets[n] >= e) {
-            this.stopOffsets.splice(n, 0, e);
+        for (var c = 0; c < this.count; c++)
+          if (this.stopOffsets[c] >= a) {
+            this.stopOffsets.splice(c, 0, a);
 
-            this.classNames.splice(n, 0, t);
+            this.classNames.splice(c, 0, b);
             break;
           }
       this.count++;
+      return;
     };
 
-    return e;
+    return a;
   }();
 
   var l = function() {
-    function e() {}
-    e.normalize = function(t, n) {
-      var i = [];
-      if (0 === n.length) {
-        return i;
+    function a() {}
+    a.normalize = function(a, b) {
+      var c = [];
+      if (b.length === 0) {
+        return c;
       }
-      var o;
+      var d = new k;
 
-      var r;
+      var f = 0;
 
-      var s;
+      var g;
 
-      var a;
+      var h;
+
+      var i;
+
+      var j;
 
       var l;
+      for (j = 0, l = b.length; j < l; j++) {
+        g = b[j];
 
-      var c = new u;
+        h = g.range.startLineNumber === a ? g.range.startColumn - 1 : 0;
 
-      var d = 0;
-      for (a = 0, l = n.length; l > a; a++) {
-        o = n[a];
-        if (!(o.range.endLineNumber < t || o.range.startLineNumber > t)) {
-          r = o.range.startLineNumber === t ? o.range.startColumn - 1 : 0;
-          s = o.range.endLineNumber === t ? o.range.endColumn - 2 : e.MAX_LINE_LENGTH - 1;
-          if (!(0 > s)) {
-            d = c.consumeLowerThan(r, d, i);
-            if (0 === c.count) {
-              d = r;
-            }
-            c.insert(s, o.options.inlineClassName);
-          }
+        i = g.range.endLineNumber === a ? g.range.endColumn - 2 : e - 1;
+        if (i < 0) continue;
+        f = d.consumeLowerThan(h, f, c);
+
+        if (d.count === 0) {
+          f = h;
         }
-      }
-      c.consumeLowerThan(e.MAX_LINE_LENGTH, d, i);
 
-      return i;
+        d.insert(i, g.options.inlineClassName);
+      }
+      d.consumeLowerThan(e, f, c);
+
+      return c;
     };
 
-    e.MAX_LINE_LENGTH = 1e7;
-
-    return e;
+    return a;
   }();
-  t.LineDecorationsNormalizer = l;
 });

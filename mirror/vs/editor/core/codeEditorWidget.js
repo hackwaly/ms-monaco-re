@@ -1,114 +1,158 @@
-define("vs/editor/core/codeEditorWidget", ["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constants",
-  "vs/editor/core/internalConstants", "vs/base/objects", "vs/base/types", "vs/platform/platform", "vs/base/dom/dom",
-  "vs/base/eventEmitter", "vs/editor/core/config/configuration", "vs/editor/core/controller/cursor",
-  "vs/editor/core/view/viewImpl", "vs/editor/core/view/model/characterHardWrappingLineMapper",
-  "vs/editor/core/view/model/splitLinesCollection", "vs/editor/core/view/model/viewModel", "vs/editor/core/position",
-  "vs/editor/core/range", "vs/editor/core/selection", "vs/base/performance/timer", "vs/editor/editorExtensions",
-  "vs/base/ui/actions", "vs/editor/editor", "vs/css!./../css/editor", "vs/css!./../css/default-theme"
-], function(e, t, n, i, o, r, s, a, u, l, c, d, h, p, f, g, m, v, y, _, b, C) {
-  var w = 0;
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
+    }
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
+    }
+    d.prototype = b.prototype;
 
-  var E = function(e) {
-    function t(t, n, i) {
-      var o = this;
-      e.call(this);
-      var r = _.start(0, "CodeEditor.ctor");
-      this.id = ++w;
+    a.prototype = new d;
+  };
 
-      this.domElement = t;
+define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/core/constants", "vs/base/objects", "vs/base/types",
+  "vs/platform/platform", "vs/base/dom/dom", "vs/base/eventEmitter", "vs/editor/core/configuration",
+  "vs/editor/core/controller/cursor", "vs/editor/core/view/view",
+  "vs/editor/core/view/model/characterHardWrappingLineMapper", "vs/editor/core/view/model/splitLinesCollection",
+  "vs/editor/core/view/model/viewModel", "vs/editor/core/position", "vs/editor/core/range",
+  "vs/editor/core/selection", "vs/base/performance/timer", "vs/editor/editorExtensions", "vs/base/ui/actions",
+  "vs/editor/editor", "vs/css!./../css/editor", "vs/css!./../css/default-theme"
+], function(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v) {
+  var w = c;
 
-      this._lifetimeListeners = [];
+  var x = d;
 
-      n = n || {};
-      var l = null;
-      if (n.model) {
-        l = n.model;
-        delete n.model;
+  var y = e;
+
+  var z = f;
+
+  var A = g;
+
+  var B = h;
+
+  var C = i;
+
+  var D = j;
+
+  var E = k;
+
+  var F = l;
+
+  var G = m;
+
+  var H = n;
+
+  var I = o;
+
+  var J = p;
+
+  var K = q;
+
+  var L = r;
+
+  var M = s;
+
+  var N = t;
+
+  var O = u;
+
+  var P = v;
+
+  var Q = 0;
+
+  var R = function(a) {
+    function b(b, c, d) {
+      var e = this;
+      a.call(this);
+      var f = M.start(M.Topic.EDITOR, "CodeEditor.ctor");
+      this.id = ++Q;
+
+      this.domElement = b;
+
+      this.lifetimeListeners = [];
+
+      c = c || {};
+      var g = null;
+      if (c.model) {
+        g = c.model;
+        delete c.model;
       }
 
-      this.configuration = new c.Configuration(n, t, function(e) {
-        return o.model ? o.model.guessIndentation(e) : null;
-      });
+      this.configuration = new D.Configuration(c);
 
-      this.forcedWidgetFocusCount = 0;
-
-      this.focusTracker = u.trackFocus(this.domElement);
+      this.focusTracker = B.trackFocus(this.domElement);
 
       this.focusTracker.addFocusListener(function() {
-        if (0 === o.forcedWidgetFocusCount) {
-          o.emit("widgetFocus", {});
-        }
+        e.emit("widgetFocus", {});
       });
 
       this.focusTracker.addBlurListener(function() {
-        if (0 === o.forcedWidgetFocusCount) {
-          o.emit("widgetBlur", {});
-        }
+        e.emit("widgetBlur", {});
       });
 
       this.handlerService = null;
 
-      this.injectorService = i;
+      this.injectorService = d;
 
-      if (i && s.isFunction(i.injectTo)) {
-        i.injectTo(this);
+      if (d && z.isFunction(d.injectTo)) {
+        d.injectTo(this);
       }
 
       if (this.handlerService) {
         this.bindings = this.configuration.bindKeys(this.handlerService);
         this.bindings.deactivate();
-        this._lifetimeListeners.push(this.addListener("blur", function() {
-          return o.bindings.deactivate();
+        this.lifetimeListeners.push(this.addListener("blur", function() {
+          return e.bindings.deactivate();
         }));
-        this._lifetimeListeners.push(this.addListener("focus", function() {
-          return o.bindings.activate();
+        this.lifetimeListeners.push(this.addListener("focus", function() {
+          return e.bindings.activate();
         }));
       } else {
         this.bindings = null;
       }
 
-      this._attachModel(l);
+      this._attachModel(g);
 
       this.contentWidgets = {};
 
       this.overlayWidgets = {};
 
       this.contributions = {};
-      for (var d = a.Registry.as(b.Extensions.EditorContributions), h = d.getEditorContributions(), p = 0, f = h.length; f >
-        p; p++) {
-        var g = h[p];
+      var h = A.Registry.as(N.Extensions.EditorContributions);
 
-        var m = g.createNew(this, g);
-        if (i && s.isFunction(i.injectTo)) {
-          i.injectTo(m);
+      var i = h.getEditorContributions();
+      for (var j = 0, k = i.length; j < k; j++) {
+        var l = i[j];
+
+        var m = l.createNew(this, l);
+        if (d && z.isFunction(d.injectTo)) {
+          d.injectTo(m);
         }
 
         this.contributions[m.getId()] = m;
       }
-      r.stop();
+      f.stop();
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.getEditorType = function() {
-      return i.EditorType.ICodeEditor;
+    b.prototype.getEditorType = function() {
+      return x.EditorType.ICodeEditor;
     };
 
-    t.prototype.injectHandlerService = function(e) {
-      this.handlerService = e;
+    b.prototype.injectHandlerService = function(a) {
+      this.handlerService = a;
     };
 
-    t.prototype.destroy = function() {
-      this.dispose();
-    };
-
-    t.prototype.dispose = function() {
-      for (; this._lifetimeListeners.length > 0;) {
-        this._lifetimeListeners.pop()();
+    b.prototype.destroy = function() {
+      while (this.lifetimeListeners.length > 0) {
+        this.lifetimeListeners.pop()();
       }
-      var t;
-      for (t in this.contributions) {
-        if (this.contributions.hasOwnProperty(t)) {
-          this.contributions[t].dispose();
+      var b;
+      for (b in this.contributions) {
+        if (this.contributions.hasOwnProperty(b)) {
+          this.contributions[b].dispose();
         }
       }
       this.contributions = {};
@@ -124,600 +168,576 @@ define("vs/editor/core/codeEditorWidget", ["require", "exports", "vs/base/lib/wi
 
       this.focusTracker.dispose();
 
-      this._postDetachModelCleanup(this._detachModel());
+      this._detachModel();
 
       this.configuration.dispose();
 
-      this.emit(i.EventType.Disposed, {});
+      this.emit(x.EventType.Disposed, {});
 
-      e.prototype.dispose.call(this);
+      a.prototype.dispose.call(this);
     };
 
-    t.prototype.updateOptions = function(e) {
-      this.configuration.updateOptions(e);
+    b.prototype.updateOptions = function(a) {
+      a = a || {};
+
+      this.configuration.updateOptions(a);
     };
 
-    t.prototype.getConfiguration = function() {
-      return r.clone(this.configuration.editor);
+    b.prototype.getConfiguration = function() {
+      return y.clone(this.configuration.editor);
     };
 
-    t.prototype.getRawConfiguration = function() {
-      return this.configuration.getRawOptions();
+    b.prototype.normalizeIndentation = function(a) {
+      return this.configuration.normalizeIndentation(a);
     };
 
-    t.prototype.getIndentationOptions = function() {
-      return r.clone(this.configuration.getIndentationOptions());
-    };
+    b.prototype.getValue = function(a) {
+      if (typeof a == "undefined") {
+        a = null;
+      }
+      if (this.model) {
+        var b = a && a.preserveBOM ? !0 : !1;
 
-    t.prototype.normalizeIndentation = function(e) {
-      return this.configuration.normalizeIndentation(e);
-    };
+        var c = P.EndOfLinePreference.TextDefined;
+        a && a.lineEnding && a.lineEnding === "\n" ? c = P.EndOfLinePreference.LF : a && a.lineEnding && a.lineEnding ===
+          "\r\n" && (c = P.EndOfLinePreference.CRLF);
 
-    t.prototype.getValue = function(e) {
-      if ("undefined" == typeof e && (e = null), this.model) {
-        var t = e && e.preserveBOM ? !0 : !1;
-
-        var n = 0;
-        e && e.lineEnding && "\n" === e.lineEnding ? n = 1 : e && e.lineEnding && "\r\n" === e.lineEnding && (n = 2);
-
-        return this.model.getValue(n, t);
+        return this.model.getValue(c, b);
       }
       return "";
     };
 
-    t.prototype.setValue = function(e) {
+    b.prototype.setValue = function(a) {
       if (this.model) {
-        this.model.setValue(e);
+        this.model.setValue(a);
       }
     };
 
-    t.prototype.getView = function() {
-      return this._view;
+    b.prototype.getView = function() {
+      return this.view;
     };
 
-    t.prototype.getModel = function() {
+    b.prototype.getModel = function() {
       return this.model;
     };
 
-    t.prototype.setModel = function(e) {
-      if ("undefined" == typeof e && (e = null), this.model !== e) {
-        var t = this._detachModel();
-        this._attachModel(e);
-
-        this.emit(i.EventType.ModelChanged);
-
-        this._postDetachModelCleanup(t);
+    b.prototype.setModel = function(a) {
+      if (typeof a == "undefined") {
+        a = null;
       }
+      if (this.model === a) return;
+      this._detachModel();
+
+      this._attachModel(a);
+
+      this.emit(x.EventType.ModelChanged);
     };
 
-    t.prototype.getDomNode = function() {
-      return this.hasView ? this._view.domNode : null;
+    b.prototype.getDomNode = function() {
+      return this.hasView ? this.view.domNode : null;
     };
 
-    t.prototype.getPosition = function() {
+    b.prototype.getPosition = function() {
       return this.cursor ? this.cursor.getPosition().clone() : null;
     };
 
-    t.prototype.setPosition = function(e, t, n, i) {
-      if ("undefined" == typeof t && (t = !1), "undefined" == typeof n && (n = !1), "undefined" == typeof i && (i = !
-        1), this.cursor) {
-        if (!m.isIPosition(e)) throw new Error("Invalid arguments");
-        this.cursor.setSelections("api", [{
-          selectionStartLineNumber: e.lineNumber,
-          selectionStartColumn: e.column,
-          positionLineNumber: e.lineNumber,
-          positionColumn: e.column
-        }]);
+    b.prototype.setPosition = function(a, b, c, d) {
+      if (typeof b == "undefined") {
+        b = !1;
+      }
 
-        if (t) {
-          this.revealPosition(e, n, i);
-        }
+      if (typeof c == "undefined") {
+        c = !1;
+      }
+
+      if (typeof d == "undefined") {
+        d = !1;
+      }
+      if (!this.cursor) return;
+      if (!J.isIPosition(a)) throw new Error("Invalid arguments");
+      this.cursor.setSelections("api", [{
+        selectionStartLineNumber: a.lineNumber,
+        selectionStartColumn: a.column,
+        positionLineNumber: a.lineNumber,
+        positionColumn: a.column
+      }]);
+
+      if (b) {
+        this.revealPosition(a, c, d);
       }
     };
 
-    t.prototype.revealPosition = function(e, t, n) {
-      if ("undefined" == typeof t && (t = !1), "undefined" == typeof n && (n = !1), !m.isIPosition(e)) throw new Error(
-        "Invalid arguments");
+    b.prototype.revealPosition = function(a, b, c) {
+      if (typeof b == "undefined") {
+        b = !1;
+      }
+
+      if (typeof c == "undefined") {
+        c = !1;
+      }
+      if (!J.isIPosition(a)) throw new Error("Invalid arguments");
       this.revealRange({
-        startLineNumber: e.lineNumber,
-        startColumn: e.column,
-        endLineNumber: e.lineNumber,
-        endColumn: e.column
-      }, t, n);
+        startLineNumber: a.lineNumber,
+        startColumn: a.column,
+        endLineNumber: a.lineNumber,
+        endColumn: a.column
+      }, b, c);
     };
 
-    t.prototype.getSelection = function() {
+    b.prototype.getSelection = function() {
       return this.cursor ? this.cursor.getSelection().clone() : null;
     };
 
-    t.prototype.getSelections = function() {
+    b.prototype.getSelections = function() {
       if (!this.cursor) {
         return null;
       }
-      for (var e = this.cursor.getSelections(), t = [], n = 0, i = e.length; i > n; n++) {
-        t[n] = e[n].clone();
+      var a = this.cursor.getSelections();
+
+      var b = [];
+      for (var c = 0, d = a.length; c < d; c++) {
+        b[c] = a[c].clone();
       }
-      return t;
+      return b;
     };
 
-    t.prototype.setSelection = function(e, t, n, i) {
-      if ("undefined" == typeof t) {
-        t = !1;
+    b.prototype.setSelection = function(a, b, c, d) {
+      if (typeof b == "undefined") {
+        b = !1;
       }
 
-      if ("undefined" == typeof n) {
-        n = !1;
+      if (typeof c == "undefined") {
+        c = !1;
       }
 
-      if ("undefined" == typeof i) {
-        i = !1;
+      if (typeof d == "undefined") {
+        d = !1;
       }
-      var o = y.isISelection(e);
+      var e = L.isISelection(a);
 
-      var r = v.isIRange(e);
-      if (!o && !r) throw new Error("Invalid arguments");
-      if (o) {
-        this._setSelectionImpl(e, t, n, i);
-      } else if (r) {
-        var s = {
-          selectionStartLineNumber: e.startLineNumber,
-          selectionStartColumn: e.startColumn,
-          positionLineNumber: e.endLineNumber,
-          positionColumn: e.endColumn
+      var f = K.isIRange(a);
+      if (!e && !f) throw new Error("Invalid arguments");
+      if (e) {
+        this._setSelectionImpl(a, b, c, d);
+      } else if (f) {
+        var g = {
+          selectionStartLineNumber: a.startLineNumber,
+          selectionStartColumn: a.startColumn,
+          positionLineNumber: a.endLineNumber,
+          positionColumn: a.endColumn
         };
-        this._setSelectionImpl(s, t, n, i);
+        this._setSelectionImpl(g, b, c, d);
       }
     };
 
-    t.prototype._setSelectionImpl = function(e, t, n, i) {
-      if (this.cursor) {
-        var o = new y.Selection(e.selectionStartLineNumber, e.selectionStartColumn, e.positionLineNumber, e.positionColumn);
-        this.cursor.setSelections("api", [o]);
+    b.prototype._setSelectionImpl = function(a, b, c, d) {
+      if (!this.cursor) return;
+      var e = new L.Selection(a.selectionStartLineNumber, a.selectionStartColumn, a.positionLineNumber, a.positionColumn);
+      this.cursor.setSelections("api", [e]);
 
-        if (t) {
-          this.revealRange(o, n, i);
-        }
+      if (b) {
+        this.revealRange(e, c, d);
       }
     };
 
-    t.prototype.revealRange = function(e, t, n) {
-      if ("undefined" == typeof t && (t = !1), "undefined" == typeof n && (n = !1), this.model && this.cursor) {
-        if (!v.isIRange(e)) throw new Error("Invalid arguments");
-        var o = this.model.validateRange(e);
-
-        var r = {
-          range: o,
-          viewRange: null,
-          revealVerticalInCenter: t,
-          revealHorizontal: n
-        };
-        this.cursor.emit(i.EventType.CursorRevealRange, r);
+    b.prototype.revealRange = function(a, b, c) {
+      if (typeof b == "undefined") {
+        b = !1;
       }
-    };
 
-    t.prototype.setSelections = function(e) {
-      if (this.cursor) {
-        if (!e || 0 === e.length) throw new Error("Invalid arguments");
-        for (var t = 0, n = e.length; n > t; t++)
-          if (!y.isISelection(e[t])) throw new Error("Invalid arguments");
-        this.cursor.setSelections("api", e);
+      if (typeof c == "undefined") {
+        c = !1;
       }
+      if (!this.model || !this.cursor) return;
+      if (!K.isIRange(a)) throw new Error("Invalid arguments");
+      var d = this.model.validateRange(a);
+
+      var e = {
+        range: d,
+        viewRange: null,
+        revealVerticalInCenter: b,
+        revealHorizontal: c
+      };
+      this.cursor.emit(x.EventType.CursorRevealRange, e);
     };
 
-    t.prototype.setScrollTop = function(e) {
-      if (this.hasView) {
-        if ("number" != typeof e) throw new Error("Invalid arguments");
-        this._view.getCodeEditorHelper().setScrollTop(e);
-      }
+    b.prototype.setSelections = function(a) {
+      if (!this.cursor) return;
+      if (!a || a.length === 0) throw new Error("Invalid arguments");
+      for (var b = 0, c = a.length; b < c; b++)
+        if (!L.isISelection(a[b])) throw new Error("Invalid arguments");
+      this.cursor.setSelections("api", a);
     };
 
-    t.prototype.getScrollTop = function() {
-      return this.hasView ? this._view.getCodeEditorHelper().getScrollTop() : -1;
+    b.prototype.setScrollTop = function(a) {
+      if (!this.hasView) return;
+      if (typeof a != "number") throw new Error("Invalid arguments");
+      this.view.getCodeEditorHelper().setScrollTop(a);
     };
 
-    t.prototype.delegateVerticalScrollbarMouseDown = function(e) {
-      if (this.hasView) {
-        this._view.getCodeEditorHelper().delegateVerticalScrollbarMouseDown(e);
-      }
+    b.prototype.getScrollTop = function() {
+      return this.hasView ? this.view.getCodeEditorHelper().getScrollTop() : -1;
     };
 
-    t.prototype.setScrollLeft = function(e) {
-      if (this.hasView) {
-        if ("number" != typeof e) throw new Error("Invalid arguments");
-        this._view.getCodeEditorHelper().setScrollLeft(e);
-      }
+    b.prototype.delegateVerticalScrollbarMouseDown = function(a) {
+      if (!this.hasView) return;
+      this.view.getCodeEditorHelper().delegateVerticalScrollbarMouseDown(a);
     };
 
-    t.prototype.getScrollLeft = function() {
-      return this.hasView ? this._view.getCodeEditorHelper().getScrollLeft() : -1;
+    b.prototype.setScrollLeft = function(a) {
+      if (!this.hasView) return;
+      if (typeof a != "number") throw new Error("Invalid arguments");
+      this.view.getCodeEditorHelper().setScrollLeft(a);
     };
 
-    t.prototype.saveViewState = function() {
+    b.prototype.getScrollLeft = function() {
+      return this.hasView ? this.view.getCodeEditorHelper().getScrollLeft() : -1;
+    };
+
+    b.prototype.saveViewState = function() {
       if (!this.cursor || !this.hasView) {
         return null;
       }
-      var e = this.cursor.saveState();
+      var a = this.cursor.saveState();
 
-      var t = this._view.saveState();
+      var b = this.view.saveState();
       return {
-        cursorState: e,
-        viewState: t
+        cursorState: a,
+        viewState: b
       };
     };
 
-    t.prototype.restoreViewState = function(e) {
-      if (this.cursor && this.hasView) {
-        var t = e;
-        if (t && t.cursorState && t.viewState) {
-          var n = t;
+    b.prototype.restoreViewState = function(a) {
+      if (!this.cursor || !this.hasView) return;
+      var b = a;
+      if (b && b.cursorState && b.viewState) {
+        var c = b;
 
-          var i = n.cursorState;
-          if (s.isArray(i)) {
-            this.cursor.restoreState(i);
-          } else {
-            this.cursor.restoreState([i]);
-          }
-
-          this._view.restoreState(n.viewState);
+        var d = c.cursorState;
+        if (z.isArray(d)) {
+          this.cursor.restoreState(d);
+        } else {
+          this.cursor.restoreState([d]);
         }
+
+        this.view.restoreState(c.viewState);
       }
     };
 
-    t.prototype.layout = function() {
-      this.configuration.observeReferenceElement();
-    };
-
-    t.prototype.onVisible = function() {};
-
-    t.prototype.onHide = function() {};
-
-    t.prototype.focus = function() {
+    b.prototype.layout = function() {
       if (this.hasView) {
-        this._view.focus();
+        this.view.layout();
       }
     };
 
-    t.prototype.beginForcedWidgetFocus = function() {
-      this.forcedWidgetFocusCount++;
+    b.prototype.onVisible = function() {};
+
+    b.prototype.onHide = function() {};
+
+    b.prototype.focus = function() {
+      if (!this.hasView) return;
+      this.view.focus();
     };
 
-    t.prototype.endForcedWidgetFocus = function() {
-      this.forcedWidgetFocusCount--;
+    b.prototype.getContribution = function(a) {
+      return this.contributions[a] || null;
     };
 
-    t.prototype.isFocused = function() {
-      return this.hasView && this._view.isFocused();
-    };
+    b.prototype.getActions = function() {
+      var a = [];
 
-    t.prototype.getContribution = function(e) {
-      return this.contributions[e] || null;
-    };
-
-    t.prototype.getActions = function() {
-      var e;
-
-      var t = [];
-      for (e in this.contributions)
-        if (this.contributions.hasOwnProperty(e)) {
-          var n = this.contributions[e];
-          if (C.isAction(n)) {
-            t.push(n);
+      var b;
+      for (b in this.contributions)
+        if (this.contributions.hasOwnProperty(b)) {
+          var c = this.contributions[b];
+          if (O.isAction(c)) {
+            a.push(c);
           }
         }
-      return t;
+      return a;
     };
 
-    t.prototype.getAction = function(e) {
-      var t = this.contributions[e];
-      return t && C.isAction(t) ? t : null;
+    b.prototype.getAction = function(a) {
+      var b = this.contributions[a];
+      return b && O.isAction(b) ? b : null;
     };
 
-    t.prototype.trigger = function(e, t, i) {
-      var o = this.getAction(t);
-      if (null !== o) {
-        if (o.enabled) {
-          n.Promise.as(o.run()).done();
+    b.prototype.trigger = function(a, b, c) {
+      var d = this.getAction(b);
+      if (d !== null) {
+        if (d.enabled) {
+          w.Promise.as(d.run()).done();
         }
       } else {
-        this.configuration.handlerDispatcher.trigger(e, t, i);
+        this.configuration.handlerDispatcher.trigger(a, b, c);
       }
     };
 
-    t.prototype.executeCommand = function(e, t) {
-      return this.configuration.handlerDispatcher.trigger(e, o.Handler.ExecuteCommand, t);
+    b.prototype.executeCommand = function(a, b) {
+      return this.configuration.handlerDispatcher.trigger(a, x.Handler.ExecuteCommand, b);
     };
 
-    t.prototype.executeCommands = function(e, t) {
-      return this.configuration.handlerDispatcher.trigger(e, o.Handler.ExecuteCommands, t);
+    b.prototype.executeCommands = function(a, b) {
+      return this.configuration.handlerDispatcher.trigger(a, x.Handler.ExecuteCommands, b);
     };
 
-    t.prototype.addContentWidget = function(e) {
-      var t = {
-        widget: e,
-        position: e.getPosition()
+    b.prototype.addContentWidget = function(a) {
+      var b = {
+        widget: a,
+        position: a.getPosition()
       };
-      this.contentWidgets[e.getId()] = t;
+      this.contentWidgets[a.getId()] = b;
 
       if (this.hasView) {
-        this._view.addContentWidget(t);
+        this.view.addContentWidget(b);
       }
     };
 
-    t.prototype.layoutContentWidget = function(e) {
-      var t = e.getId();
-      if (this.contentWidgets.hasOwnProperty(t)) {
-        var n = this.contentWidgets[t];
-        n.position = e.getPosition();
+    b.prototype.layoutContentWidget = function(a) {
+      var b = a.getId();
+      if (this.contentWidgets.hasOwnProperty(b)) {
+        var c = this.contentWidgets[b];
+        c.position = a.getPosition();
 
         if (this.hasView) {
-          this._view.layoutContentWidget(n);
+          this.view.layoutContentWidget(c);
         }
       }
     };
 
-    t.prototype.removeContentWidget = function(e) {
-      var t = e.getId();
-      if (this.contentWidgets.hasOwnProperty(t)) {
-        var n = this.contentWidgets[t];
-        delete this.contentWidgets[t];
+    b.prototype.removeContentWidget = function(a) {
+      var b = a.getId();
+      if (this.contentWidgets.hasOwnProperty(b)) {
+        var c = this.contentWidgets[b];
+        delete this.contentWidgets[b];
 
         if (this.hasView) {
-          this._view.removeContentWidget(n);
+          this.view.removeContentWidget(c);
         }
       }
     };
 
-    t.prototype.addOverlayWidget = function(e) {
-      var t = {
-        widget: e,
-        position: e.getPosition()
+    b.prototype.addOverlayWidget = function(a) {
+      var b = {
+        widget: a,
+        position: a.getPosition()
       };
-      this.overlayWidgets[e.getId()] = t;
+      this.overlayWidgets[a.getId()] = b;
 
       if (this.hasView) {
-        this._view.addOverlayWidget(t);
+        this.view.addOverlayWidget(b);
       }
     };
 
-    t.prototype.layoutOverlayWidget = function(e) {
-      var t = e.getId();
-      if (this.overlayWidgets.hasOwnProperty(t)) {
-        var n = this.overlayWidgets[t];
-        n.position = e.getPosition();
+    b.prototype.layoutOverlayWidget = function(a) {
+      var b = a.getId();
+      if (this.overlayWidgets.hasOwnProperty(b)) {
+        var c = this.overlayWidgets[b];
+        c.position = a.getPosition();
 
         if (this.hasView) {
-          this._view.layoutOverlayWidget(n);
+          this.view.layoutOverlayWidget(c);
         }
       }
     };
 
-    t.prototype.removeOverlayWidget = function(e) {
-      var t = e.getId();
-      if (this.overlayWidgets.hasOwnProperty(t)) {
-        var n = this.overlayWidgets[t];
-        delete this.overlayWidgets[t];
+    b.prototype.removeOverlayWidget = function(a) {
+      var b = a.getId();
+      if (this.overlayWidgets.hasOwnProperty(b)) {
+        var c = this.overlayWidgets[b];
+        delete this.overlayWidgets[b];
 
         if (this.hasView) {
-          this._view.removeOverlayWidget(n);
+          this.view.removeOverlayWidget(c);
         }
       }
     };
 
-    t.prototype.changeDecorations = function(e) {
-      return this.model ? this.model.changeDecorations(e, this.id) : null;
+    b.prototype.changeDecorations = function(a) {
+      return this.model ? this.model.changeDecorations(a, this.id) : null;
     };
 
-    t.prototype.getLineDecorations = function(e) {
-      return this.model ? this.model.getLineDecorations(e, this.id, this.configuration.editor.readOnly) : null;
+    b.prototype.getLineDecorations = function(a) {
+      return this.model ? this.model.getLineDecorations(a, this.id, this.configuration.editor.readOnly) : null;
     };
 
-    t.prototype.deltaDecorations = function(e, t) {
-      return this.model ? this.model.deltaDecorations(e, t, this.id) : [];
+    b.prototype.deltaDecorations = function(a, b) {
+      return this.model ? this.model.deltaDecorations(a, b, this.id) : null;
     };
 
-    t.prototype.changeViewZones = function(e) {
-      if (this.hasView) {
-        this._view.change(e);
-      }
+    b.prototype.changeViewZones = function(a) {
+      if (!this.hasView) return;
+      this.view.change(a);
     };
 
-    t.prototype.addTypingListener = function(e, t) {
-      var n = this;
-      return this.cursor ? (this.cursor.addTypingListener(e, t), function() {
-        if (n.cursor) {
-          n.cursor.removeTypingListener(e, t);
+    b.prototype.addTypingListener = function(a, b) {
+      var c = this;
+      return this.cursor ? (this.cursor.addTypingListener(a, b), function() {
+        if (c.cursor) {
+          c.cursor.removeTypingListener(a, b);
         }
       }) : null;
     };
 
-    t.prototype.getTopForLineNumber = function(e) {
-      return this.hasView ? this._view.getCodeEditorHelper().getVerticalOffsetForLineNumber(e) : -1;
+    b.prototype.getTopForLineNumber = function(a) {
+      return this.hasView ? this.view.getCodeEditorHelper().getVerticalOffsetForLineNumber(a) : -1;
     };
 
-    t.prototype.getScrolledVisiblePosition = function(e) {
-      if (!this.hasView) {
-        return null;
-      }
-      var t = this.model.validatePosition(e);
-
-      var n = this._view.getCodeEditorHelper();
-
-      var i = n.getLayoutInfo();
-
-      var o = n.getVerticalOffsetForLineNumber(t.lineNumber) - n.getScrollTop();
-
-      var r = n.getOffsetForColumn(t.lineNumber, t.column) + i.glyphMarginWidth + i.lineNumbersWidth + i.decorationsWidth -
-        n.getScrollLeft();
-      return {
-        top: o,
-        left: r,
-        height: this.configuration.editor.lineHeight
-      };
+    b.prototype.getOffsetForColumn = function(a, b) {
+      return this.hasView ? this.view.getCodeEditorHelper().getOffsetForColumn(a, b) : -1;
     };
 
-    t.prototype.getOffsetForColumn = function(e, t) {
-      return this.hasView ? this._view.getCodeEditorHelper().getOffsetForColumn(e, t) : -1;
+    b.prototype.getLayoutInfo = function() {
+      return this.hasView ? this.view.getCodeEditorHelper().getLayoutInfo() : null;
     };
 
-    t.prototype.getLayoutInfo = function() {
-      return this.hasView ? this._view.getCodeEditorHelper().getLayoutInfo() : null;
-    };
+    b.prototype._attachModel = function(a) {
+      var b = this;
+      this.model = a ? a : null;
 
-    t.prototype._attachModel = function(e) {
-      var t = this;
-      if (this.model = e ? e : null, this.listenersToRemove = [], this._view = null, this.viewModel = null, this.cursor =
-        null, this.model) {
+      this.listenersToRemove = [];
+
+      this.view = null;
+
+      this.viewModel = null;
+
+      this.cursor = null;
+      if (this.model) {
         this.model.setStopLineTokenizationAfter(this.configuration.editor.stopLineTokenizationAfter);
 
         this.configuration.setIsDominatedByLongLines(this.model.isDominatedByLongLines(this.configuration.editor.longLineBoundary));
+        var c = this.configuration.getWrappingColumn();
 
-        this.configuration.resetIndentationOptions();
-        var n = this.configuration.getWrappingColumn();
-
-        var o = -1;
-        if (n > 0) {
-          o = n;
+        var d = -1;
+        if (c > 0) {
+          d = c;
         }
-        var r = new p.CharacterHardWrappingLineMapperFactory(this.configuration.editor.wordWrapBreakBeforeCharacters,
+        var e = new G.CharacterHardWrappingLineMapperFactory(this.configuration.editor.wordWrapBreakBeforeCharacters,
           this.configuration.editor.wordWrapBreakAfterCharacters, this.configuration.editor.wordWrapBreakObtrusiveCharacters
         );
 
-        var s = new f.SplitLinesCollection(this.model, r, this.configuration.getIndentationOptions().tabSize, o);
-        this.viewModel = new g.ViewModel(s, this.id, this.configuration, this.model);
-        var a = {
+        var f = new H.SplitLinesCollection(this.model, e, this.configuration.editor.tabSize, d);
+        this.viewModel = new I.ViewModel(f, this.id, this.configuration, this.model);
+        var g = {
           viewModel: this.viewModel,
-          convertModelPositionToViewPosition: function(e, n) {
-            return t.viewModel.convertModelPositionToViewPosition(e, n);
+          convertModelPositionToViewPosition: function(a, c) {
+            return b.viewModel.convertModelPositionToViewPosition(a, c);
           },
-          convertViewToModelPosition: function(e, n) {
-            return t.viewModel.convertViewPositionToModelPosition(e, n);
+          convertViewToModelPosition: function(a, c) {
+            return b.viewModel.convertViewPositionToModelPosition(a, c);
           },
-          validateViewPosition: function(e, n, i) {
-            return t.viewModel.validateViewPosition(e, n, i);
+          validateViewPosition: function(a, c, d) {
+            return b.viewModel.validateViewPosition(a, c, d);
           }
         };
-        this.cursor = new d.Cursor(this.id, this.configuration, this.model, function(e) {
-          return t._view.renderOnce(e);
-        }, a);
+        this.cursor = new E.Cursor(this.id, this.configuration, this.model, function(a) {
+          return b.view.renderOnce(a);
+        }, g);
 
         this.viewModel.addEventSource(this.cursor);
 
-        this._view = new h.View(this.id, this.configuration, this.viewModel);
+        this.view = new F.View(this.id, this.domElement, this.configuration, this.viewModel);
 
-        if (this.injectorService) {
-          this.injectorService.injectTo(this._view);
-        }
+        this.listenersToRemove.push(this.view.getInternalEventBus().addListener(x.EventType.ViewFocusGained, function(
+          a) {
+          b.emit("focus");
 
-        this.listenersToRemove.push(this._view.getInternalEventBus().addListener(i.EventType.ViewFocusGained,
-          function() {
-            t.emit("focus");
+          b.emit("widgetFocus", {});
+        }));
 
-            t.emit("widgetFocus", {});
+        this.listenersToRemove.push(this.view.getInternalEventBus().addListener("scroll", function(a) {
+          return b.emit("scroll", a);
+        }));
+
+        this.listenersToRemove.push(this.view.getInternalEventBus().addListener(x.EventType.ViewFocusLost, function(a) {
+          return b.emit("blur");
+        }));
+
+        this.listenersToRemove.push(this.view.getInternalEventBus().addListener(x.EventType.ContextMenu, function(a) {
+          return b.emit(x.EventType.ContextMenu, a);
+        }));
+
+        this.listenersToRemove.push(this.view.getInternalEventBus().addListener(x.EventType.MouseDown, function(a) {
+          return b.emit(x.EventType.MouseDown, a);
+        }));
+
+        this.listenersToRemove.push(this.view.getInternalEventBus().addListener(x.EventType.MouseUp, function(a) {
+          return b.emit(x.EventType.MouseUp, a);
+        }));
+
+        this.listenersToRemove.push(this.view.getInternalEventBus().addListener(x.EventType.KeyUp, function(a) {
+          return b.emit(x.EventType.KeyUp, a);
+        }));
+
+        this.listenersToRemove.push(this.view.getInternalEventBus().addListener(x.EventType.MouseMove, function(a) {
+          return b.emit(x.EventType.MouseMove, a);
+        }));
+
+        this.listenersToRemove.push(this.view.getInternalEventBus().addListener(x.EventType.MouseLeave, function(a) {
+          return b.emit(x.EventType.MouseLeave, a);
+        }));
+
+        this.listenersToRemove.push(this.view.getInternalEventBus().addListener(x.EventType.KeyDown, function(a) {
+          return b.emit(x.EventType.KeyDown, a);
+        }));
+
+        this.listenersToRemove.push(this.view.getInternalEventBus().addListener(x.EventType.ViewLayoutChanged,
+          function(a) {
+            return b.emit(x.EventType.EditorLayout, a);
           }));
 
-        this.listenersToRemove.push(this._view.getInternalEventBus().addListener("scroll", function(e) {
-          return t.emit("scroll", e);
-        }));
-
-        this.listenersToRemove.push(this._view.getInternalEventBus().addListener(i.EventType.ViewFocusLost, function() {
-          return t.emit("blur");
-        }));
-
-        this.listenersToRemove.push(this._view.getInternalEventBus().addListener(i.EventType.ContextMenu, function(e) {
-          return t.emit(i.EventType.ContextMenu, e);
-        }));
-
-        this.listenersToRemove.push(this._view.getInternalEventBus().addListener(i.EventType.MouseDown, function(e) {
-          return t.emit(i.EventType.MouseDown, e);
-        }));
-
-        this.listenersToRemove.push(this._view.getInternalEventBus().addListener(i.EventType.MouseUp, function(e) {
-          return t.emit(i.EventType.MouseUp, e);
-        }));
-
-        this.listenersToRemove.push(this._view.getInternalEventBus().addListener(i.EventType.KeyUp, function(e) {
-          return t.emit(i.EventType.KeyUp, e);
-        }));
-
-        this.listenersToRemove.push(this._view.getInternalEventBus().addListener(i.EventType.MouseMove, function(e) {
-          return t.emit(i.EventType.MouseMove, e);
-        }));
-
-        this.listenersToRemove.push(this._view.getInternalEventBus().addListener(i.EventType.MouseLeave, function(e) {
-          return t.emit(i.EventType.MouseLeave, e);
-        }));
-
-        this.listenersToRemove.push(this._view.getInternalEventBus().addListener(i.EventType.KeyDown, function(e) {
-          return t.emit(i.EventType.KeyDown, e);
-        }));
-
-        this.listenersToRemove.push(this._view.getInternalEventBus().addListener(i.EventType.ViewLayoutChanged,
-          function(e) {
-            return t.emit(i.EventType.EditorLayout, e);
-          }));
-
-        this.listenersToRemove.push(this.model.addListener(i.EventType.ModelDecorationsChanged, function(e) {
-          t.emit(i.EventType.ModelDecorationsChanged, e);
-        }));
-
-        this.listenersToRemove.push(this.model.addListener(i.EventType.ModelContentChanged, function(e) {
-          if (e.changeType === i.EventType.ModelContentChangedFlush && e.modeChanged) {
-            t.emit(i.EventType.ModelModeChanged);
+        this.listenersToRemove.push(this.model.addListener(x.EventType.ModelContentChanged, function(a) {
+          if (a.changeType === x.EventType.ModelContentChangedFlush && a.modeChanged) {
+            b.emit(x.EventType.ModelModeChanged);
           }
 
-          t.emit("change", {});
+          b.emit("change", {});
         }));
 
-        this.listenersToRemove.push(this.cursor.addListener(i.EventType.CursorPositionChanged, function(e) {
-          return t.emit(i.EventType.CursorPositionChanged, e);
+        this.listenersToRemove.push(this.cursor.addListener(x.EventType.CursorPositionChanged, function(a) {
+          return b.emit(x.EventType.CursorPositionChanged, a);
         }));
 
-        this.listenersToRemove.push(this.cursor.addListener(i.EventType.CursorSelectionChanged, function(e) {
-          return t.emit(i.EventType.CursorSelectionChanged, e);
+        this.listenersToRemove.push(this.cursor.addListener(x.EventType.CursorSelectionChanged, function(a) {
+          return b.emit(x.EventType.CursorSelectionChanged, a);
         }));
 
-        this.listenersToRemove.push(this.configuration.addListener(i.EventType.ConfigurationChanged, function(e) {
-          return t.emit(i.EventType.ConfigurationChanged, e);
+        this.listenersToRemove.push(this.configuration.addListener(x.EventType.ConfigurationChanged, function(a) {
+          return b.emit(x.EventType.ConfigurationChanged, a);
         }));
 
-        this.listenersToRemove.push(this.model.addListener(i.EventType.ModelDispose, function() {
-          t.setModel(null);
+        this.listenersToRemove.push(this.model.addListener(x.EventType.ModelDispose, function() {
+          b.setModel(null);
         }));
 
-        this.domElement.appendChild(this._view.domNode);
+        this.domElement.appendChild(this.view.domNode);
 
-        this._view.renderOnce(function() {
-          var e;
-          for (e in t.contentWidgets) {
-            if (t.contentWidgets.hasOwnProperty(e)) {
-              t._view.addContentWidget(t.contentWidgets[e]);
+        this.view.renderOnce(function() {
+          var a;
+          for (a in b.contentWidgets) {
+            if (b.contentWidgets.hasOwnProperty(a)) {
+              b.view.addContentWidget(b.contentWidgets[a]);
             }
           }
-          for (e in t.overlayWidgets) {
-            if (t.overlayWidgets.hasOwnProperty(e)) {
-              t._view.addOverlayWidget(t.overlayWidgets[e]);
+          for (a in b.overlayWidgets) {
+            if (b.overlayWidgets.hasOwnProperty(a)) {
+              b.view.addOverlayWidget(b.overlayWidgets[a]);
             }
           }
-          t._view.render();
+          b.view.render();
 
-          t.hasView = !0;
+          b.hasView = !0;
         });
       } else {
         this.hasView = !1;
       }
     };
 
-    t.prototype._postDetachModelCleanup = function(e) {
-      if (e) {
-        e.removeAllDecorationsWithOwnerId(this.id);
-      }
-    };
-
-    t.prototype._detachModel = function() {
+    b.prototype._detachModel = function() {
       this.hasView = !1;
 
-      this.listenersToRemove.forEach(function(e) {
-        e();
+      this.listenersToRemove.forEach(function(a) {
+        a();
       });
 
       this.listenersToRemove = [];
@@ -727,23 +747,24 @@ define("vs/editor/core/codeEditorWidget", ["require", "exports", "vs/base/lib/wi
         this.cursor = null;
       }
 
-      if (this._view) {
-        this._view.dispose();
-        this.domElement.removeChild(this._view.domNode);
-        this._view = null;
+      if (this.view) {
+        this.view.dispose();
+        this.domElement.removeChild(this.view.domNode);
+        this.view = null;
       }
 
       if (this.viewModel) {
         this.viewModel.dispose();
         this.viewModel = null;
       }
-      var e = this.model;
-      this.model = null;
 
-      return e;
+      if (this.model) {
+        this.model.removeAllDecorationsWithOwnerId(this.id);
+        this.model = null;
+      }
     };
 
-    return t;
-  }(l.EventEmitter);
-  t.CodeEditorWidget = E;
+    return b;
+  }(C.EventEmitter);
+  b.CodeEditorWidget = R;
 });

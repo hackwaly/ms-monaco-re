@@ -212,11 +212,11 @@ var _parseModule = (function () {
     function extract(moduleId, node) {
         var r = _parseModuleId(moduleId);
         if (r) {
-            var k = moduleSeeds.indexOf(moduleId);
-            if (k >= 0) {
-                moduleSeeds.splice(k, 1);
-            }
-            moduleHash[moduleId] = true;
+//            var k = moduleSeeds.indexOf(moduleId);
+//            if (k >= 0) {
+//                moduleSeeds.splice(k, 1);
+//            }
+//            moduleHash[moduleId] = true;
 
             mkdirpSync(r.dirs);
             console.log('extract module: ' + moduleId);

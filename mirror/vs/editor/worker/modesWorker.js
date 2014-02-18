@@ -1,431 +1,449 @@
-define("vs/editor/worker/modesWorker", ["require", "exports", "vs/base/lib/winjs.base", "vs/editor/diff/diffComputer",
-  "vs/editor/modes/modesFilters", "vs/editor/core/model/textModel"
-], function(e, t, n, i, o, r) {
-  var s = function() {
-    function e() {
+define(["require", "exports", "vs/base/lib/winjs.base", "vs/editor/diff/diffComputer", "vs/editor/modes/modesFilters",
+  "vs/editor/core/model/model"
+], function(a, b, c, d, e, f) {
+  var g = c;
+
+  var h = d;
+
+  var i = e;
+
+  var j = f;
+
+  var k = function() {
+    function a() {
       this.workerParticipants = [];
-
-      this.autoValidateDelay = 500;
     }
-    e.prototype.injectPublisherService = function(e) {
-      this.publisher = e;
+    a.prototype.injectPublisherService = function(a) {
+      this.publisher = a;
     };
 
-    e.prototype.injectResourceService = function(e) {
-      this.resourceService = e;
+    a.prototype.injectResourceService = function(a) {
+      this.resourceService = a;
     };
 
-    e.prototype.injectDispatcherService = function(e) {
-      this.dispatchService = e;
+    a.prototype.injectDispatcherService = function(a) {
+      this.dispatchService = a;
 
       this.dispatchService.register(this);
     };
 
-    e.prototype.injectMarkerService = function(e) {
-      this.markerService = e;
+    a.prototype.injectMarkerService = function(a) {
+      this.markerService = a;
     };
 
-    e.prototype.setExtraData = function() {};
+    a.prototype.setExtraData = function(a) {};
 
-    e.prototype.addWorkerParticipant = function(e) {
-      this.workerParticipants.push(e);
+    a.prototype.addWorkerParticipant = function(a) {
+      this.workerParticipants.push(a);
     };
 
-    e.prototype.validate = function(e) {
-      var t = this;
-      this.markerService.createPublisher().batchChanges(function(n) {
-        t.doValidate(e, n);
-
-        t.triggerValidateParticipation(e, n);
+    a.prototype.validate = function(a) {
+      var b = this;
+      this.markerService.createPublisher().batchChanges(function(c) {
+        b.doValidate(a, c);
       });
 
-      return n.Promise.as(null);
+      return g.Promise.as(null);
     };
 
-    e.prototype.triggerValidateParticipation = function(e, t, n) {
-      if ("undefined" == typeof n) {
-        n = null;
+    a.prototype.triggerValidateParticipation = function(a, b, c) {
+      if (typeof c == "undefined") {
+        c = null;
       }
-      var i = this.resourceService.get(e);
-      this.workerParticipants.forEach(function(e) {
+      var d = this.resourceService.get(a);
+      this.workerParticipants.forEach(function(a) {
         try {
-          if ("function" != typeof e.validate) return;
-          e.validate(i, t, n);
-        } catch (o) {}
+          if (typeof a.validate == "function") {
+            a.validate(d, b, c);
+          }
+        } catch (e) {}
       });
     };
 
-    e.prototype.doValidate = function() {};
+    a.prototype.doValidate = function(a, b) {};
 
-    e.prototype.suggest = function(e, t) {
-      var i = this;
+    a.prototype.suggest = function(a, b) {
+      var c = this;
 
-      var o = [];
+      var d = [];
 
-      var r = this.resourceService.get(e);
+      var e = this.resourceService.get(a);
 
-      var s = r.getWordUntilPosition(t);
+      var f = e.getWordUntilPosition(b);
 
-      var a = {
-        currentWord: s,
+      var h = {
+        currentWord: f,
         suggestions: []
       };
-      o.push(this.doSuggest(e, t));
+      d.push(this.doSuggest(a, b));
 
-      this.workerParticipants.forEach(function(e) {
+      this.workerParticipants.forEach(function(a) {
         try {
-          if ("function" == typeof e.suggest) {
-            o.push(e.suggest(t, r));
+          if (typeof a.suggest == "function") {
+            d.push(a.suggest(b, e));
           }
-        } catch (n) {}
+        } catch (c) {}
       });
 
-      return n.Promise.join(o).then(function(e) {
-        for (var t = i.getSuggestionFilterMain(), n = 0; n < e.length; n++) {
-          e[n].forEach(function(e) {
-            if (t(s, e)) {
-              a.suggestions.push(e);
+      return g.Promise.join(d).then(function(a) {
+        var b = c.getSuggestionFilterMain();
+        for (var d = 0; d < a.length; d++) {
+          a[d].forEach(function(a) {
+            if (b(f, a)) {
+              h.suggestions.push(a);
             }
           });
         }
-        return a;
-      }, function() {
-        a.currentWord = "";
+        return h;
+      }, function(a) {
+        h.currentWord = "";
 
-        a.suggestions = [];
+        h.suggestions = [];
 
-        return a;
+        return h;
       });
     };
 
-    e.prototype.doSuggest = function(e, t) {
-      var i = [];
-      i.push.apply(i, this.suggestWords(e, t));
+    a.prototype.doSuggest = function(a, b) {
+      var c = [];
+      c.push.apply(c, this.suggestWords(a, b));
 
-      i.push.apply(i, this.suggestSnippets(e, t));
+      c.push.apply(c, this.suggestSnippets(a, b));
 
-      return n.Promise.as(i);
+      return g.Promise.as(c);
     };
 
-    e.prototype.suggestWords = function(e, t) {
-      var n = this.resourceService.get(e);
+    a.prototype.suggestWords = function(a, b) {
+      var c = this.resourceService.get(a);
 
-      var i = n.getWordUntilPosition(t);
+      var d = c.getWordUntilPosition(b);
 
-      var o = n.getAllUniqueWords(i);
-      return o.filter(function(e) {
-        return !/^-?\d*\.?\d/.test(e);
-      }).map(function(e) {
+      var e = c.getAllUniqueWords(d);
+      return e.filter(function(a) {
+        return !/^-?\d*\.?\d/.test(a);
+      }).map(function(a) {
         return {
           type: "text",
-          label: e,
-          codeSnippet: e
+          label: a,
+          codeSnippet: a
         };
       });
     };
 
-    e.prototype.suggestSnippets = function() {
+    a.prototype.suggestSnippets = function(a, b) {
       return [];
     };
 
-    e.prototype.getSuggestionFilterMain = function() {
-      var e = this.getSuggestionFilter();
-      this.workerParticipants.forEach(function(t) {
-        if ("function" == typeof t.filter) {
-          e = o.and(e, t.filter);
+    a.prototype.getSuggestionFilterMain = function() {
+      var a = this.getSuggestionFilter();
+      this.workerParticipants.forEach(function(b) {
+        if (typeof b.filter == "function") {
+          a = i.and(a, b.filter);
         }
       });
 
-      return e;
+      return a;
     };
 
-    e.prototype.getSuggestionFilter = function() {
-      return e.filter;
+    a.prototype.getSuggestionFilter = function() {
+      return a.filter;
     };
 
-    e.prototype.findOccurrences = function(e, t) {
-      var i = this.resourceService.get(e);
+    a.prototype.findOccurrences = function(a, b, c) {
+      var d = this.resourceService.get(a);
 
-      var o = i.getWordAtPosition(t);
+      var e = d.getWordAtPosition(b);
 
-      var r = [];
-      i.getAllWordsWithRange().forEach(function(e) {
-        if (e.text === o) {
-          r.push({
-            range: e.range
+      var f = [];
+      d.getAllWordsWithRange().forEach(function(a) {
+        if (a.text === e) {
+          f.push({
+            range: a.range
           });
         }
       });
 
-      return n.TPromise.as(r.slice(0, 1e3));
+      return g.Promise.as(f);
     };
 
-    e.prototype.computeDiff = function(e, t) {
-      var o = this.resourceService.get(e);
+    a.prototype.computeDiff = function(a, b) {
+      var c = this.resourceService.get(a);
 
-      var r = this.resourceService.get(t);
-      if (null !== o && null !== r) {
-        var s = o.getRawLines();
+      var d = this.resourceService.get(b);
+      if (c !== null && d !== null) {
+        var e = c.getRawLines();
 
-        var a = r.getRawLines();
+        var f = d.getRawLines();
 
-        var u = new i.DiffComputer(s, a, !0, !0);
-        return n.TPromise.as(u.computeDiff());
+        var i = new h.DiffComputer(e, f, !0, !0);
+        return g.Promise.as(i.computeDiff());
       }
-      return n.TPromise.as(null);
+      return g.Promise.as(null);
     };
 
-    e.prototype.computeDirtyDiff = function(e) {
-      var t = this.resourceService.get(e);
+    a.prototype.computeDirtyDiff = function(a) {
+      var b = this.resourceService.get(a);
 
-      var o = t.getProperty("original");
-      if (o && null !== t) {
-        var s = r.TextModel._splitText(o);
+      var c = b.getProperty("original");
+      if (c && b !== null) {
+        var d = j.Model.splitText(c);
 
-        var a = s.lines.map(function(e) {
-          return e.text;
+        var e = d.lines.map(function(a) {
+          return a.text;
         });
 
-        var u = t.getRawLines();
+        var f = b.getRawLines();
 
-        var l = new i.DiffComputer(a, u, !1, !0);
-        return n.TPromise.as(l.computeDiff());
+        var i = new h.DiffComputer(e, f, !1, !0);
+        return g.Promise.as(i.computeDiff());
       }
-      return n.TPromise.as([]);
+      return g.Promise.as([]);
     };
 
-    e.prototype.navigateValueSet = function(e, t, i) {
-      var o = this.doNavigateValueSet(e, t, i, !0);
-      return n.TPromise.as(o && o.value && o.range ? o : null);
+    a.prototype.navigateValueSet = function(a, b, c) {
+      var d = this.doNavigateValueSet(a, b, c, !0);
+      return g.Promise.as(d && d.value && d.range ? d : null);
     };
 
-    e.prototype.doNavigateValueSet = function(e, t, n, i) {
-      var o;
+    a.prototype.doNavigateValueSet = function(a, b, c, d) {
+      var e = this.resourceService.get(a);
 
-      var r = this.resourceService.get(e);
-
-      var s = {
+      var f = {
         range: null,
         value: null
       };
-      if (i) {
-        if (t.startColumn === t.endColumn) {
-          t.endColumn += 1;
+
+      var g;
+      if (d) {
+        if (b.startColumn === b.endColumn) {
+          b.endColumn += 1;
         }
-        o = r.getValueInRange(t);
-        s.range = t;
+        g = e.getValueInRange(b);
+        f.range = b;
       } else {
-        var a = {
-          lineNumber: t.startLineNumber,
-          column: t.startColumn
+        var h = {
+          lineNumber: b.startLineNumber,
+          column: b.startColumn
         };
 
-        var u = r.getWordUntilPosition(a);
-        if (o = r.getWordAtPosition(a), 0 !== o.indexOf(u)) {
+        var i = e.getWordUntilPosition(h);
+        g = e.getWordAtPosition(h);
+        if (g.indexOf(i) !== 0) {
           return null;
         }
-        if (o.length < t.endColumn - t.startColumn) {
+        if (g.length < b.endColumn - b.startColumn) {
           return null;
         }
-        s.range = t;
+        f.range = b;
 
-        s.range.startColumn = a.column - u.length;
+        f.range.startColumn = h.column - i.length;
 
-        s.range.endColumn = s.range.startColumn + o.length;
+        f.range.endColumn = f.range.startColumn + g.length;
       }
-      var l = this.numberReplace(o, n);
-      if (null !== l) {
-        s.value = l;
+      var j = this.numberReplace(g, c);
+      if (j !== null) {
+        f.value = j;
       } else {
-        var c = this.textReplace(o, n);
-        if (null !== c) {
-          s.value = c;
-        } else if (i) {
-          return this.doNavigateValueSet(e, t, n, !1);
+        var k = this.textReplace(g, c);
+        if (k !== null) {
+          f.value = k;
+        } else if (d) {
+          return this.doNavigateValueSet(a, b, c, !1);
         }
       }
-      return s;
+      return f;
     };
 
-    e.prototype.numberReplace = function(e, t) {
-      var n = Math.pow(10, e.length - (e.lastIndexOf(".") + 1));
+    a.prototype.numberReplace = function(a, b) {
+      var c = Math.pow(10, a.length - (a.lastIndexOf(".") + 1));
 
-      var i = Number(e);
+      var d = Number(a);
 
-      var o = parseFloat(e);
-      return isNaN(i) || isNaN(o) || i !== o ? null : 0 !== i || t ? (i = Math.floor(i * n), i += t ? n : -n, String(
-        i / n)) : null;
+      var e = parseFloat(a);
+      return !isNaN(d) && !isNaN(e) && d === e ? d === 0 && !b ? null : (d = Math.floor(d * c), d += b ? c : -c,
+        String(d / c)) : null;
     };
 
-    e.prototype.textReplace = function() {
+    a.prototype.textReplace = function(a, b) {
       return null;
     };
 
-    e.prototype.valueSetsReplace = function(e, t, n) {
-      for (var i = null; e.length > 0 && null === i;) {
-        i = this.valueSetReplace(e.pop(), t, n);
+    a.prototype.valueSetsReplace = function(a, b, c) {
+      var d = null;
+      while (a.length > 0 && d === null) {
+        d = this.valueSetReplace(a.pop(), b, c);
       }
-      return i;
+      return d;
     };
 
-    e.prototype.valueSetReplace = function(e, t, n) {
-      var i = e.indexOf(t);
-      return i >= 0 ? (i += n ? 1 : -1, 0 > i ? i = e.length - 1 : i %= e.length, e[i]) : null;
+    a.prototype.valueSetReplace = function(a, b, c) {
+      var d = a.indexOf(b);
+      return d >= 0 ? (d += c ? 1 : -1, d < 0 ? d = a.length - 1 : d %= a.length, a[d]) : null;
     };
 
-    e.prototype.getActionsAtPosition = function(e, t) {
-      var i = this.resourceService.get(e);
-
-      var o = i.getWordAtPosition(t);
-      return o ? n.Promise.as(["editor.actions.changeAll"]) : n.Promise.as([]);
-    };
-
-    e.prototype.createLink = function(e, t, n, i) {
+    a.prototype.createLink = function(a, b, c, d) {
       return {
         range: {
-          startLineNumber: t,
-          startColumn: n + 1,
-          endLineNumber: t,
-          endColumn: i + 1
+          startLineNumber: b,
+          startColumn: c + 1,
+          endLineNumber: b,
+          endColumn: d + 1
         },
-        url: e.substring(n, i)
+        url: a.substring(c, d)
       };
     };
 
-    e.prototype.computeLinks = function(e) {
-      var t;
+    a.prototype.computeLinks = function(a) {
+      var b;
 
-      var i;
+      var c;
 
-      var o = this.resourceService.get(e);
+      var d = this.resourceService.get(a);
 
-      var r = [];
+      var e = [];
 
-      var s = [];
+      var f = [];
 
-      var a = 1;
+      var h = 1;
 
-      var u = 9;
+      var i = 9;
 
-      var l = 10;
-      s[1] = {
+      var j = 10;
+      f[1] = {
         h: 2,
         H: 2
       };
 
-      s[2] = {
+      f[2] = {
         t: 3,
         T: 3
       };
 
-      s[3] = {
+      f[3] = {
         t: 4,
         T: 4
       };
 
-      s[4] = {
+      f[4] = {
         p: 5,
         P: 5
       };
 
-      s[5] = {
+      f[5] = {
         s: 6,
         S: 6,
         ":": 7
       };
 
-      s[6] = {
+      f[6] = {
         ":": 7
       };
 
-      s[7] = {
+      f[7] = {
         "/": 8
       };
 
-      s[8] = {
+      f[8] = {
         "/": 9
       };
-      var c = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-?=&#@:+%";
+      var k = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-?=&#@:+%";
 
-      var d = [];
+      var l = [];
 
-      var h = 0;
-      for (t = 0; t < c.length; t++) {
-        h = Math.max(h, c.charCodeAt(t));
+      var m = 0;
+      for (b = 0; b < k.length; b++) {
+        m = Math.max(m, k.charCodeAt(b));
       }
-      h = Math.max("<".charCodeAt(0), "(".charCodeAt(0), "[".charCodeAt(0), "{".charCodeAt(0));
-      for (var t = 0; h >= t; t++) {
-        d[t] = String.fromCharCode(t);
+      m = Math.max("<".charCodeAt(0), "(".charCodeAt(0), "[".charCodeAt(0), "{".charCodeAt(0));
+      for (var b = 0; b <= m; b++) {
+        l[b] = String.fromCharCode(b);
       }
-      for (t = 0; t < c.length; t++) {
-        d[c.charCodeAt(t)] = null;
+      for (b = 0; b < k.length; b++) {
+        l[k.charCodeAt(b)] = null;
       }
-      d["<".charCodeAt(0)] = ">";
+      l["<".charCodeAt(0)] = ">";
 
-      d["(".charCodeAt(0)] = ")";
+      l["(".charCodeAt(0)] = ")";
 
-      d["[".charCodeAt(0)] = "]";
+      l["[".charCodeAt(0)] = "]";
 
-      d["{".charCodeAt(0)] = "}";
+      l["{".charCodeAt(0)] = "}";
+      var n;
+
+      var o;
+
       var p;
 
-      var f;
+      var q;
 
-      var g;
+      var r;
 
-      var m;
+      var s;
+
+      var t;
+
+      var u;
 
       var v;
+      for (b = 1, c = d.getLineCount(); b <= c; b++) {
+        n = d.getLineContent(b);
 
-      var y;
+        o = 0;
 
-      var _;
+        p = n.length;
 
-      var b;
+        q = null;
 
-      var C;
-      for (t = 1, i = o.getLineCount(); i >= t; t++) {
-        for (p = o.getLineContent(t), f = 0, g = p.length, m = null, v = 0, y = a; g > f;) {
-          _ = p.charAt(f);
-          C = !1;
-          if (y === l) {
-            if (" " === _ || "	" === _ || _ === m) {
-              r.push(this.createLink(p, t, v, f));
-              C = !0;
+        r = 0;
+
+        s = h;
+        while (o < p) {
+          t = n.charAt(o);
+
+          v = !1;
+          if (s === j) {
+            if (t === " " || t === "	" || t === q) {
+              e.push(this.createLink(n, b, r, o));
+              v = !0;
             }
           } else {
-            if (y === u) {
-              if (" " === _ || "	" === _ || _ === m) {
-                C = !0;
+            if (s === i) {
+              if (t === " " || t === "	" || t === q) {
+                v = !0;
               } else {
-                y = l;
+                s = j;
               }
             } else {
-              if (s[y].hasOwnProperty(_)) {
-                y = s[y][_];
+              if (f[s].hasOwnProperty(t)) {
+                s = f[s][t];
               } else {
-                C = !0;
+                v = !0;
               }
             }
           }
-          if (C) {
-            y = a;
-            v = f + 1;
-            b = p.charCodeAt(f);
-            m = b < d.length ? d[b] : _;
+          if (v) {
+            s = h;
+            r = o + 1;
+            u = n.charCodeAt(o);
+            if (u < l.length) {
+              q = l[u];
+            } else {
+              q = t;
+            }
           }
-          f++;
+
+          o++;
         }
-        if (y === l) {
-          r.push(this.createLink(p, t, v, g));
+        if (s === j) {
+          e.push(this.createLink(n, b, r, p));
         }
       }
-      return n.TPromise.as(r);
+      return g.Promise.as(e);
     };
 
-    e.filter = o.DefaultFilter;
+    a.filter = i.DefaultFilter;
 
-    return e;
+    return a;
   }();
-  t.AbstractWorkerMode = s;
+  b.AbstractWorkerMode = k;
 });

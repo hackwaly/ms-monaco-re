@@ -1,52 +1,50 @@
-define("vs/editor/contrib/linesOperations/deleteLinesCommand", ["require", "exports", "vs/editor/core/range",
-  "vs/editor/core/selection"
-], function(e, t, n, i) {
-  function o(e) {
-    var t = e.endLineNumber;
-    e.startLineNumber < e.endLineNumber && 1 === e.endColumn && (t -= 1);
+define(["require", "exports", "vs/editor/core/range", "vs/editor/core/selection"], function(a, b, c, d) {
+  var e = c;
 
-    return new r(e.startLineNumber, t, e.positionColumn);
-  }
-  t.createFromSelection = o;
-  var r = function() {
-    function e(e, t, n) {
-      this.startLineNumber = e;
+  var f = d;
 
-      this.endLineNumber = t;
-
-      this.restoreCursorToColumn = n;
+  var g = function() {
+    function a(a) {
+      this.selection = a;
     }
-    e.prototype.getEditOperations = function(e, t) {
-      if (1 !== e.getLineCount() || 1 !== e.getLineMaxColumn(1)) {
-        var i = this.startLineNumber;
+    a.prototype.getEditOperations = function(a, b) {
+      if (a.getLineCount() === 1 && a.getLineMaxColumn(1) === 1) return;
+      var c = this.selection.startLineNumber;
 
-        var o = this.endLineNumber;
+      var d = this.selection.startColumn;
 
-        var r = 1;
+      var f = this.selection.endLineNumber;
 
-        var s = e.getLineMaxColumn(o);
-        if (o < e.getLineCount()) {
-          o += 1;
-          s = 1;
-        } else {
-          if (i > 1) {
-            i -= 1;
-            r = e.getLineMaxColumn(i);
-          }
-        }
-
-        t.addEditOperation(new n.Range(i, r, o, s), null);
+      var g = this.selection.endColumn;
+      if (c < f && g === 1) {
+        f -= 1;
       }
+
+      d = 1;
+
+      g = a.getLineMaxColumn(f);
+
+      if (f < a.getLineCount()) {
+        f += 1;
+        g = 1;
+      } else {
+        if (c > 1) {
+          c -= 1;
+          d = a.getLineMaxColumn(c);
+        }
+      }
+
+      b.addEditOperation(new e.Range(c, d, f, g), null);
     };
 
-    e.prototype.computeCursorState = function(e, t) {
-      var n = t.getInverseEditOperations();
+    a.prototype.computeCursorState = function(a, b) {
+      var c = b.getInverseEditOperations();
 
-      var o = n[0].range;
-      return new i.Selection(o.endLineNumber, this.restoreCursorToColumn, o.endLineNumber, this.restoreCursorToColumn);
+      var d = c[0].range;
+      return new f.Selection(d.endLineNumber, this.selection.positionColumn, d.endLineNumber, this.selection.positionColumn);
     };
 
-    return e;
+    return a;
   }();
-  t.DeleteLinesCommand = r;
+  b.DeleteLinesCommand = g;
 });

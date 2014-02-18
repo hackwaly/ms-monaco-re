@@ -200,11 +200,25 @@ define(["require", "exports", "vs/base/types", "vs/editor/core/view/viewEventHan
       for (h in this.zones) {
         if (this.zones.hasOwnProperty(h)) {
           i = this.zones[h];
-          c.hasOwnProperty(h) ? (i.delegate.domNode.style.top = b.getScrolledTopFromAbsoluteTop(c[h].verticalOffset) +
-            "px", i.delegate.domNode.style.height = c[h].height + "px", i.isVisible || (i.delegate.domNode.style.display =
-              "block", i.isVisible = !0), e.isFunction(i.delegate.onDomNodeTop) && i.delegate.onDomNodeTop(b.getScrolledTopFromAbsoluteTop(
-              c[h].verticalOffset))) : (i.isVisible && (i.delegate.domNode.style.display = "none", i.isVisible = !1),
-            e.isFunction(i.delegate.onDomNodeTop) && i.delegate.onDomNodeTop(b.getScrolledTopFromAbsoluteTop(-1e6)));
+          if (c.hasOwnProperty(h)) {
+            i.delegate.domNode.style.top = b.getScrolledTopFromAbsoluteTop(c[h].verticalOffset) + "px";
+            i.delegate.domNode.style.height = c[h].height + "px";
+            if (!i.isVisible) {
+              i.delegate.domNode.style.display = "block";
+              i.isVisible = !0;
+            }
+            if (e.isFunction(i.delegate.onDomNodeTop)) {
+              i.delegate.onDomNodeTop(b.getScrolledTopFromAbsoluteTop(c[h].verticalOffset));
+            }
+          } else {
+            if (i.isVisible) {
+              i.delegate.domNode.style.display = "none";
+              i.isVisible = !1;
+            }
+            if (e.isFunction(i.delegate.onDomNodeTop)) {
+              i.delegate.onDomNodeTop(b.getScrolledTopFromAbsoluteTop(-1e6));
+            }
+          }
         }
       }
       if (g) {

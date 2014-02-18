@@ -1,456 +1,326 @@
-define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/base/env", "vs/base/lib/winjs.base",
-  "vs/base/dom/dom", "vs/base/types", "vs/base/eventEmitter", "vs/base/diff/diff", "vs/base/dom/touch",
-  "vs/base/dom/mouseEvent", "vs/base/dom/keyboardEvent", "vs/base/ui/scrollbar/impl/scrollableElement"
-], function(e, t, n, i, o, r, s, a, u, l, c, d, h) {
-  var p = function() {
-    function e(e, t, n) {
-      if ("undefined" == typeof t) {
-        t = 0;
-      }
-
-      if ("undefined" == typeof n) {
-        n = e.length;
-      }
-
-      this.items = e;
-
-      this.start = t;
-
-      this.end = n;
-
-      this.index = t - 1;
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
     }
-    e.prototype.next = function() {
-      this.index = Math.min(this.index + 1, this.end);
-
-      return this.index === this.end ? null : this.items[this.index];
-    };
-
-    return e;
-  }();
-  t.ArrayIterator = p;
-  var f = function() {
-    function e(e) {
-      this.elements = e;
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
     }
-    e.prototype.update = function() {};
+    d.prototype = b.prototype;
 
-    e.prototype.getData = function() {
+    a.prototype = new d;
+  };
+
+define(["require", "exports", "./tree", "vs/base/lib/winjs.base", "vs/base/dom/dom", "vs/base/dom/mouseEvent",
+  "vs/base/dom/keyboardEvent", "vs/base/ui/scrollbar/scrollableElement"
+], function(a, b, c, d, e, f, g, h) {
+  var i = c;
+
+  var j = d;
+
+  var k = e;
+
+  var l = f;
+
+  var m = g;
+
+  var n = h;
+
+  var o = function() {
+    function a(a) {
+      this.elements = a;
+    }
+    a.prototype.update = function(a) {};
+
+    a.prototype.getData = function() {
       return this.elements;
     };
 
-    return e;
+    return a;
   }();
-  t.ElementsDragAndDropData = f;
-  var g = function() {
-    function e() {}
-    e.prototype.update = function(e) {
-      this.types = e.dataTransfer.types || this.types;
+  b.ElementsDragAndDropData = o;
+  var p = function() {
+    function a() {}
+    a.prototype.update = function(a) {
+      this.types = a.dataTransfer.types || this.types;
 
-      this.files = e.dataTransfer.files || this.files;
+      this.files = a.dataTransfer.files || this.files;
     };
 
-    e.prototype.getData = function() {
+    a.prototype.getData = function() {
       return {
         types: this.types,
         files: this.files
       };
     };
 
-    return e;
+    return a;
   }();
-  t.DesktopDragAndDropData = g;
-  var m = function() {
-    function e(e, t, n) {
-      this.context = e;
-
-      this.model = t;
+  b.DesktopDragAndDropData = p;
+  var q = function() {
+    function a(a, b) {
+      this.model = a;
 
       this.id = this.model.id;
 
-      this.top = n;
+      this.top = b;
 
-      this.height = t.getHeight();
-
-      this._styles = {};
-
-      if (t.isExpanded()) {
-        this.addClass("expanded");
-      }
+      this.height = a.getHeight();
     }
-    Object.defineProperty(e.prototype, "expanded", {
-      set: function(e) {
-        if (e) {
-          this.addClass("expanded");
-        } else {
-          this.removeClass("expanded");
-        }
-      },
-      enumerable: !0,
-      configurable: !0
-    });
-
-    Object.defineProperty(e.prototype, "loading", {
-      set: function(e) {
-        if (e) {
-          this.addClass("loading");
-        } else {
-          this.removeClass("loading");
-        }
-      },
-      enumerable: !0,
-      configurable: !0
-    });
-
-    Object.defineProperty(e.prototype, "draggable", {
-      get: function() {
-        return this._draggable;
-      },
-      set: function(e) {
-        this._draggable = e;
-
-        this.render(!0);
-      },
-      enumerable: !0,
-      configurable: !0
-    });
-
-    Object.defineProperty(e.prototype, "dropTarget", {
-      set: function(e) {
-        if (e) {
-          this.addClass("drop-target");
-        } else {
-          this.removeClass("drop-target");
-        }
-      },
-      enumerable: !0,
-      configurable: !0
-    });
-
-    e.prototype.addClass = function(e) {
-      this._styles[e] = !0;
-
-      this.render(!0);
-    };
-
-    e.prototype.removeClass = function(e) {
-      delete this._styles[e];
-
-      this.render(!0);
-    };
-
-    e.prototype.render = function(e) {
-      if ("undefined" == typeof e) {
-        e = !1;
-      }
-      var t = this;
-      if (this.row) {
-        var n = ["row"];
-        n.push.apply(n, Object.keys(this._styles));
-
-        if (this.model.hasChildren()) {
-          n.push("has-children");
-        }
-
-        this.row.className = n.join(" ");
-
-        this.row.draggable = this.draggable;
-
-        this.row.style.height = this.height + "px";
-
-        this.row.style.paddingLeft = this.context.options.twistiePixels + (this.model.getDepth() - 1) * this.context.options
-          .indentPixels + "px";
-        var i = this.context.dnd.getDragURI(this.context.tree, this.model.getElement());
-        if (i !== this.uri) {
-          if (this.unbindDragStart) {
-            this.unbindDragStart();
-            delete this.unbindDragStart;
-          }
-          if (i) {
-            this.uri = i;
-            this.draggable = !0;
-            this.unbindDragStart = r.addListener(this.row, "dragstart", function(e) {
-              t.onDragStart(e);
-            });
-          } else {
-            this.uri = null;
-          }
-        }
-
-        if (!e) {
-          this.renderCleanupFn = this.context.renderer.render(this.context.tree, this.model.getElement(), this.row.firstChild,
-            this.renderCleanupFn);
-        }
-      }
-    };
-
-    e.prototype.insertInDOM = function(e, t) {
-      if (!this.row) {
-        var n = document.createElement("div");
-        n.className = "content";
-
-        this.row = document.createElement("div");
-
-        this.row[_.BINDING] = this;
-
-        this.row.appendChild(n);
-      }
-      if (!this.row.parentElement) {
-        if (null === t) {
-          e.appendChild(this.row);
-        } else {
-          e.insertBefore(this.row, t);
-        }
-        this.render();
-      }
-    };
-
-    e.prototype.removeFromDOM = function() {
-      if (this.row) {
-        if (this.unbindDragStart) {
-          this.unbindDragStart();
-          this.unbindDragStart = null;
-        }
-        if (this.renderCleanupFn) {
-          this.renderCleanupFn(this.context.tree, this.model.getElement());
-        }
-        this.uri = null;
-        this.row.parentElement.removeChild(this.row);
-        this.row = null;
-      }
-    };
-
-    e.prototype.dispose = function() {
-      this.renderCleanupFn = null;
-
-      this.row = null;
-
-      this.model = null;
-    };
-
-    return e;
+    return a;
   }();
-  t.ViewItem = m;
-  var v = function(e) {
-    function t(t, n, i) {
-      e.call(this, t, n, 0);
-
-      this.row = i;
-    }
-    __extends(t, e);
-
-    t.prototype.render = function() {
-      if (this.row) {
-        var e = ["monaco-vtree-wrapper"];
-        e.push.apply(e, Object.keys(this._styles));
-
-        if (this.model.hasChildren()) {
-          e.push("has-children");
-        }
-
-        this.row.className = e.join(" ");
-      }
-    };
-
-    t.prototype.insertInDOM = function() {};
-
-    t.prototype.removeFromDOM = function() {};
-
-    return t;
-  }(m);
-
-  var y = function(e) {
-    function t(t) {
-      e.call(this);
-
-      this.context = t;
-
+  b.ViewItem = q;
+  var r = function() {
+    function a() {
       this.heightMap = [];
 
       this.indexes = {};
     }
-    __extends(t, e);
-
-    t.prototype.getTotalHeight = function() {
-      var e = this.heightMap[this.heightMap.length - 1];
-      return e ? e.top + e.height : 0;
+    a.prototype.getTotalHeight = function() {
+      var a = this.heightMap[this.heightMap.length - 1];
+      return a ? a.top + a.height : 0;
     };
 
-    t.prototype.onInsertItems = function(e, t) {
-      if ("undefined" == typeof t) {
-        t = null;
+    a.prototype.onInsertItems = function(a, b) {
+      if (typeof b == "undefined") {
+        b = null;
       }
-      var n;
+      var c;
 
-      var i;
+      var d;
 
-      var o;
+      var e;
 
-      var r;
+      var f;
 
-      var a;
+      var g;
 
-      var u = s.isArray(e) ? new p(e) : e;
-
-      var l = 0;
-      if (null === t) {
-        o = 0;
-        a = 0;
+      var h = 0;
+      if (b === null) {
+        e = 0;
+        g = 0;
       } else {
-        o = this.indexes[t] + 1;
-        a = this.heightMap[o - 1].top + this.heightMap[o - 1].height;
+        e = this.indexes[b.id] + 1;
+        g = this.heightMap[e - 1].top + this.heightMap[e - 1].height;
       }
-      for (var c = this.heightMap.splice.bind(this.heightMap, o, 0), d = []; n = u.next();) {
-        i = new m(this.context, n, a + l);
-        this.emit("viewItem:create", {
-          item: i.model
-        });
-        this.indexes[n.id] = o++;
-        d.push(i);
-        l += i.height;
+      var i = this.heightMap.splice.bind(this.heightMap, e, 0);
+
+      var j = [];
+      while (c = a.next()) {
+        d = new q(c, g + h);
+        this.indexes[c.id] = e++;
+        j.push(d);
+        h += d.height;
+        this.onInsertItem(d);
       }
-      for (c.apply(this.heightMap, d), r = o; r < this.heightMap.length; r++) {
-        i = this.heightMap[r];
-        i.top += l;
-        this.indexes[i.id] = r;
-      }
-      for (r = d.length - 1; r >= 0; r--) {
-        this.onInsertItem(d[r]);
-      }
-      for (r = o; r < this.heightMap.length; r++) {
-        this.onRefreshItem(this.heightMap[r]);
+      if (h === 0) return;
+      i.apply(this.heightMap, j);
+      for (; e < this.heightMap.length; e++) {
+        d = this.heightMap[e];
+        d.top += h;
+        this.indexes[d.id] = e;
+        this.onRefreshItem(d);
       }
     };
 
-    t.prototype.onInsertItem = function() {};
+    a.prototype.onInsertItem = function(a) {};
 
-    t.prototype.onRemoveItems = function(e) {
-      for (var t, n, i, o = s.isArray(e) ? new p(e) : e, r = null, a = 0; t = o.next();) {
-        t = t.id || t;
-        i = this.indexes[t];
-        n = this.heightMap[i];
-        a -= n.height;
-        delete this.indexes[t];
-        this.onRemoveItem(n);
-        if (null === r) {
-          r = i;
+    a.prototype.onRemoveItems = function(a) {
+      var b;
+
+      var c;
+
+      var d = null;
+
+      var e;
+
+      var f = 0;
+      while (b = a.next()) {
+        e = this.indexes[b.id];
+        c = this.heightMap[e];
+        f -= c.height;
+        delete this.indexes[b.id];
+        this.onRemoveItem(c);
+        if (d === null) {
+          d = e;
         }
       }
-      if (0 !== a)
-        for (this.heightMap.splice(r, i - r + 1), i = r; i < this.heightMap.length; i++) {
-          n = this.heightMap[i];
-          n.top += a;
-          this.indexes[n.id] = i;
-          this.onRefreshItem(n);
-        }
-    };
-
-    t.prototype.onRemoveItem = function() {};
-
-    t.prototype.onRefreshItemSet = function(e) {
-      var t = this;
-      this.onRefreshItems(e.sort(function(e, n) {
-        return t.indexes[e.id] - t.indexes[n.id];
-      }));
-    };
-
-    t.prototype.onRefreshItems = function(e) {
-      for (var t, n, i, o, r = s.isArray(e) ? new p(e) : e, a = null, u = 0; t = r.next();) {
-        for (o = this.indexes[t.id]; 0 !== u && null !== a && o > a; a++) {
-          n = this.heightMap[a];
-          n.top += u;
-          this.onRefreshItem(n);
-        }
-        n = this.heightMap[o];
-
-        i = t.getHeight();
-
-        n.top += u;
-
-        u += i - n.height;
-
-        n.height = i;
-
-        this.onRefreshItem(n, !0);
-
-        a = o + 1;
-      }
-      if (0 !== u && null !== a)
-        for (; a < this.heightMap.length; a++) {
-          n = this.heightMap[a];
-          n.top += u;
-          this.onRefreshItem(n);
-        }
-    };
-
-    t.prototype.onRefreshItem = function(e, t) {
-      if ("undefined" == typeof t) {
-        t = !1;
+      if (f === 0) return;
+      this.heightMap.splice(d, e - d + 1);
+      for (e = d; e < this.heightMap.length; e++) {
+        c = this.heightMap[e];
+        c.top += f;
+        this.indexes[c.id] = e;
+        this.onRefreshItem(c);
       }
     };
 
-    t.prototype.itemsCount = function() {
+    a.prototype.onRemoveItem = function(a) {};
+
+    a.prototype.onRefreshItemSet = function(a) {
+      var b = this;
+      this.onRefreshItems(new s(a.sort(function(a, c) {
+        return b.indexes[a.id] - b.indexes[c.id];
+      })));
+    };
+
+    a.prototype.onRefreshItems = function(a) {
+      var b;
+
+      var c;
+
+      var d;
+
+      var e;
+
+      var f = null;
+
+      var g = 0;
+      while (b = a.next()) {
+        e = this.indexes[b.id];
+        for (; g !== 0 && f !== null && f < e; f++) {
+          c = this.heightMap[f];
+          c.top += g;
+          this.onRefreshItem(c);
+        }
+        c = this.heightMap[e];
+
+        d = b.getHeight();
+
+        c.top += g;
+
+        g += d - c.height;
+
+        c.height = d;
+
+        this.onRefreshItem(c, !0);
+
+        f = e + 1;
+      }
+      if (g !== 0 && f !== null)
+        for (; f < this.heightMap.length; f++) {
+          c = this.heightMap[f];
+          c.top += g;
+          this.onRefreshItem(c);
+        }
+    };
+
+    a.prototype.onRefreshItem = function(a, b) {
+      if (typeof b == "undefined") {
+        b = !1;
+      }
+    };
+
+    a.prototype.itemsCount = function() {
       return this.heightMap.length;
     };
 
-    t.prototype.itemAt = function(e) {
-      return this.heightMap[this.indexAt(e)].id;
+    a.prototype.itemAt = function(a) {
+      return this.heightMap[this.indexAt(a)].id;
     };
 
-    t.prototype.withItemsInRange = function(e, t, n) {
-      e = this.indexAt(e);
+    a.prototype.withItemsInRange = function(a, b, c) {
+      a = this.indexAt(a);
 
-      t = this.indexAt(t);
-      for (var i = e; t >= i; i++) {
-        n(this.heightMap[i].id);
+      b = this.indexAt(b);
+      for (var d = a; d <= b; d++) {
+        c(this.heightMap[d].id);
       }
     };
 
-    t.prototype.indexAt = function(e) {
-      for (var t, n, i = 0, o = this.heightMap.length; o > i;)
-        if (t = Math.floor((i + o) / 2), n = this.heightMap[t], e < n.top) {
-          o = t;
+    a.prototype.indexAt = function(a) {
+      var b = 0;
+
+      var c = this.heightMap.length;
+
+      var d;
+
+      var e;
+      while (b < c) {
+        d = Math.floor((b + c) / 2);
+
+        e = this.heightMap[d];
+        if (a < e.top) {
+          c = d;
         } else {
-          if (!(e >= n.top + n.height)) {
-            return t;
+          if (!(a >= e.top + e.height)) {
+            return d;
           }
-          if (i === t) break;
-          i = t;
+          if (b === d) break;
+          b = d;
         }
+      }
       return this.heightMap.length;
     };
 
-    t.prototype.indexAfter = function(e) {
-      return Math.min(this.indexAt(e) + 1, this.heightMap.length);
+    a.prototype.indexAfter = function(a) {
+      return Math.min(this.indexAt(a) + 1, this.heightMap.length);
     };
 
-    t.prototype.itemAtIndex = function(e) {
-      return this.heightMap[e];
+    a.prototype.itemAtIndex = function(a) {
+      return this.heightMap[a];
     };
 
-    t.prototype.itemAfter = function(e) {
-      return this.heightMap[this.indexes[e.id] + 1] || null;
-    };
-
-    t.prototype.dispose = function() {
+    a.prototype.dispose = function() {
       this.heightMap = null;
 
       this.indexes = null;
     };
 
-    return t;
-  }(a.EventEmitter);
-  t.HeightMap = y;
-  var _ = function(e) {
-    function t(t, n) {
-      var o = this;
-      e.call(this, t);
+    return a;
+  }();
+  b.HeightMap = r;
+  var s = function() {
+    function a(a) {
+      this.items = a;
+
+      this.index = -1;
+    }
+    a.prototype.current = function() {
+      return this.items[this.index] || null;
+    };
+
+    a.prototype.next = function() {
+      this.index = Math.min(this.index + 1, this.items.length);
+
+      return this.items[this.index];
+    };
+
+    a.prototype.previous = function() {
+      this.index = Math.max(this.index - 1, -1);
+
+      return this.items[this.index];
+    };
+
+    a.prototype.parent = function() {
+      this.index = this.items.length;
+
+      return this.items[this.index];
+    };
+
+    a.prototype.first = function() {
+      this.index = 0;
+
+      return this.items[this.index];
+    };
+
+    a.prototype.last = function() {
+      this.index = this.items.length - 1;
+
+      return this.items[this.index];
+    };
+
+    return a;
+  }();
+
+  var t = function(a) {
+    function b(b, c) {
+      a.call(this);
 
       this.isRefreshing = !1;
 
-      this.refreshingPreviousChildrenIds = {};
-
-      this.treeContext = t;
+      this.context = b;
 
       this.modelListeners = [];
 
@@ -468,30 +338,22 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
 
       this.domNode.tabIndex = 0;
 
-      if (this.treeContext.options.alwaysFocused) {
-        r.addClass(this.domNode, "focused");
+      if (this.context.options.alwaysFocused) {
+        k.addClass(this.domNode, "focused");
       }
 
-      if (this.treeContext.options.bare) {
-        r.addClass(this.domNode, "bare");
+      if (this.context.options.bare) {
+        k.addClass(this.domNode, "bare");
       }
 
       this.wrapper = document.createElement("div");
 
       this.wrapper.className = "monaco-vtree-wrapper";
 
-      this.scrollableElement = new h.ScrollableElement(this.wrapper, {
-        scrollable: this,
-        horizontal: t.options.horizontalScrollMode || "hidden",
-        vertical: t.options.verticalScrollMode || "auto"
+      this.scrollable = new n.ScrollableElement(this.wrapper, {
+        horizontal: b.options.horizontalScrollMode || "hidden",
+        vertical: b.options.verticalScrollMode || "auto"
       });
-
-      if (i.browser.isIE11orEarlier) {
-        this.wrapper.style.msTouchAction = "none";
-        this.wrapper.style.msContentZooming = "none";
-      } else {
-        this.wrapperGesture = new l.Gesture(this.wrapper);
-      }
 
       this.rowsContainer = document.createElement("div");
 
@@ -508,224 +370,142 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
       this.fakeRow.appendChild(this.fakeContent);
 
       this.rowsContainer.appendChild(this.fakeRow);
-      var s = r.trackFocus(this.domNode);
-      s.addFocusListener(function(e) {
-        return o.onFocus(e);
-      });
+      var d = k.trackFocus(this.domNode);
+      d.addFocusListener(this.onFocus.bind(this));
 
-      s.addBlurListener(function(e) {
-        return o.onBlur(e);
-      });
+      d.addBlurListener(this.onBlur.bind(this));
 
       this.viewListeners.push(function() {
-        s.dispose();
+        d.dispose();
       });
 
-      this.viewListeners.push(r.addListener(this.domNode, "keydown", function(e) {
-        return o.onKeyDown(e);
-      }));
+      this.viewListeners.push(k.addListener(this.domNode, "keydown", this.onKeyDown.bind(this)));
 
-      this.viewListeners.push(r.addListener(this.domNode, "keyup", function(e) {
-        return o.onKeyUp(e);
-      }));
+      this.viewListeners.push(k.addListener(this.domNode, "keyup", this.onKeyUp.bind(this)));
 
-      this.viewListeners.push(r.addListener(this.domNode, "mousedown", function(e) {
-        return o.onMouseDown(e);
-      }));
+      this.viewListeners.push(k.addListener(this.wrapper, "click", this.onClick.bind(this)));
 
-      this.viewListeners.push(r.addListener(this.wrapper, "click", function(e) {
-        return o.onClick(e);
-      }));
+      this.viewListeners.push(k.addListener(this.wrapper, "contextmenu", this.onContextMenu.bind(this)));
 
-      this.viewListeners.push(r.addListener(this.domNode, "contextmenu", function(e) {
-        return o.onContextMenu(e);
-      }));
+      this.viewListeners.push(k.addListener(this.wrapper, "scroll", this.onScroll.bind(this)));
 
-      this.viewListeners.push(r.addListener(this.wrapper, l.EventType.Tap, function(e) {
-        return o.onTap(e);
-      }));
+      this.viewListeners.push(k.addListener(window, "dragover", this.onDragOver.bind(this)));
 
-      this.viewListeners.push(r.addListener(this.wrapper, l.EventType.Change, function(e) {
-        return o.onTouchChange(e);
-      }));
+      this.viewListeners.push(k.addListener(window, "drop", this.onDrop.bind(this)));
 
-      if (i.browser.isIE11orEarlier) {
-        this.viewListeners.push(r.addListener(this.wrapper, "MSPointerDown", function(e) {
-          return o.onMsPointerDown(e);
-        }));
-        this.viewListeners.push(r.addListener(this.wrapper, "MSGestureTap", function(e) {
-          return o.onMsGestureTap(e);
-        }));
-        this.viewListeners.push(r.addThrottledListener(this.wrapper, "MSGestureChange", function(e) {
-          return o.onThrottledMsGestureChange(e);
-        }, function(e, t) {
-          var n = {
-            translationY: t.translationY,
-            translationX: t.translationX
-          };
-          e && (n.translationY += e.translationY, n.translationX += e.translationX);
+      this.viewListeners.push(k.addListener(window, "dragend", this.onDragEnd.bind(this)));
 
-          return n;
-        }));
-      }
-
-      this.viewListeners.push(r.addListener(window, "dragover", function(e) {
-        return o.onDragOver(e);
-      }));
-
-      this.viewListeners.push(r.addListener(window, "drop", function(e) {
-        return o.onDrop(e);
-      }));
-
-      this.viewListeners.push(r.addListener(window, "dragend", function(e) {
-        return o.onDragEnd(e);
-      }));
-
-      this.viewListeners.push(r.addListener(window, "dragleave", function(e) {
-        return o.onDragOver(e);
-      }));
+      this.viewListeners.push(k.addListener(window, "dragleave", this.onDragOver.bind(this)));
 
       this.wrapper.appendChild(this.rowsContainer);
 
-      this.domNode.appendChild(this.scrollableElement.getDomNode());
+      this.domNode.appendChild(this.scrollable.getDomNode());
 
-      n.appendChild(this.domNode);
-
-      this._scrollTop = 0;
-
-      this.viewTop = 0;
-
-      this._viewHeight = 0;
+      c.appendChild(this.domNode);
 
       this.renderTop = 0;
 
       this.renderHeight = 0;
 
-      this.didJustPressContextMenuKey = !1;
+      this.onRowsChanged();
 
-      this.currentDropTarget = null;
+      this.layout();
 
-      this.currentDropTargets = [];
-
-      this.shouldInvalidateDropReaction = !1;
+      this.currentDropFeedbackHTMLElements = [];
 
       this.dragAndDropScrollInterval = null;
 
       this.dragAndDropScrollTimeout = null;
 
       this.onHiddenScrollTop = null;
-
-      this.onRowsChanged();
-
-      this.layout();
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.getHTMLElement = function() {
+    b.prototype.getHTMLElement = function() {
       return this.domNode;
     };
 
-    t.prototype.focus = function() {
+    b.prototype.focus = function() {
       this.domNode.focus();
     };
 
-    t.prototype.isFocused = function() {
+    b.prototype.isFocused = function() {
       return document.activeElement === this.domNode;
     };
 
-    t.prototype.blur = function() {
+    b.prototype.blur = function() {
       this.domNode.blur();
     };
 
-    t.prototype.onVisible = function() {
-      var e = this;
-      this.scrollTop = this.onHiddenScrollTop;
+    b.prototype.onVisible = function() {
+      this.wrapper.scrollTop = this.onHiddenScrollTop;
 
       this.onHiddenScrollTop = null;
 
-      this.scrollableElement.onElementDimensions();
+      this.scrollable.onElementDimensions();
 
-      this.scrollableElement.onElementInternalDimensions();
-
-      if (i.browser.isIE11orEarlier) {
-        this.msGesture = new MSGesture;
-        setTimeout(function() {
-          return e.msGesture.target = e.wrapper;
-        }, 100);
-      }
+      this.scrollable.onElementInternalDimensions();
     };
 
-    t.prototype.onHidden = function() {
-      this.onHiddenScrollTop = this.scrollTop;
+    b.prototype.onHidden = function() {
+      this.onHiddenScrollTop = this.wrapper.scrollTop;
     };
 
-    t.prototype.isTreeVisible = function() {
-      return null === this.onHiddenScrollTop;
+    b.prototype.isTreeVisible = function() {
+      return this.onHiddenScrollTop === null;
     };
 
-    t.prototype.layout = function(e) {
-      if (this.isTreeVisible()) {
-        this.viewTop = r.getTopLeftOffset(this.wrapper).top;
-        this.viewHeight = e || r.getContentHeight(this.wrapper);
-        this.scrollTop = this.scrollTop;
-        this.scrollableElement.onElementDimensions();
-        this.scrollableElement.onElementInternalDimensions();
-      }
+    b.prototype.layout = function(a) {
+      if (!this.isTreeVisible()) return;
+      this.viewTop = k.getTopLeftOffset(this.wrapper).top;
+      var b = this.wrapper.scrollTop;
+
+      var c = a || k.getContentHeight(this.wrapper);
+      this.scrollable.onElementDimensions();
+
+      this.render(b, c);
     };
 
-    t.prototype.render = function(e, t) {
-      var n;
+    b.prototype.render = function(a, b) {
+      var c = a + b;
 
-      var i;
+      var d = this.renderTop + this.renderHeight;
 
-      var o = e + t;
+      var e;
 
-      var r = this.scrollTop + this.viewHeight;
-
-      var s = e;
-      s = Math.max(s, 0);
-      var a = o;
-
-      var u = 0 === r ? 0 : r;
-      for (n = this.indexAfter(a) - 1, i = this.indexAt(Math.max(u, s)); n >= i; n--) {
-        this.insertItemInDOM(this.itemAtIndex(n));
+      var f;
+      for (e = this.indexAt(a), f = Math.min(this.indexAt(this.renderTop), this.indexAfter(c)); e < f; e++) {
+        this.insertItemInDOM(this.itemAtIndex(e));
       }
-      for (n = Math.min(this.indexAt(this.renderTop), this.indexAfter(a)) - 1, i = this.indexAt(s); n >= i; n--) {
-        this.insertItemInDOM(this.itemAtIndex(n));
+      for (e = this.indexAt(Math.max(d, a)), f = this.indexAfter(c); e < f; e++) {
+        this.insertItemInDOM(this.itemAtIndex(e));
       }
-      for (n = this.indexAt(this.renderTop), i = Math.min(this.indexAt(s), this.indexAfter(u)); i > n; n++) {
-        this.removeItemFromDOM(this.itemAtIndex(n));
+      for (e = this.indexAt(this.renderTop), f = Math.min(this.indexAt(a), this.indexAfter(d)); e < f; e++) {
+        this.removeItemFromDOM(this.itemAtIndex(e));
       }
-      for (n = Math.max(this.indexAfter(a), this.indexAt(this.renderTop)), i = this.indexAfter(u); i > n; n++) {
-        this.removeItemFromDOM(this.itemAtIndex(n));
+      for (e = Math.max(this.indexAfter(c), this.indexAt(this.renderTop)), f = this.indexAfter(d); e < f; e++) {
+        this.removeItemFromDOM(this.itemAtIndex(e));
       }
-      var l = this.itemAtIndex(this.indexAt(s));
-      if (l) {
-        this.rowsContainer.style.top = l.top - s + "px";
-      }
+      this.renderTop = a;
 
-      this.renderTop = s;
-
-      this.renderHeight = a - s;
+      this.renderHeight = b;
     };
 
-    t.prototype.setModel = function(e) {
-      var t = this;
+    b.prototype.setModel = function(a) {
       this.releaseModel();
 
-      this.model = e;
+      this.model = a;
 
-      this.modelListeners.push(this.model.addBulkListener(function(e) {
-        return t.onModelEvents(e);
-      }));
+      this.modelListeners.push(this.model.addBulkListener(this.onModelEvents.bind(this)));
     };
 
-    t.prototype.onModelEvents = function(e) {
-      for (var t = [], n = 0, i = e.length; i > n; n++) {
-        var o = e[n];
+    b.prototype.onModelEvents = function(a) {
+      var b = [];
+      for (var c = 0, d = a.length; c < d; c++) {
+        var e = a[c];
 
-        var r = o.getData();
-        switch (o.getType()) {
+        var f = e.getData();
+        switch (e.getType()) {
           case "refreshing":
             this.onRefreshing();
             break;
@@ -733,515 +513,425 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
             this.onRefreshed();
             break;
           case "clearingInput":
-            this.onClearingInput(r);
+            this.onClearingInput(f);
             break;
           case "setInput":
-            this.onSetInput(r);
+            this.onSetInput(f);
             break;
           case "item:childrenRefreshing":
-            this.onItemChildrenRefreshing(r);
+            this.onItemChildrenRefreshing(f);
             break;
           case "item:childrenRefreshed":
-            this.onItemChildrenRefreshed(r);
+            this.onItemChildrenRefreshed(f);
             break;
           case "item:refresh":
-            t.push(r.item);
+            b.push(f.item);
             break;
           case "item:expanding":
-            this.onItemExpanding(r);
+            this.onItemExpanding(f);
             break;
           case "item:expanded":
-            this.onItemExpanded(r);
+            this.onItemExpanded(f);
             break;
           case "item:collapsing":
-            this.onItemCollapsing(r);
+            this.onItemCollapsing(f);
             break;
           case "item:reveal":
-            this.onItemReveal(r);
+            this.onItemReveal(f);
             break;
           case "item:addTrait":
-            this.onItemAddTrait(r);
+            this.onItemAddTrait(f);
             break;
           case "item:removeTrait":
-            this.onItemRemoveTrait(r);
+            this.onItemRemoveTrait(f);
         }
       }
-      if (t.length > 0) {
-        this.onItemsRefresh(t);
+      if (b.length > 0) {
+        this.onItemsRefresh(b);
       }
     };
 
-    t.prototype.onRefreshing = function() {
+    b.prototype.onRefreshing = function() {
       this.isRefreshing = !0;
     };
 
-    t.prototype.onRefreshed = function() {
+    b.prototype.onRefreshed = function() {
       this.isRefreshing = !1;
 
       this.onRowsChanged();
     };
 
-    t.prototype.onRowsChanged = function() {
-      if (!this.isRefreshing) {
-        this.scrollTop = this.scrollTop;
-        this.scrollableElement.onElementInternalDimensions();
-      }
+    b.prototype.onRowsChanged = function() {
+      if (this.isRefreshing) return;
+      this.rowsContainer.style.height = this.getTotalHeight() + "px";
+
+      this.scrollable.onElementInternalDimensions();
     };
 
-    t.prototype.withFakeRow = function(e) {
-      return e(this.fakeContent);
+    b.prototype.withFakeRow = function(a) {
+      return a(this.fakeContent);
     };
 
-    t.prototype.focusNextPage = function(e) {
-      var t = this;
+    b.prototype.focusNextPage = function(a) {
+      var b = this;
 
-      var n = this.indexAt(this.scrollTop + this.viewHeight);
-      n = 0 === n ? 0 : n - 1;
-      var i = this.itemAtIndex(n).model.getElement();
+      var c = this.indexAt(this.renderTop + this.renderHeight);
+      c = c === 0 ? 0 : c - 1;
+      var d = this.itemAtIndex(c).model.getElement();
 
-      var o = this.model.getFocus();
-      if (o !== i) {
-        this.model.setFocus(i, e);
+      var e = this.model.getFocus();
+      if (e !== d) {
+        this.model.setFocus(d, a);
       } else {
-        var r = this.scrollTop;
-        this.scrollTop += this.viewHeight;
+        var f = this.wrapper.scrollTop;
+        this.wrapper.scrollTop += this.renderHeight;
 
-        if (this.scrollTop !== r) {
+        if (this.wrapper.scrollTop !== f) {
           setTimeout(function() {
-            t.focusNextPage(e);
+            b.focusNextPage(a);
           }, 0);
         }
       }
     };
 
-    t.prototype.focusPreviousPage = function(e) {
-      var t;
+    b.prototype.focusPreviousPage = function(a) {
+      var b = this;
 
-      var n = this;
-      t = 0 === this.scrollTop ? this.indexAt(this.scrollTop) : this.indexAfter(this.scrollTop - 1);
-      var i = this.itemAtIndex(t).model.getElement();
-
-      var o = this.model.getFocus();
-      if (o !== i) {
-        this.model.setFocus(i, e);
+      var c;
+      if (this.wrapper.scrollTop === 0) {
+        c = this.indexAt(this.renderTop);
       } else {
-        var r = this.scrollTop;
-        this.scrollTop -= this.viewHeight;
+        c = this.indexAfter(this.renderTop - 1);
+      }
+      var d = this.itemAtIndex(c).model.getElement();
 
-        if (this.scrollTop !== r) {
+      var e = this.model.getFocus();
+      if (e !== d) {
+        this.model.setFocus(d, a);
+      } else {
+        var f = this.wrapper.scrollTop;
+        this.wrapper.scrollTop -= this.renderHeight;
+
+        if (this.wrapper.scrollTop !== f) {
           setTimeout(function() {
-            n.focusPreviousPage(e);
+            b.focusPreviousPage(a);
           }, 0);
         }
       }
     };
 
-    Object.defineProperty(t.prototype, "viewHeight", {
-      get: function() {
-        return this._viewHeight;
-      },
-      set: function(e) {
-        this.render(this.scrollTop, e);
-
-        this._viewHeight = e;
-      },
-      enumerable: !0,
-      configurable: !0
-    });
-
-    t.prototype.getScrollHeight = function() {
-      return this.getTotalHeight();
-    };
-
-    t.prototype.getScrollWidth = function() {
-      return 0;
-    };
-
-    t.prototype.getScrollLeft = function() {
-      return 0;
-    };
-
-    t.prototype.setScrollLeft = function() {};
-
-    Object.defineProperty(t.prototype, "scrollTop", {
-      get: function() {
-        return this._scrollTop;
-      },
-      set: function(e) {
-        this.setScrollTop(e);
-      },
-      enumerable: !0,
-      configurable: !0
-    });
-
-    t.prototype.getScrollTop = function() {
-      return this._scrollTop;
-    };
-
-    t.prototype.setScrollTop = function(e) {
-      e = Math.min(e, this.getTotalHeight() - this.viewHeight);
-
-      e = Math.max(e, 0);
-
-      this.render(e, this.viewHeight);
-
-      this._scrollTop = e;
-
-      this.emit("scroll", {
-        vertical: !0,
-        horizontal: !1
-      });
-    };
-
-    t.prototype.addScrollListener = function(e) {
-      return this.addListener2("scroll", e);
-    };
-
-    t.prototype.onClearingInput = function(e) {
-      var t = e.item;
-      if (t) {
-        this.onRemoveItems(t.getNavigator());
+    b.prototype.onClearingInput = function(a) {
+      var b = a.item;
+      if (b) {
+        this.onRemoveItems(b.getNavigator());
         this.onRowsChanged();
       }
     };
 
-    t.prototype.onSetInput = function(e) {
-      this.inputItem = new v(this.treeContext, e.item, this.wrapper);
-
-      this.emit("viewItem:create", {
-        item: this.inputItem.model
-      });
+    b.prototype.onSetInput = function(a) {
+      this.inputItem = new q(a.item, 0);
     };
 
-    t.prototype.onItemChildrenRefreshing = function(e) {
-      var n = e.item;
+    b.prototype.onItemChildrenRefreshing = function(a) {
+      var c = a.item;
 
-      var i = this.items[n.id];
-      if (i && (i.loadingPromise = o.Promise.timeout(t.LOADING_DECORATION_DELAY).then(function() {
-        i.loadingPromise = null;
+      var d = this.items[c.id];
+      if (d) {
+        d.loadingPromise = j.Promise.timeout(b.LOADING_DECORATION_DELAY).then(function() {
+          d.loadingPromise = null;
 
-        i.loading = !0;
-      })), !e.isNested) {
-        for (var r, s = [], a = n.getNavigator(); r = a.next();) {
-          s.push(r.id);
-        }
-        this.refreshingPreviousChildrenIds[n.id] = s;
+          k.addClass(d.row, "loading");
+        });
+      }
+
+      if (!a.isNested) {
+        this.onRemoveItems(c.getNavigator());
+        this.onRowsChanged();
       }
     };
 
-    t.prototype.onItemChildrenRefreshed = function(e) {
-      var t = e.item;
+    b.prototype.onItemChildrenRefreshed = function(a) {
+      var b = a.item;
 
-      var n = this.items[t.id];
-      if (n && (n.loadingPromise && (n.loadingPromise.cancel(), n.loadingPromise = null), n.loading = !1), !e.isNested) {
-        for (var i, o = this.refreshingPreviousChildrenIds[t.id], r = [], s = t.getNavigator(); i = s.next();) {
-          r.push(i);
+      var c = this.items[b.id];
+      if (c) {
+        if (c.loadingPromise) {
+          c.loadingPromise.cancel();
+          c.loadingPromise = null;
         }
-        for (var a = new u.LcsDiff({
-          getLength: function() {
-            return o.length;
-          },
-          getElementHash: function(e) {
-            return o[e];
-          }
-        }, {
-          getLength: function() {
-            return r.length;
-          },
-          getElementHash: function(e) {
-            return r[e].id;
-          }
-        }, null), l = a.ComputeDiff(), c = 0, d = l.length; d > c; c++) {
-          var h = l[c];
-          if (h.originalLength > 0 && this.onRemoveItems(new p(o, h.originalStart, h.originalStart + h.originalLength)),
-            h.modifiedLength > 0) {
-            var f = r[h.modifiedStart - 1] || t;
-            f = f.getDepth() > 0 ? f : null;
+        k.removeClass(c.row, "loading");
+      }
 
-            this.onInsertItems(new p(r, h.modifiedStart, h.modifiedStart + h.modifiedLength), f ? f.id : null);
-          }
-        }
-        if (l.length) {
-          this.onRowsChanged();
-        }
+      if (!a.isNested) {
+        this.onInsertItems(b.getNavigator(), b.getLevel() === 0 ? null : b);
+        this.onRowsChanged();
       }
     };
 
-    t.prototype.onItemsRefresh = function(e) {
-      var t = this;
-      e = e.filter(function(e) {
-        return t.items.hasOwnProperty(e.id);
+    b.prototype.onItemsRefresh = function(a) {
+      var b = this;
+      a = a.filter(function(a) {
+        return b.items.hasOwnProperty(a.id);
       });
 
-      this.onRefreshItemSet(e);
+      this.onRefreshItemSet(a);
 
       this.onRowsChanged();
     };
 
-    t.prototype.onItemExpanding = function(e) {
-      var t = this.items[e.item.id];
-      t.expanded = !0;
+    b.prototype.onItemExpanding = function(a) {
+      var b = this.items[a.item.id];
+      if (b && b.row) {
+        k.addClass(b.row, "expanded");
+      }
     };
 
-    t.prototype.onItemExpanded = function(e) {
-      var t = e.item;
+    b.prototype.onItemExpanded = function(a) {
+      var b = a.item;
 
-      var n = this.items[t.id];
-      if (n) {
-        n.expanded = !0;
-        this.onInsertItems(t.getNavigator(), t.id);
+      var c = this.items[b.id];
+      if (c && c.row) {
+        k.addClass(c.row, "expanded");
+        this.onInsertItems(b.getNavigator(), b);
         this.onRowsChanged();
       }
     };
 
-    t.prototype.onItemCollapsing = function(e) {
-      var t = e.item;
+    b.prototype.onItemCollapsing = function(a) {
+      var b = a.item;
 
-      var n = this.items[t.id];
-      if (n) {
-        n.expanded = !1;
-        this.onRemoveItems(t.getNavigator());
+      var c = this.items[b.id];
+      if (c && c.row) {
+        k.removeClass(c.row, "expanded");
+        this.onRemoveItems(b.getNavigator());
         this.onRowsChanged();
       }
     };
 
-    t.prototype.onItemReveal = function(e) {
-      var t = e.item;
+    b.prototype.onItemReveal = function(a) {
+      var b = a.item;
 
-      var n = e.relativeTop;
+      var c = a.relativeTop;
 
-      var i = this.items[t.id];
-      if (i)
-        if (null !== n) {
-          n = 0 > n ? 0 : n;
+      var d = this.items[b.id];
+      if (d && d.row)
+        if (c !== null) {
+          c = c < 0 ? 0 : c;
 
-          n = n > 1 ? 1 : n;
-          var o = i.height - this.viewHeight;
-          this.scrollTop = o * n + i.top;
+          c = c > 1 ? 1 : c;
+          var e = d.height - this.renderHeight;
+          this.wrapper.scrollTop = e * c + d.top;
         } else {
-          var r = i.top + i.height;
+          var f = d.top + d.height;
 
-          var s = this.scrollTop + this.viewHeight;
-          if (i.top < this.scrollTop) {
-            this.scrollTop = i.top;
+          var g = this.wrapper.scrollTop + this.renderHeight;
+          if (d.top < this.wrapper.scrollTop) {
+            this.wrapper.scrollTop = d.top;
           } else {
-            if (r >= s) {
-              this.scrollTop = r - this.viewHeight;
+            if (f >= g) {
+              this.wrapper.scrollTop = f - this.renderHeight;
             }
           }
         }
     };
 
-    t.prototype.onItemAddTrait = function(e) {
-      var t = e.item;
+    b.prototype.onItemAddTrait = function(a) {
+      var b = a.item;
 
-      var n = e.trait;
+      var c = a.trait;
 
-      var i = this.items[t.id];
-      if (i) {
-        i.addClass(n);
+      var d = this.items[b.id];
+      if (d && d.row) {
+        k.addClass(d.row, c);
       }
 
-      if ("highlighted" === n) {
-        r.addClass(this.domNode, n);
-        this.highlightedItemWasDraggable = !! i.draggable;
-        if (i.draggable) {
-          i.draggable = !1;
+      if (c === "highlighted") {
+        k.addClass(this.domNode, c);
+        this.highlightedItemWasDraggable = !! d.row.draggable;
+        if (d.row.draggable) {
+          d.row.draggable = !1;
         }
       }
     };
 
-    t.prototype.onItemRemoveTrait = function(e) {
-      var t = e.item;
+    b.prototype.onItemRemoveTrait = function(a) {
+      var b = a.item;
 
-      var n = e.trait;
+      var c = a.trait;
 
-      var i = this.items[t.id];
-      if (i) {
-        i.removeClass(n);
+      var d = this.items[b.id];
+      if (d && d.row) {
+        k.removeClass(d.row, c);
       }
 
-      if ("highlighted" === n) {
-        r.removeClass(this.domNode, n);
+      if (c === "highlighted") {
+        k.removeClass(this.domNode, c);
         if (this.highlightedItemWasDraggable) {
-          i.draggable = !0;
+          d.row.draggable = !0;
         }
         delete this.highlightedItemWasDraggable;
       }
     };
 
-    t.prototype.onInsertItem = function(e) {
-      var t = this;
-      e.onDragStart = function(n) {
-        t.onDragStart(e, n);
-      };
+    b.prototype.onInsertItem = function(a) {
+      a.needsRender = !0;
 
-      e.needsRender = !0;
+      this.refreshViewItem(a);
 
-      this.refreshViewItem(e);
-
-      this.items[e.id] = e;
+      this.items[a.id] = a;
     };
 
-    t.prototype.onRefreshItem = function(e, t) {
-      if ("undefined" == typeof t) {
-        t = !1;
+    b.prototype.onRefreshItem = function(a, b) {
+      if (typeof b == "undefined") {
+        b = !1;
       }
 
-      e.needsRender = e.needsRender || t;
+      a.needsRender = a.needsRender || b;
 
-      this.refreshViewItem(e);
+      this.refreshViewItem(a);
     };
 
-    t.prototype.onRemoveItem = function(e) {
-      this.removeItemFromDOM(e);
+    b.prototype.onRemoveItem = function(a) {
+      this.removeItemFromDOM(a);
 
-      e.dispose();
-
-      this.emit("viewItem:dispose", {
-        item: this.inputItem.model
-      });
-
-      delete this.items[e.id];
-    };
-
-    t.prototype.refreshViewItem = function(e) {
-      e.render();
-
-      if (this.shouldBeRendered(e)) {
-        this.insertItemInDOM(e);
-      } else {
-        this.removeItemFromDOM(e);
+      if (a.renderCleanupFn) {
+        a.renderCleanupFn(this.context.tree, a.model.getElement());
+        delete a.renderCleanupFn;
       }
+
+      delete a.row;
+
+      delete a.content;
+
+      delete a.model;
+
+      delete this.items[a.id];
     };
 
-    t.prototype.onClick = function(e) {
-      if (!this.lastPointerType || "mouse" === this.lastPointerType) {
-        var t = new c.StandardMouseEvent(e);
+    b.prototype.refreshViewItem = function(a) {
+      if (!a.row) {
+        a.row = document.createElement("div");
 
-        var n = this.getItemAround(t.target);
-        if (n) {
-          this.treeContext.controller.onClick(this.treeContext.tree, n.model.getElement(), t);
+        a.row.className = "row";
+
+        a.row[b.BINDING] = a;
+
+        a.content = document.createElement("div");
+
+        a.content.className = "content";
+
+        a.row.appendChild(a.content);
+        var c = a.model.getAllTraits();
+        for (var d = 0, e = c.length; d < e; d++) {
+          k.addClass(a.row, c[d]);
         }
       }
-    };
+      a.row.style.height = a.height + "px";
 
-    t.prototype.onTap = function(e) {
-      var t = this.getItemAround(e.initialTarget);
-      if (t) {
-        this.treeContext.controller.onTap(this.treeContext.tree, t.model.getElement(), e);
+      a.row.style.top = a.top + "px";
+
+      a.row.style.paddingLeft = this.context.options.twistiePixels + (a.model.getLevel() - 1) * this.context.options.indentPixels +
+        "px";
+
+      k.toggleClass(a.row, "has-children", a.model.hasChildren());
+
+      k.toggleClass(a.row, "expanded", a.model.isExpanded());
+      var f = this.context.dnd.getDragURI(this.context.tree, a.model.getElement());
+      if (f !== a.uri) {
+        if (a.unbindDragStart) {
+          a.unbindDragStart();
+          delete a.unbindDragStart;
+        }
+        if (f) {
+          a.uri = f;
+          a.row.draggable = !0;
+          a.unbindDragStart = k.addListener(a.row, "dragstart", this.onDragStart.bind(this, a));
+        } else {
+          delete a.uri;
+        }
       }
-    };
 
-    t.prototype.onTouchChange = function(e) {
-      e.preventDefault();
-
-      e.stopPropagation();
-
-      this.scrollTop -= e.translationY;
-    };
-
-    t.prototype.onContextMenu = function(e) {
-      var t;
-
-      var i;
-      if (e instanceof KeyboardEvent || this.didJustPressContextMenuKey) {
-        this.didJustPressContextMenuKey = !1;
-        var o = new d.KeyboardEvent(e);
-        if (i = this.model.getFocus(), !i) return;
-        var s = this.context.dataSource.getId(this.context.tree, i);
-
-        var a = this.items[s];
-
-        var u = r.getDomNodePosition(a.row);
-        t = new n.KeyboardContextMenuEvent(u.left + u.width, u.top, o);
+      if (this.isVisible(a)) {
+        this.insertItemInDOM(a);
       } else {
-        var l = new c.StandardMouseEvent(e);
-
-        var h = this.getItemAround(l.target);
-        if (!h) return;
-        i = h.model.getElement();
-
-        t = new n.MouseContextMenuEvent(l);
-      }
-      this.treeContext.controller.onContextMenu(this.treeContext.tree, i, t);
-    };
-
-    t.prototype.onKeyDown = function(e) {
-      var t = new d.KeyboardEvent(e);
-      this.didJustPressContextMenuKey = "ContextMenu" === t.key || t.shiftKey && "F10" === t.key;
-
-      if (this.didJustPressContextMenuKey) {
-        t.preventDefault();
-        t.stopPropagation();
-      }
-
-      if (!(t.target && t.target.tagName && "input" === t.target.tagName.toLowerCase())) {
-        this.treeContext.controller.onKeyDown(this.treeContext.tree, t);
+        this.removeItemFromDOM(a);
       }
     };
 
-    t.prototype.onKeyUp = function(e) {
-      if (this.didJustPressContextMenuKey) {
-        this.onContextMenu(e);
-      }
+    b.prototype.onClick = function(a) {
+      var b = new l.MouseEvent(a);
 
-      this.didJustPressContextMenuKey = !1;
-
-      this.treeContext.controller.onKeyUp(this.treeContext.tree, new d.KeyboardEvent(e));
+      var c = this.getItemAround(b.target);
+      this.context.controller.onClick(this.context.tree, c.model.getElement(), b);
     };
 
-    t.prototype.onMouseDown = function() {
-      this.didJustPressContextMenuKey = !1;
+    b.prototype.onContextMenu = function(a) {
+      var b = new l.MouseEvent(a);
+
+      var c = this.getItemAround(b.target);
+      this.context.controller.onContextMenu(this.context.tree, c.model.getElement(), b);
     };
 
-    t.prototype.onDragStart = function(e, t) {
+    b.prototype.onScroll = function(a) {
+      this.render(this.wrapper.scrollTop, this.renderHeight);
+    };
+
+    b.prototype.onKeyDown = function(a) {
+      var b = new m.KeyboardEvent(a);
+      if (b.target && b.target.tagName && b.target.tagName.toLowerCase() === "input") return;
+      this.context.controller.onKeyDown(this.context.tree, b);
+    };
+
+    b.prototype.onKeyUp = function(a) {
+      this.context.controller.onKeyUp(this.context.tree, new m.KeyboardEvent(a));
+    };
+
+    b.prototype.onDragStart = function(a, b) {
       this.model.setHighlight();
 
-      t.dataTransfer.effectAllowed = "copyMove";
+      b.dataTransfer.effectAllowed = "copyMove";
 
-      t.dataTransfer.setData("URL", e.uri);
+      b.dataTransfer.setData("URL", a.uri);
 
-      if (t.dataTransfer.setDragImage && e.row) {
-        t.dataTransfer.setDragImage(e.row, t.offsetX || 6, t.offsetY || 6);
+      if (b.dataTransfer.setDragImage) {
+        b.dataTransfer.setDragImage(a.row, b.offsetX || 6, b.offsetY || 6);
       }
 
-      this.currentDragAndDropData = new f([e.model.getElement()]);
+      this.currentDragAndDropData = new o([a.model.getElement()]);
 
-      this.treeContext.dnd.onDragStart(this.treeContext.tree, this.currentDragAndDropData, new c.DragMouseEvent(t));
+      this.context.dnd.onDragStart(this.context.tree, this.currentDragAndDropData, new l.DragMouseEvent(b));
     };
 
-    t.prototype.setupDragAndDropScrollInterval = function() {
-      var e = this;
+    b.prototype.setupDragAndDropScrollInterval = function() {
+      var a = this;
       if (!this.dragAndDropScrollInterval) {
         this.dragAndDropScrollInterval = window.setInterval(function() {
-          if (void 0 !== e.dragAndDropMouseY) {
-            var t = e.dragAndDropMouseY - e.viewTop;
+          if (a.dragAndDropMouseY === undefined) return;
+          var b = a.dragAndDropMouseY - a.viewTop;
 
-            var n = 0;
+          var c = 0;
 
-            var i = e.viewHeight - 35;
-            if (35 > t) {
-              n = Math.max(-14, .2 * (t - 35));
-            } else {
-              if (t > i) {
-                n = Math.min(14, .2 * (t - i));
-              }
+          var d = a.renderHeight - 35;
+          if (b < 35) {
+            c = Math.max(-14, .2 * (b - 35));
+          } else {
+            if (b > d) {
+              c = Math.min(14, .2 * (b - d));
             }
-
-            e.scrollTop += n;
           }
+
+          a.wrapper.scrollTop += c;
         }, 10);
         this.cancelDragAndDropScrollTimeout();
         this.dragAndDropScrollTimeout = window.setTimeout(function() {
-          e.cancelDragAndDropScrollInterval();
+          a.cancelDragAndDropScrollInterval();
 
-          e.dragAndDropScrollTimeout = null;
+          a.dragAndDropScrollTimeout = null;
         }, 1e3);
       }
     };
 
-    t.prototype.cancelDragAndDropScrollInterval = function() {
+    b.prototype.cancelDragAndDropScrollInterval = function() {
       if (this.dragAndDropScrollInterval) {
         window.clearInterval(this.dragAndDropScrollInterval);
         this.dragAndDropScrollInterval = null;
@@ -1250,106 +940,136 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
       this.cancelDragAndDropScrollTimeout();
     };
 
-    t.prototype.cancelDragAndDropScrollTimeout = function() {
+    b.prototype.cancelDragAndDropScrollTimeout = function() {
       if (this.dragAndDropScrollTimeout) {
         window.clearTimeout(this.dragAndDropScrollTimeout);
         this.dragAndDropScrollTimeout = null;
       }
     };
 
-    t.prototype.onDragOver = function(e) {
-      var t = this;
+    b.prototype.onDragOver = function(a) {
+      var b = this;
 
-      var n = new c.DragMouseEvent(e);
+      var c = new l.DragMouseEvent(a);
 
-      var i = this.getItemAround(n.target);
-      if (!i) {
-        this.currentDropTarget && (this.currentDropTargets.forEach(function(e) {
-          return e.dropTarget = !1;
-        }), this.currentDropTargets = [], this.currentDropPromise && (this.currentDropPromise.cancel(), this.currentDropPromise =
-          null));
+      var d = this.getItemAround(c.target);
+      if (!d) {
+        if (this.currentDropHTMLElement) {
+          var e;
+          while (e = this.currentDropFeedbackHTMLElements.pop()) {
+            k.removeClass(e, "drop-target");
+          }
+          if (this.currentDropPromise) {
+            this.currentDropPromise.cancel();
+            this.currentDropPromise = null;
+          }
+        }
         this.cancelDragAndDropScrollInterval();
-        delete this.currentDropTarget;
+
+        delete this.currentDropHTMLElement;
+
         delete this.currentDropElement;
+
         delete this.dragAndDropMouseY;
+
         return !1;
       }
-      if (this.setupDragAndDropScrollInterval(), this.dragAndDropMouseY = n.posy, !this.currentDragAndDropData) {
-        if (!n.dataTransfer.types) {
+      this.setupDragAndDropScrollInterval();
+
+      this.dragAndDropMouseY = c.posy;
+      if (!this.currentDragAndDropData) {
+        if (!c.dataTransfer.types) {
           return !1;
         }
-        this.currentDragAndDropData = new g;
+        this.currentDragAndDropData = new p;
       }
-      this.currentDragAndDropData.update(n);
-      var r;
+      this.currentDragAndDropData.update(c);
+      var f = d.model;
 
-      var s;
+      var g;
 
-      var a = i.model;
+      var h = !1;
       do {
-        if (r = a ? a.getElement() : this.model.getInput(), s = this.treeContext.dnd.onDragOver(this.treeContext.tree,
-          this.currentDragAndDropData, r, n), 3 !== s) break;
-        a = a && a.parent;
-      } while (a);
-      if (!a) {
+        e = f ? f.getElement() : this.model.getInput();
+
+        g = this.context.dnd.onDragOver(this.context.tree, this.currentDragAndDropData, e, c);
+        if (g !== i.DragOverReaction.BUBBLE_UP) break;
+        h = !0;
+
+        f = f && f.parent;
+      } while (f);
+      if (!f) {
         delete this.currentDropElement;
         return !1;
       }
-      var u = 1 === s || 2 === s;
-      if (u) {
-        this.currentDropElement = a.getElement();
-        n.preventDefault();
-        n.dataTransfer.dropEffect = n.ctrlKey ? "copy" : "move";
+      var m = g === i.DragOverReaction.ACCEPT;
+      if (m) {
+        this.currentDropElement = f.getElement();
+        c.preventDefault();
+        c.dataTransfer.dropEffect = c.ctrlKey ? "copy" : "move";
       } else {
         delete this.currentDropElement;
       }
-      var l = a.id === this.inputItem.id ? this.inputItem : this.items[a.id];
-      if ((this.shouldInvalidateDropReaction || this.currentDropTarget !== l || this.currentDropElementReaction !== s) &&
-        (this.shouldInvalidateDropReaction = !1, this.currentDropTarget && (this.currentDropTargets.forEach(function(
-          e) {
-          return e.dropTarget = !1;
-        }), this.currentDropTargets = [], this.currentDropPromise && (this.currentDropPromise.cancel(), this.currentDropPromise =
-          null)), this.currentDropTarget = l, this.currentDropElementReaction = s, u)) {
-        if (this.currentDropTarget && (this.currentDropTarget.dropTarget = !0, this.currentDropTargets.push(this.currentDropTarget)),
-          2 === s)
-          for (var d, h = a.getNavigator(); d = h.next();) {
-            i = this.items[d.id];
-            if (i) {
-              i.dropTarget = !0;
-              this.currentDropTargets.push(i);
+      var n = f.id === this.inputItem.id ? this.wrapper : this.items[f.id].row;
+      if (this.currentDropHTMLElement !== n || this.currentDropElementDidBubbleUp !== h) {
+        if (this.currentDropHTMLElement) {
+          var e;
+          while (e = this.currentDropFeedbackHTMLElements.pop()) {
+            k.removeClass(e, "drop-target");
+          }
+          if (this.currentDropPromise) {
+            this.currentDropPromise.cancel();
+            this.currentDropPromise = null;
+          }
+        }
+        this.currentDropHTMLElement = n;
+
+        this.currentDropElementDidBubbleUp = h;
+        if (m) {
+          k.addClass(this.currentDropHTMLElement, "drop-target");
+
+          this.currentDropFeedbackHTMLElements.push(this.currentDropHTMLElement);
+          if (h) {
+            var o = f.getNavigator();
+
+            var q;
+            while (q = o.next()) {
+              d = this.items[q.id];
+              if (d && d.row) {
+                k.addClass(d.row, "drop-target");
+                this.currentDropFeedbackHTMLElements.push(d.row);
+              }
             }
           }
-        this.currentDropPromise = o.Promise.timeout(500).then(function() {
-          return t.treeContext.tree.expand(t.currentDropElement).then(function() {
-            t.shouldInvalidateDropReaction = !0;
+          this.currentDropPromise = j.Promise.timeout(500).then(function() {
+            b.context.tree.expand(b.currentDropElement);
           });
-        });
+        }
       }
       return !0;
     };
 
-    t.prototype.onDrop = function(e) {
+    b.prototype.onDrop = function(a) {
       if (this.currentDropElement) {
-        var t = new c.DragMouseEvent(e);
-        t.preventDefault();
+        var b = new l.DragMouseEvent(a);
+        b.preventDefault();
 
-        this.currentDragAndDropData.update(t);
+        this.currentDragAndDropData.update(b);
 
-        this.treeContext.dnd.drop(this.treeContext.tree, this.currentDragAndDropData, this.currentDropElement, t);
+        this.context.dnd.drop(this.context.tree, this.currentDragAndDropData, this.currentDropElement, b);
 
-        this.onDragEnd(e);
+        this.onDragEnd();
       }
       this.cancelDragAndDropScrollInterval();
     };
 
-    t.prototype.onDragEnd = function() {
-      if (this.currentDropTarget) {
-        this.currentDropTargets.forEach(function(e) {
-          return e.dropTarget = !1;
-        });
-        this.currentDropTargets = [];
+    b.prototype.onDragEnd = function() {
+      if (this.currentDropHTMLElement) {
+        var a;
+        while (a = this.currentDropFeedbackHTMLElements.pop()) {
+          k.removeClass(a, "drop-target");
+        }
       }
-
       if (this.currentDropPromise) {
         this.currentDropPromise.cancel();
         this.currentDropPromise = null;
@@ -1361,87 +1081,79 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
 
       delete this.currentDropElement;
 
-      delete this.currentDropTarget;
+      delete this.currentDropHTMLElement;
 
       delete this.dragAndDropMouseY;
     };
 
-    t.prototype.onFocus = function() {
-      if (!this.treeContext.options.alwaysFocused) {
-        r.addClass(this.domNode, "focused");
+    b.prototype.onFocus = function() {
+      if (!this.context.options.alwaysFocused) {
+        k.addClass(this.domNode, "focused");
       }
     };
 
-    t.prototype.onBlur = function() {
-      if (!this.treeContext.options.alwaysFocused) {
-        r.removeClass(this.domNode, "focused");
+    b.prototype.onBlur = function() {
+      if (!this.context.options.alwaysFocused) {
+        k.removeClass(this.domNode, "focused");
       }
     };
 
-    t.prototype.onMsPointerDown = function(e) {
-      if (this.msGesture) {
-        var t = e.pointerType;
-        this.lastPointerType = t === (e.MSPOINTER_TYPE_MOUSE || "mouse") ? "mouse" : t === (e.MSPOINTER_TYPE_TOUCH ||
-          "touch") ? "touch" : "pen";
+    b.prototype.insertItemInDOM = function(a) {
+      if (a.needsRender) {
+        a.renderCleanupFn = this.context.renderer.render(this.context.tree, a.model.getElement(), a.content, a.renderCleanupFn);
+        a.needsRender = !1;
+      }
 
-        if ("mouse" !== this.lastPointerType) {
-          this.msGesture.addPointer(e.pointerId);
-        }
+      if (!this.isInDOM(a)) {
+        this.rowsContainer.appendChild(a.row);
       }
     };
 
-    t.prototype.onThrottledMsGestureChange = function(e) {
-      this.scrollTop -= e.translationY;
-    };
-
-    t.prototype.onMsGestureTap = function(e) {
-      e.initialTarget = document.elementFromPoint(e.clientX, e.clientY);
-
-      this.onTap(e);
-    };
-
-    t.prototype.insertItemInDOM = function(e) {
-      var t = null;
-
-      var n = this.itemAfter(e);
-      if (n && n.row) {
-        t = n.row;
+    b.prototype.removeItemFromDOM = function(a) {
+      if (this.isInDOM(a)) {
+        this.rowsContainer.removeChild(a.row);
       }
-
-      e.insertInDOM(this.rowsContainer, t);
     };
 
-    t.prototype.removeItemFromDOM = function(e) {
-      e.removeFromDOM();
+    b.prototype.isVisible = function(a) {
+      return a.top < this.renderTop + this.renderHeight && a.top + a.height > this.renderTop;
     };
 
-    t.prototype.shouldBeRendered = function(e) {
-      return e.top < this.renderTop + this.renderHeight && e.top + e.height > this.renderTop;
+    b.prototype.isInDOM = function(a) {
+      return !!a.row && !! a.row.parentElement;
     };
 
-    t.prototype.getItemAround = function(e) {
-      var n = this.inputItem;
+    b.prototype.getItemAround = function(a) {
+      var c = this.inputItem;
       do {
-        if (e[t.BINDING] && (n = e[t.BINDING]), e === this.wrapper || e === this.domNode) {
-          return n;
+        if (a[b.BINDING]) {
+          c = a[b.BINDING];
         }
-        if (e === document.body) {
+        if (a === this.wrapper) {
+          return c;
+        }
+        if (a === document.body) {
           return null;
         }
-      } while (e = e.parentElement);
+      } while (a = a.parentElement);
     };
 
-    t.prototype.releaseModel = function() {
+    b.prototype.releaseModel = function() {
       if (this.model) {
-        for (; this.modelListeners.length;) {
+        while (this.modelListeners.length) {
           this.modelListeners.pop()();
         }
         this.model = null;
       }
     };
 
-    t.prototype.dispose = function() {
-      for (this.scrollableElement.destroy(), this.releaseModel(), this.modelListeners = null; this.viewListeners.length;) {
+    b.prototype.dispose = function() {
+      this.scrollable.destroy();
+
+      this.releaseModel();
+
+      this.modelListeners = null;
+      while (this.viewListeners.length) {
         this.viewListeners.pop()();
       }
       this.viewListeners = null;
@@ -1452,19 +1164,16 @@ define("vs/base/ui/widgets/tree/treeView", ["require", "exports", "./tree", "vs/
 
       this.domNode = null;
 
-      if (this.wrapperGesture) {
-        this.wrapperGesture.dispose();
-        this.wrapperGesture = null;
-      }
-
-      e.prototype.dispose.call(this);
+      a.prototype.dispose.call(this);
     };
 
-    t.BINDING = "monaco-vtree-row";
+    b.BINDING = "monaco-vtree-row";
 
-    t.LOADING_DECORATION_DELAY = 800;
+    b.BUFFER = 50;
 
-    return t;
-  }(y);
-  t.TreeView = _;
+    b.LOADING_DECORATION_DELAY = 800;
+
+    return b;
+  }(r);
+  b.TreeView = t;
 });

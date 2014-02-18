@@ -297,8 +297,18 @@ define(["require", "exports", "vs/editor/core/view/viewContext", "vs/editor/edit
         if (this.widgets.hasOwnProperty(c)) {
           d = this.widgets[c];
           e = this.widgets[c].widget.getDomNode();
-          a.hasOwnProperty(c) ? (e.style.top = a[c].top + "px", e.style.left = a[c].left + "px", d.isVisible || (d.isVisible = !
-            0)) : d.isVisible && (d.isVisible = !1, e.style.top = "-1000px");
+          if (a.hasOwnProperty(c)) {
+            e.style.top = a[c].top + "px";
+            e.style.left = a[c].left + "px";
+            if (!d.isVisible) {
+              d.isVisible = !0;
+            }
+          } else {
+            if (d.isVisible) {
+              d.isVisible = !1;
+              e.style.top = "-1000px";
+            }
+          }
         }
       }
     };

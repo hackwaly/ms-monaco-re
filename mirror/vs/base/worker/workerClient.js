@@ -1,130 +1,170 @@
-define("vs/base/worker/workerClient", ["require", "exports", "vs/base/lib/winjs.base", "vs/base/dom/dom",
-  "vs/base/performance/timer", "vs/base/errors", "vs/base/worker/workerProtocol", "vs/base/env"
-], function(e, t, n, i, o, r, s, a) {
-  function u(t, n) {
-    return e.toUrl("./" + t + "?" + encodeURIComponent(n));
-  }
-  t.WorkerMain = "workerMain.js";
-  var l = a.getCrossOriginWorkerScriptUrl || u;
+define(["require", "exports", "vs/base/lib/winjs.base", "vs/base/dom/dom", "vs/base/performance/timer"], function(a, b,
+  c, d, e) {
+  var f = c;
 
-  var c = function() {
-    function e(e, n, i) {
-      this.id = e;
+  var g = d;
 
-      this.worker = new Worker(l(t.WorkerMain, n));
+  var h = e;
+  b.WorkerMain = "workerMain.js";
+  var i = function() {
+    function c(c, d, e) {
+      this.id = c;
 
-      this.worker.onmessage = function(e) {
-        i(JSON.parse(e.data));
+      this.worker = new Worker(a.toUrl("./" + b.WorkerMain + "?" + encodeURIComponent(d)));
+
+      this.worker.onmessage = function(a) {
+        e(JSON.parse(a.data));
       };
     }
-    e.prototype.getId = function() {
+    c.prototype.getId = function() {
       return this.id;
     };
 
-    e.prototype.postMessage = function(e) {
-      this.worker.postMessage(JSON.stringify(e));
+    c.prototype.postMessage = function(a) {
+      this.worker.postMessage(JSON.stringify(a));
     };
 
-    e.prototype.terminate = function() {
+    c.prototype.terminate = function() {
       this.worker.terminate();
     };
 
-    return e;
+    return c;
   }();
 
-  var d = function() {
-    function t(t, n) {
-      var o = this;
-      this.id = t;
+  var j = function() {
+    function b(b, c) {
+      var d = this;
+      this.id = b;
 
-      this.loaded = !1;
+      this._loaded = !1;
 
-      this.beforeLoadMessages = [];
+      this._beforeLoadMessages = [];
 
       this.iframe = document.createElement("iframe");
 
-      this.iframe.id = this.iframeId();
+      this.iframe.id = this._iframeId();
 
-      this.iframe.src = e.toUrl("./workerMainCompatibility.html");
+      this.iframe.src = a.toUrl("./workerMainCompatibility.html");
 
       this.iframe.frameborder = this.iframe.height = this.iframe.width = "0";
 
       this.iframe.style.display = "none";
 
-      i.addListener(this.iframe, "load", function() {
-        return o.onLoaded();
+      g.addListener(this.iframe, "load", function() {
+        return d._onLoaded();
       });
 
-      this.onMessage = function(e) {
-        var t = null;
+      this._onMessage = function(a) {
+        var b = null;
         try {
-          t = JSON.parse(e.data);
-        } catch (i) {}
-        if (t) {
-          n(t);
+          b = JSON.parse(a.data);
+        } catch (d) {}
+        if (b) {
+          c(b);
         }
       };
 
-      i.addListener(window, "message", this.onMessage);
+      g.addListener(window, "message", this._onMessage);
 
       document.body.appendChild(this.iframe);
     }
-    t.prototype.iframeId = function() {
+    b.prototype._iframeId = function() {
       return "worker_iframe_" + this.id;
     };
 
-    t.prototype.onLoaded = function() {
-      for (this.loaded = !0; this.beforeLoadMessages.length > 0;) {
-        this.postMessage(this.beforeLoadMessages.shift());
+    b.prototype._onLoaded = function() {
+      this._loaded = !0;
+      while (this._beforeLoadMessages.length > 0) {
+        this.postMessage(this._beforeLoadMessages.shift());
       }
     };
 
-    t.prototype.getId = function() {
+    b.prototype.getId = function() {
       return this.id;
     };
 
-    t.prototype.postMessage = function(e) {
-      if (this.loaded === !0) {
-        window.frames[this.iframeId()].postMessage(JSON.stringify(e), "*");
+    b.prototype.postMessage = function(a) {
+      if (this._loaded === !0) {
+        window.frames[this._iframeId()].postMessage(JSON.stringify(a), "*");
       } else {
-        this.beforeLoadMessages.push(e);
+        this._beforeLoadMessages.push(a);
       }
     };
 
-    t.prototype.terminate = function() {
-      window.removeEventListener("message", this.onMessage);
+    b.prototype.terminate = function() {
+      window.removeEventListener("message", this._onMessage);
 
-      window.frames[this.iframeId()].close();
+      window.frames[this._iframeId()].close();
     };
 
-    return t;
+    return b;
   }();
 
-  var h = function() {
-    function e(e) {
-      this.label = e;
+  var k = function() {
+    function b(b, c) {
+      var d = this;
+      this.id = b;
+
+      this.queuedMessages = [];
+
+      this.messageHandler = function(a) {
+        d.queuedMessages.push(a);
+      };
+
+      a(["vs/base/worker/workerServer"], function(a) {
+        var b = new a.WorkerServer(function(a) {
+          c(a);
+        });
+        while (d.queuedMessages.length > 0) {
+          b.onmessage(d.queuedMessages.shift());
+        }
+        d.messageHandler = function(a) {
+          b.onmessage(a);
+        };
+      });
     }
-    e.prototype.create = function(e, t) {
-      var n = null;
-      try {
-        n = new c(e, this.label, t);
-      } catch (i) {
-        n = new d(e, t);
-      }
-      return n;
+    b.prototype.getId = function() {
+      return this.id;
     };
 
-    return e;
+    b.prototype.postMessage = function(a) {
+      this.messageHandler(a);
+    };
+
+    b.prototype.terminate = function() {
+      this.queuedMessages = null;
+
+      this.messageHandler = null;
+    };
+
+    return b;
   }();
-  t.DefaultWorkerFactory = h;
-  var p = function() {
-    function e(t, n) {
-      var i = this;
-      this._lastMessageId = 0;
 
-      this._promises = {};
+  var l = function() {
+    function a(a) {
+      this.label = a;
+    }
+    a.prototype.create = function(a, b) {
+      var c = null;
+      try {
+        c = new i(a, this.label, b);
+      } catch (d) {
+        c = new j(a, b);
+      }
+      return c;
+    };
 
-      this._messageHandlers = {};
+    return a;
+  }();
+  b.DefaultWorkerFactory = l;
+  var m = function() {
+    function a(b, c) {
+      var d = this;
+      this.lastMessageId = 0;
+
+      this.promises = {};
+
+      this.messageHandlers = {};
 
       this._messagesQueue = [];
 
@@ -134,248 +174,244 @@ define("vs/base/worker/workerClient", ["require", "exports", "vs/base/lib/winjs.
 
       this._lastTimerEvent = null;
 
-      this._worker = t.create(++e.LAST_WORKER_ID, function(e) {
-        return i._onmessage(e);
+      this.worker = b.create(++a.LAST_WORKER_ID, function(a) {
+        return d._onmessage(a);
       });
-      var o = null;
 
-      var r = window.require;
-      if ("function" == typeof r.getConfig) {
-        o = r.getConfig();
-      } else {
-        if ("undefined" != typeof window.requirejs) {
-          o = window.requirejs.s.contexts._.config;
-        }
-      }
-      var a = window.MonacoEnvironment || null;
-      this.onModuleLoaded = this._sendMessage(s.MessageType.INITIALIZE, {
-        id: this._worker.getId(),
-        moduleId: n,
-        loaderConfiguration: o,
-        MonacoEnvironment: a
+      this.onModuleLoaded = this._sendMessage("$initialize", {
+        id: this.worker.getId(),
+        moduleId: c
       });
 
       this.onModuleLoaded.then(null, function() {
-        return i._onError("Worker failed to load " + n);
+        return d.onError("Worker failed to load " + c);
       });
     }
-    e.prototype.request = function(e, t, i) {
-      var o = this;
-      if ("$" === e.charAt(0)) throw new Error("Illegal requestName: " + e);
-      var r;
+    a.prototype.request = function(a, b, c) {
+      var d = this;
+      if (a.charAt(0) === "$") throw new Error("Illegal requestName: " + a);
+      var e = !1;
 
-      var s = !1;
-      return new n.Promise(function(n, a, u) {
-        o.onModuleLoaded.then(function() {
-          if (!s) {
-            r = o._sendMessage(e, t, i).then(n, a, u);
+      var g;
+      return new f.Promise(function(f, h, i) {
+        d.onModuleLoaded.then(function() {
+          if (!e) {
+            g = d._sendMessage(a, b, c).then(f, h, i);
           }
-        }, a, u);
+        }, h, i);
       }, function() {
-        if (r) {
-          r.cancel();
+        if (g) {
+          g.cancel();
         } else {
-          s = !0;
+          e = !0;
         }
       });
     };
 
-    e.prototype.destroy = function() {
-      this.dispose();
-    };
+    a.prototype.destroy = function() {
+      var a = Object.keys(this.promises);
+      if (a.length > 0) {
+        console.warn("Terminating a worker with " + a.length + " pending promises:");
 
-    e.prototype.dispose = function() {
-      var e = Object.keys(this._promises);
-      if (e.length > 0) {
-        console.warn("Terminating a worker with " + e.length + " pending promises:");
-
-        console.warn(this._promises);
-        for (var t in this._promises) {
-          if (e.hasOwnProperty(t)) {
-            this._promises[t].error("Worker forcefully terminated");
+        console.warn(this.promises);
+        for (var b in this.promises) {
+          if (a.hasOwnProperty(b)) {
+            this.promises[b].error("Worker forcefully terminated");
           }
         }
       }
-      this._worker.terminate();
+      this.worker.terminate();
     };
 
-    e.prototype.addMessageHandler = function(e, t) {
-      this._messageHandlers[e] = t;
+    a.prototype.addMessageHandler = function(a, b) {
+      this.messageHandlers[a] = b;
     };
 
-    e.prototype.removeMessageHandler = function(e) {
-      delete this._messageHandlers[e];
+    a.prototype.removeMessageHandler = function(a) {
+      delete this.messageHandlers[a];
     };
 
-    e.prototype._sendMessage = function(e, t, i) {
-      if ("undefined" == typeof i) {
-        i = (new Date).getTime();
+    a.prototype._sendMessage = function(a, b, c) {
+      if (typeof c == "undefined") {
+        c = (new Date).getTime();
       }
-      var o;
+      var d = this;
 
-      var r;
-
-      var s;
-
-      var a = this;
-
-      var u = {
-        id: ++this._lastMessageId,
-        type: e,
-        timestamp: i,
-        payload: t
+      var e = {
+        id: ++this.lastMessageId,
+        type: a,
+        timestamp: c,
+        payload: b
       };
 
-      var l = new n.Promise(function(e, t, n) {
-        o = e;
+      var g;
 
-        r = t;
+      var h;
 
-        s = n;
+      var i;
+
+      var j = new f.Promise(function(a, b, c) {
+        g = a;
+
+        h = b;
+
+        i = c;
       }, function() {
-        a._removeMessage(u.id);
+        d._removeMessage(e.id);
       });
-      this._promises[u.id] = {
-        complete: o,
-        error: r,
-        progress: s,
-        type: e,
-        payload: t
+      this.promises[e.id] = {
+        complete: g,
+        error: h,
+        progress: i,
+        type: a,
+        payload: b
       };
 
-      this._enqueueMessage(u);
+      this._enqueueMessage(e);
 
-      return l;
+      return j;
     };
 
-    e.prototype._enqueueMessage = function(e) {
-      var t;
+    a.prototype._enqueueMessage = function(a) {
+      var b = -1;
 
-      var n = -1;
-      for (t = this._messagesQueue.length - 1; t >= 0; t--)
-        if (this._messagesQueue[t].timestamp <= e.timestamp) {
-          n = t;
+      var c;
+      for (c = this._messagesQueue.length - 1; c >= 0; c--)
+        if (this._messagesQueue[c].timestamp <= a.timestamp) {
+          b = c;
           break;
         }
-      this._messagesQueue.splice(n + 1, 0, e);
+      this._messagesQueue.splice(b + 1, 0, a);
 
       this._processMessagesQueue();
     };
 
-    e.prototype._removeMessage = function(e) {
-      for (var t = 0, n = this._messagesQueue.length; n > t; t++)
-        if (this._messagesQueue[t].id === e) {
-          this._promises.hasOwnProperty(String(e)) && delete this._promises[String(e)];
-          this._messagesQueue.splice(t, 1);
-          this._processMessagesQueue();
-          return void 0;
-        }
-    };
-
-    e.prototype._processMessagesQueue = function() {
-      var e = this;
-      if (-1 !== this._processQueueTimeout && (clearTimeout(this._processQueueTimeout), this._processQueueTimeout = -
-        1), 0 !== this._messagesQueue.length && !this._waitingForWorkerReply) {
-        var t = this._messagesQueue[0].timestamp - (new Date).getTime();
-        t = Math.max(0, t);
-
-        this._processQueueTimeout = setTimeout(function() {
-          if (e._processQueueTimeout = -1, 0 !== e._messagesQueue.length) {
-            e._waitingForWorkerReply = !0;
-            var t = e._messagesQueue.shift();
-            e._lastTimerEvent = o.start(2, e.decodeMessageName(t));
-
-            e._worker.postMessage(t);
+    a.prototype._removeMessage = function(a) {
+      for (var b = 0, c = this._messagesQueue.length; b < c; b++)
+        if (this._messagesQueue[b].id === a) {
+          if (this.promises.hasOwnProperty(String(a))) {
+            delete this.promises[String(a)];
           }
-        }, t);
-      }
-    };
 
-    e.prototype.decodeMessageName = function(e) {
-      return e.type;
-    };
+          this._messagesQueue.splice(b, 1);
 
-    e.prototype._onmessage = function(e) {
-      if (e.monacoWorker && (!e.from || e.from === this._worker.getId())) {
-        switch (e.type) {
-          case s.MessageType.REPLY:
-            var t = e;
-            if (this._waitingForWorkerReply = !1, this._lastTimerEvent && this._lastTimerEvent.stop(), !this._promises
-              .hasOwnProperty(String(t.id))) {
-              this._onError("Received unexpected message from Worker:", e);
-              return void 0;
-            }
-            switch (t.action) {
-              case s.ReplyType.COMPLETE:
-                this._promises[t.id].complete(t.payload);
-
-                delete this._promises[t.id];
-                break;
-              case s.ReplyType.ERROR:
-                this._onError("Main Thread sent to worker the following message:", {
-                  type: this._promises[t.id].type,
-                  payload: this._promises[t.id].payload
-                });
-
-                this._onError("And the worker replied with an error:", t.payload);
-
-                r.onUnexpectedError(t.payload);
-
-                this._promises[t.id].error(t.payload);
-
-                delete this._promises[t.id];
-                break;
-              case s.ReplyType.PROGRESS:
-                this._promises[t.id].progress(t.payload);
-            }
-            break;
-          case s.MessageType.PRINT:
-            var n = e;
-            switch (n.level) {
-              case s.PrintType.LOG:
-                console.log(n.payload);
-                break;
-              case s.PrintType.DEBUG:
-                console.info(n.payload);
-                break;
-              case s.PrintType.INFO:
-                console.info(n.payload);
-                break;
-              case s.PrintType.WARN:
-                console.warn(n.payload);
-                break;
-              case s.PrintType.ERROR:
-                console.error(n.payload);
-                break;
-              default:
-                this._onError("Received unexpected message from Worker:", n);
-            }
-            break;
-          default:
-            if (e.type in this && "function" == typeof this[e.type]) {
-              this[e.type](e.payload);
-            } else {
-              var i = this._messageHandlers[e.type];
-              if (i && "function" == typeof i) {
-                i(e.payload);
-              } else {
-                this._onError("Received unexpected message from Worker:", e);
-              }
-            }
+          this._processMessagesQueue();
+          return;
         }
-        this._processMessagesQueue();
+    };
+
+    a.prototype._processMessagesQueue = function() {
+      var a = this;
+      if (this._processQueueTimeout !== -1) {
+        clearTimeout(this._processQueueTimeout);
+        this._processQueueTimeout = -1;
       }
+      if (this._messagesQueue.length === 0) return;
+      if (this._waitingForWorkerReply) return;
+      var b = this._messagesQueue[0].timestamp - (new Date).getTime();
+      b = Math.max(0, b);
+
+      this._processQueueTimeout = setTimeout(function() {
+        a._processQueueTimeout = -1;
+        if (a._messagesQueue.length === 0) return;
+        a._waitingForWorkerReply = !0;
+        var b = a._messagesQueue.shift();
+        a._lastTimerEvent = h.start(h.Topic.WORKER, a._decodeMessageName(b));
+
+        a.worker.postMessage(b);
+      }, b);
     };
 
-    e.prototype._onError = function(e, t) {
-      console.error(e);
-
-      console.info(t);
+    a.prototype._decodeMessageName = function(a) {
+      return a.type;
     };
 
-    e.LAST_WORKER_ID = 1;
+    a.prototype._onmessage = function(a) {
+      if (!a.monacoWorker) return;
+      if (a.from && a.from !== this.worker.getId()) return;
+      switch (a.type) {
+        case "$reply":
+          this._waitingForWorkerReply = !1;
 
-    return e;
+          if (this._lastTimerEvent) {
+            this._lastTimerEvent.stop();
+          }
+          if (!this.promises.hasOwnProperty(String(a.id))) {
+            this.onError("Received unexpected message from Worker:", a);
+            return;
+          }
+          switch (a.action) {
+            case "complete":
+              this.promises[a.id].complete(a.payload);
+
+              delete this.promises[a.id];
+              break;
+            case "error":
+              this.onError("Main Thread sent to worker the following message:", {
+                type: this.promises[a.id].type,
+                payload: this.promises[a.id].payload
+              });
+
+              this.onError("And the worker replied with an error:", a.payload);
+
+              this.promises[a.id].error(a.payload);
+
+              delete this.promises[a.id];
+              break;
+            case "progress":
+              this.promises[a.id].progress(a.payload);
+          }
+          break;
+        case "$schedule":
+          this._sendMessage("$schedule", {
+            scheduleId: a.scheduleId
+          }, a.timestamp);
+          break;
+        case "$print":
+          switch (a.level) {
+            case "log":
+              console.log(a.payload);
+              break;
+            case "debug":
+              console.info(a.payload);
+              break;
+            case "info":
+              console.info(a.payload);
+              break;
+            case "warn":
+              console.warn(a.payload);
+              break;
+            case "error":
+              console.error(a.payload);
+              break;
+            default:
+              this.onError("Received unexpected message from Worker:", a);
+          }
+          break;
+        default:
+          if (a.type in this && typeof this[a.type] == "function") {
+            this[a.type](a.payload);
+          } else {
+            var b = this.messageHandlers[a.type];
+            if (b && typeof b == "function") {
+              b(a.payload);
+            } else {
+              this.onError("Received unexpected message from Worker:", a);
+            }
+          }
+      }
+      this._processMessagesQueue();
+    };
+
+    a.prototype.onError = function(a, b) {
+      console.error(a);
+
+      console.info(b);
+    };
+
+    a.LAST_WORKER_ID = 1;
+
+    return a;
   }();
-  t.WorkerClient = p;
+  b.WorkerClient = m;
 });

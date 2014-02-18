@@ -1,23 +1,47 @@
-define("vs/editor/contrib/diffNavigator/diffNavigator", ["require", "exports", "vs/base/eventEmitter", "vs/base/assert",
-  "vs/editor/core/constants", "vs/editor/core/range", "vs/base/objects"
-], function(e, t, n, i, o, r, s) {
-  var a = {
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
+    }
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
+    }
+    d.prototype = b.prototype;
+
+    a.prototype = new d;
+  };
+
+define(["require", "exports", "vs/base/eventEmitter", "vs/base/assert", "vs/editor/core/constants",
+  "vs/editor/core/range", "vs/base/objects"
+], function(a, b, c, d, e, f, g) {
+  var h = c;
+
+  var i = d;
+
+  var j = e;
+
+  var k = f;
+
+  var l = g;
+
+  var m = {
     followsCaret: !0,
     ignoreCharChanges: !0,
     alwaysRevealFirst: !0
   };
 
-  var u = function(e) {
-    function t(n, i) {
-      if ("undefined" == typeof i) {
-        i = {};
+  var n = function(a) {
+    function b(b, c) {
+      if (typeof c == "undefined") {
+        c = {};
       }
-      var r = this;
-      e.call(this, [t.Events.UPDATED]);
+      var d = this;
+      a.call(this);
 
-      this.editor = n;
+      this.editor = b;
 
-      this.options = s.mixin(i, a, !1);
+      this.options = l.mixin(c, m, !1);
 
       this.disposed = !1;
 
@@ -31,37 +55,37 @@ define("vs/editor/contrib/diffNavigator/diffNavigator", ["require", "exports", "
 
       this.revealFirst = this.options.alwaysRevealFirst;
 
-      this.toUnbind.push(this.editor.addListener(o.EventType.Disposed, function() {
-        return r.dispose();
+      this.toUnbind.push(this.editor.addListener(j.EventType.Disposed, function() {
+        return d.dispose();
       }));
 
-      this.toUnbind.push(this.editor.addListener(o.EventType.DiffUpdated, function() {
-        return r.onDiffUpdated();
+      this.toUnbind.push(this.editor.addListener(j.EventType.DiffUpdated, function() {
+        return d.onDiffUpdated();
       }));
 
       if (this.options.followsCaret) {
-        this.toUnbind.push(this.editor.getModifiedEditor().addListener(o.EventType.CursorPositionChanged, function() {
-          if (!r.ignoreSelectionChange) {
-            r.nextIdx = -1;
-          }
+        this.toUnbind.push(this.editor.getModifiedEditor().addListener(j.EventType.CursorPositionChanged, function(a) {
+          if (d.ignoreSelectionChange) return;
+          d.nextIdx = -1;
         }));
       }
 
       if (this.options.alwaysRevealFirst) {
-        this.toUnbind.push(this.editor.getModifiedEditor().addListener(o.EventType.ModelChanged, function() {
-          r.revealFirst = !0;
+        this.toUnbind.push(this.editor.getModifiedEditor().addListener(j.EventType.ModelChanged, function(a) {
+          d.revealFirst = !0;
         }));
       }
 
       this.init();
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.init = function() {
-      var e = this.editor.getLineChanges();
+    b.prototype.init = function() {
+      var a = this.editor.getLineChanges();
+      if (!a) return;
     };
 
-    t.prototype.onDiffUpdated = function() {
+    b.prototype.onDiffUpdated = function() {
       this.init();
 
       this.compute(this.editor.getLineChanges());
@@ -73,47 +97,47 @@ define("vs/editor/contrib/diffNavigator/diffNavigator", ["require", "exports", "
       }
     };
 
-    t.prototype.compute = function(e) {
-      var n = this;
+    b.prototype.compute = function(a) {
+      var c = this;
       this.ranges = [];
 
-      if (e) {
-        e.forEach(function(e) {
-          if (!n.options.ignoreCharChanges && e.charChanges) {
-            e.charChanges.forEach(function(e) {
-              n.ranges.push({
-                rhs: !0,
-                range: new r.Range(e.modifiedStartLineNumber, e.modifiedStartColumn, e.modifiedEndLineNumber, e
-                  .modifiedEndColumn)
-              });
-            });
-          } else {
-            n.ranges.push({
+      a.forEach(function(a) {
+        if (!c.options.ignoreCharChanges && a.charChanges) {
+          a.charChanges.forEach(function(a) {
+            c.ranges.push({
               rhs: !0,
-              range: new r.Range(e.modifiedStartLineNumber, 1, e.modifiedStartLineNumber, 1)
+              range: new k.Range(a.modifiedStartLineNumber, a.modifiedStartColumn, a.modifiedEndLineNumber, a.modifiedEndColumn)
             });
-          }
-        });
-      }
-
-      this.ranges.sort(function(e, t) {
-        return e.range.getStartPosition().isBeforeOrEqual(t.range.getStartPosition()) ? -1 : t.range.getStartPosition()
-          .isBeforeOrEqual(e.range.getStartPosition()) ? 1 : 0;
+          });
+        } else {
+          c.ranges.push({
+            rhs: !0,
+            range: new k.Range(a.modifiedStartLineNumber, 1, a.modifiedStartLineNumber, 1)
+          });
+        }
       });
 
-      this.emit(t.Events.UPDATED, {});
+      this.ranges.sort(function(a, b) {
+        return a.range.getStartPosition().isBeforeOrEqual(b.range.getStartPosition()) ? -1 : b.range.getStartPosition()
+          .isBeforeOrEqual(a.range.getStartPosition()) ? 1 : 0;
+      });
+
+      this.emit(b.Events.UPDATED, {});
     };
 
-    t.prototype.initIdx = function(e) {
-      for (var t = !1, n = this.editor.getPosition(), i = 0, o = this.ranges.length; o > i && !t; i++) {
-        var r = this.ranges[i].range;
-        if (n.isBeforeOrEqual(r.getStartPosition())) {
-          this.nextIdx = i + (e ? 0 : -1);
-          t = !0;
+    b.prototype.initIdx = function(a) {
+      var b = !1;
+
+      var c = this.editor.getPosition();
+      for (var d = 0, e = this.ranges.length; d < e && !b; d++) {
+        var f = this.ranges[d].range;
+        if (c.isBeforeOrEqual(f.getStartPosition())) {
+          this.nextIdx = d + (a ? 0 : -1);
+          b = !0;
         }
       }
-      if (!t) {
-        this.nextIdx = e ? 0 : this.ranges.length - 1;
+      if (!b) {
+        this.nextIdx = a ? 0 : this.ranges.length - 1;
       }
 
       if (this.nextIdx < 0) {
@@ -121,61 +145,61 @@ define("vs/editor/contrib/diffNavigator/diffNavigator", ["require", "exports", "
       }
     };
 
-    t.prototype.move = function(e) {
-      if (i.ok(!this.disposed, "Illegal State - diff navigator has been disposed"), this.canNavigate()) {
-        if (-1 === this.nextIdx) {
-          this.initIdx(e);
+    b.prototype.move = function(a) {
+      i.ok(!this.disposed, "Illegal State - diff navigator has been disposed");
+      if (!this.canNavigate()) return;
+      if (this.nextIdx === -1) {
+        this.initIdx(a);
+      } else {
+        if (a) {
+          this.nextIdx += 1;
+          if (this.nextIdx >= this.ranges.length) {
+            this.nextIdx = 0;
+          }
         } else {
-          if (e) {
-            this.nextIdx += 1;
-            if (this.nextIdx >= this.ranges.length) {
-              this.nextIdx = 0;
-            }
-          } else {
-            this.nextIdx -= 1;
-            if (this.nextIdx < 0) {
-              this.nextIdx = this.ranges.length - 1;
-            }
+          this.nextIdx -= 1;
+          if (this.nextIdx < 0) {
+            this.nextIdx = this.ranges.length - 1;
           }
         }
-        var t = this.ranges[this.nextIdx];
-        this.ignoreSelectionChange = !0;
-        try {
-          this.editor.setPosition(t.range.getStartPosition(), !0, !0, !0);
-        } finally {
-          this.ignoreSelectionChange = !1;
-        }
+      }
+      var b = this.ranges[this.nextIdx];
+      this.ignoreSelectionChange = !0;
+      try {
+        this.editor.setPosition(b.range.getStartPosition(), !0, !0, !0);
+      } finally {
+        this.ignoreSelectionChange = !1;
       }
     };
 
-    t.prototype.canNavigate = function() {
+    b.prototype.canNavigate = function() {
       return this.ranges.length > 0;
     };
 
-    t.prototype.next = function() {
+    b.prototype.next = function() {
       this.move(!0);
     };
 
-    t.prototype.previous = function() {
+    b.prototype.previous = function() {
       this.move(!1);
     };
 
-    t.prototype.dispose = function() {
-      for (; this.toUnbind.length > 0;) {
+    b.prototype.dispose = function() {
+      while (this.toUnbind.length > 0) {
         this.toUnbind.pop()();
       }
       this.ranges = null;
 
       this.disposed = !0;
 
-      e.prototype.dispose.call(this);
+      a.prototype.dispose.call(this);
     };
 
-    t.Events = {
+    b.Events = {
       UPDATED: "navigation.updated"
     };
 
-    return t;
-  }(n.EventEmitter);
-  t.DiffNavigator = u;
+    return b;
+  }(h.EventEmitter);
+  b.DiffNavigator = n;
 });

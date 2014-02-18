@@ -1,147 +1,145 @@
-define("vs/editor/contrib/hover/hoverWidgets", ["require", "exports", "vs/editor/editor", "vs/editor/core/position"],
-  function(e, t, n, i) {
-    var o = function() {
-      function e(e, t) {
-        this._id = e;
+define(["require", "exports", "vs/editor/editor", "vs/editor/core/position"], function(a, b, c, d) {
+  var e = c;
 
-        this._editor = t;
+  var f = d;
 
-        this._isVisible = !1;
+  var g = function() {
+    function a(a, b) {
+      this._id = a;
 
-        this._containerDomNode = document.createElement("div");
+      this._editor = b;
 
-        this._containerDomNode.className = "monaco-editor-hover monaco-editor-background";
+      this._isVisible = !1;
 
-        this._containerDomNode.style.display = "none";
+      this.containerDomNode = document.createElement("div");
 
-        this._domNode = document.createElement("div");
+      this.containerDomNode.className = "monaco-editor-hover monaco-editor-background";
 
-        this._domNode.style.display = "inline-block";
+      this.containerDomNode.style.display = "none";
 
-        this._containerDomNode.appendChild(this._domNode);
+      this._domNode = document.createElement("div");
 
-        this._editor.addContentWidget(this);
+      this._domNode.style.display = "inline-block";
 
-        this._showAtPosition = null;
+      this.containerDomNode.appendChild(this._domNode);
+
+      this._editor.addContentWidget(this);
+
+      this._showAtPosition = null;
+    }
+    a.prototype.getId = function() {
+      return this._id;
+    };
+
+    a.prototype.getDomNode = function() {
+      return this.containerDomNode;
+    };
+
+    a.prototype.showAt = function(a) {
+      this._showAtPosition = new f.Position(a.lineNumber, a.column);
+
+      if (!this._isVisible) {
+        this._isVisible = !0;
+        this.containerDomNode.style.display = "block";
       }
-      e.prototype.getId = function() {
-        return this._id;
-      };
+      var b = parseInt(this.containerDomNode.style.maxWidth, 10);
+      this.containerDomNode.style.width = b + "px";
 
-      e.prototype.getDomNode = function() {
-        return this._containerDomNode;
-      };
+      this.containerDomNode.style.height = "";
 
-      e.prototype.showAt = function(e) {
-        this._showAtPosition = new i.Position(e.lineNumber, e.column);
+      this.containerDomNode.style.left = "0px";
+      var c = Math.min(b, this._domNode.clientWidth + 5);
 
-        if (!this._isVisible) {
-          this._isVisible = !0;
-          this._containerDomNode.style.display = "block";
-        }
-        var t = parseInt(this._containerDomNode.style.maxWidth, 10);
-        this._containerDomNode.style.width = t + "px";
+      var d = this._domNode.clientHeight + 1;
+      this.containerDomNode.style.width = c + "px";
 
-        this._containerDomNode.style.height = "";
+      this.containerDomNode.style.height = d + "px";
 
-        this._containerDomNode.style.left = "0px";
-        var n = Math.min(t, this._domNode.clientWidth + 5);
+      this._editor.layoutContentWidget(this);
+    };
 
-        var o = this._domNode.clientHeight + 1;
-        this._containerDomNode.style.width = n + "px";
+    a.prototype.hide = function() {
+      if (!this._isVisible) return;
+      this._isVisible = !1;
 
-        this._containerDomNode.style.height = o + "px";
+      this.containerDomNode.style.display = "none";
 
-        this._editor.layoutContentWidget(this);
+      this._editor.layoutContentWidget(this);
+    };
 
-        this._editor.getOffsetForColumn(this._showAtPosition.lineNumber, this._showAtPosition.column);
-      };
+    a.prototype.getPosition = function() {
+      return this._isVisible ? {
+        position: this._showAtPosition,
+        preference: [e.ContentWidgetPositionPreference.ABOVE, e.ContentWidgetPositionPreference.BELOW]
+      } : null;
+    };
 
-      e.prototype.hide = function() {
-        if (this._isVisible) {
-          this._isVisible = !1;
-          this._containerDomNode.style.display = "none";
-          this._editor.layoutContentWidget(this);
-        }
-      };
+    a.prototype.dispose = function() {
+      this.hide();
+    };
 
-      e.prototype.getPosition = function() {
-        return this._isVisible ? {
-          position: this._showAtPosition,
-          preference: [1, 2]
-        } : null;
-      };
+    return a;
+  }();
+  b.ContentHoverWidget = g;
+  var h = function() {
+    function a(a, b) {
+      this._id = a;
 
-      e.prototype.dispose = function() {
-        this.hide();
-      };
+      this._editor = b;
 
-      return e;
-    }();
-    t.ContentHoverWidget = o;
-    var r = function() {
-      function e(e, t) {
-        this._id = e;
+      this._isVisible = !1;
 
-        this._editor = t;
+      this._domNode = document.createElement("div");
 
-        this._isVisible = !1;
+      this._domNode.className = "monaco-editor-hover monaco-editor-background";
 
-        this._domNode = document.createElement("div");
+      this._domNode.style.display = "none";
 
-        this._domNode.className = "monaco-editor-hover monaco-editor-background";
+      this._showAtLineNumber = -1;
 
-        this._domNode.style.display = "none";
+      this._editor.addOverlayWidget(this);
+    }
+    a.prototype.getId = function() {
+      return this._id;
+    };
 
-        this._domNode.setAttribute("aria-hidden", "true");
+    a.prototype.getDomNode = function() {
+      return this._domNode;
+    };
 
-        this._domNode.setAttribute("role", "presentation");
+    a.prototype.showAt = function(a) {
+      this._showAtLineNumber = a;
 
-        this._showAtLineNumber = -1;
-
-        this._editor.addOverlayWidget(this);
+      if (!this._isVisible) {
+        this._isVisible = !0;
+        this._domNode.style.display = "block";
       }
-      e.prototype.getId = function() {
-        return this._id;
-      };
+      var b = this._editor.getLayoutInfo();
 
-      e.prototype.getDomNode = function() {
-        return this._domNode;
-      };
+      var c = this._editor.getTopForLineNumber(this._showAtLineNumber);
 
-      e.prototype.showAt = function(e) {
-        this._showAtLineNumber = e;
+      var d = this._editor.getScrollTop();
+      this._domNode.style.left = b.glyphMarginLeft + b.glyphMarginWidth + "px";
 
-        if (!this._isVisible) {
-          this._isVisible = !0;
-          this._domNode.style.display = "block";
-        }
-        var t = this._editor.getLayoutInfo();
+      this._domNode.style.top = c - d + "px";
+    };
 
-        var n = this._editor.getTopForLineNumber(this._showAtLineNumber);
+    a.prototype.hide = function() {
+      if (!this._isVisible) return;
+      this._isVisible = !1;
 
-        var i = this._editor.getScrollTop();
-        this._domNode.style.left = t.glyphMarginLeft + t.glyphMarginWidth + "px";
+      this._domNode.style.display = "none";
+    };
 
-        this._domNode.style.top = n - i + "px";
-      };
+    a.prototype.getPosition = function() {
+      return null;
+    };
 
-      e.prototype.hide = function() {
-        if (this._isVisible) {
-          this._isVisible = !1;
-          this._domNode.style.display = "none";
-        }
-      };
+    a.prototype.dispose = function() {
+      this.hide();
+    };
 
-      e.prototype.getPosition = function() {
-        return null;
-      };
-
-      e.prototype.dispose = function() {
-        this.hide();
-      };
-
-      return e;
-    }();
-    t.GlyphHoverWidget = r;
-  });
+    return a;
+  }();
+  b.GlyphHoverWidget = h;
+});

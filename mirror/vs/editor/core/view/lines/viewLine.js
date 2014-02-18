@@ -1,523 +1,584 @@
-define("vs/editor/core/view/lines/viewLine", ["require", "exports", "vs/base/env", "vs/editor/core/view/viewContext",
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
+    }
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
+    }
+    d.prototype = b.prototype;
+
+    a.prototype = new d;
+  };
+
+define(["require", "exports", "vs/base/env", "vs/editor/core/view/viewContext",
   "vs/editor/core/view/lines/viewLineParts"
-], function(e, t, n, i, o) {
-  function r(e, t) {
-    return e.top === t.top ? e.left - t.left : e.top - t.top;
+], function(a, b, c, d, e) {
+  function t(a, b) {
+    return a.top === b.top ? a.left - b.left : a.top - b.top;
   }
 
-  function s(e, t, n) {
-    var i = e.findIndexOfOffset(t);
-    return n >= i ? i : n;
+  function u(a, b, c) {
+    var d = a.findIndexOfOffset(b);
+    return d <= c ? d : c;
   }
 
-  function a(e, t) {
-    return window.screen && window.screen.deviceXDPI && (navigator.userAgent.indexOf("Trident/6.0") >= 0 || navigator
-      .userAgent.indexOf("Trident/5.0") >= 0) ? new d(e, t) : n.browser.isWebKit ? new h(e, t) : new c(e, t);
+  function v(a, b) {
+    return window.screen && window.screen.deviceXDPI && (f.browser.isIE9 || f.browser.isIE10) ? new p(a, b) : f.browser
+      .isWebKit ? new q(a, b) : new o(a, b);
   }
+  var f = c;
 
-  function u(e) {
-    var t = e.lineContent;
+  var g = d;
 
-    var n = {
-      charOffsetInPart: [],
-      hasOverflowed: !1,
-      lastRenderedPartIndex: 0,
-      partsCount: 0,
-      output: []
-    };
+  var h = e;
 
-    var i = 0;
-    if (n.output.push("<span>"), t.length > 0) {
-      var o;
+  var i = " ".charCodeAt(0);
 
-      var r;
+  var j = "	".charCodeAt(0);
 
-      var s;
+  var k = "<".charCodeAt(0);
 
-      var a;
+  var l = ">".charCodeAt(0);
 
-      var u = t.length;
+  var m = "&".charCodeAt(0);
 
-      var l = -1;
+  var n = function() {
+    function a(a, b, c, d) {
+      this.top = a;
 
-      var c = 0;
+      this.left = b;
 
-      var d = 0;
+      this.width = c;
 
-      var h = 0;
-
-      var p = "";
-
-      var b = e.tabSize;
-
-      var C = e.stopRenderingLineAfter;
-
-      var w = e.parts;
-      for (-1 !== C && u > C - 1 && (p = t.substr(C - 1, 1), u = C - 1, n.hasOverflowed = !0), r = 0; u > r; r++) {
-        switch (r === c && (l++, c = l + 1 < w.length ? w[l + 1].startIndex : Number.MAX_VALUE, r > 0 && n.output.push(
-            "</span>"), i++, n.output.push('<span class="'), s = "token " + w[l].type.replace(/[^a-z0-9\-]/gi, " "),
-          n.output.push(s), n.output.push('">'), h = 0), n.charOffsetInPart[r] = h, o = t.charCodeAt(r)) {
-          case g:
-            for (a = b - (r + d) % b, d += a - 1, h += a - 1; a > 0;) {
-              n.output.push(" ");
-              a--;
-            }
-            break;
-          case f:
-            n.output.push(" ");
-            break;
-          case m:
-            n.output.push("&lt;");
-            break;
-          case v:
-            n.output.push("&gt;");
-            break;
-          case y:
-            n.output.push("&amp;");
-            break;
-          case 0:
-            n.output.push("&#00;");
-            break;
-          case _:
-            n.output.push("&#8203");
-            break;
-          default:
-            n.output.push(t.charAt(r));
-        }
-        h++;
-      }
-      n.output.push("</span>");
-
-      n.charOffsetInPart[u] = h;
-
-      n.lastRenderedPartIndex = l;
-
-      if (p.length > 0) {
-        n.output.push('<span class="');
-        n.output.push(s);
-        n.output.push('" style="color:grey">');
-        n.output.push(p);
-        n.output.push("&hellip;</span>");
-      }
-    } else {
-      n.output.push("<span>&nbsp;</span>");
+      this.height = d;
     }
-    n.output.push("</span>");
-
-    n.partsCount = i;
-
-    return n;
-  }
-  var l = function() {
-    function e(e, t, n, i) {
-      this.top = e;
-
-      this.left = t;
-
-      this.width = n;
-
-      this.height = i;
-    }
-    return e;
+    return a;
   }();
 
-  var c = function() {
-    function e(e, t) {
-      this._context = e;
+  var o = function() {
+    function a(a, b) {
+      this.context = a;
 
-      if (t) {
-        this._domNode = document.createElement("div");
-        this._domNode.className = i.ClassNames.VIEW_LINE;
+      if (b) {
+        this.domNode = document.createElement("div");
+        this.domNode.className = g.ClassNames.VIEW_LINE;
       }
 
-      this._isInvalid = !0;
+      this.isInvalid = !0;
 
-      this._isMaybeInvalid = !1;
+      this.isMaybeInvalid = !1;
 
-      this._lineParts = null;
+      this.lineParts = null;
 
-      this._cachedInnerHTML = null;
+      this.html = null;
 
-      this._charOffsetInPart = [];
+      this.charOffsetInPart = [];
 
-      this._hasOverflowed = !1;
+      this.hasOverflowed = !1;
 
-      this._lastRenderedPartIndex = 0;
+      this.lastRenderedPartIndex = 0;
     }
-    e.prototype.getDomNode = function() {
-      return this._domNode;
+    a.prototype.getDomNode = function() {
+      return this.domNode;
     };
 
-    e.prototype.setDomNode = function(e) {
-      this._domNode = e;
+    a.prototype.setDomNode = function(a) {
+      this.domNode = a;
     };
 
-    e.prototype.onContentChanged = function() {
-      this._isInvalid = !0;
+    a.prototype.onContentChanged = function() {
+      this.isInvalid = !0;
     };
 
-    e.prototype.onLinesInsertedAbove = function() {
-      this._isMaybeInvalid = !0;
+    a.prototype.onLinesInsertedAbove = function() {
+      this.isMaybeInvalid = !0;
     };
 
-    e.prototype.onLinesDeletedAbove = function() {
-      this._isMaybeInvalid = !0;
+    a.prototype.onLinesDeletedAbove = function() {
+      this.isMaybeInvalid = !0;
     };
 
-    e.prototype.onLineChangedAbove = function() {
-      this._isMaybeInvalid = !0;
+    a.prototype.onLineChangedAbove = function() {
+      this.isMaybeInvalid = !0;
     };
 
-    e.prototype.onTokensChanged = function() {
-      this._isMaybeInvalid = !0;
+    a.prototype.onModelDecorationsChanged = function() {
+      this.isMaybeInvalid = !0;
     };
 
-    e.prototype.onModelDecorationsChanged = function() {
-      this._isMaybeInvalid = !0;
+    a.prototype.onConfigurationChanged = function(a) {
+      this.isInvalid = !0;
     };
 
-    e.prototype.onConfigurationChanged = function() {
-      this._isInvalid = !0;
-    };
-
-    e.prototype.shouldUpdateHTML = function(e) {
-      var t = null;
-      (this._isMaybeInvalid || this._isInvalid) && (t = this._computeLineParts(e));
-
-      this._isMaybeInvalid && (this._isInvalid || this._lineParts && this._lineParts.equals(t) || (this._isInvalid = !
-        0), this._isMaybeInvalid = !1);
-
-      this._isInvalid && (this._lineParts = t);
-
-      return this._isInvalid;
-    };
-
-    e.prototype.getLineOuterHTML = function(e, t) {
-      var n = [];
-      n.push('<div lineNumber="');
-
-      n.push(e.toString());
-
-      n.push('" style="top:');
-
-      n.push(t.toString());
-
-      n.push("px;height:");
-
-      n.push(this._context.configuration.editor.lineHeight.toString());
-
-      n.push('px;" class="');
-
-      n.push(i.ClassNames.VIEW_LINE);
-
-      n.push('">');
-
-      n = n.concat(this._getLineInnerHTML(e));
-
-      n.push("</div>");
-
-      return n;
-    };
-
-    e.prototype.getLineStatistics = function() {
-      return {
-        partsCount: this._partsCount,
-        charactersCount: this._charOffsetInPart.length
-      };
-    };
-
-    e.prototype._getLineInnerHTML = function(e) {
-      this._isInvalid && (this._cachedInnerHTML = this._renderMyLine(e, this._lineParts), this._isInvalid = !1);
-
-      return this._cachedInnerHTML;
-    };
-
-    e.prototype.layoutLine = function(e, t) {
-      var n = this._domNode.getAttribute("lineNumber");
-      if (n !== e.toString()) {
-        this._domNode.setAttribute("lineNumber", e.toString());
+    a.prototype.shouldUpdateHTML = function(a) {
+      var b = null;
+      if (this.isMaybeInvalid || this.isInvalid) {
+        b = this.computeLineParts(a);
       }
-      var i = this._domNode.style.top;
-      if (i !== t + "px") {
-        this._domNode.style.top = t + "px";
+      this.isMaybeInvalid && (!this.isInvalid && (!this.lineParts || !this.lineParts.equals(b)) && (this.isInvalid = !
+        0), this.isMaybeInvalid = !1);
+
+      this.isInvalid && (this.lineParts = b);
+
+      return this.isInvalid;
+    };
+
+    a.prototype.getLineOuterHTML = function(a, b, c) {
+      var d = [];
+      d.push('<div lineNumber="');
+
+      d.push(b.toString());
+
+      d.push('" style="top:');
+
+      d.push(c.toString());
+
+      d.push('px;" class="');
+
+      d.push(g.ClassNames.VIEW_LINE);
+
+      d.push('">');
+
+      d = d.concat(this.getLineInnerHTML(a, b));
+
+      d.push("</div>");
+
+      return d;
+    };
+
+    a.prototype.getLineInnerHTML = function(a, b) {
+      this.isInvalid && (this.html = this.renderLine(b, this.lineParts), this.isInvalid = !1);
+
+      return this.html;
+    };
+
+    a.prototype.layoutLine = function(a, b) {
+      var c = this.domNode.getAttribute("lineNumber");
+      if (c !== a.toString()) {
+        this.domNode.setAttribute("lineNumber", a.toString());
       }
-      var o = this._domNode.style.height;
-      if (o !== this._context.configuration.editor.lineHeight + "px") {
-        this._domNode.style.height = this._context.configuration.editor.lineHeight + "px";
+      var d = this.domNode.style.top;
+      if (d !== b + "px") {
+        this.domNode.style.top = b + "px";
       }
     };
 
-    e.prototype._computeLineParts = function(e) {
-      return o.createLineParts(e, this._context.model.getLineTokens(e), this._context.model.getInlineDecorations(e));
+    a.prototype.computeLineParts = function(a) {
+      return h.createLineParts(a, this.context.model.getLineTokens(a), this.context.model.getInlineDecorations(a));
     };
 
-    e.prototype._renderMyLine = function(e, n) {
-      this._bustReadingCache();
-      var i = t.renderLine({
-        lineContent: this._context.model.getLineContent(e),
-        tabSize: this._context.configuration.getIndentationOptions().tabSize,
-        stopRenderingLineAfter: this._context.configuration.editor.stopRenderingLineAfter,
-        parts: n.getParts()
-      });
-      this._charOffsetInPart = i.charOffsetInPart;
+    a.prototype.renderLine = function(a, b) {
+      var c = [];
 
-      this._hasOverflowed = i.hasOverflowed;
+      var d = this.context.model.getLineContent(a);
 
-      this._lastRenderedPartIndex = i.lastRenderedPartIndex;
+      var e = this.context.configuration.editor.viewWordWrap;
+      this.charOffsetInPart = [];
 
-      this._partsCount = i.partsCount;
+      this.hasOverflowed = !1;
 
-      return i.output;
-    };
+      this.bustReadingCache();
 
-    e.prototype._getReadingTarget = function() {
-      return this._domNode.firstChild;
-    };
+      c.push("<span>");
+      if (d.length > 0) {
+        var g;
 
-    e.prototype._bustReadingCache = function() {
-      this._cachedWidth = -1;
-    };
+        var h;
 
-    e.prototype.getHeight = function() {
-      return this._domNode.offsetHeight;
-    };
+        var n = d.length;
 
-    e.prototype.getWidth = function() {
-      -1 === this._cachedWidth && (this._cachedWidth = this._getReadingTarget().offsetWidth);
+        var o;
 
-      return this._cachedWidth;
-    };
+        var p = -1;
 
-    e.prototype.getVisibleRangesForRange = function(e, t, n, i, o, r) {
-      var s = this._context.configuration.editor.stopRenderingLineAfter;
-      return -1 !== s && t > s && n > s ? null : (-1 !== s && t > s && (t = s), -1 !== s && n > s && (n = s), this._readVisibleRangesForRange(
-        e, t, n, i, o, r));
-    };
+        var q = 0;
 
-    e.prototype._readVisibleRangesForRange = function(e, t, n, i, o, s) {
-      var a;
-      if (a = t === n ? this._readRawVisibleRangesForPosition(e, t, i, o, s) : this._readRawVisibleRangesForRange(e,
-        t, n, i, o, s), !a || a.length <= 1) {
-        return a;
-      }
-      a.sort(r);
-      for (var u, l = [], c = a[0], d = 1, h = a.length; h > d; d++) {
-        u = a[d];
-        if (c.left + c.width + .001 >= u.left) {
-          c.width = Math.max(c.width, u.left + u.width - c.left);
-        } else {
-          l.push(c);
-          c = u;
+        var r = 0;
+
+        var s = 0;
+
+        var t = !0;
+
+        var u = "";
+
+        var v = this.context.configuration.editor.tabSize;
+
+        var w;
+
+        var x = this.context.configuration.editor.stopRenderingLineAfter;
+
+        var y = this.lineParts.getParts();
+        if (x !== -1 && n > x - 1) {
+          u = d.substr(x - 1, 1);
+          n = x - 1;
+          this.hasOverflowed = !0;
         }
+        for (h = 0; h < n; h++) {
+          if (h === q) {
+            p++;
+            q = p + 1 < y.length ? y[p + 1].startIndex : Number.MAX_VALUE;
+            if (h > 0) {
+              c.push("</span>");
+            }
+            c.push('<span class="');
+            o = "token " + y[p].type.replace(/[^a-z0-9\-]/gi, " ");
+            c.push(o);
+            c.push('">');
+            if (e && !t && !f.browser.isIE9) {
+              c.push("&#8203;");
+              s = 1;
+            } else {
+              s = 0;
+            }
+          }
+
+          this.charOffsetInPart[h] = s;
+
+          g = d.charCodeAt(h);
+          if (g === j) {
+            w = v - (h + r) % v;
+
+            r += w - 1;
+
+            s += w - 1;
+            while (w > 0) {
+              c.push(" ");
+              w--;
+            }
+          } else {
+            if (g === i) {
+              c.push(" ");
+            } else {
+              if (g === k) {
+                t = !1;
+                c.push("&lt;");
+              } else {
+                if (g === l) {
+                  t = !1;
+                  c.push("&gt;");
+                } else {
+                  if (g === m) {
+                    t = !1;
+                    c.push("&amp;");
+                  } else {
+                    t = !1;
+                    c.push(d.charAt(h));
+                  }
+                }
+              }
+            }
+          }
+          s++;
+        }
+        c.push("</span>");
+
+        this.charOffsetInPart[n] = s;
+
+        this.lastRenderedPartIndex = p;
+
+        if (u.length > 0) {
+          c.push('<span class="');
+          c.push(o);
+          c.push('" style="color:grey">');
+          c.push(u);
+          c.push("…</span>");
+        }
+      } else {
+        c.push("<span>&nbsp;</span>");
       }
-      l.push(c);
-
-      return l;
-    };
-
-    e.prototype._readRawVisibleRangesForPosition = function(e, t, n, i, o) {
-      if (0 === this._charOffsetInPart.length) {
-        var r = this._readRawVisibleRangesForEntireLine(n, i);
-        r[0].width = 0;
-
-        return r;
-      }
-      var a = s(this._lineParts, t - 1, this._lastRenderedPartIndex);
-
-      var u = this._charOffsetInPart[t - 1];
-      return this._readRawVisibleRangesFrom(this._getReadingTarget(), a, u, a, u, n, i, o);
-    };
-
-    e.prototype._readRawVisibleRangesForRange = function(e, t, n, i, o, r) {
-      if (1 === t && n === this._charOffsetInPart.length) {
-        return this._readRawVisibleRangesForEntireLine(i, o);
-      }
-      var a = s(this._lineParts, t - 1, this._lastRenderedPartIndex);
-
-      var u = this._charOffsetInPart[t - 1];
-
-      var l = s(this._lineParts, n - 1, this._lastRenderedPartIndex);
-
-      var c = this._charOffsetInPart[n - 1];
-      return this._readRawVisibleRangesFrom(this._getReadingTarget(), a, u, l, c, i, o, r);
-    };
-
-    e.prototype._readRawVisibleRangesForEntireLine = function(e) {
-      var t = this._domNode.getBoundingClientRect();
-      return [new l(t.top - e, 0, this._getReadingTarget().offsetWidth, t.height)];
-    };
-
-    e.prototype._readRawVisibleRangesFrom = function(e, t, n, i, o, r, s, a) {
-      var u = p.createRange();
-      u.setStart(e.children[t].firstChild, n);
-
-      u.setEnd(e.children[i].firstChild, o);
-      var l = u.getClientRects();
-
-      var c = null;
-      l.length > 0 && (c = this._createRawVisibleRangesFromClientRects(l, r, s));
-
-      p.detachRange(u, a);
+      c.push("</span>");
 
       return c;
     };
 
-    e.prototype._createRawVisibleRangesFromClientRects = function(e, t, n) {
-      var i;
+    a.prototype.getReadingTarget = function() {
+      return this.domNode.firstChild;
+    };
+
+    a.prototype.bustReadingCache = function() {
+      this.cachedWidth = -1;
+    };
+
+    a.prototype.getHeight = function() {
+      return this.domNode.offsetHeight;
+    };
+
+    a.prototype.getWidth = function() {
+      this.cachedWidth === -1 && (this.cachedWidth = this.getReadingTarget().offsetWidth);
+
+      return this.cachedWidth;
+    };
+
+    a.prototype.getVisibleRangesForRange = function(a, b, c, d, e, f, g) {
+      var h = this.context.configuration.editor.stopRenderingLineAfter;
+      return h !== -1 && b > h && c > h ? null : (h !== -1 && b > h && (b = h), h !== -1 && c > h && (c = h), this.readVisibleRangesForRange(
+        a, b, c, d, e, f, g));
+    };
+
+    a.prototype.readVisibleRangesForRange = function(a, b, c, d, e, f, g) {
+      var h;
+      if (b === c) {
+        h = this.readRawVisibleRangesForPosition(a, b, d, e, f, g);
+      } else {
+        h = this.readRawVisibleRangesForRange(a, b, c, d, e, f, g);
+      }
+      if (!h || h.length === 0) {
+        return h;
+      }
+      h.sort(t);
+      var i = [];
+
+      var j = h[0];
+
+      var k;
+      for (var l = 1, m = h.length; l < m; l++) {
+        k = h[l];
+        if (j.top === k.top && j.height === k.height && j.left + j.width + .001 >= k.left) {
+          j.width = Math.max(j.width, k.left + k.width - j.left);
+        } else {
+          i.push(j);
+          j = k;
+        }
+      }
+      i.push(j);
+
+      return i;
+    };
+
+    a.prototype.readRawVisibleRangesForPosition = function(a, b, c, d, e, f) {
+      var g = this.lineParts;
+
+      var h = u(g, b - 1, this.lastRenderedPartIndex);
+
+      var i = this.charOffsetInPart[b - 1];
+
+      var j = this.getReadingTarget();
+      return this.readRawVisibleRangesFrom(j, h, i, h, i, c, d, e, f);
+    };
+
+    a.prototype.readRawVisibleRangesForRange = function(a, b, c, d, e, f, g) {
+      if (!this.context.configuration.editor.viewWordWrap && b === 1 && c === this.charOffsetInPart.length) {
+        return this.readRawVisibleRangesForEntireLine(d, e, f);
+      }
+      var h = this.lineParts;
+
+      var i = u(h, b - 1, this.lastRenderedPartIndex);
+
+      var j = this.charOffsetInPart[b - 1];
+
+      var k = u(h, c - 1, this.lastRenderedPartIndex);
+
+      var l = this.charOffsetInPart[c - 1];
+
+      var m = this.getReadingTarget();
+      return this.readRawVisibleRangesFrom(m, i, j, k, l, d, e, f, g);
+    };
+
+    a.prototype.readRawVisibleRangesForEntireLine = function(a, b, c) {
+      var d = this.domNode.getBoundingClientRect();
+      return [new n(d.top - a, 0, this.getReadingTarget().offsetWidth, d.height)];
+    };
+
+    a.prototype.readRawVisibleRangesFrom = function(a, b, c, d, e, f, g, h, i) {
+      var j = s.createRange();
+      j.setStart(a.children[b].firstChild, c);
+
+      j.setEnd(a.children[d].firstChild, e);
+      var k = j.getClientRects();
+
+      var l = null;
+      k.length > 0 && (l = this.createRawVisibleRangesFromClientRects(k, f + g, h));
+
+      s.detachRange(j, i);
+
+      return l;
+    };
+
+    a.prototype.createRawVisibleRangesFromClientRects = function(a, b, c) {
+      var d = a.length;
+
+      var e;
+
+      var f;
+
+      var g = [];
+      g = new Array(d);
+      for (f = 0; f < d; f++) {
+        e = a[f];
+        g[f] = new n(e.top - b, e.left - c, e.width, e.height);
+      }
+      return g;
+    };
+
+    a.prototype.getColumnOfNodeOffset = function(a, b, c) {
+      var d = -1;
+      while (b) {
+        b = b.previousSibling;
+        d++;
+      }
+      var e = this.lineParts.getParts();
+      if (d >= e.length) {
+        return this.context.configuration.editor.stopRenderingLineAfter;
+      }
+      if (c === 0) {
+        return e[d].startIndex + 1;
+      }
+      var f = e[d].startIndex;
+
+      var g;
+
+      var h;
+      if (d + 1 < e.length) {
+        g = e[d + 1].startIndex;
+        h = this.charOffsetInPart[g - 1] + this.charOffsetInPart[g];
+      } else {
+        g = this.context.model.getLineMaxColumn(a) - 1;
+        h = this.charOffsetInPart[g];
+      }
+      var i = f;
+
+      var j;
+
+      var k = g;
+      if (this.context.configuration.editor.stopRenderingLineAfter !== -1) {
+        k = Math.min(this.context.configuration.editor.stopRenderingLineAfter - 1, g);
+      }
+      var l;
+
+      var m;
+
+      var n;
 
       var o;
 
-      var r = e.length;
+      var p;
+      while (i < k) {
+        j = Math.floor((i + k) / 2);
 
-      var s = [];
-      for (o = 0; r > o; o++) {
-        i = e[o];
-        s.push(new l(i.top - t, Math.max(0, i.left - n), i.width, i.height));
-      }
-      return s;
-    };
+        l = this.charOffsetInPart[j];
 
-    e.prototype.getColumnOfNodeOffset = function(e, t, n) {
-      for (var i = -1; t;) {
-        t = t.previousSibling;
-        i++;
-      }
-      var o = this._lineParts.getParts();
-      if (i >= o.length) {
-        return this._context.configuration.editor.stopRenderingLineAfter;
-      }
-      if (0 === n) {
-        return o[i].startIndex + 1;
-      }
-      var r;
-
-      var s;
-
-      var a = o[i].startIndex;
-      if (i + 1 < o.length) {
-        r = o[i + 1].startIndex;
-        s = this._charOffsetInPart[r - 1] + this._charOffsetInPart[r];
-      } else {
-        r = this._context.model.getLineMaxColumn(e) - 1;
-        s = this._charOffsetInPart[r];
-      }
-      var u;
-
-      var l = a;
-
-      var c = r;
-      if (-1 !== this._context.configuration.editor.stopRenderingLineAfter) {
-        c = Math.min(this._context.configuration.editor.stopRenderingLineAfter - 1, r);
-      }
-      for (var d, h, p, f, g; c > l;) {
-        if (u = Math.floor((l + c) / 2), d = this._charOffsetInPart[u], h = u === r ? Number.MAX_VALUE : u + 1 === r ?
-          s : this._charOffsetInPart[u + 1], p = u === a ? Number.MIN_VALUE : this._charOffsetInPart[u - 1], f = (p +
-            d) / 2, g = (d + h) / 2, n > f && g >= n) {
-          return u + 1;
-        }
-        if (f >= n) {
-          c = u - 1;
+        if (j === g) {
+          m = Number.MAX_VALUE;
         } else {
-          l = u + 1;
+          if (j + 1 === g) {
+            m = h;
+          } else {
+            m = this.charOffsetInPart[j + 1];
+          }
+        }
+
+        if (j === f) {
+          n = Number.MIN_VALUE;
+        } else {
+          n = this.charOffsetInPart[j - 1];
+        }
+
+        o = (n + l) / 2;
+
+        p = (l + m) / 2;
+        if (o < c && c <= p) {
+          return j + 1;
+        }
+        if (c <= o) {
+          k = j - 1;
+        } else {
+          i = j + 1;
         }
       }
-      return l + 1;
+      return i + 1;
     };
 
-    return e;
+    a.prototype.getInnerSpansTopOffset = function() {
+      return this.getReadingTarget().offsetTop;
+    };
+
+    return a;
   }();
 
-  var d = function(e) {
-    function t(t, n) {
-      e.call(this, t, n);
+  var p = function(a) {
+    function b(b, c) {
+      a.call(this, b, c);
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype._createRawVisibleRangesFromClientRects = function(e, t, n) {
-      var i;
+    b.prototype.createRawVisibleRangesFromClientRects = function(a, b, c) {
+      var d = a.length;
 
-      var o;
+      var e;
 
-      var r = e.length;
+      var f;
 
-      var s = [];
+      var g = [];
 
-      var a = screen.logicalYDPI / screen.deviceYDPI;
+      var h = screen.logicalYDPI / screen.deviceYDPI;
 
-      var u = screen.logicalXDPI / screen.deviceXDPI;
-      for (s = new Array(r), o = 0; r > o; o++) {
-        i = e[o];
-        s[o] = new l(i.top * a - t, Math.max(0, i.left * u - n), i.width * u, i.height * a);
+      var i = screen.logicalXDPI / screen.deviceXDPI;
+      g = new Array(d);
+      for (f = 0; f < d; f++) {
+        e = a[f];
+        g[f] = new n(e.top * h - b, e.left * i - c, e.width * i, e.height * h);
       }
-      return s;
+      return g;
     };
 
-    return t;
-  }(c);
+    return b;
+  }(o);
 
-  var h = function(e) {
-    function t(t, n) {
-      e.call(this, t, n);
+  var q = function(a) {
+    function b(b, c) {
+      a.call(this, b, c);
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype._readVisibleRangesForRange = function(t, n, i, o, r, s) {
-      var a = e.prototype._readVisibleRangesForRange.call(this, t, n, i, o, r, s);
-      if (!a || 0 === a.length || n === i || 1 === n && i === this._charOffsetInPart.length) {
-        return a;
+    b.prototype.readVisibleRangesForRange = function(b, c, d, e, f, g, h) {
+      var i = a.prototype.readVisibleRangesForRange.call(this, b, c, d, e, f, g, h);
+      if (!i || i.length === 0 || c === d || c === 1 && d === this.charOffsetInPart.length) {
+        return i;
       }
-      var u = this._readRawVisibleRangesForPosition(t, i - 1, o, r, s);
+      var j = this.readRawVisibleRangesForPosition(b, d - 1, e, f, g, h);
 
-      var l = this._readRawVisibleRangesForPosition(t, i, o, r, s);
-      if (u && u.length > 0 && l && l.length > 0) {
-        var c = u[0];
+      var k = this.readRawVisibleRangesForPosition(b, d, e, f, g, h);
+      if (j && j.length > 0 && k && k.length > 0) {
+        var l = j[0];
 
-        var d = l[0];
+        var m = k[0];
 
-        var h = !0;
-        if (c.top === d.top) {
-          h = c.left <= d.left;
+        var n = !0;
+        if (l.top === m.top) {
+          n = l.left <= m.left;
         }
-        var p = a[a.length - 1];
-        if (h && p.top === d.top && p.left < d.left) {
-          p.width = d.left - p.left;
+        var o = i[i.length - 1];
+        if (n && o.top === m.top && o.left < m.left) {
+          o.width = m.left - o.left;
         } else {
-          if (p.top > d.top) {
-            a.splice(a.length - 1, 1);
+          if (o.top > m.top) {
+            i.splice(i.length - 1, 1);
           }
         }
       }
-      return a;
+      return i;
     };
 
-    return t;
-  }(c);
+    return b;
+  }(o);
 
-  var p = function() {
-    function e() {}
-    e.createRange = function() {
-      e._handyReadyRange || (e._handyReadyRange = document.createRange());
-
-      return e._handyReadyRange;
+  var r = function() {
+    function a() {
+      this._handyReadyRange = document.createRange();
+    }
+    a.prototype.createRange = function() {
+      return this._handyReadyRange;
     };
 
-    e.detachRange = function(e, t) {
-      e.selectNodeContents(t);
+    a.prototype.detachRange = function(a, b) {
+      a.selectNodeContents(b);
     };
 
-    return e;
+    return a;
   }();
-  t.createLine = a;
-  var f = " ".charCodeAt(0);
 
-  var g = "	".charCodeAt(0);
-
-  var m = "<".charCodeAt(0);
-
-  var v = ">".charCodeAt(0);
-
-  var y = "&".charCodeAt(0);
-
-  var _ = "\r".charCodeAt(0);
-  t.renderLine = u;
+  var s = new r;
+  b.createLine = v;
 });

@@ -1,67 +1,70 @@
-define("vs/base/diagnostics", ["require", "exports"], function(e, t) {
-  function n(e, t) {
-    for (; e.length > t;) {
-      e.shift();
+define(["require", "exports"], function(a, b) {
+  function g(a, b) {
+    while (a.length > b) {
+      a.shift();
     }
   }
 
-  function i(e, t) {
-    var i = r[e] || !1;
-    r[e] = i;
-    var o = s[e] || [];
-    o.push(t);
+  function h(a, b) {
+    var c = d[a] || !1;
+    d[a] = c;
+    var h = e[a] || [];
+    h.push(b);
 
-    s[e] = o;
-    var u = function() {
-      for (var i = [], o = 0; o < arguments.length - 0; o++) {
-        i[o] = arguments[o + 0];
+    e[a] = h;
+    var i = function() {
+      var c = [];
+      for (var e = 0; e < arguments.length - 0; e++) {
+        c[e] = arguments[e + 0];
       }
-      var s;
-      if (r[e] === !0) {
-        var u = [arguments];
-        s = a.indexOf(t);
+      var h;
+      if (d[a] === !0) {
+        var i = [arguments];
+        h = f.indexOf(b);
 
-        if (-1 !== s) {
-          u.unshift.apply(u, a[s + 1] || []);
-          a[s + 1] = [];
+        if (h !== -1) {
+          i.unshift.apply(i, f[h + 1] || []);
+          f[h + 1] = [];
         }
-        var l = (u.length > 1, function() {
-          var e = u.shift();
-          t.apply(t, e);
+        var j = i.length > 1;
 
-          if (u.length > 0) {
-            window.setTimeout(l, 500);
+        var k = function() {
+          var a = i.shift();
+          b.apply(b, a);
+
+          if (i.length > 0) {
+            window.setTimeout(k, 500);
           }
-        });
-        l();
+        };
+        k();
       } else {
-        s = a.indexOf(t);
+        h = f.indexOf(b);
 
-        s = -1 !== s ? s : a.length;
-        var c = s + 1;
+        h = h !== -1 ? h : f.length;
+        var l = h + 1;
 
-        var d = a[c] || [];
-        d.push(arguments);
+        var m = f[l] || [];
+        m.push(arguments);
 
-        n(d, 50);
+        g(m, 50);
 
-        a[s] = t;
+        f[h] = b;
 
-        a[c] = d;
+        f[l] = m;
       }
     };
-    return u;
+    return i;
   }
-  var o = self;
-  if (!o.Monaco) {
-    o.Monaco = {};
+  var c = self;
+  if (!c.Monaco) {
+    c.Monaco = {};
   }
 
-  o.Monaco.Diagnostics = {};
-  var r = o.Monaco.Diagnostics;
+  c.Monaco.Diagnostics = {};
+  var d = c.Monaco.Diagnostics;
 
-  var s = {};
+  var e = {};
 
-  var a = [];
-  t.register = i;
+  var f = [];
+  b.register = h;
 });

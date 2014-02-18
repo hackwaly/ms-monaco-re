@@ -1,42 +1,42 @@
-define("vs/base/time/schedulers", ["require", "exports"], function(e, t) {
-  var n = function() {
-    function e(e, t) {
+define("vs/base/time/schedulers", ["require", "exports"], function(a, b) {
+  var c = function() {
+    function a(a, b) {
       this.timeoutToken = -1;
 
-      this.runner = e;
+      this.runner = a;
 
-      this.timeout = t;
+      this.timeout = b;
 
       this.timeoutHandler = this.onTimeout.bind(this);
     }
-    e.prototype.dispose = function() {
+    a.prototype.dispose = function() {
       this.cancel();
 
       this.runner = null;
     };
 
-    e.prototype.cancel = function() {
-      if (-1 !== this.timeoutToken) {
+    a.prototype.cancel = function() {
+      if (this.timeoutToken !== -1) {
         clearTimeout(this.timeoutToken);
         this.timeoutToken = -1;
       }
     };
 
-    e.prototype.setRunner = function(e) {
-      this.runner = e;
+    a.prototype.setRunner = function(a) {
+      this.runner = a;
     };
 
-    e.prototype.setTimeout = function(e) {
-      this.timeout = e;
+    a.prototype.setTimeout = function(a) {
+      this.timeout = a;
     };
 
-    e.prototype.schedule = function() {
+    a.prototype.schedule = function() {
       this.cancel();
 
       this.timeoutToken = setTimeout(this.timeoutHandler, this.timeout);
     };
 
-    e.prototype.onTimeout = function() {
+    a.prototype.onTimeout = function() {
       this.timeoutToken = -1;
 
       if (this.runner) {
@@ -44,7 +44,7 @@ define("vs/base/time/schedulers", ["require", "exports"], function(e, t) {
       }
     };
 
-    return e;
+    return a;
   }();
-  t.RunOnceScheduler = n;
+  b.RunOnceScheduler = c;
 });

@@ -1,28 +1,30 @@
-define("vs/base/dom/browserService", ["require", "exports", "vs/base/dom/mockDom"], function(e, t, n) {
-  function i() {
-    return r;
+define(["require", "exports", "vs/base/dom/mockDom"], function(a, b, c) {
+  function g() {
+    return f;
   }
-  var o = function() {
-    function e() {
+  var d = c;
+
+  var e = function() {
+    function a() {
       this.document = window.document;
 
       this.window = window;
     }
-    e.prototype.mock = function() {
-      this.document = new n.MockDocument;
+    a.prototype.mock = function() {
+      this.document = new d.MockDocument;
 
-      this.window = new n.MockWindow;
+      this.window = new d.MockWindow;
     };
 
-    e.prototype.restore = function() {
+    a.prototype.restore = function() {
       this.document = window.document;
 
       this.window = window;
     };
 
-    return e;
+    return a;
   }();
 
-  var r = new o;
-  t.getService = i;
+  var f = new e;
+  b.getService = g;
 });

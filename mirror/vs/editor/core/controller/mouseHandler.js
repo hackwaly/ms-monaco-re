@@ -1,36 +1,71 @@
-define("vs/editor/core/controller/mouseHandler", ["require", "exports", "vs/base/env", "vs/editor/core/position",
-  "vs/base/dom/mouseEvent", "vs/base/dom/dom", "vs/editor/editor", "vs/editor/core/controller/mouseTarget",
-  "vs/editor/core/view/viewEventHandler", "vs/base/lifecycle", "vs/base/dom/globalMouseMoveMonitor"
-], function(e, t, n, i, o, r, s, a, u, l, c) {
-  var d = function(e, t) {
-    var n = new o.StandardMouseEvent(t);
-    n.preventDefault();
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
+    }
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
+    }
+    d.prototype = b.prototype;
 
-    return n;
+    a.prototype = new d;
   };
 
-  var h = function(e) {
-    function t(n, i, o) {
-      var s = this;
-      e.call(this);
+define(["require", "exports", "vs/base/env", "vs/editor/core/position", "vs/base/dom/mouseEvent", "vs/base/dom/dom",
+  "vs/editor/editor", "vs/editor/core/controller/mouseTarget", "vs/editor/core/view/viewEventHandler",
+  "vs/base/lifecycle"
+], function(a, b, c, d, e, f, g, h, i, j) {
+  var k = c;
 
-      this.context = n;
+  var l = d;
 
-      this.viewController = i;
+  var m = e;
 
-      this.viewHelper = o;
+  var n = f;
 
-      this.mouseTargetFactory = new a.MouseTargetFactory(this.context, o);
+  var o = g;
+
+  var p = h;
+
+  var q = i;
+
+  var r = j;
+
+  var s = function(a, b) {
+    var c = null;
+    if (b.rangeParent) {
+      c = {
+        rangeParent: b.rangeParent,
+        rangeOffset: b.rangeOffset
+      };
+    }
+    var d = new m.MouseEvent(b, c);
+    d.preventDefault();
+
+    return d;
+  };
+
+  var t = function(a) {
+    function b(c, d, e) {
+      var f = this;
+      a.call(this);
+
+      this.context = c;
+
+      this.viewController = d;
+
+      this.viewHelper = e;
+
+      this.mouseTargetFactory = new p.MouseTargetFactory(this.context, e);
 
       this.listenersToRemove = [];
 
       this.hideTextAreaTimeout = -1;
 
-      this.toDispose = [];
+      this._hookUnbind = [];
 
-      this.mouseMoveMonitor = new c.GlobalMouseMoveMonitor;
-
-      this.toDispose.push(this.mouseMoveMonitor);
+      this._hookDispose = [];
 
       this.lastMouseEvent = null;
 
@@ -48,333 +83,377 @@ define("vs/editor/core/controller/mouseHandler", ["require", "exports", "vs/base
 
       this.layoutHeight = 0;
 
-      this.listenersToRemove.push(r.addListener(this.viewHelper.viewDomNode, "contextmenu", function(e) {
-        return s._onContextMenu(e);
+      this.listenersToRemove.push(n.addListener(this.viewHelper.viewDomNode, "contextmenu", function(a) {
+        return f._onContextMenu(a);
       }));
 
-      this.listenersToRemove.push(r.addThrottledListener(this.viewHelper.viewDomNode, "mousemove", function(e) {
-        return s._onMouseMove(e);
-      }, d, t.MOUSE_MOVE_MINIMUM_TIME));
+      this.listenersToRemove.push(n.addThrottledListener(this.viewHelper.viewDomNode, "mousemove", function(a) {
+        return f._onMouseMove(a);
+      }, s, b.MOUSE_MOVE_MINIMUM_TIME));
 
-      this.listenersToRemove.push(r.addListener(this.viewHelper.viewDomNode, "mouseup", function(e) {
-        return s._onMouseUp(e);
+      this.listenersToRemove.push(n.addListener(this.viewHelper.viewDomNode, "mouseup", function(a) {
+        return f._onMouseUp(a);
       }));
 
-      this.listenersToRemove.push(r.addNonBubblingMouseOutListener(this.viewHelper.viewDomNode, function(e) {
-        return s._onMouseLeave(e);
+      this.listenersToRemove.push(n.addNonBubblingMouseOutListener(this.viewHelper.viewDomNode, function(a) {
+        return f._onMouseLeave(a);
       }));
 
-      this.listenersToRemove.push(r.addListener(this.viewHelper.viewDomNode, "mousedown", function(e) {
-        return s._onMouseDown(e);
+      this.listenersToRemove.push(n.addListener(this.viewHelper.viewDomNode, "mousedown", function(a) {
+        return f._onMouseDown(a);
       }));
 
       this.context.addEventHandler(this);
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.dispose = function() {
+    b.prototype.dispose = function() {
       this.context.removeEventHandler(this);
 
-      this.listenersToRemove.forEach(function(e) {
-        e();
+      this.listenersToRemove.forEach(function(a) {
+        a();
       });
 
       this.listenersToRemove = [];
 
-      this.toDispose = l.disposeAll(this.toDispose);
-
       this._unhook();
 
-      if (-1 !== this.hideTextAreaTimeout) {
+      if (this.hideTextAreaTimeout !== -1) {
         window.clearTimeout(this.hideTextAreaTimeout);
         this.hideTextAreaTimeout = -1;
       }
     };
 
-    t.prototype.onLayoutChanged = function() {
+    b.prototype.onLayoutChanged = function(a) {
       return !1;
     };
 
-    t.prototype.onScrollChanged = function(e) {
-      this.mouseMoveMonitor.isMonitoring() && this._hookedOnScroll(e);
+    b.prototype.onScrollChanged = function(a) {
+      (this._hookUnbind.length > 0 || this._hookDispose.length > 0) && this._hookedOnScroll(a);
 
       return !1;
     };
 
-    t.prototype._onContextMenu = function(e) {
-      var t = new o.StandardMouseEvent(e);
+    b.prototype._onContextMenu = function(a) {
+      var b = new m.MouseEvent(a);
 
-      var n = r.getDomNodePosition(this.viewHelper.linesContentDomNode);
+      var c = n.getDomNodePosition(this.viewHelper.linesContentDomNode);
 
-      var i = this.mouseTargetFactory.createMouseTarget(n, t, !0);
+      var d = this.mouseTargetFactory.createMouseTarget(c, b, !0);
 
-      var s = {
-        event: t,
-        target: i
+      var e = {
+        event: b,
+        target: d
       };
-      this.viewController.emitContextMenu(s);
+      this.viewController.emitContextMenu(e);
     };
 
-    t.prototype._onMouseMove = function(e) {
-      if (!this.mouseMoveMonitor.isMonitoring()) {
-        var t = r.getDomNodePosition(this.viewHelper.linesContentDomNode);
+    b.prototype._onMouseMove = function(a) {
+      if (this._hookUnbind.length !== 0 || this._hookDispose.length !== 0) return;
+      var b = n.getDomNodePosition(this.viewHelper.linesContentDomNode);
 
-        var n = this.mouseTargetFactory.createMouseTarget(t, e, !0);
+      var c = this.mouseTargetFactory.createMouseTarget(b, a, !0);
 
-        var i = {
-          event: e,
-          target: n
-        };
-        this.viewController.emitMouseMove(i);
-      }
+      var d = {
+        event: a,
+        target: c
+      };
+      this.viewController.emitMouseMove(d);
     };
 
-    t.prototype._onMouseLeave = function(e) {
-      var t = {
-        event: new o.StandardMouseEvent(e),
+    b.prototype._onMouseLeave = function(a) {
+      var b = {
+        event: new m.MouseEvent(a),
         target: null
       };
-      this.viewController.emitMouseLeave(t);
+      this.viewController.emitMouseLeave(b);
     };
 
-    t.prototype._onMouseUp = function(e) {
-      var t = new o.StandardMouseEvent(e);
+    b.prototype._onMouseUp = function(a) {
+      var b = new m.MouseEvent(a);
 
-      var n = r.getDomNodePosition(this.viewHelper.linesContentDomNode);
+      var c = n.getDomNodePosition(this.viewHelper.linesContentDomNode);
 
-      var i = this.mouseTargetFactory.createMouseTarget(n, t, !0);
+      var d = this.mouseTargetFactory.createMouseTarget(c, b, !0);
 
-      var s = {
-        event: t,
-        target: i
+      var e = {
+        event: b,
+        target: d
       };
-      this.viewController.emitMouseUp(s);
+      this.viewController.emitMouseUp(e);
     };
 
-    t.prototype._onMouseDown = function(e) {
-      var t = this;
+    b.prototype._onMouseDown = function(a) {
+      var b = this;
 
-      var i = new o.StandardMouseEvent(e);
+      var c = new m.MouseEvent(a);
 
-      var s = r.getDomNodePosition(this.viewHelper.linesContentDomNode);
+      var d = n.getDomNodePosition(this.viewHelper.linesContentDomNode);
 
-      var a = this.mouseTargetFactory.createMouseTarget(s, i, !0);
+      var e = this.mouseTargetFactory.createMouseTarget(d, c, !0);
 
-      var u = 6 === a.type || 7 === a.type;
+      var f = e.type === o.MouseTargetType.CONTENT_TEXT || e.type === o.MouseTargetType.CONTENT_EMPTY;
 
-      var l = 2 === a.type || 3 === a.type || 4 === a.type;
+      var g = e.type === o.MouseTargetType.GUTTER_GLYPH_MARGIN || e.type === o.MouseTargetType.GUTTER_LINE_NUMBERS ||
+        e.type === o.MouseTargetType.GUTTER_LINE_DECORATIONS;
 
-      var c = 3 === a.type;
+      var h = e.type === o.MouseTargetType.GUTTER_LINE_NUMBERS;
 
-      var d = this.context.configuration.editor.selectOnLineNumbers;
-
-      var h = 8 === a.type || 5 === a.type;
-      if (i.leftButton && (u || c && d)) {
-        if (n.browser.isIE11orEarlier) {
-          if (i.browserEvent.fromElement) {
-            i.preventDefault();
-            this.viewHelper.focusTextArea();
+      var i = this.context.configuration.editor.selectOnLineNumbers;
+      if (c.leftButton && (f || h && i)) {
+        if (k.browser.isIE10) {
+          if (c.browserEvent.fromElement) {
+            c.preventDefault();
+            this.viewHelper.textArea.focus();
           } else {
             setTimeout(function() {
-              t.viewHelper.focusTextArea();
+              b.viewHelper.textArea.focus();
             });
           }
         } else {
-          i.preventDefault();
-          this.viewHelper.focusTextArea();
+          c.preventDefault();
+          this.viewHelper.textArea.focus();
         }
-        this._updateMouse(a.type, i, i.shiftKey, i.detail);
-        this._hook(a.type);
+        this._updateMouse(e.type, c, c.shiftKey, c.detail);
+        this._hook(e.type);
       } else {
-        if (l) {
-          i.preventDefault();
-        } else {
-          if (h && this.viewHelper.shouldSuppressMouseDownOnViewZone(a.detail)) {
-            i.preventDefault();
-          }
+        if (g) {
+          c.preventDefault();
         }
       }
-      var p = {
-        event: i,
-        target: a
+      var j = {
+        event: c,
+        target: e
       };
-      this.viewController.emitMouseDown(p);
+      this.viewController.emitMouseDown(j);
     };
 
-    t.prototype._hookedOnScroll = function() {
-      var e = this;
-      if (-1 === this.onScrollTimeout) {
-        this.onScrollTimeout = window.setTimeout(function() {
-          e.onScrollTimeout = -1;
+    b.prototype._onIE8DblClick = function(a) {
+      var b = new m.MouseEvent(a);
 
-          e._updateMouse(e.monitoringStartTargetType, null, !0);
+      var c = n.getDomNodePosition(this.viewHelper.linesContentDomNode);
+
+      var d = this.mouseTargetFactory.createMouseTarget(c, b, !0);
+      if (d.type === o.MouseTargetType.CONTENT_TEXT || d.type === o.MouseTargetType.CONTENT_EMPTY) {
+        this._updateMouse(d.type, b, b.shiftKey, b.detail);
+        b.preventDefault();
+        this.viewHelper.textArea.focus();
+      }
+    };
+
+    b.prototype._hookedOnScroll = function(a) {
+      var b = this;
+      if (this.onScrollTimeout === -1) {
+        this.onScrollTimeout = window.setTimeout(function() {
+          b.onScrollTimeout = -1;
+
+          b._updateMouse(b._hookStartTargetType, null, !0);
         }, 10);
       }
     };
 
-    t.prototype._hook = function(e) {
-      var t = this;
-      if (!this.mouseMoveMonitor.isMonitoring()) {
-        this.monitoringStartTargetType = e;
-        this.mouseMoveMonitor.startMonitoring(d, function(e) {
-          t._updateMouse(t.monitoringStartTargetType, e, !0);
-        }, function() {
-          t._unhook();
-        });
+    b.prototype._hookedOnDocumentMouseMove = function(a) {
+      this._updateMouse(this._hookStartTargetType, a, !0);
+    };
+
+    b.prototype._hookedOnDocumentMouseUp = function(a) {
+      var b = new m.MouseEvent(a);
+      if (b.leftButton) {
+        this._unhook();
       }
     };
 
-    t.prototype._unhook = function() {
-      if (-1 !== this.onScrollTimeout) {
+    b.prototype._hook = function(a) {
+      var b = this;
+      if (this._hookUnbind.length > 0 || this._hookDispose.length > 0) return;
+      this._hookStartTargetType = a;
+
+      this._hookUnbind.push(n.addThrottledListener(document, "mousemove", function(a) {
+        return b._hookedOnDocumentMouseMove(a);
+      }, s));
+
+      this._hookUnbind.push(n.addListener(document, "mouseup", function(a) {
+        return b._hookedOnDocumentMouseUp(a);
+      }));
+
+      if (k.isInIframe()) {
+        this._hookUnbind.push(n.addListener(document, "mouseout", function(a) {
+          var c = new m.MouseEvent(a);
+          if (c.target.tagName.toLowerCase() === "html") {
+            b._unhook();
+          }
+        }));
+        this._hookUnbind.push(n.addListener(document, "mouseover", function(a) {
+          var c = new m.MouseEvent(a);
+          if (c.target.tagName.toLowerCase() === "html") {
+            b._unhook();
+          }
+        }));
+        this._hookUnbind.push(n.addListener(document.body, "mouseleave", function(a) {
+          b._unhook();
+        }));
+      }
+    };
+
+    b.prototype._unhook = function() {
+      this._hookUnbind.forEach(function(a) {
+        a();
+      });
+
+      this._hookUnbind = [];
+
+      this._hookDispose = r.disposeAll(this._hookDispose);
+
+      if (this.onScrollTimeout !== -1) {
         window.clearTimeout(this.onScrollTimeout);
         this.onScrollTimeout = -1;
       }
     };
 
-    t.prototype._getPositionOutsideEditor = function(e, t) {
-      var n;
-      return t.posy < e.top ? (n = this.viewHelper.getLineNumberAtVerticalOffset(Math.max(this.viewHelper.getScrollTop() -
-        (e.top - t.posy), 0)), {
-        lineNumber: n,
+    b.prototype._getPositionOutsideEditor = function(a, b) {
+      var c;
+      return b.posy < a.top ? (c = this.viewHelper.getLineNumberAtVerticalOffset(Math.max(this.viewHelper.getScrollTop() -
+        (a.top - b.posy), 0)), {
+        lineNumber: c,
         column: 1
-      }) : t.posy > e.top + e.height ? (n = this.viewHelper.getLineNumberAtVerticalOffset(this.viewHelper.getScrollTop() +
-        (t.posy - e.top)), {
-        lineNumber: n,
-        column: this.context.model.getLineMaxColumn(n)
-      }) : (n = this.viewHelper.getLineNumberAtVerticalOffset(this.viewHelper.getScrollTop() + (t.posy - e.top)), t.posx <
-        e.left ? {
-          lineNumber: n,
+      }) : b.posy > a.top + a.height ? (c = this.viewHelper.getLineNumberAtVerticalOffset(this.viewHelper.getScrollTop() +
+        (b.posy - a.top)), {
+        lineNumber: c,
+        column: this.context.model.getLineMaxColumn(c)
+      }) : (c = this.viewHelper.getLineNumberAtVerticalOffset(this.viewHelper.getScrollTop() + (b.posy - a.top)), b.posx <
+        a.left ? {
+          lineNumber: c,
           column: 1
-        } : t.posx > e.left + e.width ? {
-          lineNumber: n,
-          column: this.context.model.getLineMaxColumn(n)
+        } : b.posx > a.left + a.width ? {
+          lineNumber: c,
+          column: this.context.model.getLineMaxColumn(c)
         } : null);
     };
 
-    t.prototype._updateMouse = function(e, n, o, s) {
-      if ("undefined" == typeof s) {
-        s = 0;
+    b.prototype._updateMouse = function(a, c, d, e) {
+      if (typeof e == "undefined") {
+        e = 0;
       }
 
-      n = n || this.lastMouseEvent;
+      c = c || this.lastMouseEvent;
 
-      this.lastMouseEvent = n;
-      var a;
+      this.lastMouseEvent = c;
+      var f = n.getDomNodePosition(this.viewHelper.viewDomNode);
 
-      var u;
+      var g = this._getPositionOutsideEditor(f, c);
 
-      var l = r.getDomNodePosition(this.viewHelper.viewDomNode);
+      var h;
 
-      var c = this._getPositionOutsideEditor(l, n);
-      if (c) {
-        a = c.lineNumber;
-        u = c.column;
+      var i;
+      if (g) {
+        h = g.lineNumber;
+        i = g.column;
       } else {
-        var d = this.mouseTargetFactory.createMouseTarget(l, n, !0);
+        var j = this.mouseTargetFactory.createMouseTarget(f, c, !0);
 
-        var h = d.position;
-        if (!h) return;
-        a = h.lineNumber;
+        var k = j.position;
+        if (!k) return;
+        h = k.lineNumber;
 
-        u = h.column;
+        i = k.column;
       }
-      if (s) {
-        var p = (new Date).getTime();
-        if (p - this.lastSetMouseDownCountTime > t.CLEAR_MOUSE_DOWN_COUNT_TIME) {
-          s = 1;
+      if (e) {
+        var m = (new Date).getTime();
+        if (m - this.lastSetMouseDownCountTime > b.CLEAR_MOUSE_DOWN_COUNT_TIME) {
+          e = 1;
         }
 
-        this.lastSetMouseDownCountTime = p;
+        this.lastSetMouseDownCountTime = m;
 
-        if (s > this.lastMouseDownCount + 1) {
-          s = this.lastMouseDownCount + 1;
+        if (e > this.lastMouseDownCount + 1) {
+          e = this.lastMouseDownCount + 1;
         }
-        var f = new i.Position(a, u);
-        if (this.lastMouseDownPosition && this.lastMouseDownPosition.equals(f)) {
+        var p = new l.Position(h, i);
+        if (this.lastMouseDownPosition && this.lastMouseDownPosition.equals(p)) {
           this.lastMouseDownPositionEqualCount++;
         } else {
           this.lastMouseDownPositionEqualCount = 1;
         }
 
-        this.lastMouseDownPosition = f;
+        this.lastMouseDownPosition = p;
 
-        this.lastMouseDownCount = Math.min(s, this.lastMouseDownPositionEqualCount);
+        this.lastMouseDownCount = Math.min(e, this.lastMouseDownPositionEqualCount);
 
-        n.detail = this.lastMouseDownCount;
+        c.detail = this.lastMouseDownCount;
       }
-      if (3 === e) {
-        if (n.altKey) {
-          if (o) {
-            this.viewController.lastCursorLineSelect("mouse", a, u);
+      if (a === o.MouseTargetType.GUTTER_LINE_NUMBERS) {
+        if (c.altKey) {
+          if (d) {
+            this.viewController.lastCursorLineSelect("mouse", h, i);
           } else {
-            this.viewController.createCursor("mouse", a, u, !0);
+            this.viewController.createCursor("mouse", h, i, !0);
           }
         } else {
-          if (o) {
-            this.viewController.lineSelectDrag("mouse", a, u);
+          if (d) {
+            this.viewController.lineSelectDrag("mouse", h, i);
           } else {
-            this.viewController.lineSelect("mouse", a, u);
+            this.viewController.lineSelect("mouse", h, i);
           }
         }
       } else if (this.lastMouseDownCount >= 4) {
         this.viewController.selectAll("mouse");
-      } else if (3 === this.lastMouseDownCount) {
-        if (n.altKey) {
-          if (o) {
-            this.viewController.lastCursorLineSelectDrag("mouse", a, u);
+      } else if (this.lastMouseDownCount === 3) {
+        if (c.altKey) {
+          if (d) {
+            this.viewController.lastCursorLineSelectDrag("mouse", h, i);
           } else {
-            this.viewController.lastCursorLineSelect("mouse", a, u);
+            this.viewController.lastCursorLineSelect("mouse", h, i);
           }
         } else {
-          if (o) {
-            this.viewController.lineSelectDrag("mouse", a, u);
+          if (d) {
+            this.viewController.lineSelectDrag("mouse", h, i);
           } else {
-            this.viewController.lineSelect("mouse", a, u);
-          }
-        }
-      } else if (2 === this.lastMouseDownCount) {
-        var g = l.left + this.viewHelper.visibleRangeForPosition2(a, u).left;
-
-        var m = "none";
-        if (n.posx > g) {
-          m = "right";
-        } else {
-          if (n.posx < g) {
-            m = "left";
+            this.viewController.lineSelect("mouse", h, i);
           }
         }
+      } else if (this.lastMouseDownCount === 2) {
+        var q = f.left + this.viewHelper.visibleRangeForPosition2(h, i).left;
 
-        if (n.altKey) {
-          this.viewController.lastCursorWordSelect("mouse", a, u, m);
+        var r = "none";
+        if (c.posx > q) {
+          r = "right";
         } else {
-          if (o) {
-            this.viewController.wordSelectDrag("mouse", a, u, m);
+          if (c.posx < q) {
+            r = "left";
+          }
+        }
+
+        if (c.altKey) {
+          this.viewController.lastCursorWordSelect("mouse", h, i, r);
+        } else {
+          if (d) {
+            this.viewController.wordSelectDrag("mouse", h, i, r);
           } else {
-            this.viewController.wordSelect("mouse", a, u, m);
+            this.viewController.wordSelect("mouse", h, i, r);
           }
         }
       } else {
-        if (n.altKey) {
-          if (o) {
-            this.viewController.lastCursorMoveToSelect("mouse", a, u);
+        if (c.altKey) {
+          if (d) {
+            this.viewController.lastCursorMoveToSelect("mouse", h, i);
           } else {
-            this.viewController.createCursor("mouse", a, u, !1);
+            this.viewController.createCursor("mouse", h, i, !1);
           }
         } else {
-          if (o) {
-            this.viewController.moveToSelect("mouse", a, u);
+          if (d) {
+            this.viewController.moveToSelect("mouse", h, i);
           } else {
-            this.viewController.moveTo("mouse", a, u);
+            this.viewController.moveTo("mouse", h, i);
           }
         }
       }
     };
 
-    t.CLEAR_MOUSE_DOWN_COUNT_TIME = 400;
+    b.CLEAR_MOUSE_DOWN_COUNT_TIME = 400;
 
-    t.MOUSE_MOVE_MINIMUM_TIME = 100;
+    b.MOUSE_MOVE_MINIMUM_TIME = 100;
 
-    return t;
-  }(u.ViewEventHandler);
-  t.MouseHandler = h;
+    return b;
+  }(q.ViewEventHandler);
+  b.MouseHandler = t;
 });

@@ -1,185 +1,203 @@
-define("vs/languages/typescript/editor/workerStatusReporter", ["require", "exports", "vs/editor/editor",
-  "vs/editor/core/constants", "vs/editor/modes/modesExtensions", "vs/base/eventEmitter", "vs/base/dom/builder",
-  "vs/css!./workerStatusReporter"
-], function(e, t, n, i, o, r, s) {
-  var a;
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
+    }
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
+    }
+    d.prototype = b.prototype;
 
-  var u = s.$;
-  ! function(e) {
-    e[e.Unknown = 0] = "Unknown";
+    a.prototype = new d;
+  };
 
-    e[e.Updating = 1] = "Updating";
+define(["require", "exports", "vs/editor/editor", "vs/editor/core/constants", "vs/editor/modes/modesExtensions",
+  "vs/base/eventEmitter", "vs/base/dom/builder", "vs/css!./workerStatusReporter"
+], function(a, b, c, d, e, f, g) {
+  var h = c;
 
-    e[e.Fetching = 2] = "Fetching";
+  var i = d;
 
-    e[e.Error = 3] = "Error";
+  var j = e;
 
-    e[e.Ok = 4] = "Ok";
-  }(a || (a = {}));
-  var l = function(e) {
-    function t(t) {
-      var n = this;
-      e.call(this);
+  var k = f;
 
-      this.worker = t;
+  var l = g;
+
+  var m = l.$;
+
+  var n;
+  (function(a) {
+    a[a.Unknown = 0] = "Unknown";
+
+    a[a.Updating = 1] = "Updating";
+
+    a[a.Fetching = 2] = "Fetching";
+
+    a[a.Error = 3] = "Error";
+
+    a[a.Ok = 4] = "Ok";
+  })(n || (n = {}));
+  var o = function(a) {
+    function b(b) {
+      var c = this;
+      a.call(this);
+
+      this.worker = b;
 
       this.worker.request("setStatusReporting", [!0]);
 
-      this.updateStatus(0);
+      this.updateStatus(n.Unknown);
 
-      this.worker.addMessageHandler("ts.statusUpdate", function(e) {
-        switch (e.status) {
+      this.worker.addMessageHandler("ts.statusUpdate", function(a) {
+        switch (a.status) {
           case 0:
-            n.updateStatus(4);
+            c.updateStatus(n.Ok);
             break;
           case 1:
-            n.updateStatus(1);
+            c.updateStatus(n.Updating);
             break;
           case 2:
-            n.updateStatus(3);
+            c.updateStatus(n.Error);
             break;
           case 3:
-            n.updateStatus(2);
+            c.updateStatus(n.Fetching);
             break;
           default:
-            n.updateStatus(0);
+            c.updateStatus(n.Unknown);
         }
       });
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.getStatus = function() {
+    b.prototype.getStatus = function() {
       return this.status;
     };
 
-    t.prototype.updateStatus = function(e) {
-      if (this.status !== e) {
-        this.status = e;
-        this.emit(t.Events.Updated, this.status);
+    b.prototype.updateStatus = function(a) {
+      if (this.status !== a) {
+        this.status = a;
+        this.emit(b.Events.Updated, this.status);
       }
     };
 
-    t.prototype.dispose = function() {
+    b.prototype.dispose = function() {
       this.worker.removeMessageHandler("ts.status");
     };
 
-    t.Events = {
+    b.Events = {
       Updated: "updated"
     };
 
-    return t;
-  }(r.EventEmitter);
+    return b;
+  }(k.EventEmitter);
 
-  var c = function() {
-    function e() {}
-    e.prototype.getStatus = function(e) {
-      if (!this.status) {
-        this.status = [];
-        for (var t = e.getWorkers(), n = 0, i = t.length; i > n; n++) {
-          if ("vs/languages/typescript/typescriptWorker2" === t[n].moduleIdentifier) {
-            this.status.push(new l(t[n]));
-          }
-        }
-      }
+  var p = function() {
+    function a() {}
+    a.prototype.getStatus = function(a) {
+      this.status || (this.status = a.getWorkers().map(function(a) {
+        return new o(a);
+      }));
+
       return this.status;
     };
 
-    return e;
+    return a;
   }();
 
-  var d = new c;
+  var q = new p;
 
-  var h = function() {
-    function e(e) {
-      var t = this;
-      this.editor = e;
+  var r = function() {
+    function a(a) {
+      var b = this;
+      this.editor = a;
 
       this.callOnDispose = [];
 
-      this.factory = d;
+      this.factory = q;
 
       this.created = !1;
 
-      this.domNode = u(".monaco-typescript-status");
+      this.domNode = m(".monaco-typescript-status");
 
       this.editor.addOverlayWidget(this);
 
       this.onModelChange();
 
       this.callOnDispose.push(this.editor.addListener(i.EventType.ModelChanged, function() {
-        return t.onModelChange();
+        return b.onModelChange();
       }));
     }
-    e.prototype.getId = function() {
-      return e.ID;
+    a.prototype.getId = function() {
+      return a.ID;
     };
 
-    e.prototype.dispose = function() {
-      for (; this.callOnDispose.length > 0;) {
+    a.prototype.dispose = function() {
+      while (this.callOnDispose.length > 0) {
         this.callOnDispose.pop()();
       }
     };
 
-    e.prototype.onModelChange = function() {
-      var e = this;
+    a.prototype.onModelChange = function() {
+      var a = this;
 
-      var t = this.editor.getModel();
-      if (t) {
-        var n = t.getMode();
-        if ("vs.languages.typescript" === n.getId() && n instanceof o.AbstractMode) {
-          this.domNode.show();
-          if (!this.created) {
-            this.created = !0;
-            this.factory.getStatus(n).forEach(function(t) {
-              var n = u(".worker").appendTo(e.domNode);
-              e.updateWidget(n, 0);
+      var b = this.editor.getModel();
+      if (!b) return;
+      var c = b.getMode();
+      if (c.getId() === "vs.languages.typescript" && c instanceof j.AbstractMode) {
+        this.domNode.show();
+        if (!this.created) {
+          this.created = !0;
+          this.factory.getStatus(c).forEach(function(b) {
+            var c = m(".worker").appendTo(a.domNode);
+            a.updateWidget(c, n.Unknown);
 
-              e.callOnDispose.push(t.addListener(l.Events.Updated, function(t) {
-                e.updateWidget(n, t);
-              }));
-            });
-          }
-        } else {
-          this.domNode.hide();
+            a.callOnDispose.push(b.addListener(o.Events.Updated, function(b) {
+              a.updateWidget(c, b);
+            }));
+          });
         }
+      } else {
+        this.domNode.hide();
       }
     };
 
-    e.prototype.updateWidget = function(e, t) {
-      if (t && 0 !== t) {
-        if (4 === t) {
-          e.attr("status", "ok");
+    a.prototype.updateWidget = function(a, b) {
+      if (!b || b === n.Unknown) {
+        a.attr("status", "unkown");
+      } else {
+        if (b === n.Ok) {
+          a.attr("status", "ok");
         } else {
-          if (1 === t) {
-            e.attr("status", "updating");
+          if (b === n.Updating) {
+            a.attr("status", "updating");
           } else {
-            if (2 === t) {
-              e.attr("status", "fetching");
+            if (b === n.Fetching) {
+              a.attr("status", "fetching");
             } else {
-              if (3 === t) {
-                e.attr("status", "error");
+              if (b === n.Error) {
+                a.attr("status", "error");
               }
             }
           }
         }
-      } else {
-        e.attr("status", "unkown");
       }
     };
 
-    e.prototype.getDomNode = function() {
+    a.prototype.getDomNode = function() {
       return this.domNode.getHTMLElement();
     };
 
-    e.prototype.getPosition = function() {
+    a.prototype.getPosition = function() {
       return {
-        preference: 0
+        preference: h.OverlayWidgetPositionPreference.TOP_RIGHT_CORNER
       };
     };
 
-    e.ID = "typescript.status.reporter";
+    a.ID = "typescript.status.reporter";
 
-    return e;
+    return a;
   }();
-  t.StatusPresenter = h;
+  b.StatusPresenter = r;
 });

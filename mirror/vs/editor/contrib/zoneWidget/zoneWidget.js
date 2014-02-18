@@ -1,72 +1,94 @@
-define("vs/editor/contrib/zoneWidget/zoneWidget", ["require", "exports", "vs/base/types", "vs/base/objects",
-  "vs/base/eventEmitter", "vs/base/dom/builder", "vs/editor/core/constants", "vs/css!./zoneWidget"
-], function(e, t, n, i, o, r, s) {
-  var a = r.$;
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
+    }
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
+    }
+    d.prototype = b.prototype;
 
-  var u = {
-    showArrow: !0,
+    a.prototype = new d;
+  };
+
+define(["require", "exports", "vs/base/types", "vs/base/objects", "vs/base/eventEmitter", "vs/base/dom/builder",
+  "vs/editor/core/constants", "vs/css!./zoneWidget"
+], function(a, b, c, d, e, f, g) {
+  var h = c;
+
+  var i = d;
+
+  var j = e;
+
+  var k = f;
+
+  var l = g;
+
+  var m = {
+    showAbove: !1,
     showFrame: !0,
     frameColor: "",
     className: ""
   };
 
-  var l = "vs.editor.contrib.zoneWidget";
+  var n = "vs.editor.contrib.zoneWidget";
 
-  var c = function() {
-    function e(e, t, n, i, o) {
-      this.domNode = e;
+  var o = function() {
+    function a(a, b, c, d, e) {
+      this.domNode = a;
 
-      this.afterLineNumber = t;
+      this.afterLineNumber = b;
 
-      this.heightInLines = n;
+      this.heightInLines = c;
 
-      this._onDomNodeTop = i;
+      this._onDomNodeTop = d;
 
-      this._onComputedHeight = o;
+      this._onComputedHeight = e;
     }
-    e.prototype.onDomNodeTop = function(e) {
-      this._onDomNodeTop(e);
+    a.prototype.onDomNodeTop = function(a) {
+      this._onDomNodeTop(a);
     };
 
-    e.prototype.onComputedHeight = function(e) {
-      this._onComputedHeight(e);
+    a.prototype.onComputedHeight = function(a) {
+      this._onComputedHeight(a);
     };
 
-    return e;
+    return a;
   }();
 
-  var d = function() {
-    function e(e, t) {
-      this._id = e;
+  var p = function() {
+    function a(a, b) {
+      this._id = a;
 
-      this._domNode = t;
+      this._domNode = b;
     }
-    e.prototype.getId = function() {
+    a.prototype.getId = function() {
       return this._id;
     };
 
-    e.prototype.getDomNode = function() {
+    a.prototype.getDomNode = function() {
       return this._domNode;
     };
 
-    e.prototype.getPosition = function() {
+    a.prototype.getPosition = function() {
       return null;
     };
 
-    return e;
+    return a;
   }();
 
-  var h = function(e) {
-    function t(t, n) {
-      if ("undefined" == typeof n) {
-        n = {};
+  var q = function(a) {
+    function b(b, c) {
+      if (typeof c == "undefined") {
+        c = {};
       }
-      var o = this;
-      e.call(this);
+      var d = this;
+      a.call(this);
 
-      this.editor = t;
+      this.editor = b;
 
-      this.options = i.mixin(i.clone(u), n);
+      this.options = i.mixin(i.clone(m), c);
 
       this.zoneId = -1;
 
@@ -76,178 +98,175 @@ define("vs/editor/contrib/zoneWidget/zoneWidget", ["require", "exports", "vs/bas
 
       this.domNode = document.createElement("div");
 
-      this.domNode.setAttribute("aria-hidden", "true");
-
-      this.domNode.setAttribute("role", "presentation");
-
       this.container = null;
 
       this.listenersToRemove = [];
 
-      this.listenersToRemove.push(this.editor.addListener(s.EventType.EditorLayout, function(e) {
-        var t = o.getWidth(e);
-        o.domNode.style.width = t + "px";
+      this.listenersToRemove.push(this.editor.addListener(l.EventType.EditorLayout, function(a) {
+        var b = d.getWidth(a);
+        d.domNode.style.width = b + "px";
 
-        o.onWidth(t);
+        d.onWidth(b);
       }));
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.create = function() {
-      var e = this;
+    b.prototype.create = function() {
+      var a = this;
 
-      var t = a(this.domNode).addClass("zone-widget").addClass(this.options.className);
-      t.div({
+      var b = k.Build.withElement(this.domNode).addClass("zone-widget").addClass(this.options.className);
+      b.div({
         "class": "container"
-      }, function(t) {
-        e.container = t.asContainer();
+      }, function(b) {
+        a.container = b.asContainer();
 
-        e.fillContainer(t.getHTMLElement());
+        a.fillContainer(b.getHTMLElement());
       });
     };
 
-    t.prototype.getWidth = function(e) {
-      "undefined" == typeof e && (e = this.editor.getLayoutInfo());
+    b.prototype.getWidth = function(a) {
+      typeof a == "undefined" && (a = this.editor.getLayoutInfo());
 
-      return e.width - e.verticalScrollbarWidth;
+      return a.width - a.verticalScrollbarWidth;
     };
 
-    t.prototype.onViewZoneTop = function(e) {
-      this.domNode.style.top = e + "px";
+    b.prototype.onViewZoneTop = function(a) {
+      this.domNode.style.top = a + "px";
     };
 
-    t.prototype.onViewZoneHeight = function(e) {
-      this.domNode.style.height = e + "px";
+    b.prototype.onViewZoneHeight = function(a) {
+      this.domNode.style.height = a + "px";
     };
 
-    t.prototype.show = function(e, t) {
-      if (n.isUndefinedOrNull(e.startLineNumber)) {
+    b.prototype.createArrow = function(a, b, c) {
+      var d = document.createElement("div");
+
+      var e = this.editor.getOffsetForColumn(a.lineNumber, a.column);
+      d.style.borderWidth = c + "px";
+
+      d.style.left = e + "px";
+
+      this.options.showAbove ? (d.className = "zone-widget-arrow above", d.style.top = 4 + c + b + "px", d.style.borderTopColor =
+        this.options.frameColor) : (d.className = "zone-widget-arrow below", d.style.top = -c + "px", d.style.borderBottomColor =
+        this.options.frameColor);
+
+      return d;
+    };
+
+    b.prototype.show = function(a, b) {
+      if (h.isUndefinedOrNull(a.startLineNumber)) {
         this.showImpl({
-          startLineNumber: e.lineNumber,
-          startColumn: e.column,
-          endLineNumber: e.lineNumber,
-          endColumn: e.column
-        }, t);
+          startLineNumber: a.lineNumber,
+          startColumn: a.column,
+          endLineNumber: a.lineNumber,
+          endColumn: a.column
+        }, b);
       } else {
-        this.showImpl(e, t);
+        this.showImpl(a, b);
       }
     };
 
-    t.prototype.showImpl = function(e, t) {
-      var n = this;
-
-      var i = {
-        lineNumber: e.startLineNumber,
-        column: e.startColumn
+    b.prototype.showImpl = function(a, b) {
+      var c = this;
+      this.position = {
+        lineNumber: a.startLineNumber,
+        column: a.startColumn
       };
+
       this.domNode.style.width = this.getWidth() + "px";
 
-      this.editor.revealPosition(i, !1, !1);
-      var o = document.createElement("div");
+      this.editor.revealPosition(this.position, !1, !1);
+      var d = document.createElement("div");
 
-      var r = document.createElement("div");
+      var e = this.editor.getConfiguration().lineHeight;
 
-      var s = this.editor.getConfiguration().lineHeight;
-
-      var a = t * s;
-
-      var u = 0;
-
-      var h = 0;
-      if (this.options.showArrow) {
-        u = Math.round(s / 3);
-        a -= 2 * u;
-        r = document.createElement("div");
-        r.className = "zone-widget-arrow below";
-        r.style.top = -u + "px";
-        r.style.borderWidth = u + "px";
-        r.style.left = this.editor.getOffsetForColumn(i.lineNumber, i.column) + "px";
-        r.style.borderBottomColor = this.options.frameColor;
-        o.appendChild(r);
-      }
-
+      var f;
       if (this.options.showFrame) {
-        h = Math.round(s / 9);
-        a -= 2 * h;
+        var g = Math.round(e / 3);
+
+        var h = Math.max(0, e - 2 * g);
+        f = (b - 1) * e + h - 4;
+
+        d.appendChild(this.createArrow(this.position, f, g));
+      } else {
+        f = b * e;
       }
-
-      this.editor.changeViewZones(function(e) {
-        if (-1 !== n.zoneId) {
-          e.removeZone(n.zoneId);
+      this.editor.changeViewZones(function(a) {
+        if (c.zoneId !== -1) {
+          a.removeZone(c.zoneId);
         }
 
-        if (n.overlayWidget) {
-          n.editor.removeOverlayWidget(n.overlayWidget);
-          n.overlayWidget = null;
+        if (c.overlayWidget) {
+          c.editor.removeOverlayWidget(c.overlayWidget);
+          c.overlayWidget = null;
         }
-        var r = new c(o, i.lineNumber, t, function(e) {
-          return n.onViewZoneTop(e);
-        }, function(e) {
-          return n.onViewZoneHeight(e);
+        var e = new o(d, c.position.lineNumber + (c.options.showAbove ? -1 : 0), b, function(a) {
+          return c.onViewZoneTop(a);
+        }, function(a) {
+          return c.onViewZoneHeight(a);
         });
-        n.zoneId = e.addZone(r);
+        c.zoneId = a.addZone(e);
 
-        n.overlayWidget = new d(l + n.zoneId, n.domNode);
+        c.overlayWidget = new p(n + c.zoneId, c.domNode);
 
-        n.editor.addOverlayWidget(n.overlayWidget);
+        c.editor.addOverlayWidget(c.overlayWidget);
       });
 
       if (this.options.showFrame) {
         this.container.style({
           borderTopColor: this.options.frameColor,
           borderBottomColor: this.options.frameColor,
-          borderTopWidth: h + "px",
-          borderBottomWidth: h + "px"
+          top: g + "px",
+          height: f + "px",
+          overflow: "hidden"
+        });
+      } else {
+        this.container.style({
+          borderTopColor: this.options.frameColor,
+          borderBottomColor: this.options.frameColor,
+          borderTopWidth: 0,
+          borderBottomWidth: 0,
+          height: f + "px",
+          overflow: "hidden"
         });
       }
 
-      this.container.style({
-        top: u + "px",
-        height: a + "px",
-        overflow: "hidden"
-      });
+      this.doLayout(f);
 
-      this.doLayout(a);
-
-      this.editor.setSelection(e);
-      var p = {
-        lineNumber: Math.min(this.editor.getModel().getLineCount(), Math.max(1, e.endLineNumber + 1)),
+      this.editor.setSelection(a);
+      var i = {
+        lineNumber: Math.min(this.editor.getModel().getLineCount(), Math.max(1, a.endLineNumber + (this.options.showAbove ? -
+          1 : 1))),
         column: 1
       };
-      this.editor.revealPosition(p, !1, !1);
-
-      this.position = i;
+      this.editor.revealPosition(i, !1, !1);
     };
 
-    t.prototype.dispose = function() {
-      var e = this;
-      this.listenersToRemove.forEach(function(e) {
-        e();
-      });
-
-      this.listenersToRemove = [];
+    b.prototype.dispose = function() {
+      var a = this;
+      this.position = null;
 
       if (this.overlayWidget) {
         this.editor.removeOverlayWidget(this.overlayWidget);
         this.overlayWidget = null;
       }
 
-      if (-1 !== this.zoneId) {
-        this.editor.changeViewZones(function(t) {
-          t.removeZone(e.zoneId);
+      if (this.zoneId !== -1) {
+        this.editor.changeViewZones(function(b) {
+          b.removeZone(a.zoneId);
 
-          e.zoneId = -1;
+          a.zoneId = -1;
         });
       }
     };
 
-    t.prototype.fillContainer = function() {};
+    b.prototype.fillContainer = function(a) {};
 
-    t.prototype.onWidth = function() {};
+    b.prototype.onWidth = function(a) {};
 
-    t.prototype.doLayout = function() {};
+    b.prototype.doLayout = function(a) {};
 
-    return t;
-  }(o.EventEmitter);
-  t.ZoneWidget = h;
+    return b;
+  }(j.EventEmitter);
+  b.ZoneWidget = q;
 });

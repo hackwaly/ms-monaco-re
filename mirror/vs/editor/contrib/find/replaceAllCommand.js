@@ -1,47 +1,26 @@
-define("vs/editor/contrib/find/replaceAllCommand", ["require", "exports", "vs/editor/core/range",
-  "vs/editor/core/selection"
-], function(e, t, n, i) {
-  var o = function() {
-    function e(e, t) {
-      this._ranges = e;
+define(["require", "exports", "vs/editor/core/selection"], function(a, b, c) {
+  var d = c;
 
-      this._replaceStrings = t;
+  var e = function() {
+    function a(a, b) {
+      this._ranges = a;
+
+      this._replaceStrings = b;
     }
-    e.prototype.getEditOperations = function(e, t) {
-      if (this._ranges.length > 0) {
-        for (var i = [], o = 0; o < this._ranges.length; o++) {
-          i.push({
-            range: this._ranges[o],
-            text: this._replaceStrings[o]
-          });
-        }
-        i.sort(function(e, t) {
-          return n.compareRangesUsingStarts(e.range, t.range);
-        });
-        for (var r = [], s = i[0], o = 1; o < i.length; o++) {
-          if (s.range.endLineNumber === i[o].range.startLineNumber && s.range.endColumn === i[o].range.startColumn) {
-            s.range = s.range.plusRange(i[o].range);
-            s.text = s.text + i[o].text;
-          } else {
-            r.push(s);
-            s = i[o];
-          }
-        }
-        r.push(s);
-        for (var o = 0; o < r.length; o++) {
-          t.addEditOperation(r[o].range, r[o].text);
-        }
+    a.prototype.getEditOperations = function(a, b) {
+      for (var c = 0; c < this._ranges.length; c++) {
+        b.addEditOperation(this._ranges[c], this._replaceStrings[c]);
       }
     };
 
-    e.prototype.computeCursorState = function(e, t) {
-      var n = t.getInverseEditOperations();
+    a.prototype.computeCursorState = function(a, b) {
+      var c = b.getInverseEditOperations();
 
-      var o = n[n.length - 1].range;
-      return new i.Selection(o.endLineNumber, o.endColumn, o.endLineNumber, o.endColumn);
+      var e = c[c.length - 1].range;
+      return new d.Selection(e.endLineNumber, e.endColumn, e.endLineNumber, e.endColumn);
     };
 
-    return e;
+    return a;
   }();
-  t.ReplaceAllCommand = o;
+  b.ReplaceAllCommand = e;
 });

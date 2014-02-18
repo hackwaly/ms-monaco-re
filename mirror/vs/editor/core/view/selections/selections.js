@@ -182,14 +182,38 @@ define(["require", "exports", "vs/editor/core/view/viewEventHandler", "vs/css!./
         if (l > 0) {
           f = a[l - 1].left;
           g = a[l - 1].left + a[l - 1].width;
-          c === f ? j.top = e.FLAT : c > f && (j.top = e.INTERN);
-          d === g ? k.top = e.FLAT : f < d && d < g && (k.top = e.INTERN);
+          if (c === f) {
+            j.top = e.FLAT;
+          } else {
+            if (c > f) {
+              j.top = e.INTERN;
+            }
+          }
+          if (d === g) {
+            k.top = e.FLAT;
+          } else {
+            if (f < d && d < g) {
+              k.top = e.INTERN;
+            }
+          }
         }
         if (l + 1 < m) {
           h = a[l + 1].left;
           i = a[l + 1].left + a[l + 1].width;
-          c === h ? j.bottom = e.FLAT : h < c && c < i && (j.bottom = e.INTERN);
-          d === i ? k.bottom = e.FLAT : d < i && (k.bottom = e.INTERN);
+          if (c === h) {
+            j.bottom = e.FLAT;
+          } else {
+            if (h < c && c < i) {
+              j.bottom = e.INTERN;
+            }
+          }
+          if (d === i) {
+            k.bottom = e.FLAT;
+          } else {
+            if (d < i) {
+              k.bottom = e.INTERN;
+            }
+          }
         }
         b.startStyle = j;
         b.endStyle = k;

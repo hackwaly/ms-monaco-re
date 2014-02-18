@@ -1,12 +1,18 @@
-define("vs/editor/contrib/parameterHints/parameterHintsWidget", ["require", "exports", "vs/base/dom/builder",
-  "vs/editor/editor", "vs/css!./parameterHints"
-], function(e, t, n) {
-  var i = n.$;
+define(["require", "exports", "vs/base/dom/builder", "vs/editor/core/constants", "vs/editor/editor",
+  "vs/css!./parameterHints"
+], function(a, b, c, d, e) {
+  var f = c;
 
-  var o = function() {
-    function e(t, n, o) {
-      var r = this;
-      this.editor = o;
+  var g = d;
+
+  var h = e;
+
+  var i = f.$;
+
+  var j = function() {
+    function a(b, c, d) {
+      var e = this;
+      this.editor = c;
 
       this.modelListenersToRemove = [];
 
@@ -14,108 +20,131 @@ define("vs/editor/contrib/parameterHints/parameterHintsWidget", ["require", "exp
 
       this.isVisible = !1;
 
-      this.setModel(n);
+      this.setModel(b);
+
+      this.triggerCharactersListeners = [];
+      var f = function() {
+        while (e.triggerCharactersListeners.length > 0) {
+          e.triggerCharactersListeners.pop()();
+        }
+        if (e.editor.getModel()) {
+          var a = e.editor.getModel().getMode();
+          if (a.parameterHintsSupport) {
+            var b = a.parameterHintsSupport.getParameterHintsTriggerCharacters();
+            for (var c = 0; c < b.length; c++) {
+              e.triggerCharactersListeners.push(e.editor.addTypingListener(b[c], function() {
+                return e.model.trigger();
+              }));
+            }
+          }
+        }
+      };
+      this.modelListenersToRemove.push(this.editor.addListener(g.EventType.ModelChanged, f));
+
+      this.modelListenersToRemove.push(this.editor.addListener(g.EventType.ModelModeChanged, f));
 
       this.$el = i(".editor-widget.parameter-hints-widget").on("click", function() {
-        r.selectNext();
+        e.selectNext();
 
-        r.editor.focus();
+        e.editor.focus();
       });
 
       this.$wrapper = i(".wrapper.monaco-editor-background").appendTo(this.$el);
-      var s = i(".buttons").appendTo(this.$wrapper);
-      i(".button.previous").on("click", function(e) {
-        e.preventDefault();
+      var h = i(".buttons").appendTo(this.$wrapper);
 
-        e.stopPropagation();
+      var j = i(".button.previous").on("click", function(a) {
+        a.preventDefault();
 
-        r.selectPrevious();
-      }).appendTo(s);
+        a.stopPropagation();
 
-      i(".button.next").on("click", function(e) {
-        e.preventDefault();
+        e.selectPrevious();
+      }).appendTo(h);
 
-        e.stopPropagation();
+      var k = i(".button.next").on("click", function(a) {
+        a.preventDefault();
 
-        r.selectNext();
-      }).appendTo(s);
+        a.stopPropagation();
 
+        e.selectNext();
+      }).appendTo(h);
       this.$overloads = i(".overloads").appendTo(this.$wrapper);
 
       this.$signatures = i(".signatures").appendTo(this.$wrapper);
-
-      this.bindings = t.handlerService.bindGroup(function(e) {
-        e({
-          key: "Escape"
-        }, r.cancel.bind(r));
-
-        e({
-          key: "UpArrow"
-        }, r.selectPrevious.bind(r));
-
-        e({
-          key: "DownArrow"
-        }, r.selectNext.bind(r));
-      }, {
-        id: e.ID
-      });
 
       this.signatureViews = [];
 
       this.currentSignature = 0;
 
+      this.bindings = d.bindGroup(function(a) {
+        a({
+          key: "Escape"
+        }, e.cancel.bind(e));
+
+        a({
+          key: "UpArrow"
+        }, e.selectPrevious.bind(e));
+
+        a({
+          key: "DownArrow"
+        }, e.selectNext.bind(e));
+      }, {
+        id: a.ID
+      });
+
       this.editor.addContentWidget(this);
 
       this.hide();
     }
-    e.prototype.setModel = function(e) {
-      var t = this;
+    a.prototype.setModel = function(a) {
+      var b = this;
       this.releaseModel();
 
-      this.model = e;
+      this.model = a;
 
-      this.modelListenersToRemove.push(this.model.addListener("hint", function(e) {
-        t.show();
+      this.modelListenersToRemove.push(this.model.addListener("hint", function(a) {
+        b.show();
 
-        t.render(e.hints);
+        b.render(a.hints);
 
-        t.currentSignature = e.hints.currentSignature;
+        b.currentSignature = a.hints.currentSignature;
 
-        t.select(t.currentSignature);
+        b.select(b.currentSignature);
       }));
 
-      this.modelListenersToRemove.push(this.model.addListener("cancel", function() {
-        t.hide();
+      this.modelListenersToRemove.push(this.model.addListener("cancel", function(a) {
+        b.hide();
       }));
     };
 
-    e.prototype.show = function() {
-      if (this.bindings) {
-        this.isVisible = !0;
-        this.$el.removeClass("hidden");
-        this.bindings.activate();
-        this.editor.layoutContentWidget(this);
-      }
+    a.prototype.show = function() {
+      this.isVisible = !0;
+
+      this.$el.removeClass("hidden");
+
+      this.bindings.activate();
+
+      this.editor.layoutContentWidget(this);
     };
 
-    e.prototype.hide = function() {
-      if (this.bindings) {
-        this.isVisible = !1;
-        this.bindings.deactivate();
-        this.$el.addClass("hidden");
-        this.editor.layoutContentWidget(this);
-      }
+    a.prototype.hide = function() {
+      this.isVisible = !1;
+
+      this.bindings.deactivate();
+
+      this.$el.addClass("hidden");
+
+      this.editor.layoutContentWidget(this);
     };
 
-    e.prototype.getPosition = function() {
+    a.prototype.getPosition = function() {
       return this.isVisible ? {
         position: this.editor.getPosition(),
-        preference: [1, 2]
+        preference: [h.ContentWidgetPositionPreference.ABOVE, h.ContentWidgetPositionPreference.BELOW]
       } : null;
     };
 
-    e.prototype.render = function(e) {
-      if (e.signatures.length > 1) {
+    a.prototype.render = function(a) {
+      if (a.signatures.length > 1) {
         this.$el.addClass("multiple");
       } else {
         this.$el.removeClass("multiple");
@@ -124,95 +153,104 @@ define("vs/editor/contrib/parameterHints/parameterHintsWidget", ["require", "exp
       this.$signatures.empty();
 
       this.signatureViews = [];
-      for (var t = 0, n = 0, i = e.signatures.length; i > n; n++) {
-        var o = e.signatures[n];
+      var b = 0;
 
-        var r = this.renderSignature(this.$signatures, o, e.currentParameter);
-        this.renderDocumentation(r, o, e.currentParameter);
-        var s = r.getClientArea().height;
+      var c = a.currentSignature;
+      for (var d = 0, e = a.signatures.length; d < e; d++) {
+        var f = a.signatures[d];
+
+        var g = this.renderSignature(this.$signatures, f, a.currentParameter);
+        this.renderDocumentation(g, f, a.currentParameter);
+        var h = g.getClientArea().height;
         this.signatureViews.push({
-          top: t,
-          height: s
+          top: b,
+          height: h
         });
 
-        t += s;
+        b += h;
       }
     };
 
-    e.prototype.renderSignature = function(e, t, n) {
-      var o = i(".signature").appendTo(e);
+    a.prototype.renderSignature = function(a, b, c) {
+      var d = i(".signature").appendTo(a);
 
-      var r = (t.label, t.parameters.length > 0);
-      if (r) {
-        for (var s = i("span.parameters"), a = 0, u = 0, l = t.parameters.length; l > u; u++) {
-          var c = t.parameters[u];
-          (0 === u ? o : s).append(i("span").text(t.label.substring(a, c.signatureLabelOffset)));
+      var e = b.label;
 
-          s.append(i("span.parameter").addClass(u === n ? "active" : "").text(t.label.substring(c.signatureLabelOffset,
-            c.signatureLabelEnd)));
-
-          a = c.signatureLabelEnd;
-        }
-        o.append(s);
-
-        o.append(i("span").text(t.label.substring(a)));
+      var f = b.parameters.length > 0;
+      if (!f) {
+        d.append(i("span").text(b.label));
       } else {
-        o.append(i("span").text(t.label));
+        var g = i("span.parameters");
+
+        var h = 0;
+        for (var j = 0, k = b.parameters.length; j < k; j++) {
+          var l = b.parameters[j];
+          (j === 0 ? d : g).append(i("span").text(b.label.substring(h, l.signatureLabelOffset)));
+
+          g.append(i("span.parameter").addClass(j === c ? "active" : "").text(b.label.substring(l.signatureLabelOffset,
+            l.signatureLabelEnd)));
+
+          h = l.signatureLabelEnd;
+        }
+        d.append(g);
+
+        d.append(i("span").text(b.label.substring(h)));
       }
-      return o;
+      return d;
     };
 
-    e.prototype.renderDocumentation = function(e, t, n) {
-      if (t.documentation) {
-        e.append(i(".documentation").text(t.documentation));
+    a.prototype.renderDocumentation = function(a, b, c) {
+      if (b.documentation) {
+        a.append(i(".documentation").text(b.documentation));
       }
-      var o = t.parameters[n];
-      if (o && o.documentation) {
-        var r = i(".documentation");
-        r.append(i("span.parameter").text(o.label));
+      var d = b.parameters[c];
+      if (d && d.documentation) {
+        var e = i(".documentation");
+        e.append(i("span.parameter").text(d.label));
 
-        r.append(i("span").text(o.documentation));
+        e.append(i("span").text(d.documentation));
 
-        e.append(r);
+        a.append(e);
       }
     };
 
-    e.prototype.select = function(e) {
-      var t = this.signatureViews[e];
+    a.prototype.select = function(a) {
+      var b = this.signatureViews[a];
       this.$signatures.style({
-        height: t.height + "px"
+        height: b.height + "px"
       });
 
-      this.$signatures.getHTMLElement().scrollTop = t.top;
+      this.$signatures.getHTMLElement().scrollTop = b.top;
 
-      this.$overloads.text(e + 1 + "/" + this.signatureViews.length);
+      this.$overloads.text(a + 1 + "/" + this.signatureViews.length);
     };
 
-    e.prototype.selectNext = function() {
+    a.prototype.selectNext = function() {
       return this.signatureViews.length < 2 ? (this.cancel(), !1) : (this.currentSignature = (this.currentSignature +
         1) % this.signatureViews.length, this.select(this.currentSignature), !0);
     };
 
-    e.prototype.selectPrevious = function() {
+    a.prototype.selectPrevious = function() {
       return this.signatureViews.length < 2 ? (this.cancel(), !1) : (this.currentSignature--, this.currentSignature <
         0 && (this.currentSignature = this.signatureViews.length - 1), this.select(this.currentSignature), !0);
     };
 
-    e.prototype.cancel = function() {
+    a.prototype.cancel = function() {
       this.model.cancel();
     };
 
-    e.prototype.getDomNode = function() {
+    a.prototype.getDomNode = function() {
       return this.$el.getHTMLElement();
     };
 
-    e.prototype.getId = function() {
-      return e.ID;
+    a.prototype.getId = function() {
+      return a.ID;
     };
 
-    e.prototype.releaseModel = function() {
-      for (var e; e = this.modelListenersToRemove.pop();) {
-        e();
+    a.prototype.releaseModel = function() {
+      var a;
+      while (a = this.modelListenersToRemove.pop()) {
+        a();
       }
       if (this.model) {
         this.model.dispose();
@@ -220,9 +258,11 @@ define("vs/editor/contrib/parameterHints/parameterHintsWidget", ["require", "exp
       }
     };
 
-    e.prototype.destroy = function() {
+    a.prototype.destroy = function() {
       this.releaseModel();
-
+      while (this.triggerCharactersListeners.length > 0) {
+        this.triggerCharactersListeners.pop()();
+      }
       if (this.$overloads) {
         this.$overloads.destroy();
         delete this.$overloads;
@@ -249,9 +289,9 @@ define("vs/editor/contrib/parameterHints/parameterHintsWidget", ["require", "exp
       }
     };
 
-    e.ID = "editor.widget.parameterHintsWidget";
+    a.ID = "editor.widget.parameterHintsWidget";
 
-    return e;
+    return a;
   }();
-  t.ParameterHintsWidget = o;
+  b.ParameterHintsWidget = j;
 });

@@ -1,32 +1,56 @@
-define("vs/editor/contrib/toggleTabFocusMode/toggleTabFocusMode", ["require", "exports", "vs/nls!vs/editor/editor.main",
-  "vs/base/lib/winjs.base", "vs/platform/platform", "vs/platform/actionRegistry", "vs/editor/editorExtensions"
-], function(e, t, n, i, o, r, s) {
-  var a = function(e) {
-    function t(t, n) {
-      e.call(this, t, n);
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
     }
-    __extends(t, e);
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
+    }
+    d.prototype = b.prototype;
 
-    t.prototype.run = function() {
+    a.prototype = new d;
+  };
+
+define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/platform/platform", "vs/platform/actionRegistry",
+  "vs/editor/editorExtensions"
+], function(a, b, c, d, e, f, g) {
+  var h = c;
+
+  var i = d;
+
+  var j = e;
+
+  var k = f;
+
+  var l = g;
+
+  var m = function(a) {
+    function b(b, c) {
+      a.call(this, b, c);
+    }
+    __extends(b, a);
+
+    b.prototype.run = function() {
       this.editor.getConfiguration().tabFocusMode ? this.editor.updateOptions({
         tabFocusMode: !1
       }) : this.editor.updateOptions({
         tabFocusMode: !0
       });
 
-      return i.TPromise.as(!0);
+      return i.Promise.as(null);
     };
 
-    t.ID = "editor.actions.toggleTabFocusMode";
+    b.ID = "editor.actions.toggleTabFocusMode";
 
-    return t;
-  }(s.EditorAction);
+    return b;
+  }(l.EditorAction);
 
-  var u = new r.ActionDescriptor(a, a.ID, n.localize("vs_editor_contrib_toggleTabFocusMode_toggleTabFocusMode", 0), {
+  var n = new k.ActionDescriptor(m, m.ID, h.localize("toggle.tabfocusmode", "Toggle use of tab key for setting focus"), {
     ctrlCmd: !0,
     key: "M"
   });
 
-  var l = o.Registry.as(s.Extensions.EditorContributions);
-  l.registerEditorContribution(u);
+  var o = j.Registry.as(l.Extensions.EditorContributions);
+  o.registerEditorContribution(n);
 });

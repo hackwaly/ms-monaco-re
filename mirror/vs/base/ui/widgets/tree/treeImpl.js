@@ -1,280 +1,310 @@
-define("vs/base/ui/widgets/tree/treeImpl", ["require", "exports", "vs/base/types",
-  "vs/base/ui/widgets/tree/treeDefaults", "vs/base/eventEmitter", "./treeModel", "./treeView", "vs/css!./tree"
-], function(e, t, n, i, o, r, s) {
-  var a = function() {
-    function e(e, t, o) {
-      if ("undefined" == typeof o && (o = {}), this.tree = e, this.configuration = t, this.options = o, !t.dataSource)
-        throw new Error("You must provide a Data Source to the tree.");
-      this.dataSource = t.dataSource;
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
+    }
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
+    }
+    d.prototype = b.prototype;
 
-      this.renderer = t.renderer || new i.DefaultRenderer;
+    a.prototype = new d;
+  };
 
-      this.controller = t.controller || new i.DefaultController;
+define(["require", "exports", "vs/base/types", "vs/base/ui/widgets/tree/treeDefaults", "vs/base/eventEmitter",
+  "./treeModel", "./treeView", "vs/css!./tree"
+], function(a, b, c, d, e, f, g) {
+  var h = c;
 
-      this.dnd = t.dnd || new i.DefaultDragAndDrop;
+  var i = d;
 
-      this.filter = t.filter || new i.DefaultFilter;
+  var j = e;
 
-      this.sorter = t.sorter || null;
-      var r = [this.dataSource, this.renderer, this.controller, this.dnd, this.filter, this.sorter];
-      r.forEach(function(t) {
-        if (t && n.isFunction(t.setTree)) {
-          t.setTree(e);
+  var k = f;
+
+  var l = g;
+
+  var m = function() {
+    function a(a, b, c) {
+      if (typeof c == "undefined") {
+        c = {};
+      }
+
+      this.tree = a;
+
+      this.configuration = b;
+
+      this.options = c;
+      if (!b.dataSource) throw new Error("You must provide a Data Source to the tree.");
+      this.dataSource = b.dataSource;
+
+      this.renderer = b.renderer || new i.DefaultRenderer;
+
+      this.controller = b.controller || new i.DefaultController;
+
+      this.dnd = b.dnd || new i.DefaultDragAndDrop;
+
+      this.filter = b.filter || new i.DefaultFilter;
+
+      this.sorter = b.sorter || null;
+      var d = [this.dataSource, this.renderer, this.controller, this.dnd, this.filter, this.sorter];
+      d.forEach(function(b) {
+        if (b && h.isFunction(b.setTree)) {
+          b.setTree(a);
         }
       });
     }
-    return e;
+    return a;
   }();
-  t.TreeContext = a;
-  var u = function(e) {
-    function t(t, n, i) {
-      if ("undefined" == typeof i) {
-        i = {};
+  b.TreeContext = m;
+  var n = function(a) {
+    function b(b, c, d) {
+      if (typeof d == "undefined") {
+        d = {};
       }
 
-      e.call(this);
+      a.call(this);
 
-      this.container = t;
+      this.container = b;
 
-      this.configuration = n;
+      this.configuration = c;
 
-      this.options = i;
+      this.options = d;
 
-      this.options.twistiePixels = "number" == typeof this.options.twistiePixels ? this.options.twistiePixels : 32;
+      this.options.twistiePixels = typeof this.options.twistiePixels == "number" ? this.options.twistiePixels : 20;
 
-      this.options.indentPixels = "number" == typeof this.options.indentPixels ? this.options.indentPixels : 12;
+      this.options.indentPixels = typeof this.options.indentPixels == "number" ? this.options.indentPixels : 10;
 
       this.options.alwaysFocused = this.options.alwaysFocused === !0 ? !0 : !1;
 
       this.options.bare = this.options.bare === !0 ? !0 : !1;
 
-      this.context = new a(this, n, i);
+      this.context = new m(this, c, d);
 
-      this.model = new r.TreeModel(this.context);
+      this.model = new k.TreeModel(this.context);
 
-      this.view = new s.TreeView(this.context, this.container);
+      this.view = new l.TreeView(this.context, this.container);
 
       this.view.setModel(this.model);
 
       this.addEmitter(this.model);
-
-      this.addEmitter(this.view);
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.getHTMLElement = function() {
+    b.prototype.getHTMLElement = function() {
       return this.view.getHTMLElement();
     };
 
-    t.prototype.layout = function(e) {
-      this.view.layout(e);
+    b.prototype.layout = function(a) {
+      this.view.layout(a);
     };
 
-    t.prototype.DOMFocus = function() {
+    b.prototype.DOMFocus = function() {
       this.view.focus();
     };
 
-    t.prototype.isDOMFocused = function() {
+    b.prototype.isDOMFocused = function() {
       return this.view.isFocused();
     };
 
-    t.prototype.DOMBlur = function() {
+    b.prototype.DOMBlur = function() {
       this.view.blur();
     };
 
-    t.prototype.onVisible = function() {
+    b.prototype.onVisible = function() {
       this.view.onVisible();
     };
 
-    t.prototype.onHidden = function() {
+    b.prototype.onHidden = function() {
       this.view.onHidden();
     };
 
-    t.prototype.setInput = function(e) {
-      return this.model.setInput(e);
+    b.prototype.setInput = function(a) {
+      return this.model.setInput(a);
     };
 
-    t.prototype.getInput = function() {
+    b.prototype.getInput = function() {
       return this.model.getInput();
     };
 
-    t.prototype.refresh = function(e, t) {
-      "undefined" == typeof e && (e = null);
+    b.prototype.refresh = function(a, b) {
+      typeof a == "undefined" && (a = null);
 
-      "undefined" == typeof t && (t = !0);
+      typeof b == "undefined" && (b = !0);
 
-      return this.model.refresh(e, t);
+      return this.model.refresh(a, b);
     };
 
-    t.prototype.refreshAll = function(e, t) {
-      "undefined" == typeof t && (t = !0);
+    b.prototype.refreshAll = function(a, b) {
+      typeof b == "undefined" && (b = !0);
 
-      return this.model.refreshAll(e, t);
+      return this.model.refreshAll(a, b);
     };
 
-    t.prototype.expand = function(e) {
-      return this.model.expand(e);
+    b.prototype.expand = function(a) {
+      return this.model.expand(a);
     };
 
-    t.prototype.expandAll = function(e) {
-      return this.model.expandAll(e);
+    b.prototype.expandAll = function(a) {
+      return this.model.expandAll(a);
     };
 
-    t.prototype.collapse = function(e, t) {
-      "undefined" == typeof t && (t = !1);
+    b.prototype.collapse = function(a, b) {
+      typeof b == "undefined" && (b = !1);
 
-      return this.model.collapse(e);
+      return this.model.collapse(a);
     };
 
-    t.prototype.collapseAll = function(e, t) {
-      "undefined" == typeof e && (e = null);
+    b.prototype.collapseAll = function(a, b) {
+      typeof a == "undefined" && (a = null);
 
-      "undefined" == typeof t && (t = !1);
+      typeof b == "undefined" && (b = !1);
 
-      return this.model.collapseAll(e, t);
+      return this.model.collapseAll(a, b);
     };
 
-    t.prototype.toggleExpansion = function(e) {
-      return this.model.toggleExpansion(e);
+    b.prototype.toggleExpansion = function(a) {
+      return this.model.toggleExpansion(a);
     };
 
-    t.prototype.toggleExpansionAll = function(e) {
-      return this.model.toggleExpansionAll(e);
+    b.prototype.toggleExpansionAll = function(a) {
+      return this.model.toggleExpansionAll(a);
     };
 
-    t.prototype.isExpanded = function(e) {
-      return this.model.isExpanded(e);
+    b.prototype.isExpanded = function(a) {
+      return this.model.isExpanded(a);
     };
 
-    t.prototype.reveal = function(e, t) {
-      "undefined" == typeof t && (t = null);
+    b.prototype.reveal = function(a, b) {
+      typeof b == "undefined" && (b = null);
 
-      return this.model.reveal(e, t);
+      return this.model.reveal(a, b);
     };
 
-    t.prototype.setHighlight = function(e, t) {
-      this.model.setHighlight(e, t);
+    b.prototype.setHighlight = function(a, b) {
+      this.model.setHighlight(a, b);
     };
 
-    t.prototype.getHighlight = function() {
+    b.prototype.getHighlight = function() {
       return this.model.getHighlight();
     };
 
-    t.prototype.isHighlighted = function(e) {
-      return this.model.isFocused(e);
+    b.prototype.isHighlighted = function(a) {
+      return this.model.isFocused(a);
     };
 
-    t.prototype.clearHighlight = function(e) {
-      this.model.setHighlight(null, e);
+    b.prototype.clearHighlight = function(a) {
+      this.model.setHighlight(null, a);
     };
 
-    t.prototype.select = function(e, t) {
-      this.model.select(e, t);
+    b.prototype.select = function(a, b) {
+      this.model.select(a, b);
     };
 
-    t.prototype.selectAll = function(e, t) {
-      this.model.selectAll(e, t);
+    b.prototype.selectAll = function(a, b) {
+      this.model.selectAll(a, b);
     };
 
-    t.prototype.deselect = function(e, t) {
-      this.model.deselect(e, t);
+    b.prototype.deselect = function(a, b) {
+      this.model.deselect(a, b);
     };
 
-    t.prototype.deselectAll = function(e, t) {
-      this.model.deselectAll(e, t);
+    b.prototype.deselectAll = function(a, b) {
+      this.model.deselectAll(a, b);
     };
 
-    t.prototype.setSelection = function(e, t) {
-      this.model.setSelection(e, t);
+    b.prototype.setSelection = function(a, b) {
+      this.model.setSelection(a, b);
     };
 
-    t.prototype.isSelected = function(e) {
-      return this.model.isSelected(e);
+    b.prototype.isSelected = function(a) {
+      return this.model.isSelected(a);
     };
 
-    t.prototype.getSelection = function() {
+    b.prototype.getSelection = function() {
       return this.model.getSelection();
     };
 
-    t.prototype.clearSelection = function(e) {
-      this.model.setSelection([], e);
+    b.prototype.clearSelection = function(a) {
+      this.model.setSelection([], a);
     };
 
-    t.prototype.selectNext = function(e, t) {
-      this.model.selectNext(e, t);
+    b.prototype.selectNext = function(a, b) {
+      this.model.selectNext(a, b);
     };
 
-    t.prototype.selectPrevious = function(e, t) {
-      this.model.selectPrevious(e, t);
+    b.prototype.selectPrevious = function(a, b) {
+      this.model.selectPrevious(a, b);
     };
 
-    t.prototype.selectParent = function(e) {
-      this.model.selectParent(e);
+    b.prototype.selectParent = function(a) {
+      this.model.selectParent(a);
     };
 
-    t.prototype.setFocus = function(e, t) {
-      this.model.setFocus(e, t);
+    b.prototype.setFocus = function(a, b) {
+      this.model.setFocus(a, b);
     };
 
-    t.prototype.isFocused = function(e) {
-      return this.model.isFocused(e);
+    b.prototype.isFocused = function(a) {
+      return this.model.isFocused(a);
     };
 
-    t.prototype.getFocus = function() {
+    b.prototype.getFocus = function() {
       return this.model.getFocus();
     };
 
-    t.prototype.focusNext = function(e, t) {
-      this.model.focusNext(e, t);
+    b.prototype.focusNext = function(a, b) {
+      this.model.focusNext(a, b);
     };
 
-    t.prototype.focusPrevious = function(e, t) {
-      this.model.focusPrevious(e, t);
+    b.prototype.focusPrevious = function(a, b) {
+      this.model.focusPrevious(a, b);
     };
 
-    t.prototype.focusParent = function(e) {
-      this.model.focusParent(e);
+    b.prototype.focusParent = function(a) {
+      this.model.focusParent(a);
     };
 
-    t.prototype.focusFirst = function(e) {
-      this.model.focusFirst(e);
+    b.prototype.focusFirst = function(a) {
+      this.model.focusFirst(a);
     };
 
-    t.prototype.focusLast = function(e) {
-      this.model.focusLast(e);
+    b.prototype.focusLast = function(a) {
+      this.model.focusLast(a);
     };
 
-    t.prototype.focusNextPage = function(e) {
-      this.view.focusNextPage(e);
+    b.prototype.focusNextPage = function(a) {
+      this.view.focusNextPage(a);
     };
 
-    t.prototype.focusPreviousPage = function(e) {
-      this.view.focusPreviousPage(e);
+    b.prototype.focusPreviousPage = function(a) {
+      this.view.focusPreviousPage(a);
     };
 
-    t.prototype.clearFocus = function(e) {
-      this.model.setFocus(null, e);
+    b.prototype.clearFocus = function(a) {
+      this.model.setFocus(null, a);
     };
 
-    t.prototype.withFakeRow = function(e) {
-      return this.view.withFakeRow(e);
+    b.prototype.withFakeRow = function(a) {
+      return this.view.withFakeRow(a);
     };
 
-    t.prototype.dispose = function() {
-      if (null !== this.model) {
+    b.prototype.dispose = function() {
+      if (this.model !== null) {
         this.model.dispose();
         this.model = null;
       }
 
-      if (null !== this.view) {
+      if (this.view !== null) {
         this.view.dispose();
         this.view = null;
       }
 
-      e.prototype.dispose.call(this);
+      a.prototype.dispose.call(this);
     };
 
-    return t;
-  }(o.EventEmitter);
-  t.Tree = u;
+    return b;
+  }(j.EventEmitter);
+  b.Tree = n;
 });

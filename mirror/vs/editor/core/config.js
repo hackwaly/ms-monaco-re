@@ -228,103 +228,138 @@ define(["require", "exports", "vs/base/env", "vs/editor/core/constants"], functi
 
   b.Config.addKeyBinding(f.Handler.DeleteWordRight, h(!1, "Delete"));
 
-  e.browser.isMacintosh ? (b.Config.addKeyBinding(f.Handler.CursorTop, {
-    ctrlCmd: !0,
-    key: "UpArrow"
-  }), b.Config.addKeyBinding(f.Handler.CursorTopSelect, {
-    ctrlCmd: !0,
-    shift: !0,
-    key: "UpArrow"
-  }), b.Config.addKeyBinding(f.Handler.CursorBottom, {
-    ctrlCmd: !0,
-    key: "DownArrow"
-  }), b.Config.addKeyBinding(f.Handler.CursorBottomSelect, {
-    ctrlCmd: !0,
-    shift: !0,
-    key: "DownArrow"
-  }), e.browser.isOpera ? (b.Config.addKeyBinding(f.Handler.Undo, {
-    winCtrl: !0,
-    key: "Z"
-  }), b.Config.addKeyBinding(f.Handler.Redo, {
-    winCtrl: !0,
-    key: "Y"
-  })) : (b.Config.addKeyBinding(f.Handler.Undo, {
-    ctrlCmd: !0,
-    key: "Z"
-  }), b.Config.addKeyBinding(f.Handler.Redo, {
-    ctrlCmd: !0,
-    shift: !0,
-    key: "Z"
-  })), b.Config.addKeyBinding(f.Handler.CursorHome, {
-    ctrlCmd: !0,
-    key: "LeftArrow"
-  }), b.Config.addKeyBinding(f.Handler.CursorHomeSelect, {
-    ctrlCmd: !0,
-    shift: !0,
-    key: "LeftArrow"
-  }), b.Config.addKeyBinding(f.Handler.CursorEnd, {
-    ctrlCmd: !0,
-    key: "RightArrow"
-  }), b.Config.addKeyBinding(f.Handler.CursorEndSelect, {
-    ctrlCmd: !0,
-    shift: !0,
-    key: "RightArrow"
-  }), b.Config.addKeyBinding(f.Handler.CursorHome, {
-    winCtrl: !0,
-    key: "A"
-  }), b.Config.addKeyBinding(f.Handler.CursorLeft, {
-    winCtrl: !0,
-    key: "B"
-  }), b.Config.addKeyBinding(f.Handler.DeleteRight, {
-    winCtrl: !0,
-    key: "D"
-  }), b.Config.addKeyBinding(f.Handler.CursorEnd, {
-    winCtrl: !0,
-    key: "E"
-  }), b.Config.addKeyBinding(f.Handler.CursorRight, {
-    winCtrl: !0,
-    key: "F"
-  }), b.Config.addKeyBinding(f.Handler.DeleteLeft, {
-    winCtrl: !0,
-    key: "H"
-  }), b.Config.addKeyBinding(f.Handler.DeleteAllRight, {
-    winCtrl: !0,
-    key: "K"
-  }), b.Config.addKeyBinding(f.Handler.CursorDown, {
-    winCtrl: !0,
-    key: "N"
-  }), b.Config.addKeyBinding(f.Handler.LineBreakInsert, {
-    winCtrl: !0,
-    key: "O"
-  }), b.Config.addKeyBinding(f.Handler.CursorUp, {
-    winCtrl: !0,
-    key: "P"
-  }), b.Config.addKeyBinding(f.Handler.CursorPageDown, {
-    winCtrl: !0,
-    key: "V"
-  })) : (b.Config.addKeyBinding(f.Handler.CursorTop, {
-    ctrlCmd: !0,
-    key: "Home"
-  }), b.Config.addKeyBinding(f.Handler.CursorTopSelect, {
-    ctrlCmd: !0,
-    shift: !0,
-    key: "Home"
-  }), b.Config.addKeyBinding(f.Handler.CursorBottom, {
-    ctrlCmd: !0,
-    key: "End"
-  }), b.Config.addKeyBinding(f.Handler.CursorBottomSelect, {
-    ctrlCmd: !0,
-    shift: !0,
-    key: "End"
-  }), b.Config.addKeyBinding(f.Handler.Undo, {
-    ctrlCmd: !0,
-    key: "Z"
-  }), b.Config.addKeyBinding(f.Handler.Redo, {
-    ctrlCmd: !0,
-    key: "Y"
-  }), b.Config.addKeyBinding(f.Handler.Redo, {
-    ctrlCmd: !0,
-    shift: !0,
-    key: "Z"
-  }));
+  if (e.browser.isMacintosh) {
+    b.Config.addKeyBinding(f.Handler.CursorTop, {
+      ctrlCmd: !0,
+      key: "UpArrow"
+    });
+    b.Config.addKeyBinding(f.Handler.CursorTopSelect, {
+      ctrlCmd: !0,
+      shift: !0,
+      key: "UpArrow"
+    });
+    b.Config.addKeyBinding(f.Handler.CursorBottom, {
+      ctrlCmd: !0,
+      key: "DownArrow"
+    });
+    b.Config.addKeyBinding(f.Handler.CursorBottomSelect, {
+      ctrlCmd: !0,
+      shift: !0,
+      key: "DownArrow"
+    });
+    if (e.browser.isOpera) {
+      b.Config.addKeyBinding(f.Handler.Undo, {
+        winCtrl: !0,
+        key: "Z"
+      });
+      b.Config.addKeyBinding(f.Handler.Redo, {
+        winCtrl: !0,
+        key: "Y"
+      });
+    } else {
+      b.Config.addKeyBinding(f.Handler.Undo, {
+        ctrlCmd: !0,
+        key: "Z"
+      });
+      b.Config.addKeyBinding(f.Handler.Redo, {
+        ctrlCmd: !0,
+        shift: !0,
+        key: "Z"
+      });
+    }
+    b.Config.addKeyBinding(f.Handler.CursorHome, {
+      ctrlCmd: !0,
+      key: "LeftArrow"
+    });
+    b.Config.addKeyBinding(f.Handler.CursorHomeSelect, {
+      ctrlCmd: !0,
+      shift: !0,
+      key: "LeftArrow"
+    });
+    b.Config.addKeyBinding(f.Handler.CursorEnd, {
+      ctrlCmd: !0,
+      key: "RightArrow"
+    });
+    b.Config.addKeyBinding(f.Handler.CursorEndSelect, {
+      ctrlCmd: !0,
+      shift: !0,
+      key: "RightArrow"
+    });
+    b.Config.addKeyBinding(f.Handler.CursorHome, {
+      winCtrl: !0,
+      key: "A"
+    });
+    b.Config.addKeyBinding(f.Handler.CursorLeft, {
+      winCtrl: !0,
+      key: "B"
+    });
+    b.Config.addKeyBinding(f.Handler.DeleteRight, {
+      winCtrl: !0,
+      key: "D"
+    });
+    b.Config.addKeyBinding(f.Handler.CursorEnd, {
+      winCtrl: !0,
+      key: "E"
+    });
+    b.Config.addKeyBinding(f.Handler.CursorRight, {
+      winCtrl: !0,
+      key: "F"
+    });
+    b.Config.addKeyBinding(f.Handler.DeleteLeft, {
+      winCtrl: !0,
+      key: "H"
+    });
+    b.Config.addKeyBinding(f.Handler.DeleteAllRight, {
+      winCtrl: !0,
+      key: "K"
+    });
+    b.Config.addKeyBinding(f.Handler.CursorDown, {
+      winCtrl: !0,
+      key: "N"
+    });
+    b.Config.addKeyBinding(f.Handler.LineBreakInsert, {
+      winCtrl: !0,
+      key: "O"
+    });
+    b.Config.addKeyBinding(f.Handler.CursorUp, {
+      winCtrl: !0,
+      key: "P"
+    });
+    b.Config.addKeyBinding(f.Handler.CursorPageDown, {
+      winCtrl: !0,
+      key: "V"
+    });
+  } else {
+    b.Config.addKeyBinding(f.Handler.CursorTop, {
+      ctrlCmd: !0,
+      key: "Home"
+    });
+    b.Config.addKeyBinding(f.Handler.CursorTopSelect, {
+      ctrlCmd: !0,
+      shift: !0,
+      key: "Home"
+    });
+    b.Config.addKeyBinding(f.Handler.CursorBottom, {
+      ctrlCmd: !0,
+      key: "End"
+    });
+    b.Config.addKeyBinding(f.Handler.CursorBottomSelect, {
+      ctrlCmd: !0,
+      shift: !0,
+      key: "End"
+    });
+    b.Config.addKeyBinding(f.Handler.Undo, {
+      ctrlCmd: !0,
+      key: "Z"
+    });
+    b.Config.addKeyBinding(f.Handler.Redo, {
+      ctrlCmd: !0,
+      key: "Y"
+    });
+    b.Config.addKeyBinding(f.Handler.Redo, {
+      ctrlCmd: !0,
+      shift: !0,
+      key: "Z"
+    });
+  }
 });

@@ -206,8 +206,17 @@ define(["require", "exports", "vs/editor/core/view/viewEventHandler", "vs/editor
     };
 
     b.prototype.updateCurrentLine = function() {
-      this._shouldShowCurrentLine() ? this.currentLineIsVisible || (this.currentLine.style.display = "block", this.currentLineIsVisible = !
-        0) : this.currentLineIsVisible && (this.currentLine.style.display = "none", this.currentLineIsVisible = !1);
+      if (this._shouldShowCurrentLine()) {
+        if (!this.currentLineIsVisible) {
+          this.currentLine.style.display = "block";
+          this.currentLineIsVisible = !0;
+        }
+      } else {
+        if (this.currentLineIsVisible) {
+          this.currentLine.style.display = "none";
+          this.currentLineIsVisible = !1;
+        }
+      }
     };
 
     b.prototype.getRenderType = function() {
@@ -222,7 +231,11 @@ define(["require", "exports", "vs/editor/core/view/viewEventHandler", "vs/editor
         this.blinkTimer = -1;
       }
       var c = this.getRenderType();
-      c === g.Visible || c === g.Blink ? this._show() : this._hide();
+      if (c === g.Visible || c === g.Blink) {
+        this._show();
+      } else {
+        this._hide();
+      }
 
       if (c === g.Blink) {
         this.blinkTimer = window.setInterval(function() {
@@ -232,7 +245,11 @@ define(["require", "exports", "vs/editor/core/view/viewEventHandler", "vs/editor
     };
 
     b.prototype._blink = function() {
-      this.isVisible ? this._hide() : this._show();
+      if (this.isVisible) {
+        this._hide();
+      } else {
+        this._show();
+      }
     };
 
     b.prototype._show = function() {

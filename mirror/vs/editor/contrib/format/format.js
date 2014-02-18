@@ -1,168 +1,214 @@
-define("vs/editor/contrib/format/format", ["require", "exports", "vs/base/lib/winjs.base", "vs/base/types",
-  "vs/platform/platform", "vs/platform/actionRegistry", "vs/editor/core/range", "vs/editor/core/constants",
-  "vs/nls!vs/editor/editor.main", "vs/editor/editorExtensions", "vs/editor/core/command/replaceCommand",
-  "vs/editor/editor", "vs/editor/core/editorState"
-], function(e, t, n, i, o, r, s, a, u, l, c, d, h) {
-  var p = function() {
-    function e(e) {
-      var t = this;
-      this.editor = e;
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
+    }
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
+    }
+    d.prototype = b.prototype;
+
+    a.prototype = new d;
+  };
+
+define(["require", "exports", "vs/base/lib/winjs.base", "vs/base/types", "vs/platform/platform",
+  "vs/platform/actionRegistry", "vs/editor/core/range", "vs/editor/core/constants", "vs/nls",
+  "vs/editor/editorExtensions", "vs/editor/core/command/replaceCommand"
+], function(a, b, c, d, e, f, g, h, i, j, k) {
+  var l = c;
+
+  var m = d;
+
+  var n = e;
+
+  var o = f;
+
+  var p = g;
+
+  var q = h;
+
+  var r = i;
+
+  var s = j;
+
+  var t = k;
+
+  var u = function() {
+    function a(a) {
+      var b = this;
+      this.editor = a;
 
       this.callOnDispose = [];
 
       this.callOnModel = [];
 
-      this.callOnDispose.push(e.addListener(a.EventType.ConfigurationChanged, function() {
-        return t.update();
+      this.callOnDispose.push(a.addListener(q.EventType.ConfigurationChanged, function() {
+        return b.update();
       }));
 
-      this.callOnDispose.push(e.addListener(a.EventType.ModelChanged, function() {
-        return t.update();
+      this.callOnDispose.push(a.addListener(q.EventType.ModelChanged, function() {
+        return b.update();
       }));
 
-      this.callOnDispose.push(e.addListener(a.EventType.ModelModeChanged, function() {
-        return t.update();
+      this.callOnDispose.push(a.addListener(q.EventType.ModelModeChanged, function() {
+        return b.update();
       }));
     }
-    e.prototype.update = function() {
-      for (var e = this; this.callOnModel.length > 0;) {
+    a.prototype.update = function() {
+      var a = this;
+      while (this.callOnModel.length > 0) {
         this.callOnModel.pop()();
       }
-      if (this.editor.getConfiguration().formatOnType && !i.isUndefinedOrNull(this.editor.getModel())) {
-        var t = this.editor.getModel();
+      if (!this.editor.getConfiguration().formatOnType) return;
+      if (m.isUndefinedOrNull(this.editor.getModel())) return;
+      var b = this.editor.getModel();
 
-        var n = t.getMode();
-        if (!i.isUndefinedOrNull(n.formattingSupport) && i.isFunction(n.formattingSupport.getAutoFormatTriggerCharacters) &&
-          i.isFunction(n.formattingSupport.formatAfterKeystroke)) {
-          this.formattingOptions = this.editor.getIndentationOptions();
-          n.formattingSupport.getAutoFormatTriggerCharacters().forEach(function(t) {
-            e.callOnModel.push(e.editor.addTypingListener(t, function() {
-              return e.trigger();
-            }));
-          });
-        }
-      }
-    };
-
-    e.prototype.trigger = function() {
-      var e = this;
-
-      var t = this.editor.getModel();
-
-      var o = this.editor.getPosition().lineNumber;
-
-      var r = new s.Range(o, 1, o, t.getLineMaxColumn(o));
-
-      var a = {
-        range: r,
-        id: t.addTrackedRange(r, 0),
-        lineText: t.getLineContent(o)
+      var c = b.getMode();
+      if (m.isUndefinedOrNull(c.formattingSupport) || !m.isFunction(c.formattingSupport.getAutoFormatTriggerCharacters) || !
+        m.isFunction(c.formattingSupport.formatAfterKeystroke)) return;
+      this.formattingOptions = {
+        tabSize: this.editor.getConfiguration().tabSize,
+        insertSpaces: this.editor.getConfiguration().insertSpaces
       };
 
-      var u = new n.TPromise(function(n, o, r) {
-        t.getMode().formattingSupport.formatAfterKeystroke(t.getAssociatedResource(), e.editor.getPosition(), e.formattingOptions)
-          .then(function(e) {
-            var o = t.getTrackedRange(a.id);
-            if (t.removeTrackedRange(a.id), !i.isUndefinedOrNull(e)) {
-              var r = t.getValueInRange(o);
-              if (a.lineText === r && e.text !== r && e.range.startLineNumber === e.range.endLineNumber) {
-                a.lineText = e.text;
-                a.range = o;
-                n(a);
-              }
-            }
-          }, o, r);
+      c.formattingSupport.getAutoFormatTriggerCharacters().forEach(function(b) {
+        a.callOnModel.push(a.editor.addTypingListener(b, function() {
+          return a.trigger();
+        }));
       });
-      u.then(function(t) {
-        var n = new s.Range(t.range.startLineNumber, t.range.startColumn, t.range.endLineNumber, t.range.endColumn);
-
-        var i = e.editor.getSelection();
-
-        var o = new c.ReplaceCommandThatPreservesSelection(n, t.lineText, i);
-        e.editor.executeCommand(e.getId(), o);
-      }, function() {});
     };
 
-    e.prototype.getId = function() {
-      return e.ID;
+    a.prototype.trigger = function() {
+      var a = this;
+
+      var b = this.editor.getModel();
+
+      var c = this.editor.getPosition().lineNumber;
+
+      var d = new p.Range(c, 1, c, b.getLineMaxColumn(c));
+
+      var e = {
+        range: d,
+        id: b.addTrackedRange(d),
+        lineText: b.getLineContent(c)
+      };
+
+      var f = new l.Promise(function(c, d, f) {
+        b.getMode().formattingSupport.formatAfterKeystroke(b.getAssociatedResource(), a.editor.getPosition(), a.formattingOptions)
+          .then(function(a) {
+            var d = b.getTrackedRange(e.id);
+            b.removeTrackedRange(e.id);
+            if (m.isUndefinedOrNull(a)) return;
+            var f = b.getValueInRange(d);
+            if (e.lineText !== f || a.text === f) return;
+            if (a.range.startLineNumber !== a.range.endLineNumber) return;
+            e.lineText = a.text;
+
+            e.range = d;
+
+            c(e);
+          }, d, f);
+      });
+      f.then(function() {
+        var b = new p.Range(e.range.startLineNumber, e.range.startColumn, e.range.endLineNumber, e.range.endColumn);
+
+        var c = a.editor.getSelection();
+
+        var d = new t.ReplaceCommandThatPreservesSelection(b, e.lineText, c);
+        a.editor.executeCommand(a.getId(), d);
+      }, function(a) {});
     };
 
-    e.prototype.dispose = function() {
-      for (; this.callOnDispose.length > 0;) {
+    a.prototype.getId = function() {
+      return a.ID;
+    };
+
+    a.prototype.dispose = function() {
+      while (this.callOnDispose.length > 0) {
         this.callOnDispose.pop()();
       }
-      for (; this.callOnModel.length > 0;) {
+      while (this.callOnModel.length > 0) {
         this.callOnModel.pop()();
       }
     };
 
-    e.ID = "editor.contrib.autoFormat";
+    a.ID = "editor.contrib.autoFormat";
 
-    return e;
+    return a;
   }();
 
-  var f = function(e) {
-    function t(t, n) {
-      e.call(this, t, n, l.Precondition.WidgetFocus | l.Precondition.Writeable | l.Precondition.UpdateOnModelChange |
-        l.Precondition.ShowInContextMenu);
+  var v = function(a) {
+    function b(b, c) {
+      a.call(this, b, c);
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.getEnablementState = function() {
-      return e.prototype.getEnablementState.call(this) && !! this.editor.getModel().getMode().formattingSupport;
+    b.prototype.getEnablementState = function() {
+      return a.prototype.getEnablementState.call(this) && !! this.editor.getModel().getMode().formattingSupport;
     };
 
-    t.prototype.run = function() {
-      var e = this;
+    b.prototype.run = function() {
+      var a = this;
 
-      var t = this.editor.getModel();
+      var b = this.editor.getModel();
 
-      var n = (t.getMode(), t.getMode().formattingSupport);
+      var c = b.getMode();
 
-      var o = this.editor.getPosition();
+      var d = b.getMode().formattingSupport;
 
-      var r = this.editor.getSelection();
-      if (!r.isEmpty()) {
-        r.startColumn = 1;
+      var e = this.editor.getPosition();
+
+      var f = this.editor.getSelection();
+      if (!f.isEmpty()) {
+        f.startColumn = 1;
       }
-      var a = r;
-      if (r.isEmpty()) {
-        a = new s.Range(1, 1, t.getLineCount(), t.getLineMaxColumn(t.getLineCount()));
+      var g = f;
+      if (f.isEmpty()) {
+        g = new p.Range(1, 1, b.getLineCount(), b.getLineMaxColumn(b.getLineCount()));
       }
-      var u = this.editor.getIndentationOptions();
-
-      var l = h.capture(this.editor, 0, 2);
-      return n.format(t.getAssociatedResource(), a, u).then(function(t) {
-        return l.validate() ? i.isString(t) ? (e.apply(e.editor, o, r, t), e.editor.focus(), !0) : !1 : !1;
+      var h = {
+        tabSize: this.editor.getConfiguration().tabSize,
+        insertSpaces: this.editor.getConfiguration().insertSpaces
+      };
+      return d.format(b.getAssociatedResource(), g, h).then(function(b) {
+        if (m.isString(b)) {
+          a.apply(a.editor, e, f, b);
+          a.editor.focus();
+        }
       });
     };
 
-    t.prototype.apply = function(e, t, n, i) {
-      if (n.isEmpty()) {
-        if (e.getModel().getValue() === i) return;
-        var o = e.getModel().getLineCount();
-
-        var r = e.getModel().getLineMaxColumn(o);
-
-        var a = new c.ReplaceCommand(new s.Range(1, 1, o, r), i);
-        e.executeCommand(this.id, a);
-
-        e.setSelection(n);
+    b.prototype.apply = function(a, b, c, d) {
+      if (!c.isEmpty()) {
+        var e = new t.ReplaceCommandThatPreservesSelection(c, d, c);
+        a.executeCommand(this.id, e);
       } else {
-        var u = new c.ReplaceCommandThatPreservesSelection(n, i, n);
-        e.executeCommand(this.id, u);
+        if (a.getModel().getValue() === d) return;
+        var f = a.getModel().getLineCount();
+
+        var g = a.getModel().getLineMaxColumn(f);
+
+        var h = new t.ReplaceCommand(new p.Range(1, 1, f, g), d);
+        a.executeCommand(this.id, h);
+
+        a.setSelection(c);
       }
     };
 
-    t.ID = "editor.actions.format";
+    b.ID = "editor.actions.format";
 
-    return t;
-  }(l.EditorAction);
-  t.FormatAction = f;
-  var g = new r.ActionDescriptor(f, f.ID, u.localize("vs_editor_contrib_format_format", 0));
+    return b;
+  }(s.EditorAction);
+  b.FormatAction = v;
+  var w = new o.ActionDescriptor(v, v.ID, r.localize("formatAction.label", "Format code"), {
+    ctrlCmd: !0,
+    alt: !0,
+    key: "F"
+  });
 
-  var m = o.Registry.as(l.Extensions.EditorContributions);
-  m.registerEditorContribution(g);
+  var x = n.Registry.as(s.Extensions.EditorContributions);
+  x.registerEditorContribution(w);
 
-  m.registerEditorContribution(new o.BaseDescriptor(p));
+  x.registerEditorContribution(new n.BaseDescriptor(u));
 });

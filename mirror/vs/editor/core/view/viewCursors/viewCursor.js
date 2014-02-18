@@ -94,7 +94,12 @@ define(["require", "exports"], function(a, b) {
 
     a.prototype.prepareRender = function(a) {
       var b = a.visibleRangeForPosition(this.position);
-      b ? (this.positionTop = b.top, this.positionLeft = b.left) : this.positionTop = -1e3;
+      if (b) {
+        this.positionTop = b.top;
+        this.positionLeft = b.left;
+      } else {
+        this.positionTop = -1e3;
+      }
     };
 
     a.prototype.render = function(a) {

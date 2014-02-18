@@ -1,54 +1,56 @@
-define("vs/editor/core/command/shiftCommand", ["require", "exports", "vs/editor/core/range"], function(e, t, n) {
-  var i = function() {
-    function e(e, t, n) {
-      this._configuration = e;
+define(["require", "exports", "vs/editor/core/range"], function(a, b, c) {
+  var d = c;
 
-      this._isUnshift = t;
+  var e = function() {
+    function a(a, b, c) {
+      this._configuration = a;
 
-      this._selection = n;
+      this._isUnshift = b;
+
+      this._selection = c;
     }
-    e.prototype.getEditOperations = function(e, t) {
-      var i = this._selection.startLineNumber;
+    a.prototype.getEditOperations = function(a, b) {
+      var c = this._selection.startLineNumber;
 
-      var o = this._selection.endLineNumber;
-      if (1 === this._selection.endColumn && i !== o) {
-        o -= 1;
+      var e = this._selection.endLineNumber;
+      if (this._selection.endColumn === 1 && c !== e) {
+        e -= 1;
       }
-      var r;
+      var f;
       if (this._isUnshift) {
-        var s = this._configuration.getIndentationOptions().tabSize;
-        for (r = i; o >= r; r++) {
-          var a;
+        var g = this._configuration.editor.tabSize;
+        for (f = c; f <= e; f++) {
+          var h = a.getLineContent(f);
 
-          var u = e.getLineContent(r);
-          if ("	" === u.charAt(0)) {
-            a = 1;
+          var i;
+          if (h.charAt(0) === "	") {
+            i = 1;
           } else
-            for (a = 0; a < u.length && s > a; a++) {
-              if ("	" === u.charAt(a)) {
-                a++;
+            for (i = 0; i < h.length && i < g; i++) {
+              if (h.charAt(i) === "	") {
+                i++;
                 break;
               }
-              if (" " !== u.charAt(a)) break;
+              if (h.charAt(i) !== " ") break;
             }
-          if (0 !== a) {
-            t.addEditOperation(new n.Range(r, 1, r, a + 1), null);
+          if (i !== 0) {
+            b.addEditOperation(new d.Range(f, 1, f, i + 1), null);
           }
         }
       } else {
-        var l = this._configuration.getOneIndent();
-        for (r = i; o >= r; r++) {
-          t.addEditOperation(new n.Range(r, 1, r, 1), l);
+        var j = this._configuration.getOneIndent();
+        for (f = c; f <= e; f++) {
+          b.addEditOperation(new d.Range(f, 1, f, 1), j);
         }
       }
-      this._selectionId = t.trackSelection(this._selection);
+      this._selectionId = b.trackSelection(this._selection);
     };
 
-    e.prototype.computeCursorState = function(e, t) {
-      return t.getTrackedSelection(this._selectionId);
+    a.prototype.computeCursorState = function(a, b) {
+      return b.getTrackedSelection(this._selectionId);
     };
 
-    return e;
+    return a;
   }();
-  t.ShiftCommand = i;
+  b.ShiftCommand = e;
 });

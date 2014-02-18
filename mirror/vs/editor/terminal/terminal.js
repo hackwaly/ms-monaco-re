@@ -1,138 +1,158 @@
-define("vs/editor/terminal/terminal", ["require", "exports", "vs/editor/core/codeEditorWidget",
-  "vs/editor/core/internalConstants", "vs/editor/core/constants", "vs/base/dom/dom",
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
+    }
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
+    }
+    d.prototype = b.prototype;
+
+    a.prototype = new d;
+  };
+
+define(["require", "exports", "vs/editor/core/codeEditorWidget", "vs/editor/core/constants", "vs/base/dom/dom",
   "vs/editor/core/command/replaceCommand", "vs/css!./terminal"
-], function(e, t, n, i, o, r, s) {
-  var a = function(e) {
-    function t(t, n, i) {
-      var o = this;
-      e.call(this, t, n, i);
+], function(a, b, c, d, e, f) {
+  var g = c;
+
+  var h = d;
+
+  var i = e;
+
+  var j = f;
+
+  var k = function(a) {
+    function b(b, c, d) {
+      var e = this;
+      a.call(this, b, c, d);
 
       this.terminalListenersToRemove = [];
 
-      this.terminalListenersToRemove.push(r.addListener(t, "mouseup", function() {
-        return o.onMouseUp();
+      this.terminalListenersToRemove.push(i.addListener(b, "mouseup", function(a) {
+        return e.onMouseUp();
       }));
 
       this.isReadOnly = !1;
 
       this.resume(!0, !0);
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype._attachModel = function(t) {
-      var n = this;
-      e.prototype._attachModel.call(this, t);
+    b.prototype._attachModel = function(b) {
+      var c = this;
+      a.prototype._attachModel.call(this, b);
 
       if (this.cursor) {
-        this.listenersToRemove.push(this.cursor.addListener(o.EventType.CursorSelectionChanged, function(e) {
-          return n._onCursorSelectionChanged(e);
+        this.listenersToRemove.push(this.cursor.addListener(h.EventType.CursorSelectionChanged, function(a) {
+          return c._onCursorSelectionChanged(a);
         }));
       }
     };
 
-    t.prototype._onCursorSelectionChanged = function(e) {
-      if ("modelChange" === e.source && e.selection.isEmpty()) {
-        var t = this.getPosition();
+    b.prototype._onCursorSelectionChanged = function(a) {
+      if (a.source === "modelChange" && a.selection.isEmpty()) {
+        var b = this.getPosition();
 
-        var n = this.cursor.getEditableRange();
-        if (t.equals(n.getEndPosition())) {
-          this.revealPosition(t, !1, !1);
+        var c = this.cursor.getEditableRange();
+        if (b.equals(c.getEndPosition())) {
+          this.revealPosition(b, !1, !1);
         }
       }
     };
 
-    t.prototype.onMouseUp = function() {
-      if (this.getModel() && this.getSelection().isEmpty()) {
-        var e = this.getPosition();
+    b.prototype.onMouseUp = function() {
+      if (!this.getModel()) return;
+      if (!this.getSelection().isEmpty()) return;
+      var a = this.getPosition();
 
-        var t = this.cursor.getEditableRange();
-        if (!t.containsPosition(e)) {
-          var n = this.model.getLineCount();
+      var b = this.cursor.getEditableRange();
+      if (!b.containsPosition(a)) {
+        var c = this.model.getLineCount();
 
-          var i = this.model.getLineMaxColumn(n);
-          this.setPosition({
-            lineNumber: n,
-            column: i
-          }, !1, !1, !1);
-        }
+        var d = this.model.getLineMaxColumn(c);
+        this.setPosition({
+          lineNumber: c,
+          column: d
+        }, !1, !1, !1);
       }
     };
 
-    t.prototype.destroy = function() {
-      this.terminalListenersToRemove.forEach(function(e) {
-        e();
+    b.prototype.destroy = function() {
+      this.terminalListenersToRemove.forEach(function(a) {
+        a();
       });
 
       this.terminalListenersToRemove = [];
 
-      e.prototype.destroy.call(this);
+      a.prototype.destroy.call(this);
     };
 
-    t.prototype.getEditorType = function() {
-      return o.EditorType.ITerminal;
+    b.prototype.getEditorType = function() {
+      return h.EditorType.ITerminal;
     };
 
-    t.prototype.peekCurrentInput = function() {
-      var e = this.cursor.getEditableRange();
-      return this.getModel().getValueInRange(e);
+    b.prototype.peekCurrentInput = function() {
+      var a = this.cursor.getEditableRange();
+      return this.getModel().getValueInRange(a);
     };
 
-    t.prototype.acceptInput = function() {
-      var e = this.peekCurrentInput();
+    b.prototype.acceptInput = function() {
+      var a = this.peekCurrentInput();
       this.resume(!0, !0);
 
-      return e;
+      return a;
     };
 
-    t.prototype.replaceInput = function(e) {
-      var t = this.peekCurrentInput();
+    b.prototype.replaceInput = function(a) {
+      var b = this.peekCurrentInput();
 
-      var n = this.cursor.getEditableRange();
-      if (t !== e) {
-        var o = new s.ReplaceCommand(n, e);
-        this.trigger("terminal", i.Handler.ExecuteCommand, o);
-      }
-      return t;
+      var c = this.cursor.getEditableRange();
+
+      var d = new j.ReplaceCommand(c, a);
+      this.trigger("terminal", h.Handler.ExecuteCommand, d);
+
+      return b;
     };
 
-    t.prototype.setReadOnly = function(e) {
-      if (this.isReadOnly !== e) {
-        this.isReadOnly = e;
+    b.prototype.setReadOnly = function(a) {
+      if (this.isReadOnly !== a) {
+        this.isReadOnly = a;
         this.updateOptions({
-          readOnly: e
+          readOnly: a
         });
       }
     };
 
-    t.prototype.pause = function() {
+    b.prototype.pause = function() {
       this.setReadOnly(!0);
     };
 
-    t.prototype.resume = function(e, t) {
-      if (this.getModel()) {
-        this.setReadOnly(!1);
-        var n = this.model.getLineCount();
+    b.prototype.resume = function(a, b) {
+      if (!this.getModel()) return;
+      this.setReadOnly(!1);
+      var c = this.model.getLineCount();
 
-        var i = this.model.getLineMaxColumn(n);
-        if (e) {
-          this.cursor.setEditableRange({
-            startLineNumber: n,
-            startColumn: i,
-            endLineNumber: n,
-            endColumn: i
-          });
-        }
+      var d = this.model.getLineMaxColumn(c);
+      if (a) {
+        this.cursor.setEditableRange({
+          startLineNumber: c,
+          startColumn: d,
+          endLineNumber: c,
+          endColumn: d
+        });
+      }
 
-        if (t) {
-          this.setPosition({
-            lineNumber: n,
-            column: i
-          }, !1, !1, !1);
-        }
+      if (b) {
+        this.setPosition({
+          lineNumber: c,
+          column: d
+        }, !1, !1, !1);
       }
     };
 
-    return t;
-  }(n.CodeEditorWidget);
-  t.Terminal = a;
+    return b;
+  }(g.CodeEditorWidget);
+  b.Terminal = k;
 });

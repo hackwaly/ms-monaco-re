@@ -1,77 +1,95 @@
-define("vs/base/injector", ["require", "exports", "vs/base/assert", "vs/base/types"], function(e, t, n, i) {
-  var o = "inject";
+define(["require", "exports", "vs/base/assert", "vs/base/types", "vs/base/strings"], function(a, b, c, d, e) {
+  function l(a) {
+    var b = {};
 
-  var r = o.length;
+    var c = a.prototype || a;
+    while (c !== null) {
+      var d = Object.keys(c);
+      for (var e = 0, f = d.length; e < f; e++) {
+        if (h.startsWith(d[e], i)) {
+          b[d[e].substr(j, 1).toLocaleLowerCase() + d[e].substring(j + 1)] = !0;
+        }
+      }
+      c = Object.getPrototypeOf(c);
+    }
+    return Object.keys(b);
+  }
+  var f = c;
 
-  var s = function() {
-    function e() {
+  var g = d;
+
+  var h = e;
+
+  var i = "inject";
+
+  var j = i.length;
+
+  var k = function() {
+    function a() {
       this.map = {};
 
       this.parent = null;
     }
-    e.prototype.setParent = function(e) {
-      this.parent = e;
+    a.prototype.setParent = function(a) {
+      this.parent = a;
     };
 
-    e.prototype.registerService = function(e, t) {
-      n.ok(!i.isUndefinedOrNull(e));
+    a.prototype.registerService = function(a, b) {
+      f.ok(!g.isUndefinedOrNull(a));
 
-      n.ok(!i.isUndefinedOrNull(t));
+      f.ok(!g.isUndefinedOrNull(b));
 
-      this.map[e.toLowerCase()] = t;
+      this.map[a.toLowerCase()] = b;
 
-      return t;
+      return b;
     };
 
-    e.prototype.injectTo = function(e) {
-      var t = this;
-      n.ok(!i.isUndefinedOrNull(e));
-      var s = !1;
-      if (i.isArray(e)) {
-        e.forEach(function(e) {
-          s = t.injectTo(e) || s;
+    a.prototype.injectTo = function(a) {
+      var b = this;
+      f.ok(!g.isUndefinedOrNull(a));
+      if (g.isArray(a)) {
+        a.forEach(function(a) {
+          b.injectTo(a);
         });
-        return s;
+        return;
       }
-      for (var a in e)
-        if (0 === a.indexOf(o)) {
-          var u = e[a];
-          if (i.isFunction(u)) {
-            a = a.substring(r).toLowerCase();
-            var l = this.findService(a, e);
-            if (!i.isUndefinedOrNull(l)) {
-              u.apply(e, [l]);
-              s = !0;
-            }
-          }
-        }
-      return s;
-    };
-
-    e.prototype.createChild = function() {
-      var t = new e;
-      t.setParent(this);
-
-      return t;
-    };
-
-    e.prototype.findService = function(e, t) {
-      if ("undefined" == typeof t) {
-        t = null;
+      for (var c in a) {
+        if (c.indexOf(i) !== 0) continue;
+        var d = a[c];
+        if (!g.isFunction(d)) continue;
+        c = c.substring(j).toLowerCase();
+        var e = this.findService(c, a);
+        if (g.isUndefinedOrNull(e)) continue;
+        d.apply(a, [e]);
       }
-      var n = this.map[e];
-      !i.isUndefinedOrNull(n) && t !== n || null === this.parent || (n = this.parent.findService(e, t));
-
-      return n;
     };
 
-    e.prototype.dispose = function() {
+    a.prototype.createChild = function() {
+      var b = new a;
+      b.setParent(this);
+
+      return b;
+    };
+
+    a.prototype.findService = function(a, b) {
+      if (typeof b == "undefined") {
+        b = null;
+      }
+      var c = this.map[a];
+      (g.isUndefinedOrNull(c) || b === c) && this.parent !== null && (c = this.parent.findService(a, b));
+
+      return c;
+    };
+
+    a.prototype.dispose = function() {
       this.map = null;
 
       this.parent = null;
     };
 
-    return e;
+    return a;
   }();
-  t.Container = s;
+  b.Container = k;
+
+  b.computeInjectionDependencies = l;
 });

@@ -1,6 +1,6 @@
-define("vs/editor/core/view/layout/lines/whitespaceComputer", ["require", "exports"], function(e, t) {
-  var n = function() {
-    function e() {
+define(["require", "exports"], function(a, b) {
+  var c = function() {
+    function a() {
       this.heights = [];
 
       this.ids = [];
@@ -15,73 +15,78 @@ define("vs/editor/core/view/layout/lines/whitespaceComputer", ["require", "expor
 
       this.lastWhitespaceId = 0;
     }
-    e.findInsertionIndex = function(e, t) {
-      for (var n, i = 0, o = e.length; o > i;) {
-        n = Math.floor((i + o) / 2);
-        if (t < e[n]) {
-          o = n;
+    a.findInsertionIndex = function(a, b) {
+      var c = 0;
+
+      var d = a.length;
+
+      var e;
+      while (c < d) {
+        e = Math.floor((c + d) / 2);
+        if (b < a[e]) {
+          d = e;
         } else {
-          i = n + 1;
+          c = e + 1;
         }
       }
-      return i;
+      return c;
     };
 
-    e.prototype.insertWhitespace = function(t, n) {
-      var i = ++this.lastWhitespaceId;
+    a.prototype.insertWhitespace = function(b, c) {
+      var d = ++this.lastWhitespaceId;
 
-      var o = e.findInsertionIndex(this.afterLineNumbers, t);
-      this.insertWhitespaceAtIndex(i, o, t, n);
+      var e = a.findInsertionIndex(this.afterLineNumbers, b);
+      this.insertWhitespaceAtIndex(d, e, b, c);
 
-      return i;
+      return d;
     };
 
-    e.prototype.insertWhitespaceAtIndex = function(e, t, n, i) {
-      this.heights.splice(t, 0, i);
+    a.prototype.insertWhitespaceAtIndex = function(a, b, c, d) {
+      this.heights.splice(b, 0, d);
 
-      this.ids.splice(t, 0, e);
+      this.ids.splice(b, 0, a);
 
-      this.afterLineNumbers.splice(t, 0, n);
+      this.afterLineNumbers.splice(b, 0, c);
 
-      this.prefixSum.splice(t, 0, 0);
-      var o;
+      this.prefixSum.splice(b, 0, 0);
+      var e;
 
-      var r;
-      for (o in this.whitespaceId2Index) {
-        if (this.whitespaceId2Index.hasOwnProperty(o)) {
-          r = this.whitespaceId2Index[o];
-          if (r >= t) {
-            this.whitespaceId2Index[o] = r + 1;
+      var f;
+      for (e in this.whitespaceId2Index) {
+        if (this.whitespaceId2Index.hasOwnProperty(e)) {
+          f = this.whitespaceId2Index[e];
+          if (f >= b) {
+            this.whitespaceId2Index[e] = f + 1;
           }
         }
       }
-      this.whitespaceId2Index[e.toString()] = t;
+      this.whitespaceId2Index[a.toString()] = b;
 
-      this.prefixSumValidIndex = Math.min(this.prefixSumValidIndex, t - 1);
+      this.prefixSumValidIndex = Math.min(this.prefixSumValidIndex, b - 1);
     };
 
-    e.prototype.changeWhitespace = function(e, t) {
-      var n = e.toString();
-      if (this.whitespaceId2Index.hasOwnProperty(n)) {
-        var i = this.whitespaceId2Index[n];
-        if (this.heights[i] !== t) {
-          this.heights[i] = t;
-          this.prefixSumValidIndex = Math.min(this.prefixSumValidIndex, i - 1);
+    a.prototype.changeWhitespace = function(a, b) {
+      var c = a.toString();
+      if (this.whitespaceId2Index.hasOwnProperty(c)) {
+        var d = this.whitespaceId2Index[c];
+        if (this.heights[d] !== b) {
+          this.heights[d] = b;
+          this.prefixSumValidIndex = Math.min(this.prefixSumValidIndex, d - 1);
           return !0;
         }
       }
       return !1;
     };
 
-    e.prototype.changeAfterLineNumberForWhitespace = function(t, n) {
-      var i = t.toString();
-      if (this.whitespaceId2Index.hasOwnProperty(i)) {
-        var o = this.whitespaceId2Index[i];
-        if (this.afterLineNumbers[o] !== n) {
-          var r = this.heights[o];
-          this.removeWhitespace(t);
-          var s = e.findInsertionIndex(this.afterLineNumbers, n);
-          this.insertWhitespaceAtIndex(t, s, n, r);
+    a.prototype.changeAfterLineNumberForWhitespace = function(b, c) {
+      var d = b.toString();
+      if (this.whitespaceId2Index.hasOwnProperty(d)) {
+        var e = this.whitespaceId2Index[d];
+        if (this.afterLineNumbers[e] !== c) {
+          var f = this.heights[e];
+          this.removeWhitespace(b);
+          var g = a.findInsertionIndex(this.afterLineNumbers, c);
+          this.insertWhitespaceAtIndex(b, g, c, f);
 
           return !0;
         }
@@ -89,138 +94,147 @@ define("vs/editor/core/view/layout/lines/whitespaceComputer", ["require", "expor
       return !1;
     };
 
-    e.prototype.removeWhitespace = function(e) {
-      var t = e.toString();
-      if (this.whitespaceId2Index.hasOwnProperty(t)) {
-        var n = this.whitespaceId2Index[t];
-        delete this.whitespaceId2Index[t];
+    a.prototype.removeWhitespace = function(a) {
+      var b = a.toString();
+      if (this.whitespaceId2Index.hasOwnProperty(b)) {
+        var c = this.whitespaceId2Index[b];
+        delete this.whitespaceId2Index[b];
 
-        this.removeWhitespaceAtIndex(n);
+        this.removeWhitespaceAtIndex(c);
 
         return !0;
       }
       return !1;
     };
 
-    e.prototype.removeWhitespaceAtIndex = function(e) {
-      this.heights.splice(e, 1);
+    a.prototype.removeWhitespaceAtIndex = function(a) {
+      this.heights.splice(a, 1);
 
-      this.ids.splice(e, 1);
+      this.ids.splice(a, 1);
 
-      this.afterLineNumbers.splice(e, 1);
+      this.afterLineNumbers.splice(a, 1);
 
-      this.prefixSum.splice(e, 1);
+      this.prefixSum.splice(a, 1);
 
-      this.prefixSumValidIndex = Math.min(this.prefixSumValidIndex, e - 1);
-      var t;
+      this.prefixSumValidIndex = Math.min(this.prefixSumValidIndex, a - 1);
+      var b;
 
-      var n;
-      for (t in this.whitespaceId2Index) {
-        if (this.whitespaceId2Index.hasOwnProperty(t)) {
-          n = this.whitespaceId2Index[t];
-          if (n >= e) {
-            this.whitespaceId2Index[t] = n - 1;
+      var c;
+      for (b in this.whitespaceId2Index) {
+        if (this.whitespaceId2Index.hasOwnProperty(b)) {
+          c = this.whitespaceId2Index[b];
+          if (c >= a) {
+            this.whitespaceId2Index[b] = c - 1;
           }
         }
       }
     };
 
-    e.prototype.onModelLinesDeleted = function(e, t) {
-      var n;
+    a.prototype.onModelLinesDeleted = function(a, b) {
+      var c;
 
-      var i;
+      var d;
 
-      var o;
-      for (i = 0, o = this.afterLineNumbers.length; o > i; i++) {
-        n = this.afterLineNumbers[i];
-        if (n >= e && t >= n) {
-          this.afterLineNumbers[i] = e - 1;
+      var e;
+      for (d = 0, e = this.afterLineNumbers.length; d < e; d++) {
+        c = this.afterLineNumbers[d];
+        if (a <= c && c <= b) {
+          this.afterLineNumbers[d] = a - 1;
         } else {
-          if (n > t) {
-            this.afterLineNumbers[i] -= t - e + 1;
+          if (c > b) {
+            this.afterLineNumbers[d] -= b - a + 1;
           }
         }
       }
     };
 
-    e.prototype.onModelLinesInserted = function(e, t) {
-      var n;
+    a.prototype.onModelLinesInserted = function(a, b) {
+      var c;
 
-      var i;
+      var d;
 
-      var o;
-      for (i = 0, o = this.afterLineNumbers.length; o > i; i++) {
-        n = this.afterLineNumbers[i];
-        if (n >= e) {
-          this.afterLineNumbers[i] += t - e + 1;
+      var e;
+      for (d = 0, e = this.afterLineNumbers.length; d < e; d++) {
+        c = this.afterLineNumbers[d];
+        if (a <= c) {
+          this.afterLineNumbers[d] += b - a + 1;
         }
       }
     };
 
-    e.prototype.getTotalHeight = function() {
-      return 0 === this.heights.length ? 0 : this.getAccumulatedHeight(this.heights.length - 1);
+    a.prototype.getTotalHeight = function() {
+      return this.heights.length === 0 ? 0 : this.getAccumulatedHeight(this.heights.length - 1);
     };
 
-    e.prototype.getAccumulatedHeight = function(e) {
-      var t = Math.max(0, this.prefixSumValidIndex + 1);
-      if (0 === t) {
+    a.prototype.getAccumulatedHeight = function(a) {
+      var b = Math.max(0, this.prefixSumValidIndex + 1);
+      if (b === 0) {
         this.prefixSum[0] = this.heights[0];
-        t++;
+        b++;
       }
-      for (var n = t; e >= n; n++) {
-        this.prefixSum[n] = this.prefixSum[n - 1] + this.heights[n];
+      for (var c = b; c <= a; c++) {
+        this.prefixSum[c] = this.prefixSum[c - 1] + this.heights[c];
       }
-      this.prefixSumValidIndex = Math.max(this.prefixSumValidIndex, e);
+      this.prefixSumValidIndex = Math.max(this.prefixSumValidIndex, a);
 
-      return this.prefixSum[e];
+      return this.prefixSum[a];
     };
 
-    e.prototype.getAccumulatedHeightBeforeLineNumber = function(e) {
-      var t = this.findLastWhitespaceBeforeLineNumber(e);
-      return -1 === t ? 0 : this.getAccumulatedHeight(t);
+    a.prototype.getAccumulatedHeightBeforeLineNumber = function(a) {
+      var b = this.findLastWhitespaceBeforeLineNumber(a);
+      return b === -1 ? 0 : this.getAccumulatedHeight(b);
     };
 
-    e.prototype.findLastWhitespaceBeforeLineNumber = function(e) {
-      for (var t, n = this.afterLineNumbers, i = 0, o = n.length - 1; o >= i;)
-        if (t = Math.floor((i + o) / 2), n[t] < e) {
-          if (t + 1 >= n.length || n[t + 1] >= e) {
-            return t;
+    a.prototype.findLastWhitespaceBeforeLineNumber = function(a) {
+      var b = this.afterLineNumbers;
+
+      var c = 0;
+
+      var d = b.length - 1;
+
+      var e;
+      while (c <= d) {
+        e = Math.floor((c + d) / 2);
+        if (b[e] < a) {
+          if (e + 1 >= b.length || b[e + 1] >= a) {
+            return e;
           }
-          i = t + 1;
+          c = e + 1;
         } else {
-          o = t - 1;
+          d = e - 1;
         }
+      }
       return -1;
     };
 
-    e.prototype.findFirstWhitespaceAfterLineNumber = function(e) {
-      var t = this.findLastWhitespaceBeforeLineNumber(e);
+    a.prototype.findFirstWhitespaceAfterLineNumber = function(a) {
+      var b = this.findLastWhitespaceBeforeLineNumber(a);
 
-      var n = t + 1;
-      return n < this.heights.length ? n : -1;
+      var c = b + 1;
+      return c < this.heights.length ? c : -1;
     };
 
-    e.prototype.getFirstWhitespaceIndexAfterLineNumber = function(e) {
-      return this.findFirstWhitespaceAfterLineNumber(e);
+    a.prototype.getFirstWhitespaceIndexAfterLineNumber = function(a) {
+      return this.findFirstWhitespaceAfterLineNumber(a);
     };
 
-    e.prototype.getCount = function() {
+    a.prototype.getCount = function() {
       return this.heights.length;
     };
 
-    e.prototype.getAfterLineNumberForWhitespaceIndex = function(e) {
-      return this.afterLineNumbers[e];
+    a.prototype.getAfterLineNumberForWhitespaceIndex = function(a) {
+      return this.afterLineNumbers[a];
     };
 
-    e.prototype.getIdForWhitespaceIndex = function(e) {
-      return this.ids[e];
+    a.prototype.getIdForWhitespaceIndex = function(a) {
+      return this.ids[a];
     };
 
-    e.prototype.getHeightForWhitespaceIndex = function(e) {
-      return this.heights[e];
+    a.prototype.getHeightForWhitespaceIndex = function(a) {
+      return this.heights[a];
     };
 
-    return e;
+    return a;
   }();
-  t.WhitespaceComputer = n;
+  b.WhitespaceComputer = c;
 });

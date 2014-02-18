@@ -176,10 +176,15 @@ define(["require", "exports", "vs/nls", "vs/base/dom/dom", "vs/base/eventEmitter
 
       this.textAreaCover = document.createElement("div");
 
-      this.context.configuration.editor.glyphMargin ? this.textAreaCover.className = H.ClassNames.GLYPH_MARGIN + " " +
-        H.ClassNames.TEXTAREA_COVER : this.context.configuration.editor.lineNumbers ? this.textAreaCover.className =
-        H.ClassNames.LINE_NUMBERS + " " + H.ClassNames.TEXTAREA_COVER : this.textAreaCover.className =
-        "monaco-editor-background " + H.ClassNames.TEXTAREA_COVER;
+      if (this.context.configuration.editor.glyphMargin) {
+        this.textAreaCover.className = H.ClassNames.GLYPH_MARGIN + " " + H.ClassNames.TEXTAREA_COVER;
+      } else {
+        if (this.context.configuration.editor.lineNumbers) {
+          this.textAreaCover.className = H.ClassNames.LINE_NUMBERS + " " + H.ClassNames.TEXTAREA_COVER;
+        } else {
+          this.textAreaCover.className = "monaco-editor-background " + H.ClassNames.TEXTAREA_COVER;
+        }
+      }
 
       this.textAreaCover.style.position = "absolute";
 

@@ -1,137 +1,81 @@
-define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/winjs.base", "vs/base/objects",
-  "vs/base/types", "vs/platform/platform", "./modesFilters", "./stream", "vs/editor/worker/editorWorkerClient",
-  "vs/editor/modes/modes", "vs/base/performance/timer", "vs/editor/modes/nullMode", "vs/base/arrays"
-], function(e, t, n, i, o, r, s, a, u, l, c, d, h) {
-  t.isDigit = function() {
-    var e = "0".charCodeAt(0);
+define(["require", "exports", "vs/base/lib/winjs.base", "vs/base/objects", "vs/base/types", "vs/platform/platform",
+  "./modesFilters", "./stream", "vs/editor/worker/editorWorkerClient", "vs/editor/modes/modes",
+  "vs/base/performance/timer", "vs/editor/modes/nullMode", "vs/platform/services", "vs/base/arrays"
+], function(a, b, c, d, e, f, g, h, i, j, k, l, m, n) {
+  var o = c;
 
-    var t = "1".charCodeAt(0);
+  var p = d;
 
-    var n = "2".charCodeAt(0);
+  var q = e;
 
-    var i = "3".charCodeAt(0);
+  var r = f;
 
-    var o = "4".charCodeAt(0);
+  var s = g;
 
-    var r = "5".charCodeAt(0);
+  var t = h;
 
-    var s = "6".charCodeAt(0);
+  var u = i;
 
-    var a = "7".charCodeAt(0);
+  var v = j;
 
-    var u = "8".charCodeAt(0);
+  var w = k;
 
-    var l = "9".charCodeAt(0);
+  var x = l;
 
-    var c = "a".charCodeAt(0);
+  var y = m;
 
-    var d = "b".charCodeAt(0);
+  var z = n;
+  b.isDigit = function() {
+    var a = "0123456789abcdef";
 
-    var h = "c".charCodeAt(0);
-
-    var p = "d".charCodeAt(0);
-
-    var f = "e".charCodeAt(0);
-
-    var g = "f".charCodeAt(0);
-
-    var m = "A".charCodeAt(0);
-
-    var v = "B".charCodeAt(0);
-
-    var y = "C".charCodeAt(0);
-
-    var _ = "D".charCodeAt(0);
-
-    var b = "E".charCodeAt(0);
-
-    var C = "F".charCodeAt(0);
-    return function(w, E) {
-      var S = w.charCodeAt(0);
-      switch (E) {
-        case 1:
-          return S === e;
-        case 2:
-          return S >= e && t >= S;
-        case 3:
-          return S >= e && n >= S;
-        case 4:
-          return S >= e && i >= S;
-        case 5:
-          return S >= e && o >= S;
-        case 6:
-          return S >= e && r >= S;
-        case 7:
-          return S >= e && s >= S;
-        case 8:
-          return S >= e && a >= S;
-        case 9:
-          return S >= e && u >= S;
-        case 10:
-          return S >= e && l >= S;
-        case 11:
-          return S >= e && l >= S || S === c || S === m;
-        case 12:
-          return S >= e && l >= S || S >= c && d >= S || S >= m && v >= S;
-        case 13:
-          return S >= e && l >= S || S >= c && h >= S || S >= m && y >= S;
-        case 14:
-          return S >= e && l >= S || S >= c && p >= S || S >= m && _ >= S;
-        case 15:
-          return S >= e && l >= S || S >= c && f >= S || S >= m && b >= S;
-        default:
-          return S >= e && l >= S || S >= c && g >= S || S >= m && C >= S;
-      }
+    var b = {};
+    for (var c = 0; c < a.length; c++) {
+      b[a.charAt(c).toLowerCase()] = c + 1;
+      b[a.charAt(c).toUpperCase()] = c + 1;
+    }
+    return function(c, d) {
+      return b[c] ? b[c] <= d : !1;
     };
   }();
-  var p = function() {
-    function e(e, t, n) {
-      this.startIndex = e;
-
-      this.type = t;
-
-      this.bracket = n;
-    }
-    return e;
-  }();
-
-  var f = function() {
-    function e(e, t, n) {
-      if ("undefined" == typeof e) {
-        e = null;
+  var A = function() {
+    function a(a, b, c) {
+      if (typeof a == "undefined") {
+        a = null;
       }
 
-      if ("undefined" == typeof t) {
-        t = null;
+      if (typeof b == "undefined") {
+        b = null;
       }
 
-      if ("undefined" == typeof n) {
-        n = !1;
+      if (typeof c == "undefined") {
+        c = !1;
       }
 
-      this.id = e;
+      this.id = a;
 
-      this.workerModule = t;
+      this.workerModule = b;
 
-      this.supportsNestedMode = n;
+      this.supportsNestedMode = c;
 
       this.workerPool = [];
 
-      this._defaultWorker = null;
+      this.defaultWorker = null;
 
       this.models = {};
 
-      this._options = null;
+      this.options = null;
 
       this.validationSupport = this;
-
-      this.autoValidateDelay = 500;
 
       this.tokenizationSupport = this;
 
       this.occurrencesSupport = this;
 
       this.suggestSupport = this;
+
+      this.parameterHintsSupport = this;
+
+      this.formattingSupport = this;
 
       this.inplaceReplaceSupport = this;
 
@@ -150,714 +94,725 @@ define("vs/editor/modes/modesExtensions", ["require", "exports", "vs/base/lib/wi
       this.characterPairSupport = this;
 
       this.tokenTypeClassificationSupport = this;
-
-      this.inEditorActionsSupport = this;
     }
-    e.prototype.getId = function() {
+    a.prototype.getId = function() {
       return this.id;
     };
 
-    e.prototype._models = function() {
+    a.prototype._models = function() {
       return this.models;
     };
 
-    e.prototype.injectContextService = function(e) {
-      this.contextService = e;
+    a.prototype.injectContextService = function(a) {
+      this.contextService = a;
     };
 
-    e.prototype._getOrCreateNullWorker = function() {
-      if (null === e.NULL_WORKER_INSTANCE) try {
-        e.NULL_WORKER_INSTANCE = new u.EditorWorkerClient(e.NULL_WORKER_ID, "nullWorker", {
-          contextService: this.contextService,
-          participants: [],
-          configData: {},
-          extraData: null
-        });
-      } catch (t) {
-        console.error(t);
-      }
-      return e.NULL_WORKER_INSTANCE;
-    };
-
-    e.prototype._registerWorker = function(e) {
-      var t = this;
-      if (e) {
-        this.workerPool.push(e);
-        Object.keys(this.models).forEach(function(n) {
-          e.bindModel(t.models[n]);
-        });
-      }
-    };
-
-    e.prototype._newCustomWorker = function(n, i) {
-      if (!this.workerModule || this.workerModule === e.NULL_WORKER_ID) {
+    a.prototype.newWorker = function(a, c) {
+      var d = this;
+      if (!this.workerModule) {
         return null;
       }
       if (!this.contextService) {
         return null;
       }
-      if (o.isUndefinedOrNull(i)) {
-        i = this.workerModule.substring(this.workerModule.lastIndexOf("/") + 1);
+      if (q.isUndefinedOrNull(c)) {
+        c = this.workerModule.substring(this.workerModule.lastIndexOf("/") + 1);
       }
-      var s = [];
+      var e = [];
 
-      var a = this.getId();
-      if (null !== a && a.length > 0) {
-        var l = r.Registry.as(t.Extensions.EditorModes);
-        l.getWorkerParticipants(a).forEach(function(e) {
-          s.push(e);
+      var f = this.getId();
+      if (f !== null && f.length > 0) {
+        var g = r.Registry.as(b.Extensions.EditorModes);
+        g.getWorkerParticipants(f).forEach(function(a) {
+          e.push(a);
         });
       }
       try {
-        var c = new u.EditorWorkerClient(this.workerModule, i, {
+        var h = new u.EditorWorkerClient(this.workerModule, c, {
           contextService: this.contextService,
-          participants: s,
-          configData: this._options,
-          extraData: n
+          participants: e,
+          configData: this.options,
+          extraData: a
         });
-        this._registerWorker(c);
+        this.workerPool.push(h);
 
-        return c;
-      } catch (d) {
-        console.error(d);
+        Object.keys(this.models).forEach(function(a) {
+          h.bindModel(d.models[a]);
+        });
 
-        return void 0;
+        return h;
+      } catch (i) {
+        console.error(i);
+
+        return undefined;
       }
     };
 
-    e.prototype.getWorkers = function() {
+    a.prototype.getWorkers = function() {
       return this.workerPool.slice(0);
     };
 
-    e.prototype.workerRequest = function(e, t, i) {
-      if ("undefined" == typeof t) {
-        t = null;
+    a.prototype.workerRequest = function(a, b, c) {
+      if (typeof b == "undefined") {
+        b = null;
       }
-      var o = c.start(1, e.commandName || e.command);
+      var d = w.start(w.Topic.LANGUAGES, a.commandName || a.command);
 
-      var r = function() {
-        o.stop();
+      var e = function() {
+        d.stop();
       };
-      i || (this.ensureWorkers(), i = this._defaultWorker);
+      c || (this.ensureDefaultWorker(), c = this.defaultWorker);
 
-      return i ? n.decoratePromise(i.request(e.command, e.params), r, r) : n.Promise.as(t);
+      return c ? o.decoratePromise(c.request(a.command, a.params), e, e) : o.Promise.as(b);
     };
 
-    e.prototype.ensureWorkers = function() {
-      if (!this.nullWorker) {
-        this.nullWorker = this._getOrCreateNullWorker();
-        this._registerWorker(this.nullWorker);
-      }
-
-      if (!this._defaultWorker) {
-        this._defaultWorker = this._newCustomWorker();
-      }
-
-      if (!this._defaultWorker) {
-        this._defaultWorker = this.nullWorker;
+    a.prototype.ensureDefaultWorker = function() {
+      if (!this.defaultWorker) {
+        this.defaultWorker = this.newWorker();
       }
     };
 
-    e.prototype.bindModel = function(e) {
-      this.ensureWorkers();
+    a.prototype.bindModel = function(a) {
+      this.ensureDefaultWorker();
 
-      this.models[e.id] = e;
+      this.models[a.id] = a;
 
-      this.workerPool.forEach(function(t) {
-        t.bindModel(e);
+      this.workerPool.forEach(function(b) {
+        b.bindModel(a);
       });
     };
 
-    e.prototype.unbindModel = function(e) {
-      delete this.models[e.id];
+    a.prototype.unbindModel = function(a) {
+      delete this.models[a.id];
 
-      this.workerPool.forEach(function(t) {
-        t.unbindModel(e);
+      this.workerPool.forEach(function(b) {
+        b.unbindModel(a);
       });
     };
 
-    e.prototype.validate = function(e) {
-      return this.request("validate", null, e);
+    a.prototype.validate = function(a) {
+      return this.request("validate", null, a);
     };
 
-    e.prototype.getFilter = function() {
+    a.prototype.getFilter = function() {
       return s.DefaultFilter;
     };
 
-    e.prototype.suggest = function(e, t, n) {
-      return this.request("suggest", n, e, t);
+    a.prototype.suggest = function(a, b, c) {
+      return this.request("suggest", c, a, b);
     };
 
-    e.prototype.getTriggerCharacters = function() {
+    a.prototype.getTriggerCharacters = function() {
       return [];
     };
 
-    e.prototype.shouldAutotriggerSuggest = function(t, n, i) {
-      return this._handleEvent(t, n, i, function(t, n, i, o) {
-        return t instanceof e ? t.shouldAutotriggerSuggestImpl(n, i.tokens, o) : t.suggestSupport ? t.suggestSupport
-          .shouldAutotriggerSuggest(n, i, o) : void 0;
+    a.prototype.shouldAutotriggerSuggest = function(b, c, d) {
+      return this._handleEvent(b, c, d, function(b, c, d, e) {
+        if (b instanceof a) {
+          return b.shouldAutotriggerSuggestImpl(c, d.tokens, e);
+        }
+        if (b.suggestSupport) {
+          return b.suggestSupport.shouldAutotriggerSuggest(c, d, e);
+        }
       });
     };
 
-    e.prototype.shouldAutotriggerSuggestImpl = function() {
+    a.prototype.shouldAutotriggerSuggestImpl = function(a, b, c) {
       return !1;
     };
 
-    e.prototype.shouldShowEmptySuggestionList = function() {
+    a.prototype.shouldShowEmptySuggestionList = function() {
       return !0;
     };
 
-    e.prototype.shouldTriggerParameterHints = function() {
-      return !0;
+    a.prototype.getParameterHints = function(a, b, c) {
+      return o.Promise.as(null);
     };
 
-    e.prototype.findOccurrences = function(e, t, n, i) {
-      "undefined" == typeof n && (n = !1);
-
-      return this.request("findOccurrences", i, e, t, n);
+    a.prototype.getParameterHintsTriggerCharacters = function() {
+      return ["(", ","];
     };
 
-    e.prototype.format = function(e, t, n) {
-      return this.request("format", null, e, t, n);
+    a.prototype.findOccurrences = function(a, b, c, d) {
+      typeof c == "undefined" && (c = !1);
+
+      return this.request("findOccurrences", d, a, b, c);
     };
 
-    e.prototype.navigateValueSet = function(e, t, n, i) {
-      return this.request("navigateValueSet", i, e, t, n);
+    a.prototype.format = function(a, b, c) {
+      return this.request("format", null, a, b, c);
     };
 
-    e.prototype.getActionsAtPosition = function(e, t, n) {
-      return this.request("getActionsAtPosition", n, e, t);
+    a.prototype.navigateValueSet = function(a, b, c, d) {
+      return this.request("navigateValueSet", d, a, b, c);
     };
 
-    e.prototype.computeDiff = function(e, t, n) {
-      return this.request("computeDiff", n || this.nullWorker, e, t);
+    a.prototype.computeDiff = function(a, b, c) {
+      return this.request("computeDiff", c, a, b);
     };
 
-    e.prototype.computeDirtyDiff = function(e, t) {
-      return this.request("computeDirtyDiff", t || this.nullWorker, e);
+    a.prototype.computeDirtyDiff = function(a, b) {
+      return this.request("computeDirtyDiff", b, a);
     };
 
-    e.prototype.computeLinks = function(e, t) {
-      return this.request("computeLinks", t || this.nullWorker, e);
+    a.prototype.computeLinks = function(a) {
+      return this.request("computeLinks", null, a);
     };
 
-    e.prototype.configure = function(e) {
-      var t = this;
-      if (o.isEmptyObject(e)) {
-        return n.Promise.as(!0);
+    a.prototype.configure = function(a) {
+      var b = this;
+      if (q.isEmptyObject(a)) {
+        return o.Promise.as(!0);
       }
-      this._options = e;
-      var i = this.workerPool.map(function(i) {
-        return i === t.nullWorker ? n.Promise.as(null) : t.request("configure", i, e);
+      this.options = a;
+      var c = this.workerPool.map(function(c) {
+        return b.request("configure", c, a);
       });
-      return n.Promise.join(i);
+      return o.Promise.join(c);
     };
 
-    e.prototype.onEnter = function(t, n, i) {
-      return this._handleEvent(t, n, i, function(t, n, i, o) {
-        return t instanceof e ? t.onEnterImpl(n, i.tokens, o) : t.electricCharacterSupport ? t.electricCharacterSupport
-          .onEnter(n, i, o) : void 0;
+    a.prototype.onEnter = function(b, c, d) {
+      return this._handleEvent(b, c, d, function(b, c, d, e) {
+        if (b instanceof a) {
+          return b.onEnterImpl(c, d.tokens, e);
+        }
+        if (b.electricCharacterSupport) {
+          return b.electricCharacterSupport.onEnter(c, d, e);
+        }
       });
     };
 
-    e.prototype.onEnterImpl = function() {
+    a.prototype.onEnterImpl = function(a, b, c) {
       return null;
     };
 
-    e.prototype.onElectricCharacter = function(t, n, i) {
-      return this._handleEvent(t, n, i, function(t, n, i, o) {
-        return t instanceof e ? t.onElectricCharacterImpl(n, i.tokens, o) : t.electricCharacterSupport ? t.electricCharacterSupport
-          .onElectricCharacter(n, i, o) : void 0;
+    a.prototype.onElectricCharacter = function(b, c, d) {
+      return this._handleEvent(b, c, d, function(b, c, d, e) {
+        if (b instanceof a) {
+          return b.onElectricCharacterImpl(c, d.tokens, e);
+        }
+        if (b.electricCharacterSupport) {
+          return b.electricCharacterSupport.onElectricCharacter(c, d, e);
+        }
       });
     };
 
-    e.prototype.onElectricCharacterImpl = function() {
+    a.prototype.onElectricCharacterImpl = function(a, b, c) {
       return null;
     };
 
-    e.prototype.getElectricCharacters = function() {
+    a.prototype.getElectricCharacters = function() {
       return [];
     };
 
-    e.prototype.request = function(e, t) {
-      for (var n = [], i = 0; i < arguments.length - 2; i++) {
-        n[i] = arguments[i + 2];
+    a.prototype.request = function(a, b) {
+      var c = [];
+      for (var d = 0; d < arguments.length - 2; d++) {
+        c[d] = arguments[d + 2];
       }
       return this.workerRequest({
-        command: e,
-        params: n
-      }, null, t);
+        command: a,
+        params: c
+      }, null, b);
     };
 
-    e.prototype.getInitialState = function() {
+    a.prototype.getInitialState = function() {
       throw new Error("Abstract Method");
     };
 
-    e.prototype.getNonWordTokenTypes = function() {
+    a.prototype.getNonWordTokenTypes = function() {
       return [];
     };
 
-    e.prototype.getWordDefinition = function() {
-      return d.NullMode.DEFAULT_WORD_REGEXP;
+    a.prototype.getWordDefinition = function() {
+      return x.NullMode.DEFAULT_WORD_REGEXP;
     };
 
-    e.prototype.getAutoClosingPairs = function() {
+    a.prototype.getAutoClosingPairs = function() {
       return [];
     };
 
-    e.prototype.shouldAutoClosePair = function(t, n, i, o) {
-      return this._handleEvent(n, i, o, function(n, i, o, r) {
-        return n instanceof e ? n.shouldAutoClosePairImpl(t, i, o.tokens, r) : n.characterPairSupport ? n.characterPairSupport
-          .shouldAutoClosePair(t, i, o, r) : void 0;
+    a.prototype.shouldAutoClosePair = function(b, c, d, e) {
+      return this._handleEvent(c, d, e, function(c, d, e, f) {
+        if (c instanceof a) {
+          return c.shouldAutoClosePairImpl(b, d, e.tokens, f);
+        }
+        if (c.characterPairSupport) {
+          return c.characterPairSupport.shouldAutoClosePair(b, d, e, f);
+        }
       });
     };
 
-    e.prototype.shouldAutoClosePairImpl = function() {
+    a.prototype.shouldAutoClosePairImpl = function(a, b, c, d) {
       return !0;
     };
 
-    e.prototype.getSurroundingPairs = function() {
+    a.prototype.getSurroundingPairs = function() {
       return this.getAutoClosingPairs();
     };
 
-    e.prototype.getCommentsConfiguration = function() {
+    a.prototype.getCommentsConfiguration = function() {
       return null;
     };
 
-    e.prototype._handleEvent = function(e, t, n, i) {
-      if (0 === t.tokens.length || !this.supportsNestedMode) {
-        return i(this, e, t, n);
+    a.prototype._handleEvent = function(a, b, c, d) {
+      if (b.tokens.length === 0 || !this.supportsNestedMode) {
+        return d(this, a, b, c);
       }
-      var o = t.modeTransitions;
+      var e = b.modeTransitions;
 
-      var r = t.tokens;
+      var f = b.tokens;
 
-      var s = h.findIndexInSegmentsArray(o, n);
+      var g = z.findIndexInSegmentsArray(e, c);
 
-      var a = o[s].mode;
+      var h = e[g].mode;
 
-      var u = o[s].startIndex;
+      var i = e[g].startIndex;
 
-      var l = h.findIndexInSegmentsArray(r, u);
+      var j = z.findIndexInSegmentsArray(f, i);
 
-      var c = -1;
+      var k = -1;
 
-      var d = -1;
-      if (s + 1 < o.length) {
-        d = h.findIndexInSegmentsArray(r, o[s + 1].startIndex);
-        c = r[d].startIndex;
+      var l = -1;
+      if (g + 1 < e.length) {
+        l = z.findIndexInSegmentsArray(f, e[g + 1].startIndex);
+        k = f[l].startIndex;
       } else {
-        d = r.length;
-        c = e.length;
+        l = f.length;
+        k = a.length;
       }
-      for (var f, g = [], m = r[l].startIndex, v = l; d > v; v++) {
-        f = r[v];
-        g.push(new p(f.startIndex - m, f.type, f.bracket));
+      var m = [];
+
+      var n = f[j].startIndex;
+
+      var o;
+      for (var p = j; p < l; p++) {
+        o = f[p];
+        m.push({
+          startIndex: o.startIndex - n,
+          type: o.type,
+          bracket: o.bracket
+        });
       }
-      var y = e.substring(m, c);
+      var q = a.substring(n, k);
 
-      var _ = n - m;
+      var r = c - n;
 
-      var b = {
-        tokens: g,
+      var s = {
+        tokens: m,
         modeTransitions: [{
           startIndex: 0,
-          mode: a
+          mode: h
         }],
         actualStopOffset: 0,
         endState: null
       };
-      return i(a, y, b, _);
+      return d(h, q, s, r);
     };
 
-    e.prototype._getEmbeddedLevel = function(e) {
-      for (var t = -1; e;) {
-        t++;
-        e = e.getStateData();
+    a.prototype._getEmbeddedLevel = function(a) {
+      var b = -1;
+      while (a) {
+        b++;
+        a = a.getStateData();
       }
-      return t;
+      return b;
     };
 
-    e.prototype._nestedTokenize = function(e, t, n, i, o, r) {
-      for (var s = t.getStateData(), a = this.getLeavingNestedModeData(e, s), u = t; u.getStateData() && u.getStateData()
-        .getMode() !== this;) {
-        u = u.getStateData();
+    a.prototype._nestedTokenize = function(a, b, c, d, e, f) {
+      var g = b.getStateData();
+
+      var h = this.getLeavingNestedModeData(a, g);
+
+      var i = b;
+      while (i.getStateData() && i.getStateData().getMode() !== this) {
+        i = i.getStateData();
       }
-      var l = u.getMode();
-      if (!a) {
-        var c;
-        c = l.tokenizationSupport ? l.tokenizationSupport.tokenize(e, t, n, i) : d.nullTokenize(l, e, t, n);
+      var j = i.getMode();
+      if (!h) {
+        var k;
+        j.tokenizationSupport ? k = j.tokenizationSupport.tokenize(a, b, c, d) : k = x.nullTokenize(j, a, b, c);
 
-        c.tokens = o.concat(c.tokens);
+        k.tokens = e.concat(k.tokens);
 
-        c.modeTransitions = r.concat(c.modeTransitions);
+        k.modeTransitions = f.concat(k.modeTransitions);
 
-        return c;
+        return k;
       }
-      var h = a.nestedModeBuffer;
-      if (h.length > 0) {
-        var p;
-        p = l.tokenizationSupport ? l.tokenizationSupport.tokenize(h, t, n, i) : d.nullTokenize(l, h, t, n);
+      var l = h.nestedModeBuffer;
+      if (l.length > 0) {
+        var m;
+        if (j.tokenizationSupport) {
+          m = j.tokenizationSupport.tokenize(l, b, c, d);
+        } else {
+          m = x.nullTokenize(j, l, b, c);
+        }
 
-        t = p.endState;
+        b = m.endState;
 
-        o = o.concat(p.tokens);
+        e = e.concat(m.tokens);
 
-        r = r.concat(p.modeTransitions);
+        f = f.concat(m.modeTransitions);
       }
-      var f = a.bufferAfterNestedMode;
+      var n = h.bufferAfterNestedMode;
 
-      var g = a.stateAfterNestedMode;
-      g.setStateData(s.getStateData());
+      var o = h.stateAfterNestedMode;
+      o.setStateData(g.getStateData());
 
-      this.onReturningFromNestedMode(g, t);
+      this.onReturningFromNestedMode(o, b);
 
-      return this._myTokenize(f, g, n + h.length, i, o, r);
+      return this._myTokenize(n, o, c + l.length, d, e, f);
     };
 
-    e.prototype._myTokenize = function(t, n, i, o, r, s) {
-      var u;
+    a.prototype._myTokenize = function(b, c, d, e, f, g) {
+      var h = new t.LineStream(b);
 
-      var l;
+      var i;
 
-      var c = new a.LineStream(t);
+      var j;
 
-      var d = null;
-      n = n.clone();
+      var k;
 
-      if (s.length <= 0 || s[s.length - 1].mode !== this) {
-        s.push({
-          startIndex: i,
+      var l = null;
+
+      var m;
+      c = c.clone();
+
+      if (g.length <= 0 || g[g.length - 1].mode !== this) {
+        g.push({
+          startIndex: d,
           mode: this
         });
       }
-      for (var h = Math.min(o - i, t.length), f = 0; c.pos() < h;) {
-        l = c.pos();
-        do {
-          if (u = n.tokenize(c), null === u || void 0 === u || (void 0 === u.type || null === u.type) && (void 0 ===
-            u.nextState || null === u.nextState)) throw new Error("Tokenizer must return a valid state");
-          if (u.nextState && (u.nextState.setStateData(n.getStateData()), n = u.nextState), c.pos() <= l) throw new Error(
-            "Stream did not advance while tokenizing.");
-        } while (!u.type && "" !== u.type);
-        if ((d !== u.type || u.bracket || null === d) && r.push(new p(l + i, u.type, u.bracket || f)), d = u.type,
-          this.supportsNestedMode && this.enterNestedMode(n)) {
-          var g = this._getEmbeddedLevel(n);
-          if (g < e.MAX_EMBEDDED_LEVELS) {
-            var m = this.getNestedModeInitialState(n);
-            if (!c.eos()) {
-              var v = t.substr(c.pos());
-              return this._nestedTokenize(v, m, i + c.pos(), o, r, s);
+      var n = Math.min(e - d, b.length);
+      while (h.pos() < n) {
+        j = h.pos();
+
+        k = null;
+        while (k === null) {
+          i = c.tokenize(h);
+          if (i === null || i === undefined || !(i.type !== undefined && i.type !== null || i.nextState !== undefined &&
+            i.nextState !== null)) throw new Error("Tokenizer must return a valid state");
+          k = i.type !== null && i.type !== undefined ? i.type : null;
+
+          m = i.bracket !== null && i.bracket !== undefined ? i.bracket : v.Bracket.None;
+
+          if (i.nextState !== undefined && i.nextState !== null) {
+            i.nextState.setStateData(c.getStateData());
+            c = i.nextState;
+          }
+          if (h.pos() <= j) throw new Error("Stream did not advance while tokenizing.");
+        }
+        if (l === null || l !== k || m !== v.Bracket.None) {
+          f.push({
+            startIndex: j + d,
+            type: k,
+            bracket: m
+          });
+        }
+
+        l = k;
+        if (this.supportsNestedMode && this.enterNestedMode(c)) {
+          var o = this._getEmbeddedLevel(c);
+          if (o < a.MAX_EMBEDDED_LEVELS) {
+            var p = this.getNestedModeInitialState(c);
+            if (!h.eos()) {
+              var q = b.substr(h.pos());
+              return this._nestedTokenize(q, p, d + h.pos(), e, f, g);
             }
-            n = m;
+            c = p;
           }
         }
       }
       return {
-        tokens: r,
-        actualStopOffset: c.pos() + i,
-        modeTransitions: s,
-        endState: n
+        tokens: f,
+        actualStopOffset: h.pos() + d,
+        modeTransitions: g,
+        endState: c
       };
     };
 
-    e.prototype.tokenize = function(e, t, n, i) {
-      "undefined" == typeof n && (n = 0);
+    a.prototype.tokenize = function(a, b, c, d) {
+      typeof c == "undefined" && (c = 0);
 
-      "undefined" == typeof i && (i = n + e.length);
+      typeof d == "undefined" && (d = c + a.length);
 
-      return t.getMode() !== this ? this._nestedTokenize(e, t, n, i, [], []) : this._myTokenize(e, t, n, i, [], []);
+      return b.getMode() !== this ? this._nestedTokenize(a, b, c, d, [], []) : this._myTokenize(a, b, c, d, [], []);
     };
 
-    e.prototype.enterNestedMode = function() {
+    a.prototype.enterNestedMode = function(a) {
       return !1;
     };
 
-    e.prototype.getNestedMode = function() {
+    a.prototype.getNestedMode = function(a) {
       return null;
     };
 
-    e.prototype.getNestedModeInitialState = function(e) {
-      var t;
+    a.prototype.getNestedModeInitialState = function(a) {
+      var b = this.getNestedMode(a);
 
-      var n = this.getNestedMode(e);
-      t = n.tokenizationSupport ? n.tokenizationSupport.getInitialState() : new d.NullState(n, null);
+      var c;
+      b.tokenizationSupport ? c = b.tokenizationSupport.getInitialState() : c = new x.NullState(b, null);
 
-      t.setStateData(e);
+      c.setStateData(a);
 
-      return t;
+      return c;
     };
 
-    e.prototype.getLeavingNestedModeData = function() {
+    a.prototype.getLeavingNestedModeData = function(a, b) {
       return null;
     };
 
-    e.prototype.onReturningFromNestedMode = function() {};
+    a.prototype.onReturningFromNestedMode = function(a, b) {};
 
-    e.NULL_WORKER_ID = "vs/languages/nullWorker";
+    a.MAX_EMBEDDED_LEVELS = 5;
 
-    e.NULL_WORKER_INSTANCE = null;
-
-    e.MAX_EMBEDDED_LEVELS = 5;
-
-    return e;
+    return a;
   }();
-  t.AbstractMode = f;
-  var g = function() {
-    function e() {}
-    e.tokenize = function(e, t) {
-      for (var n = {
+  b.AbstractMode = A;
+  var B = function() {
+    function a() {}
+    a.tokenize = function(a, b) {
+      var c = {
         tagName: "div",
         style: "white-space: pre",
         children: []
-      }, i = e.split("\n"), o = t.tokenizationSupport.getInitialState(), r = 0; r < i.length; r++) {
-        var s = i[r];
+      };
 
-        var a = 0;
+      var d = a.split("\n");
 
-        var u = t.tokenizationSupport.tokenize(s, o);
-        o = u.endState;
-        for (var l = u.tokens, c = 0; c < l.length; c++) {
-          var d = l[c];
-          e = "";
+      var e = b.tokenizationSupport.getInitialState();
+      for (var f = 0; f < d.length; f++) {
+        var g = d[f];
 
-          if (c < l.length - 1) {
-            e = s.substring(a, l[c + 1].startIndex);
-            a = l[c + 1].startIndex;
+        var h = 0;
+
+        var i = b.tokenizationSupport.tokenize(g, e);
+        e = i.endState;
+        var j = i.tokens;
+        for (var k = 0; k < j.length; k++) {
+          var l = j[k];
+          a = "";
+
+          if (k < j.length - 1) {
+            a = g.substring(h, j[k + 1].startIndex);
+            h = j[k + 1].startIndex;
           } else {
-            e = s.substr(a);
+            a = g.substr(h);
           }
-          var h = "token";
-          if (d.type) {
-            h += " " + d.type.split(".").join(" ");
+          var m = "token";
+          if (l.type) {
+            m += " " + l.type.split(".").join(" ");
           }
 
-          n.children.push({
+          c.children.push({
             tagName: "span",
-            className: h,
-            text: e
+            className: m,
+            text: a
           });
         }
-        if (r < i.length - 1) {
-          n.children.push({
+        if (f < d.length - 1) {
+          c.children.push({
             tagName: "br"
           });
         }
       }
-      return n;
+      return c;
     };
 
-    return e;
+    return a;
   }();
-  t.TextToHtmlTokenizer = g;
-  var m = function() {
-    function e(e, t) {
-      if ("undefined" == typeof t) {
-        t = null;
+  b.TextToHtmlTokenizer = B;
+  var C = function() {
+    function a(a, b) {
+      if (typeof b == "undefined") {
+        b = null;
       }
 
-      this.mode = e;
+      this.mode = a;
 
-      this.stateData = t;
+      this.stateData = b;
     }
-    e.prototype.getMode = function() {
+    a.prototype.getMode = function() {
       return this.mode;
     };
 
-    e.prototype.clone = function() {
-      var e = this.makeClone();
-      e.initializeFrom(this);
+    a.prototype.clone = function() {
+      var a = this.makeClone();
+      a.initializeFrom(this);
 
-      return e;
+      return a;
     };
 
-    e.prototype.makeClone = function() {
+    a.prototype.makeClone = function() {
       throw new Error("Abstract Method");
     };
 
-    e.prototype.initializeFrom = function(e) {
-      this.stateData = null !== e.stateData ? e.stateData.clone() : null;
+    a.prototype.initializeFrom = function(a) {
+      this.stateData = a.stateData !== null ? a.stateData.clone() : null;
     };
 
-    e.prototype.getStateData = function() {
+    a.prototype.getStateData = function() {
       return this.stateData;
     };
 
-    e.prototype.setStateData = function(e) {
-      this.stateData = e;
+    a.prototype.setStateData = function(a) {
+      this.stateData = a;
     };
 
-    e.prototype.equals = function(t) {
-      if (null === t || this.mode !== t.getMode()) {
+    a.prototype.equals = function(b) {
+      if (b === null || this.mode !== b.getMode()) {
         return !1;
       }
-      if (!(t instanceof e)) {
-        return !1;
+      if (b instanceof a) {
+        var c = b;
+        return this.stateData === null && c.stateData === null ? !0 : this.stateData === null || c.stateData === null ? !
+          1 : this.stateData.equals(c.stateData);
       }
-      var n = t;
-      return null === this.stateData && null === n.stateData ? !0 : null === this.stateData || null === n.stateData ? !
-        1 : this.stateData.equals(n.stateData);
+      return !1;
     };
 
-    e.prototype.tokenize = function() {
+    a.prototype.tokenize = function(a) {
       throw new Error("Abstract Method");
     };
 
-    return e;
+    return a;
   }();
-  t.AbstractState = m;
+  b.AbstractState = C;
 
-  t.LANGUAGE_CONFIGURATION = "languages";
+  b.LANGUAGE_CONFIGURATION = "languages";
 
-  t.Extensions = {
+  b.Extensions = {
     EditorModes: "editor.modes"
   };
-  var v = {};
+  var D = {};
 
-  var y = {};
+  var E = {};
 
-  var _ = {};
+  var F = {};
 
-  var b = {};
+  var G = {};
 
-  var C = {};
+  var H = {};
 
-  var w = {};
+  var I = {};
 
-  var E = function() {
-    function e() {
+  var J = function() {
+    function a() {
       this._modeCreationRequests = {};
 
       this._modesRegistryInjector = null;
     }
-    e.prototype.injectInjectorService = function(e) {
-      this._modesRegistryInjector = e;
+    a.prototype.injectInjectorService = function(a) {
+      this._modesRegistryInjector = a;
     };
 
-    e.prototype.registerWorkerParticipant = function(e, t) {
-      if (!v.hasOwnProperty(e)) {
-        v[e] = [];
+    a.prototype.registerWorkerParticipant = function(a, b) {
+      if (!D.hasOwnProperty(a)) {
+        D[a] = [];
       }
 
-      v[e].push(t);
+      D[a].push(b);
     };
 
-    e.prototype.getWorkerParticipants = function(e) {
-      return v.hasOwnProperty(e) ? v[e] : [];
+    a.prototype.getWorkerParticipants = function(a) {
+      return D.hasOwnProperty(a) ? D[a] : [];
     };
 
-    e.prototype.isRegisteredMode = function(e) {
-      return y.hasOwnProperty(e);
+    a.prototype.isRegisteredMode = function(a) {
+      return E.hasOwnProperty(a);
     };
 
-    e.prototype.getRegisteredModes = function() {
-      var e;
-
-      var t = [];
-      for (e in y) {
-        t.push(e);
-      }
-      return t;
-    };
-
-    e.prototype.registerMode = function(e, t) {
-      e.forEach(function(e) {
-        y[e] = t;
+    a.prototype.registerMode = function(a, b) {
+      a.forEach(function(a) {
+        E[a] = b;
       });
     };
 
-    e.prototype.configureMode = function(e, t) {
-      this.doConfigureMode(e, t, C, _);
+    a.prototype.configureMode = function(a, b) {
+      this.doConfigureMode(a, b, H, F);
     };
 
-    e.prototype.configureModeById = function(e, t) {
-      this.doConfigureMode(e, t, w, b);
+    a.prototype.configureModeById = function(a, b) {
+      this.doConfigureMode(a, b, I, G);
     };
 
-    e.prototype.doConfigureMode = function(e, t, n, o) {
-      if (n.hasOwnProperty(e)) {
-        var r = n[e];
-        if (r && r.configSupport) {
-          r.configSupport.configure(t);
+    a.prototype.doConfigureMode = function(a, b, c, d) {
+      if (c.hasOwnProperty(a)) {
+        var e = c[a];
+        if (e && e.configSupport) {
+          e.configSupport.configure(b);
         }
       } else {
-        var s = o[e] || {};
-        s = i.mixin(s, t);
+        var f = d[a] || {};
+        f = p.mixin(f, b);
 
-        o[e] = s;
+        d[a] = f;
       }
     };
 
-    e.prototype.getMode = function(e) {
-      if (!e) {
+    a.prototype.getMode = function(a) {
+      if (!a) {
         return null;
       }
-      for (var t = e.split(","), n = 0; n < t.length; n++) {
-        var i = t[n].trim();
+      var b = a.split(",");
+      for (var c = 0; c < b.length; c++) {
+        var d = b[c].trim();
 
-        var o = this.getOrCreateOneModeSync(i);
-        if (o) {
-          return o;
+        var e = this.getOrCreateOneModeSync(d);
+        if (e) {
+          return e;
         }
       }
       return null;
     };
 
-    e.prototype.getOrCreateOneModeSync = function(e) {
-      if (C.hasOwnProperty(e)) {
-        return C[e];
+    a.prototype.getOrCreateOneModeSync = function(a) {
+      if (H.hasOwnProperty(a)) {
+        return H[a];
       }
-      if (!this.isRegisteredMode(e)) {
+      if (!this.isRegisteredMode(a)) {
         return null;
       }
-      var t = y[e].syncLoadAndCreate(this._modesRegistryInjector);
-      t && (C[e] = t, w[t.getId()] = t, t.configSupport && (_.hasOwnProperty(e) && t.configSupport.configure(_[e] || {}),
-        b.hasOwnProperty(t.getId()) && t.configSupport.configure(b[t.getId()] || {})));
+      var b = E[a].syncLoadAndCreate(this._modesRegistryInjector);
+      b && (H[a] = b, I[b.getId()] = b, b.configSupport && (F.hasOwnProperty(a) && b.configSupport.configure(F[a] || {}),
+        G.hasOwnProperty(b.getId()) && b.configSupport.configure(G[b.getId()] || {})));
 
-      return t;
+      return b;
     };
 
-    e.prototype.getModeDescriptor = function(e) {
-      if (e)
-        for (var t = e.split(","), n = 0; n < t.length; n++) {
-          var i = t[n].trim();
-          if (this.isRegisteredMode(i)) {
-            return y[i];
-          }
-        }
-      return null;
-    };
-
-    e.prototype.getOrCreateMode = function(e) {
-      if (!e) {
-        return n.Promise.as(null);
+    a.prototype.getOrCreateMode = function(a) {
+      if (!a) {
+        return o.Promise.as(null);
       }
-      for (var t = e.split(","), i = 0; i < t.length; i++) {
-        var o = t[i].trim();
-        if (this.isRegisteredMode(o)) {
-          return this.getOrCreateOneModeAsync(o);
+      var b = a.split(",");
+      for (var c = 0; c < b.length; c++) {
+        var d = b[c].trim();
+        if (this.isRegisteredMode(d)) {
+          return this.getOrCreateOneModeAsync(d);
         }
       }
-      return n.Promise.as(null);
+      return o.Promise.as(null);
     };
 
-    e.prototype.getOrCreateOneModeAsync = function(e) {
-      var t = this;
-      return C.hasOwnProperty(e) ? n.Promise.as(C[e]) : (this._modeCreationRequests.hasOwnProperty(e) || (this._modeCreationRequests[
-        e] = y[e].loadAndCreate(this._modesRegistryInjector).then(function(n) {
-        C[e] = n;
+    a.prototype.getOrCreateOneModeAsync = function(a) {
+      var b = this;
+      return H.hasOwnProperty(a) ? o.Promise.as(H[a]) : (this._modeCreationRequests.hasOwnProperty(a) || (this._modeCreationRequests[
+        a] = E[a].loadAndCreate(this._modesRegistryInjector).then(function(c) {
+        H[a] = c;
 
-        w[n.getId()] = n;
+        I[c.getId()] = c;
 
-        n && n.configSupport && (_.hasOwnProperty(e) && n.configSupport.configure(_[e] || {}), b.hasOwnProperty(
-          n.getId()) && n.configSupport.configure(b[n.getId()] || {}));
+        c && c.configSupport && (F.hasOwnProperty(a) && c.configSupport.configure(F[a] || {}), G.hasOwnProperty(
+          c.getId()) && c.configSupport.configure(G[c.getId()] || {}));
 
-        delete t._modeCreationRequests[e];
+        delete b._modeCreationRequests[a];
 
-        return n;
-      })), this._modeCreationRequests[e]);
+        return c;
+      })), this._modeCreationRequests[a]);
     };
 
-    return e;
+    return a;
   }();
-  r.Registry.add(t.Extensions.EditorModes, new E);
+  r.Registry.mixin(b.Extensions.EditorModes, new J);
 });

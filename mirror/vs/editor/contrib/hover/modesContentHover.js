@@ -1,217 +1,212 @@
-define("vs/editor/contrib/hover/modesContentHover", ["require", "exports", "vs/editor/core/range",
-  "vs/base/lib/winjs.base", "vs/editor/contrib/hover/hoverOperation", "vs/editor/contrib/hover/hoverWidgets",
-  "vs/base/dom/htmlContent"
-], function(e, t, n, i, o, r, s) {
-  var a = function() {
-    function e(e) {
-      this._editor = e;
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
+    }
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
+    }
+    d.prototype = b.prototype;
+
+    a.prototype = new d;
+  };
+
+define(["require", "exports", "vs/editor/core/range", "vs/base/lib/winjs.base",
+  "vs/editor/contrib/hover/hoverOperation", "vs/editor/contrib/hover/hoverWidgets", "vs/base/dom/htmlContent"
+], function(a, b, c, d, e, f, g) {
+  var h = c;
+
+  var i = d;
+
+  var j = e;
+
+  var k = f;
+
+  var l = g;
+
+  var m = function() {
+    function a(a) {
+      this._editor = a;
 
       this._range = null;
     }
-    e.prototype.setRange = function(e) {
-      this._range = e;
+    a.prototype.setRange = function(a) {
+      this._range = a;
 
       this._result = [];
     };
 
-    e.prototype.clearResult = function() {
-      this._result = [];
-    };
+    a.prototype.computeAsync = function() {
+      var a = this._editor.getModel().getMode();
 
-    e.prototype.computeAsync = function() {
-      var e = this._editor.getModel().getMode();
-
-      var t = e.extraInfoSupport;
-      return t ? t.computeInfo(this._editor.getModel().getAssociatedResource(), {
+      var b = a.extraInfoSupport;
+      return b ? b.computeInfo(this._editor.getModel().getAssociatedResource(), {
         lineNumber: this._range.startLineNumber,
         column: this._range.startColumn
-      }).then(function(e) {
-        if (e) {
-          var t = "undefined" != typeof e.range;
-
-          var n = "undefined" != typeof e.value;
-
-          var i = "undefined" != typeof e.htmlContent && e.htmlContent && e.htmlContent.length > 0;
-          if (t && (n || i)) {
-            return [e];
-          }
-        }
-        return null;
-      }) : i.TPromise.as(null);
+      }).then(function(a) {
+        return a ? [a] : null;
+      }) : i.Promise.as(null);
     };
 
-    e.prototype.computeSync = function() {
-      var e = this;
+    a.prototype.computeSync = function() {
+      var a = this;
 
-      var t = this._range.startLineNumber;
+      var b = this._range.startLineNumber;
 
-      var i = this._editor.getLineDecorations(t);
+      var c = this._editor.getLineDecorations(b);
 
-      var o = this._editor.getModel().getLineMaxColumn(t);
+      var d = this._editor.getModel().getLineMaxColumn(b);
 
-      var r = [];
-      i.forEach(function(i) {
-        var s = i.range.startLineNumber === t ? i.range.startColumn : 1;
+      var e = [];
+      c.forEach(function(c) {
+        var f = c.range.startLineNumber === b ? c.range.startColumn : 1;
 
-        var a = i.range.endLineNumber === t ? i.range.endColumn : o;
-        if (s <= e._range.startColumn && e._range.endColumn <= a && (i.options.hoverMessage || i.options.htmlMessage &&
-          i.options.htmlMessage.length > 0)) {
-          var u = {
-            value: i.options.hoverMessage,
-            range: new n.Range(e._range.startLineNumber, s, e._range.startLineNumber, a)
+        var g = c.range.endLineNumber === b ? c.range.endColumn : d;
+        if (f <= a._range.startColumn && a._range.endColumn <= g && (c.options.hoverMessage || c.options.htmlMessage &&
+          c.options.htmlMessage.length > 0)) {
+          var i = {
+            value: c.options.hoverMessage,
+            range: new h.Range(a._range.startLineNumber, f, a._range.startLineNumber, g)
           };
-          if (i.options.htmlMessage) {
-            u.htmlContent = i.options.htmlMessage;
+          if (c.options.htmlMessage) {
+            i.htmlContent = c.options.htmlMessage;
           }
 
-          r.push(u);
+          e.push(i);
         }
       });
 
-      return r;
+      return e;
     };
 
-    e.prototype.onResult = function(e, t) {
-      this._result = t ? e.concat(this._result) : this._result.concat(e);
+    a.prototype.onResult = function(a, b) {
+      if (b) {
+        this._result = a.concat(this._result);
+      } else {
+        this._result = this._result.concat(a);
+      }
     };
 
-    e.prototype.getResult = function() {
+    a.prototype.getResult = function() {
       return this._result.slice(0);
     };
 
-    return e;
+    return a;
   }();
 
-  var u = function(e) {
-    function t(n) {
-      var i = this;
-      e.call(this, t.ID, n);
+  var n = function(a) {
+    function b(c) {
+      var d = this;
+      a.call(this, b.ID, c);
 
-      this._computer = new a(this._editor);
+      this._computer = new m(this._editor);
 
-      this._highlightDecorations = [];
-
-      this._hoverOperation = new o.HoverOperation(this._computer, function(e) {
-        return i._withResult(e, !0);
-      }, null, function(e) {
-        return i._withResult(e, !1);
+      this._hoverOperation = new j.HoverOperation(this._computer, function(a) {
+        return d._withResult(a);
+      }, null, function(a) {
+        return d._withResult(a);
       });
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.onModelDecorationsChanged = function() {
-      if (this._isVisible) {
-        this._hoverOperation.cancel();
-        this._computer.clearResult();
-        this._hoverOperation.start();
-      }
-    };
+    b.prototype.startShowingAt = function(a) {
+      if (this._lastRange && this._lastRange.equalsRange(a)) return;
+      this._hoverOperation.cancel();
+      if (this._isVisible)
+        if (this._showAtPosition.lineNumber !== a.startLineNumber) {
+          this.hide();
+        } else {
+          var b = [];
+          for (var c = 0, d = this._messages.length; c < d; c++) {
+            var e = this._messages[c];
 
-    t.prototype.startShowingAt = function(e) {
-      if (!this._lastRange || !this._lastRange.equalsRange(e)) {
-        if (this._hoverOperation.cancel(), this._isVisible)
-          if (this._showAtPosition.lineNumber !== e.startLineNumber) {
-            this.hide();
-          } else {
-            for (var t = [], n = 0, i = this._messages.length; i > n; n++) {
-              var o = this._messages[n];
-
-              var r = o.range;
-              if (r.startColumn <= e.startColumn && r.endColumn >= e.endColumn) {
-                t.push(o);
-              }
-            }
-            if (t.length > 0) {
-              this._renderMessages(e, t);
-            } else {
-              this.hide();
+            var f = e.range;
+            if (f.startColumn <= a.startColumn && f.endColumn >= a.endColumn) {
+              b.push(e);
             }
           }
-        this._lastRange = e;
+          if (b.length > 0) {
+            this._renderMessages(a, b);
+          } else {
+            this.hide();
+          }
+        }
+      this._lastRange = a;
 
-        this._computer.setRange(e);
+      this._computer.setRange(a);
 
-        this._hoverOperation.start();
-      }
+      this._hoverOperation.start();
     };
 
-    t.prototype.hide = function() {
+    b.prototype.hide = function() {
       this._lastRange = null;
 
       this._hoverOperation.cancel();
 
-      e.prototype.hide.call(this);
-
-      this._highlightDecorations = this._editor.deltaDecorations(this._highlightDecorations, []);
+      a.prototype.hide.call(this);
     };
 
-    t.prototype._withResult = function(e, t) {
-      this._messages = e;
+    b.prototype._withResult = function(a) {
+      this._messages = a;
 
       if (this._messages.length > 0) {
         this._renderMessages(this._lastRange, this._messages);
       } else {
-        if (t) {
-          this.hide();
-        }
+        this.hide();
       }
     };
 
-    t.prototype._renderMessages = function(e, t) {
-      var i = Number.MAX_VALUE;
+    b.prototype._renderMessages = function(a, b) {
+      var c;
 
-      var o = t[0].range;
+      var d;
 
-      var r = document.createDocumentFragment();
-      t.forEach(function(e) {
-        if (e.range) {
-          i = Math.min(i, e.range.startColumn);
+      var e;
 
-          o = n.plusRange(o, e.range);
-          var t = document.createElement("div");
+      var f = Number.MAX_VALUE;
 
-          var a = null;
+      var g = [];
 
-          var u = t;
-          if (e.className) {
-            a = document.createElement("span");
-            a.className = e.className;
-            u = a;
-            t.appendChild(a);
-          }
+      var h = document.createDocumentFragment();
+      b.forEach(function(a) {
+        f = Math.min(f, a.range.startColumn);
+        var b = document.createElement("div");
 
-          if (e.htmlContent && e.htmlContent.length > 0) {
-            e.htmlContent.forEach(function(e) {
-              u.appendChild(s.renderHtml(e));
-            });
-          } else {
-            u.textContent = e.value;
-          }
+        var c = null;
 
-          r.appendChild(t);
+        var d = b;
+        if (a.className) {
+          c = document.createElement("span");
+          c.className = a.className;
+          d = c;
+          b.appendChild(c);
         }
+
+        if (a.htmlContent && a.htmlContent.length > 0) {
+          a.htmlContent.forEach(function(a) {
+            d.appendChild(l.renderHtml(a));
+          });
+        } else {
+          d.textContent = a.value;
+        }
+
+        h.appendChild(b);
       });
 
       this._domNode.textContent = "";
 
-      this._domNode.appendChild(r);
+      this._domNode.appendChild(h);
 
       this.showAt({
-        lineNumber: e.startLineNumber,
-        column: i
+        lineNumber: a.startLineNumber,
+        column: f
       });
-
-      this._highlightDecorations = this._editor.deltaDecorations(this._highlightDecorations, [{
-        range: o,
-        options: {
-          className: "hoverHighlight"
-        }
-      }]);
     };
 
-    t.ID = "editor.contrib.modesContentHoverWidget";
+    b.ID = "editor.contrib.modesContentHoverWidget";
 
-    return t;
-  }(r.ContentHoverWidget);
-  t.ModesContentHoverWidget = u;
+    return b;
+  }(k.ContentHoverWidget);
+  b.ModesContentHoverWidget = n;
 });

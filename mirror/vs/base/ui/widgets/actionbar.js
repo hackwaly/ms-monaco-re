@@ -1,211 +1,229 @@
-define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/editor.main", "vs/base/lifecycle",
-  "vs/base/dom/builder", "vs/base/ui/actions", "vs/base/dom/dom", "vs/base/ui/events", "vs/base/types",
-  "vs/base/eventEmitter", "vs/base/dom/keyboardEvent", "vs/css!./actionbar"
-], function(e, t, n, i, o, r, s, a, u, l, c) {
-  var d = o.$;
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
+    }
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
+    }
+    d.prototype = b.prototype;
 
-  var h = function(e) {
-    function t(t, n) {
-      var i = this;
-      if (e.call(this), this._callOnDispose = [], this._context = t || this, this._action = n, n instanceof r.Action) {
-        var o = n.addBulkListener(function(e) {
-          e.forEach(function(e) {
-            switch (e.getType()) {
-              case r.Action.ENABLED:
-                i._updateEnabled();
-                break;
-              case r.Action.LABEL:
-                i._updateLabel();
+    a.prototype = new d;
+  };
 
-                i._updateTitle();
+define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/dom/builder", "vs/base/ui/actions",
+  "vs/base/lifecycle", "vs/base/dom/dom", "vs/base/ui/events", "vs/base/types", "vs/base/eventEmitter",
+  "vs/base/dom/keyboardEvent", "vs/css!./actionbar"
+], function(a, b, c, d, e, f, g, h, i, j, k, l) {
+  function E(a, b) {
+    if (a.button !== 0) return;
+    if (a.type === r.EventType.MOUSE_DOWN) {
+      b.addClass("active");
+    } else {
+      b.removeClass("active");
+    }
+  }
+  var m = c;
+
+  var n = d;
+
+  var o = e;
+
+  var p = f;
+
+  var q = g;
+
+  var r = h;
+
+  var s = i;
+
+  var t = j;
+
+  var u = k;
+
+  var v = l;
+
+  var w = o.$;
+
+  var x = function(a) {
+    function b(b, c) {
+      var d = this;
+      a.call(this);
+
+      this._callOnDispose = [];
+
+      this._context = b || this;
+
+      this.action = c;
+      if (c instanceof p.Action) {
+        var e = c.addBulkListener(function(a) {
+          a.forEach(function(a) {
+            switch (a.getType()) {
+              case p.Action.ENABLED:
+                d._updateEnabled();
                 break;
-              case r.Action.CLASS:
-                i._updateClass();
+              case p.Action.LABEL:
+                d._updateLabel();
                 break;
-              case r.Action.CHECKED:
-                i._updateChecked();
+              case p.Action.CLASS:
+                d._updateClass();
+                break;
+              case p.Action.CHECKED:
+                d._updateChecked();
                 break;
               default:
-                i._updateUnknown(e);
+                d._updateUnknown(a);
             }
           });
         });
-        this._callOnDispose.push(o);
+        this._callOnDispose.push(e);
       }
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    Object.defineProperty(t.prototype, "callOnDispose", {
-      get: function() {
-        return this._callOnDispose;
-      },
-      enumerable: !0,
-      configurable: !0
-    });
-
-    Object.defineProperty(t.prototype, "actionRunner", {
-      set: function(e) {
-        this._actionRunner = e;
-      },
-      enumerable: !0,
-      configurable: !0
-    });
-
-    t.prototype.getAction = function() {
-      return this._action;
+    b.prototype.getAction = function() {
+      return this.action;
     };
 
-    t.prototype.isEnabled = function() {
-      return this._action.enabled;
+    b.prototype.setActionContext = function(a) {
+      this._context = a;
     };
 
-    t.prototype.setActionContext = function(e) {
-      this._context = e;
-    };
+    b.prototype.render = function(a) {
+      var b = this;
+      this.builder = o.Build.withElement(a);
 
-    t.prototype.render = function(e) {
-      var t = this;
-      this.builder = d(e);
-
-      this.builder.on(s.EventType.CLICK, function(e) {
-        t.onClick(e);
+      this.builder.on(r.EventType.CLICK, function(a) {
+        b.onClick(a);
       });
 
-      this.builder.on("mousedown", function(e) {
-        if (0 === e.button && t._action.enabled) {
-          t.builder.addClass("active");
+      this.builder.on("mousedown", function(a) {
+        if (a.button === 0 && b.action.enabled) {
+          b.builder.addClass("active");
         }
       });
 
-      this.builder.on(["mouseup", "mouseout"], function(e) {
-        if (0 === e.button && t._action.enabled) {
-          t.builder.removeClass("active");
+      this.builder.on(["mouseup", "mouseout"], function(a) {
+        if (a.button === 0 && b.action.enabled) {
+          b.builder.removeClass("active");
         }
       });
     };
 
-    t.prototype.onClick = function(e) {
-      s.EventHelper.stop(e, !0);
+    b.prototype.onClick = function(a) {
+      r.EventHelper.stop(a, !0);
 
-      this._actionRunner.run(this._action, this._context || e);
+      this.runAction(a);
     };
 
-    t.prototype.focus = function() {
+    b.prototype.runAction = function(a) {
+      var b = this;
+      if (!this.action.enabled) return;
+      this.emit(s.EventType.BEFORE_RUN, {
+        action: this.action
+      });
+
+      n.Promise.as(this.action.run(this._context || a)).then(function(a) {
+        b.emit(s.EventType.RUN, {
+          action: b.action,
+          result: a
+        });
+      }, function(a) {
+        b.emit(s.EventType.RUN, {
+          action: b.action,
+          error: a
+        });
+      }).done();
+    };
+
+    b.prototype.focus = function() {
       this.builder.domFocus();
-
-      this.builder.addClass("focused");
     };
 
-    t.prototype.blur = function() {
-      this.builder.removeClass("focused");
+    b.prototype._updateEnabled = function() {};
+
+    b.prototype._updateLabel = function() {};
+
+    b.prototype._updateClass = function() {};
+
+    b.prototype._updateChecked = function() {};
+
+    b.prototype._updateUnknown = function(a) {};
+
+    b.prototype.dispose = function() {
+      a.prototype.dispose.call(this);
+
+      q.cAll(this._callOnDispose);
     };
 
-    t.prototype._updateEnabled = function() {};
+    return b;
+  }(u.EventEmitter);
+  b.BaseActionItem = x;
 
-    t.prototype._updateLabel = function() {};
-
-    t.prototype._updateTitle = function() {};
-
-    t.prototype._updateClass = function() {};
-
-    t.prototype._updateChecked = function() {};
-
-    t.prototype._updateUnknown = function() {};
-
-    t.prototype.dispose = function() {
-      e.prototype.dispose.call(this);
-
-      i.cAll(this._callOnDispose);
-    };
-
-    return t;
-  }(l.EventEmitter);
-  t.BaseActionItem = h;
-  var p = function(e) {
-    function t(n, i) {
-      e.call(this, t.ID, n, n ? "separator text" : "separator");
-
-      this.checked = !1;
-
-      this.enabled = !1;
-
-      this.order = i;
+  b.Separator = {
+    id: "actions.monaco.separator",
+    "class": "separator",
+    label: "",
+    checked: !1,
+    enabled: !1,
+    run: function() {
+      return null;
     }
-    __extends(t, e);
-
-    t.ID = "actions.monaco.separator";
-
-    return t;
-  }(r.Action);
-  t.Separator = p;
-  var f = function(e) {
-    function t(t, n, i) {
-      if ("undefined" == typeof i) {
-        i = {};
+  };
+  var y = function(a) {
+    function b(b, c, d) {
+      if (typeof d == "undefined") {
+        d = {};
       }
 
-      e.call(this, t, n);
+      a.call(this, b, c);
 
-      this.options = i;
+      this.options = d;
 
-      this.options.icon = void 0 !== i.icon ? i.icon : !1;
+      this.options.icon = d.icon !== undefined ? d.icon : !1;
 
-      this.options.label = void 0 !== i.label ? i.label : !0;
+      this.options.label = d.label !== undefined ? d.label : !0;
 
       this.cssClass = "";
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.render = function(t) {
-      e.prototype.render.call(this, t);
+    b.prototype.render = function(b) {
+      a.prototype.render.call(this, b);
 
-      this.$e = d("a.action-label").attr("tabIndex", "-1").appendTo(this.builder);
+      this.$e = w("a.action-label").attr("tabIndex", "-1").appendTo(this.builder);
 
       this.$e.attr({
         role: "menuitem"
       });
 
-      if (this.options.label && this.options.keybinding) {
-        d("span.keybinding").text(this.options.keybinding).appendTo(this.builder);
+      if (!this.options.label && this.getAction().label && this.options.icon) {
+        this.$e.attr({
+          title: this.getAction().label
+        });
       }
 
       this._updateClass();
 
       this._updateLabel();
 
-      this._updateTitle();
-
       this._updateEnabled();
 
       this._updateChecked();
     };
 
-    t.prototype.focus = function() {
-      e.prototype.focus.call(this);
-
+    b.prototype.focus = function() {
       this.$e.domFocus();
     };
 
-    t.prototype._updateLabel = function() {
+    b.prototype._updateLabel = function() {
       if (this.options.label) {
         this.$e.text(this.getAction().label);
       }
     };
 
-    t.prototype._updateTitle = function() {
-      if (!this.options.label && this.getAction().label && this.options.icon) {
-        var e = this.getAction().label;
-        if (this.options.keybinding) {
-          e = n.localize("vs_base_ui_widgets_actionbar", 0, e, this.options.keybinding);
-        }
-
-        this.$e.attr({
-          title: e
-        });
-      }
-    };
-
-    t.prototype._updateClass = function() {
+    b.prototype._updateClass = function() {
       if (this.cssClass) {
         this.$e.removeClass(this.cssClass);
       }
@@ -213,16 +231,14 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
       if (this.options.icon) {
         this.cssClass = this.getAction().class;
         this.$e.addClass("icon");
-        if (this.cssClass) {
-          this.$e.addClass(this.cssClass);
-        }
+        this.$e.addClass(this.cssClass);
         this._updateEnabled();
       } else {
         this.$e.removeClass("icon");
       }
     };
 
-    t.prototype._updateEnabled = function() {
+    b.prototype._updateEnabled = function() {
       if (this.getAction().enabled) {
         this.builder.removeClass("disabled");
         this.$e.removeClass("disabled");
@@ -232,7 +248,7 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
       }
     };
 
-    t.prototype._updateChecked = function() {
+    b.prototype._updateChecked = function() {
       if (this.getAction().checked) {
         this.$e.addClass("checked");
       } else {
@@ -240,169 +256,149 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
       }
     };
 
-    return t;
-  }(h);
-  t.ActionItem = f;
-  var g = function(e) {
-    function t() {
-      e.apply(this, arguments);
+    return b;
+  }(x);
+  b.ActionItem = y;
+  var z = function(a) {
+    function b(b) {
+      a.call(this, null, b);
+
+      this.callOnDispose = [];
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.render = function(t) {
-      var n = document.createElement("div");
-      d(n).addClass("progress-item");
-      var i = document.createElement("div");
-      d(i).addClass("label");
+    b.prototype.render = function(b) {
+      var c = document.createElement("div");
+      o.Build.withElement(c).addClass("progress-item");
+      var d = document.createElement("div");
+      o.Build.withElement(d).addClass("label");
 
-      i.textContent = this.getAction().label;
+      d.textContent = this.getAction().label;
 
-      i.title = this.getAction().label;
+      d.title = this.getAction().label;
 
-      e.prototype.render.call(this, i);
-      var o = document.createElement("div");
-      o.textContent = "…";
+      a.prototype.render.call(this, d);
+      var e = document.createElement("div");
+      e.textContent = "…";
 
-      d(o).addClass("tag", "progress");
-      var r = document.createElement("div");
-      r.textContent = "✓";
+      o.Build.withElement(e).addClass("tag", "progress");
+      var f = document.createElement("div");
+      f.textContent = "✓";
 
-      d(r).addClass("tag", "done");
-      var s = document.createElement("div");
-      s.textContent = "!";
+      o.Build.withElement(f).addClass("tag", "done");
+      var g = document.createElement("div");
+      g.textContent = "!";
 
-      d(s).addClass("tag", "error");
+      o.Build.withElement(g).addClass("tag", "error");
 
-      this.callOnDispose.push(this.addListener(a.EventType.BEFORE_RUN, function() {
-        d(o).addClass("active");
+      this.callOnDispose.push(this.addListener(s.EventType.BEFORE_RUN, function() {
+        o.Build.withElement(e).addClass("active");
 
-        d(r).removeClass("active");
+        o.Build.withElement(f).removeClass("active");
 
-        d(s).removeClass("active");
+        o.Build.withElement(g).removeClass("active");
       }));
 
-      this.callOnDispose.push(this.addListener(a.EventType.RUN, function(e) {
-        d(o).removeClass("active");
+      this.callOnDispose.push(this.addListener(s.EventType.RUN, function(a) {
+        o.Build.withElement(e).removeClass("active");
 
-        if (e.error) {
-          d(r).removeClass("active");
-          d(s).addClass("active");
+        if (a.error) {
+          o.Build.withElement(f).removeClass("active");
+          o.Build.withElement(g).addClass("active");
         } else {
-          d(s).removeClass("active");
-          d(r).addClass("active");
+          o.Build.withElement(g).removeClass("active");
+          o.Build.withElement(f).addClass("active");
         }
       }));
 
-      n.appendChild(i);
+      c.appendChild(d);
 
-      n.appendChild(o);
+      c.appendChild(e);
 
-      n.appendChild(r);
+      c.appendChild(f);
 
-      n.appendChild(s);
+      c.appendChild(g);
 
-      t.appendChild(n);
+      b.appendChild(c);
     };
 
-    t.prototype.dispose = function() {
-      i.cAll(this.callOnDispose);
+    b.prototype.dispose = function() {
+      q.cAll(this.callOnDispose);
 
-      e.prototype.dispose.call(this);
+      a.prototype.dispose.call(this);
     };
 
-    return t;
-  }(h);
-  t.ProgressItem = g;
+    return b;
+  }(x);
+  b.ProgressItem = z;
 
-  (function(e) {
-    e[e.HORIZONTAL = 1] = "HORIZONTAL";
+  (function(a) {
+    a[a.HORIZONTAL = 1] = "HORIZONTAL";
 
-    e[e.VERTICAL = 2] = "VERTICAL";
-  })(t.ActionsOrientation || (t.ActionsOrientation = {}));
-  var m = (t.ActionsOrientation, {
-    orientation: 1,
+    a[a.VERTICAL = 2] = "VERTICAL";
+  })(b.ActionsOrientation || (b.ActionsOrientation = {}));
+  var A = b.ActionsOrientation;
+
+  var B = {
+    orientation: A.HORIZONTAL,
     context: null
-  });
+  };
 
-  var v = function(e) {
-    function t(t, i) {
-      if ("undefined" == typeof i) {
-        i = m;
+  var C = function(a) {
+    function b(b, c) {
+      if (typeof c == "undefined") {
+        c = B;
       }
-      var o = this;
-      e.call(this);
+      var d = this;
+      a.call(this);
 
-      this.builder = t;
+      this.builder = b;
 
-      this.options = i;
-
-      this.toDispose = [];
-
-      this._actionRunner = this.options.actionRunner;
-
-      if (!this._actionRunner) {
-        this._actionRunner = new r.ActionRunner;
-        this.toDispose.push(this._actionRunner);
-      }
-
-      this.toDispose.push(this.addEmitter2(this._actionRunner));
+      this.options = c;
 
       this.items = [];
 
-      this.focusedItem = void 0;
+      this.focusedItem = undefined;
 
       this.domNode = document.createElement("div");
 
       this.domNode.className = "monaco-action-bar";
 
-      this.domNode.tabIndex = 0;
-
-      if (2 === this.options.orientation) {
+      if (this.options.orientation === A.VERTICAL) {
         this.domNode.className += " vertical";
       }
 
-      d(this.domNode).on(s.EventType.KEY_DOWN, function(e) {
-        var t = new c.KeyboardEvent(e);
+      o.Build.withElement(this.domNode).on(r.EventType.KEY_DOWN, function(a) {
+        var b = new v.KeyboardEvent(a);
 
-        var n = !0;
-        switch (t.asString()) {
+        var c = !0;
+        switch (b.asString()) {
           case "UpArrow":
           case "LeftArrow":
-            o.focusPrevious();
+            d.doFocus(!1);
             break;
           case "DownArrow":
           case "RightArrow":
-            o.focusNext();
-            break;
-          case "Escape":
-            o.cancel();
-            break;
-          case "Enter":
+            d.doFocus(!0);
             break;
           default:
-            n = !1;
+            c = !1;
         }
-        if (n) {
-          t.preventDefault();
-          t.stopPropagation();
+        if (c) {
+          b.preventDefault();
+          b.stopPropagation();
         }
       });
 
-      d(this.domNode).on(s.EventType.KEY_UP, function(e) {
-        var t = new c.KeyboardEvent(e);
-        switch (t.asString()) {
+      o.Build.withElement(this.domNode).on(r.EventType.KEY_UP, function(a) {
+        var b = new v.KeyboardEvent(a);
+        switch (b.asString()) {
           case "Enter":
-            o.doTrigger(t);
+            d.doTrigger(a);
 
-            t.preventDefault();
+            b.preventDefault();
 
-            t.stopPropagation();
-        }
-      });
-      var a = s.trackFocus(this.domNode);
-      a.addBlurListener(function(e) {
-        if (!(document.activeElement !== o.domNode && s.isAncestor(document.activeElement, o.domNode))) {
-          o.emit("blur", e);
+            b.stopPropagation();
         }
       });
 
@@ -412,198 +408,291 @@ define("vs/base/ui/widgets/actionbar", ["require", "exports", "vs/nls!vs/editor/
 
       this.actionsList.setAttribute("role", "menu");
 
-      this.actionsList.setAttribute("aria-label", n.localize("vs_base_ui_widgets_actionbar", 1));
+      this.actionsList.setAttribute("aria-label", m.localize("actionBarAccessibleLabel", "Action Bar"));
 
       this.domNode.appendChild(this.actionsList);
 
-      if (t) {
-        t.getHTMLElement().appendChild(this.domNode);
+      if (b) {
+        b.getHTMLElement().appendChild(this.domNode);
       }
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    Object.defineProperty(t.prototype, "actionRunner", {
-      get: function() {
-        return this._actionRunner;
-      },
-      set: function(e) {
-        if (e) {
-          this._actionRunner = e;
-          this.items.forEach(function(t) {
-            return t.actionRunner = e;
-          });
-        }
-      },
-      enumerable: !0,
-      configurable: !0
-    });
-
-    t.prototype.getContainer = function() {
-      return d(this.domNode);
+    b.prototype.getContainer = function() {
+      return o.Build.withElement(this.domNode);
     };
 
-    t.prototype.push = function(e, t) {
-      if ("undefined" == typeof t) {
-        t = {};
+    b.prototype.push = function(a, b) {
+      if (typeof b == "undefined") {
+        b = {};
       }
-      var n = this;
-      if (!Array.isArray(e)) {
-        e = [e];
+      var c = this;
+      if (!t.isArray(a)) {
+        a = [a];
       }
-      var i = u.isNumber(t.index) ? t.index : null;
-      e.forEach(function(e) {
-        var o = document.createElement("li");
-        o.className = "action-item";
+      var d = t.isNumber(b.index) ? b.index : null;
+      a.forEach(function(a) {
+        var e = document.createElement("li");
+        e.className = "action-item";
 
-        o.setAttribute("role", "presentation");
-        var r = null;
-        if (n.options.actionItemProvider) {
-          r = n.options.actionItemProvider(e);
+        e.setAttribute("role", "presentation");
+        var f = null;
+        if (c.options.actionItemProvider) {
+          f = c.options.actionItemProvider(a);
         }
 
-        if (!r) {
-          r = new f(n.options.context, e, t);
+        if (!f) {
+          f = new y(c.options.context, a, b);
         }
 
-        r.actionRunner = n._actionRunner;
+        f.setActionContext(c.options.context);
 
-        r.setActionContext(n.options.context);
+        c.addEmitter(f);
 
-        n.addEmitter(r);
+        f.render(e);
 
-        r.render(o);
-
-        if (null === i || 0 > i || i >= n.actionsList.children.length) {
-          n.actionsList.appendChild(o);
+        if (d === null || d < 0 || d >= c.actionsList.children.length) {
+          c.actionsList.appendChild(e);
         } else {
-          n.actionsList.insertBefore(o, n.actionsList.children[i++]);
+          c.actionsList.insertBefore(e, c.actionsList.children[d++]);
         }
 
-        n.items.push(r);
+        c.items.push(f);
       });
     };
 
-    t.prototype.clear = function() {
-      for (var e; e = this.items.pop();) {
-        e.dispose();
+    b.prototype.clear = function() {
+      var a;
+      while (a = this.items.pop()) {
+        a.dispose();
       }
-      d(this.actionsList).empty();
+      w(this.actionsList).empty();
     };
 
-    t.prototype.length = function() {
-      return this.items.length;
+    b.prototype.isEmpty = function() {
+      return this.items.length === 0;
     };
 
-    t.prototype.isEmpty = function() {
-      return 0 === this.items.length;
+    b.prototype.onContentsChange = function() {
+      this.emit(s.EventType.CONTENTS_CHANGED);
     };
 
-    t.prototype.onContentsChange = function() {
-      this.emit(a.EventType.CONTENTS_CHANGED);
+    b.prototype.focus = function() {
+      this.doFocus();
     };
 
-    t.prototype.focus = function(e) {
-      if (e && "undefined" == typeof this.focusedItem) {
-        this.focusedItem = 0;
-      }
-
-      this.updateFocus();
-    };
-
-    t.prototype.focusNext = function() {
-      if ("undefined" == typeof this.focusedItem) {
-        this.focusedItem = this.items.length - 1;
-      }
-      var e;
-
-      var t = this.focusedItem;
-      do {
-        this.focusedItem = (this.focusedItem + 1) % this.items.length;
-        e = this.items[this.focusedItem];
-      } while (this.focusedItem !== t && !e.isEnabled());
-      if (!(this.focusedItem !== t || e.isEnabled())) {
-        this.focusedItem = void 0;
-      }
-
-      this.updateFocus();
-    };
-
-    t.prototype.focusPrevious = function() {
-      if ("undefined" == typeof this.focusedItem) {
-        this.focusedItem = 0;
-      }
-      var e;
-
-      var t = this.focusedItem;
-      do {
-        this.focusedItem = this.focusedItem - 1;
-        if (this.focusedItem < 0) {
-          this.focusedItem = this.items.length - 1;
+    b.prototype.doFocus = function(a) {
+      var b = this.items.length;
+      if (b === 0) return;
+      if (typeof a == "undefined") {
+        if (typeof this.focusedItem == "undefined") {
+          this.focusedItem = 0;
         }
-        e = this.items[this.focusedItem];
-      } while (this.focusedItem !== t && !e.isEnabled());
-      if (!(this.focusedItem !== t || e.isEnabled())) {
-        this.focusedItem = void 0;
-      }
-
-      this.updateFocus();
-    };
-
-    t.prototype.updateFocus = function() {
-      if ("undefined" == typeof this.focusedItem) {
-        this.domNode.focus();
-        return void 0;
-      }
-      for (var e = 0; e < this.items.length; e++) {
-        var t = this.items[e];
-
-        var n = t;
-        if (e === this.focusedItem) {
-          if (u.isFunction(n.focus)) {
-            n.focus();
-          }
+      } else {
+        if (typeof this.focusedItem == "undefined") {
+          this.focusedItem = 0;
         } else {
-          if (u.isFunction(n.blur)) {
-            n.blur();
+          if (a) {
+            this.focusedItem += 1;
+            if (this.focusedItem >= b) {
+              this.focusedItem = 0;
+            }
+          } else {
+            this.focusedItem -= 1;
+            if (this.focusedItem < 0) {
+              this.focusedItem = b - 1;
+            }
           }
+        }
+      }
+      for (var c = 0; c < this.items.length; c++) {
+        var d = this.items[c];
+        if (!(d instanceof x)) continue;
+        var e = d;
+        if (c === this.focusedItem) {
+          e.focus();
+          e.builder.addClass("focused");
+        } else {
+          e.builder.removeClass("focused");
         }
       }
     };
 
-    t.prototype.doTrigger = function(e) {
-      if ("undefined" != typeof this.focusedItem) {
-        var t = this.items[this.focusedItem];
-        this.run(t._action, t._context || e).done();
-      }
+    b.prototype.doTrigger = function(a) {
+      if (typeof this.focusedItem == "undefined") return;
+      this.items[this.focusedItem].runAction(a);
     };
 
-    t.prototype.cancel = function() {
-      this.emit(a.EventType.CANCEL);
-    };
-
-    t.prototype.run = function(e, t) {
-      return this._actionRunner.run(e, t);
-    };
-
-    t.prototype.dispose = function() {
-      if (null !== this.items) {
+    b.prototype.dispose = function() {
+      if (this.items !== null) {
         this.clear();
       }
 
       this.items = null;
 
-      this.toDispose = i.disposeAll(this.toDispose);
-
       this.getContainer().destroy();
 
-      e.prototype.dispose.call(this);
+      a.prototype.dispose.call(this);
     };
 
-    t.DEFAULT_OPTIONS = {
-      orientation: 1
+    b.DEFAULT_OPTIONS = {
+      orientation: A.HORIZONTAL
     };
 
-    return t;
-  }(l.EventEmitter);
-  t.ActionBar = v;
+    return b;
+  }(u.EventEmitter);
+  b.ActionBar = C;
+  var D = function(a) {
+    function b(b, c) {
+      if (typeof c == "undefined") {
+        c = {};
+      }
+      var d = this;
+      a.call(this);
+
+      this.builder = b;
+
+      this.options = c;
+
+      this.listeners = [];
+
+      this.domNodeBuilder = b.div({
+        "class": "monaco-actions-widget"
+      }, function(a) {
+        d.primaryActionBar = new C(a);
+
+        d.secondaryActionBar = new C(a, {
+          orientation: A.VERTICAL
+        });
+
+        d.primaryActionBar.getContainer().addClass("primary");
+
+        d.secondaryActionBar.getContainer().addClass("secondary");
+
+        a.div({
+          "class": "more",
+          text: m.localize("more", "…")
+        }).on([r.EventType.CLICK], function(a, b) {
+          r.EventHelper.stop(a, !0);
+
+          d.toggleMore();
+        }).on([r.EventType.MOUSE_DOWN, r.EventType.MOUSE_UP, r.EventType.MOUSE_OUT], E);
+      });
+
+      this.listeners.push(this.primaryActionBar.addListener(s.EventType.BEFORE_RUN, function(a) {
+        a.actionType = "primary";
+
+        d.emit(s.EventType.BEFORE_RUN, a);
+      }));
+
+      this.listeners.push(this.primaryActionBar.addListener(s.EventType.RUN, function(a) {
+        a.actionType = "primary";
+
+        d.emit(s.EventType.RUN, a);
+      }));
+
+      this.listeners.push(this.secondaryActionBar.addListener(s.EventType.BEFORE_RUN, function(a) {
+        a.actionType = "secondary";
+
+        d.emit(s.EventType.BEFORE_RUN, a);
+      }));
+
+      this.listeners.push(this.secondaryActionBar.addListener(s.EventType.RUN, function(a) {
+        a.actionType = "secondary";
+
+        d.emit(s.EventType.RUN, a);
+      }));
+
+      this.updateView();
+    }
+    __extends(b, a);
+
+    b.prototype.updateView = function() {
+      if (this.primaryActionBar.items.length === 0) {
+        this.domNodeBuilder.removeClass("hasPrimary");
+      } else {
+        this.domNodeBuilder.addClass("hasPrimary");
+      }
+
+      if (this.secondaryActionBar.items.length === 0) {
+        this.domNodeBuilder.removeClass("hasSecondary");
+      } else {
+        this.domNodeBuilder.addClass("hasSecondary");
+      }
+    };
+
+    b.prototype.getContainer = function() {
+      return o.Build.withBuilder(this.domNodeBuilder);
+    };
+
+    b.prototype.toggleMore = function(a, b) {
+      var c = "more";
+      if (typeof a == "undefined") {
+        a = !this.domNodeBuilder.hasClass(c);
+      }
+
+      if (a) {
+        this.domNodeBuilder.addClass("more");
+      } else {
+        this.domNodeBuilder.removeClass("more");
+      }
+
+      if (b !== !0) {
+        this.emit(s.EventType.TOGGLE, {
+          expanded: a
+        });
+      }
+    };
+
+    b.prototype.push = function(a, b) {
+      if (typeof b == "undefined") {
+        b = {};
+      }
+      var c = this;
+
+      var d = [];
+      t.isArray(a) || (a = [a]);
+
+      a.forEach(function(a) {
+        if (b.secondary) {
+          c.secondaryActionBar.push(a, b);
+        } else {
+          c.primaryActionBar.push(a, b);
+        }
+      });
+
+      this.updateView();
+
+      return d.length === 1 ? d[0] : d;
+    };
+
+    b.prototype.clear = function() {
+      this.primaryActionBar.clear();
+
+      this.secondaryActionBar.clear();
+
+      this.toggleMore(!1);
+    };
+
+    b.prototype.update = function() {
+      this.updateView();
+    };
+
+    b.prototype.dispose = function() {
+      var b;
+      while (b = this.listeners.pop()) {
+        b();
+      }
+      this.primaryActionBar.dispose();
+
+      this.secondaryActionBar.dispose();
+
+      this.domNodeBuilder.empty();
+
+      a.prototype.dispose.call(this);
+    };
+
+    return b;
+  }(u.EventEmitter);
+  b.ActionsWidget = D;
 });

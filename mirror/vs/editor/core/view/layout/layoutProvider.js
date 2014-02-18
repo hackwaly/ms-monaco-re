@@ -1,56 +1,99 @@
-define("vs/editor/core/view/layout/layoutProvider", ["require", "exports", "vs/editor/core/constants",
-  "vs/editor/core/view/layout/lines/linesLayout", "vs/editor/core/view/viewEventHandler",
-  "vs/editor/core/view/layout/editorLayoutProvider", "vs/editor/core/view/layout/scroll/scrollManager"
-], function(e, t, n, i, o, r, s) {
-  var a = function(e) {
-    function t(t, n, o, a, u) {
-      e.call(this);
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
+    }
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
+    }
+    d.prototype = b.prototype;
 
-      this.configuration = t;
+    a.prototype = new d;
+  };
 
-      this.privateViewEventBus = o;
+define(["require", "exports", "vs/editor/core/constants", "vs/editor/core/view/layout/lines/linesLayout",
+  "vs/editor/core/view/viewEventHandler", "vs/editor/core/view/layout/elementSizeObserver",
+  "vs/editor/core/view/layout/characterSizeProvider", "vs/editor/core/view/layout/editorLayoutProvider",
+  "vs/editor/core/view/layout/scroll/scrollManager"
+], function(a, b, c, d, e, f, g, h, i) {
+  var j = c;
 
-      this.model = n;
+  var k = d;
 
-      this.scrollManager = new s.ScrollManager(t, o, a, u);
+  var l = e;
 
-      this.editorLayoutProvider = new r.EditorLayoutProvider(this.configuration.editor.observedOuterWidth, this.configuration
-        .editor.observedOuterHeight, this.configuration.editor.lineHeight, this.configuration.editor.glyphMargin,
-        this.configuration.editor.lineNumbers, this.configuration.editor.lineNumbersMinChars, this.configuration.editor
-        .lineDecorationsWidth, this.configuration.editor.maxDigitWidth);
+  var m = f;
+
+  var n = g;
+
+  var o = h;
+
+  var p = i;
+
+  var q = function(a) {
+    function b(b, c, d, e, f, g) {
+      var h = this;
+      a.call(this);
+
+      this.configuration = c;
+
+      this.privateViewEventBus = e;
+
+      this.model = d;
+
+      this.scrollManager = new p.ScrollManager(c, e, f, g);
+
+      this.charSizeProvider = new n.CharacterSizeProvider(this.configuration);
+
+      this.editorLayoutProvider = new o.EditorLayoutProvider(-1, -1, this.configuration.editor.lineHeight, this.configuration
+        .editor.glyphMargin, this.configuration.editor.lineNumbers, this.configuration.editor.lineNumbersMinChars,
+        this.charSizeProvider.maxDigitWidth());
 
       this.editorLayoutProvider.setLineCount(this.model.getLineCount());
 
       this.editorLayoutProvider.setScrollbarSize(this.scrollManager.getVerticalScrollbarWidth(), this.scrollManager.getHorizontalScrollbarHeight());
 
-      this._updateWrappingColumn(this.getLayoutInfo(), 0);
+      this.elementSizeObserver = new m.ElementSizeObserver(b, function(a, b) {
+        return h._onContainerSizeChanged(a, b);
+      });
 
-      this.linesLayout = new i.LinesLayout(t, n);
+      if (this.configuration.editor.automaticLayout) {
+        this.elementSizeObserver.startObserving();
+      }
+
+      this.linesLayout = new k.LinesLayout(c, d, this.getLayoutInfo().contentWidth);
 
       this._updatePageSize();
 
       this._updateHeight();
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.dispose = function() {
+    b.prototype.dispose = function() {
+      this.elementSizeObserver.dispose();
+
       this.scrollManager.dispose();
     };
 
-    t.prototype.updateLineCount = function() {
-      var e = this.editorLayoutProvider.setLineCount(this.model.getLineCount());
-      if (e) {
+    b.prototype.layout = function() {
+      this.elementSizeObserver.observe();
+    };
+
+    b.prototype.updateLineCount = function() {
+      var a = this.editorLayoutProvider.setLineCount(this.model.getLineCount());
+      if (a) {
         this._emitLayoutChangedEvent();
       }
     };
 
-    t.prototype.onZonesChanged = function() {
+    b.prototype.onZonesChanged = function() {
       this._updateHeight();
 
       return !1;
     };
 
-    t.prototype.onModelFlushed = function() {
+    b.prototype.onModelFlushed = function() {
       this.linesLayout.onModelFlushed();
 
       this.updateLineCount();
@@ -60,8 +103,8 @@ define("vs/editor/core/view/layout/layoutProvider", ["require", "exports", "vs/e
       return !1;
     };
 
-    t.prototype.onModelLinesDeleted = function(e) {
-      this.linesLayout.onModelLinesDeleted(e);
+    b.prototype.onModelLinesDeleted = function(a) {
+      this.linesLayout.onModelLinesDeleted(a);
 
       this.updateLineCount();
 
@@ -70,12 +113,14 @@ define("vs/editor/core/view/layout/layoutProvider", ["require", "exports", "vs/e
       return !1;
     };
 
-    t.prototype.onModelLineChanged = function() {
+    b.prototype.onModelLineChanged = function(a) {
+      this.linesLayout.onModelLineChanged(a);
+
       return !1;
     };
 
-    t.prototype.onModelLinesInserted = function(e) {
-      this.linesLayout.onModelLinesInserted(e);
+    b.prototype.onModelLinesInserted = function(a) {
+      this.linesLayout.onModelLinesInserted(a);
 
       this.updateLineCount();
 
@@ -84,125 +129,148 @@ define("vs/editor/core/view/layout/layoutProvider", ["require", "exports", "vs/e
       return !1;
     };
 
-    t.prototype.onConfigurationChanged = function() {
-      var e = this.linesLayout.getCenteredLineInViewport(this.getCurrentViewport());
+    b.prototype.onConfigurationChanged = function(a) {
+      var b = this.editorLayoutProvider.setShowLineNumbers(this.configuration.editor.lineNumbers);
+      b = this.editorLayoutProvider.setLineNumbersMinChars(this.configuration.editor.lineNumbersMinChars) || b;
+
+      b = this.editorLayoutProvider.setGlyphMargin(this.configuration.editor.glyphMargin) || b;
+
+      this._updateWrappingColumn(this.getLayoutInfo());
+
+      b && this._emitLayoutChangedEvent();
+
+      this.linesLayout.onConfigurationChanged(a);
+
+      this._updateHeight();
+
+      return !1;
+    };
+
+    b.prototype.onConfigurationLineHeightChanged = function() {
       this._updatePageSize();
-      var t = this.editorLayoutProvider.setDimensions(this.configuration.editor.observedOuterWidth, this.configuration
-        .editor.observedOuterHeight);
-      t = this.editorLayoutProvider.setShowLineNumbers(this.configuration.editor.lineNumbers) || t;
-
-      t = this.editorLayoutProvider.setLineNumbersMinChars(this.configuration.editor.lineNumbersMinChars) || t;
-
-      t = this.editorLayoutProvider.setGlyphMargin(this.configuration.editor.glyphMargin) || t;
-
-      t = this.editorLayoutProvider.setLineDecorationsWidth(this.configuration.editor.lineDecorationsWidth) || t;
-
-      t = this.editorLayoutProvider.setLineHeight(this.configuration.editor.lineHeight) || t;
-
-      t = this.editorLayoutProvider.setMaxDigitWidth(this.configuration.editor.maxDigitWidth) || t;
-
-      this._updateWrappingColumn(this.getLayoutInfo(), e);
-
-      t && this._emitLayoutChangedEvent();
+      var a = this.editorLayoutProvider.setLineHeight(this.configuration.editor.lineHeight);
+      a && this._emitLayoutChangedEvent();
 
       this._updateHeight();
 
       return !1;
     };
 
-    t.prototype._updateHeight = function() {
-      var e = this.scrollManager.getScrollHeight();
+    b.prototype.onConfigurationFontChanged = function() {
+      var a = this.charSizeProvider.doMeasurements();
+      if (a) {
+        var b = this.editorLayoutProvider.setMaxDigitWidth(this.charSizeProvider.maxDigitWidth());
+        if (b) {
+          this._emitLayoutChangedEvent();
+        }
+      }
+      this._updateWrappingColumn(this.getLayoutInfo());
+
+      return !1;
+    };
+
+    b.prototype._updateHeight = function() {
+      var a = this.scrollManager.getScrollHeight();
       this.scrollManager.setScrollHeight(this.getTotalHeight());
-      var t = this.scrollManager.getScrollHeight();
-      if (e !== t) {
-        this.privateViewEventBus.emit(n.EventType.ViewScrollHeightChanged, t);
+      var b = this.scrollManager.getScrollHeight();
+      if (a !== b) {
+        this.privateViewEventBus.emit(j.EventType.ViewScrollHeightChanged, b);
       }
     };
 
-    t.prototype._updateWrappingColumn = function(e, t) {
-      var n = this.configuration.getWrappingColumn();
+    b.prototype._updateWrappingColumn = function(a) {
+      var b = this.configuration.getWrappingColumn();
 
-      var i = -1;
-      if (0 === n) {
-        i = Math.max(1, Math.floor((e.contentWidth - e.verticalScrollbarWidth) / this.configuration.editor.thinnestCharacterWidth));
+      var c = -1;
+      if (b === 0) {
+        c = Math.max(1, Math.floor(a.contentWidth / this.configuration.editor.thinnestCharacterWidth));
       } else {
-        if (n > 0) {
-          i = n;
+        if (b > 0) {
+          c = b;
         }
       }
 
-      this.model.setWrappingColumn(i, t);
+      this.model.setWrappingColumn(c);
     };
 
-    t.prototype._updatePageSize = function() {
-      var e = this.editorLayoutProvider.getLayoutInfo();
-      this.configuration.editor.pageSize = Math.floor(e.height / this.configuration.editor.lineHeight) - 2;
+    b.prototype._onContainerSizeChanged = function(a, b) {
+      var c = this.editorLayoutProvider.setDimensions(a, b);
+      if (c) {
+        this._updatePageSize();
+        this._emitLayoutChangedEvent();
+      }
     };
 
-    t.prototype.getLayoutInfo = function() {
-      var e = this.editorLayoutProvider.getLayoutInfo();
+    b.prototype._updatePageSize = function() {
+      var a = this.editorLayoutProvider.getLayoutInfo();
+      this.configuration.editor.pageSize = Math.floor(a.height / this.configuration.editor.lineHeight) - 2;
+    };
 
-      var t = this.scrollManager.getOverviewRulerLayoutInfo();
-      e.overviewRuler = {
-        top: t.top,
-        width: t.width,
-        height: e.height - t.top - t.bottom,
+    b.prototype.getLayoutInfo = function() {
+      var a = this.editorLayoutProvider.getLayoutInfo();
+
+      var b = this.scrollManager.getOverviewRulerLayoutInfo();
+      a.overviewRuler = {
+        top: b.top,
+        width: b.width,
+        height: a.height - b.top - b.bottom,
         right: 0
       };
 
-      return e;
+      return a;
     };
 
-    t.prototype.getCurrentViewport = function() {
-      var e = this.editorLayoutProvider.getLayoutInfo();
+    b.prototype.getCurrentViewport = function() {
+      var a = this.editorLayoutProvider.getLayoutInfo();
       return {
         top: this.scrollManager.getScrollTop(),
         left: this.scrollManager.getScrollLeft(),
-        width: e.contentWidth,
-        height: e.contentHeight
+        width: a.contentWidth,
+        height: a.contentHeight
       };
     };
 
-    t.prototype._emitLayoutChangedEvent = function(e) {
-      if ("undefined" == typeof e) {
-        e = 0;
+    b.prototype._emitLayoutChangedEvent = function() {
+      this.scrollManager.onSizeProviderLayoutChanged();
+      var a = this.getLayoutInfo();
+      if (this.linesLayout) {
+        this.linesLayout.onWrappingWidthChanged(a.contentWidth);
       }
 
-      this.scrollManager.onSizeProviderLayoutChanged();
-      var t = this.getLayoutInfo();
-      this.scrollManager.setWidth(t.contentWidth);
+      this.scrollManager.setWidth(a.contentWidth);
 
-      this.scrollManager.setHeight(t.contentHeight);
+      this.scrollManager.setHeight(a.contentHeight);
 
-      this._updateWrappingColumn(t, e);
+      this._updateWrappingColumn(a);
 
-      this.privateViewEventBus.emit(n.EventType.ViewLayoutChanged, t);
+      this.privateViewEventBus.emit(j.EventType.ViewLayoutChanged, a);
     };
 
-    t.prototype.emitLayoutChangedEvent = function() {
+    b.prototype.emitLayoutChangedEvent = function() {
       this._emitLayoutChangedEvent();
     };
 
-    t.prototype._computeScrollWidth = function(e, n) {
-      var i = this.configuration.getWrappingColumn();
+    b.prototype._computeScrollWidth = function(a, c) {
+      var d = this.configuration.getWrappingColumn();
 
-      var o = 0 === i;
-      return o ? Math.max(e, n) : Math.max(e + t.LINES_HORIZONTAL_EXTRA_PX, n);
+      var e = d === 0;
+      return !this.configuration.editor.viewWordWrap && !e ? Math.max(a + b.LINES_HORIZONTAL_EXTRA_PX, c) : Math.max(
+        a, c);
     };
 
-    t.prototype.onMaxLineWidthChanged = function(e) {
-      var t = this._computeScrollWidth(e, this.getCurrentViewport().width);
+    b.prototype.onMaxLineWidthChanged = function(a) {
+      var b = this._computeScrollWidth(a, this.getCurrentViewport().width);
 
-      var i = this.scrollManager.getScrollWidth();
-      this.scrollManager.setScrollWidth(t);
-      var t = this.scrollManager.getScrollWidth();
-      if (t !== i) {
-        this.privateViewEventBus.emit(n.EventType.ViewScrollWidthChanged);
+      var c = this.scrollManager.getScrollWidth();
+      this.scrollManager.setScrollWidth(b);
+      var b = this.scrollManager.getScrollWidth();
+      if (b !== c) {
+        this.privateViewEventBus.emit(j.EventType.ViewScrollWidthChanged);
         this._updateHeight();
       }
     };
 
-    t.prototype.saveState = function() {
+    b.prototype.saveState = function() {
       return {
         scrollTop: this.scrollManager.getScrollTop(),
         scrollLeft: this.scrollManager.getScrollLeft(),
@@ -210,106 +278,116 @@ define("vs/editor/core/view/layout/layoutProvider", ["require", "exports", "vs/e
       };
     };
 
-    t.prototype.restoreState = function(e) {
-      this.scrollManager.setScrollTop(e.scrollTop);
+    b.prototype.restoreState = function(a) {
+      this.scrollManager.setScrollTop(a.scrollTop);
 
-      this.scrollManager.setScrollLeft(e.scrollLeft);
+      this.scrollManager.setScrollLeft(a.scrollLeft);
     };
 
-    t.prototype.addWhitespace = function(e, t) {
-      return this.linesLayout.insertWhitespace(e, t);
+    b.prototype.addWhitespace = function(a, b) {
+      return this.linesLayout.addWhitespace(a, b);
     };
 
-    t.prototype.changeWhitespace = function(e, t) {
-      return this.linesLayout.changeWhitespace(e, t);
+    b.prototype.changeWhitespace = function(a, b) {
+      return this.linesLayout.changeWhitespace(a, b);
     };
 
-    t.prototype.changeAfterLineNumberForWhitespace = function(e, t) {
-      return this.linesLayout.changeAfterLineNumberForWhitespace(e, t);
+    b.prototype.changeAfterLineNumberForWhitespace = function(a, b) {
+      return this.linesLayout.changeAfterLineNumberForWhitespace(a, b);
     };
 
-    t.prototype.removeWhitespace = function(e) {
-      return this.linesLayout.removeWhitespace(e);
+    b.prototype.removeWhitespace = function(a) {
+      return this.linesLayout.removeWhitespace(a);
     };
 
-    t.prototype.getVerticalOffsetForLineNumber = function(e) {
-      return this.linesLayout.getVerticalOffsetForLineNumber(e);
+    b.prototype.getVerticalOffsetForLineNumber = function(a) {
+      return this.linesLayout.getVerticalOffsetForLineNumber(a);
     };
 
-    t.prototype.heightInPxForLine = function(e) {
-      return this.linesLayout.getHeightForLineNumber(e);
+    b.prototype.updateLineHeights = function(a, b) {
+      this.linesLayout.updateLineHeights(a, b);
+
+      this._updateHeight();
     };
 
-    t.prototype.getLineNumberAtVerticalOffset = function(e) {
-      return this.linesLayout.getLineNumberAtOrAfterVerticalOffset(e);
+    b.prototype.heightInPxForLine = function(a) {
+      return this.linesLayout.heightInPxForLine(a);
     };
 
-    t.prototype.getTotalHeight = function() {
-      var e = 0;
-      this.scrollManager.getScrollWidth() > this.scrollManager.getWidth() && (e = this.scrollManager.getHorizontalScrollbarHeight());
-
-      return this.linesLayout.getTotalHeight(this.getCurrentViewport(), e);
+    b.prototype.getLineNumberAtVerticalOffset = function(a) {
+      return this.linesLayout.getLineNumberAtVerticalOffset(a);
     };
 
-    t.prototype.getWhitespaceAtVerticalOffset = function(e) {
-      return this.linesLayout.getWhitespaceAtVerticalOffset(e);
+    b.prototype.getLinesTotalHeight = function() {
+      return this.linesLayout.getLinesTotalHeight();
     };
 
-    t.prototype.getLinesViewportData = function() {
-      return this.linesLayout.getLinesViewportData(this.getCurrentViewport());
+    b.prototype.getTotalHeight = function() {
+      var a = 0;
+      this.scrollManager.getScrollWidth() > this.scrollManager.getWidth() && (a = this.scrollManager.getHorizontalScrollbarHeight());
+
+      return this.linesLayout.getTotalHeight(this.getCurrentViewport(), a);
     };
 
-    t.prototype.getWhitespaceViewportData = function() {
+    b.prototype.getWhitespaceAtVerticalOffset = function(a) {
+      return this.linesLayout.getWhitespaceAtVerticalOffset(a);
+    };
+
+    b.prototype.getLinesViewportData = function(a) {
+      return this.linesLayout.getLinesViewportData(a, this.getCurrentViewport());
+    };
+
+    b.prototype.getWhitespaceViewportData = function() {
       return this.linesLayout.getWhitespaceViewportData(this.getCurrentViewport());
     };
 
-    t.prototype.getOverviewRulerInsertData = function() {
-      var e = this.scrollManager.getOverviewRulerLayoutInfo();
+    b.prototype.getOverviewRulerInsertData = function() {
+      var a = this.scrollManager.getOverviewRulerLayoutInfo();
       return {
-        parent: e.parent,
-        insertBefore: e.insertBefore
+        parent: a.parent,
+        insertBefore: a.insertBefore
       };
     };
 
-    t.prototype.getScrollbarContainerDomNode = function() {
+    b.prototype.getScrollbarContainerDomNode = function() {
       return this.scrollManager.getScrollbarContainerDomNode();
     };
 
-    t.prototype.delegateVerticalScrollbarMouseDown = function(e) {
-      this.scrollManager.delegateVerticalScrollbarMouseDown(e);
+    b.prototype.delegateVerticalScrollbarMouseDown = function(a) {
+      this.scrollManager.delegateVerticalScrollbarMouseDown(a);
     };
 
-    t.prototype.getScrollHeight = function() {
+    b.prototype.getScrollHeight = function() {
       return this.scrollManager.getScrollHeight();
     };
 
-    t.prototype.getScrollWidth = function() {
+    b.prototype.getScrollWidth = function() {
       return this.scrollManager.getScrollWidth();
     };
 
-    t.prototype.getScrollLeft = function() {
+    b.prototype.getScrollLeft = function() {
       return this.scrollManager.getScrollLeft();
     };
 
-    t.prototype.setScrollLeft = function(e) {
-      this.scrollManager.setScrollLeft(e);
+    b.prototype.setScrollLeft = function(a) {
+      this.scrollManager.setScrollLeft(a);
     };
 
-    t.prototype.getScrollTop = function() {
+    b.prototype.getScrollTop = function() {
       return this.scrollManager.getScrollTop();
     };
 
-    t.prototype.setScrollTop = function(e) {
-      this.scrollManager.setScrollTop(e);
+    b.prototype.setScrollTop = function(a) {
+      this.scrollManager.setScrollTop(a);
     };
 
-    t.prototype.getScrolledTopFromAbsoluteTop = function(e) {
-      return this.scrollManager.getScrolledTopFromAbsoluteTop(e);
+    b.prototype.getScrolledTopFromAbsoluteTop = function(a) {
+      return this.scrollManager.getScrolledTopFromAbsoluteTop(a);
     };
 
-    t.LINES_HORIZONTAL_EXTRA_PX = 30;
+    b.LINES_HORIZONTAL_EXTRA_PX = 30;
 
-    return t;
-  }(o.ViewEventHandler);
-  t.LayoutProvider = a;
+    return b;
+  }(l.ViewEventHandler);
+  b.LayoutProvider = q;
 });

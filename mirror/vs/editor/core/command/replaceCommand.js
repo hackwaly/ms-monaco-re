@@ -1,80 +1,96 @@
-define("vs/editor/core/command/replaceCommand", ["require", "exports", "vs/editor/core/selection"], function(e, t, n) {
-  var i = function() {
-    function e(e, t) {
-      this._range = e;
-
-      this._text = t;
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
     }
-    e.prototype.getEditOperations = function(e, t) {
-      t.addEditOperation(this._range, this._text);
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
+    }
+    d.prototype = b.prototype;
+
+    a.prototype = new d;
+  };
+
+define(["require", "exports", "vs/editor/core/selection"], function(a, b, c) {
+  var d = c;
+
+  var e = function() {
+    function a(a, b) {
+      this._range = a;
+
+      this._text = b;
+    }
+    a.prototype.getEditOperations = function(a, b) {
+      b.addEditOperation(this._range, this._text);
     };
 
-    e.prototype.computeCursorState = function(e, t) {
-      var i = t.getInverseEditOperations();
+    a.prototype.computeCursorState = function(a, b) {
+      var c = b.getInverseEditOperations();
 
-      var o = i[0].range;
-      return new n.Selection(o.endLineNumber, o.endColumn, o.endLineNumber, o.endColumn);
+      var e = c[0].range;
+      return new d.Selection(e.endLineNumber, e.endColumn, e.endLineNumber, e.endColumn);
     };
 
-    return e;
+    return a;
   }();
-  t.ReplaceCommand = i;
-  var o = function(e) {
-    function t(t, n) {
-      e.call(this, t, n);
+  b.ReplaceCommand = e;
+  var f = function(a) {
+    function b(b, c) {
+      a.call(this, b, c);
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.computeCursorState = function(e, t) {
-      var i = t.getInverseEditOperations();
+    b.prototype.computeCursorState = function(a, b) {
+      var c = b.getInverseEditOperations();
 
-      var o = i[0].range;
-      return new n.Selection(o.startLineNumber, o.startColumn, o.startLineNumber, o.startColumn);
+      var e = c[0].range;
+      return new d.Selection(e.startLineNumber, e.startColumn, e.startLineNumber, e.startColumn);
     };
 
-    return t;
-  }(i);
-  t.ReplaceCommandWithoutChangingPosition = o;
-  var r = function(e) {
-    function t(t, n, i, o) {
-      e.call(this, t, n);
+    return b;
+  }(e);
+  b.ReplaceCommandWithoutChangingPosition = f;
+  var g = function(a) {
+    function b(b, c, d, e) {
+      a.call(this, b, c);
 
-      this._columnDeltaOffset = o;
+      this._columnDeltaOffset = e;
 
-      this._lineNumberDeltaOffset = i;
+      this._lineNumberDeltaOffset = d;
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.computeCursorState = function(e, t) {
-      var i = t.getInverseEditOperations();
+    b.prototype.computeCursorState = function(a, b) {
+      var c = b.getInverseEditOperations();
 
-      var o = i[0].range;
-      return new n.Selection(o.endLineNumber + this._lineNumberDeltaOffset, o.endColumn + this._columnDeltaOffset, o.endLineNumber +
-        this._lineNumberDeltaOffset, o.endColumn + this._columnDeltaOffset);
+      var e = c[0].range;
+      return new d.Selection(e.endLineNumber + this._lineNumberDeltaOffset, e.endColumn + this._columnDeltaOffset, e.endLineNumber +
+        this._lineNumberDeltaOffset, e.endColumn + this._columnDeltaOffset);
     };
 
-    return t;
-  }(i);
-  t.ReplaceCommandWithOffsetCursorState = r;
-  var s = function(e) {
-    function t(t, n, i) {
-      e.call(this, t, n);
+    return b;
+  }(e);
+  b.ReplaceCommandWithOffsetCursorState = g;
+  var h = function(a) {
+    function b(b, c, d) {
+      a.call(this, b, c);
 
-      this._initialSelection = i;
+      this._initialSelection = d;
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.getEditOperations = function(t, n) {
-      e.prototype.getEditOperations.call(this, t, n);
+    b.prototype.getEditOperations = function(b, c) {
+      a.prototype.getEditOperations.call(this, b, c);
 
-      this._selectionId = n.trackSelection(this._initialSelection);
+      this._selectionId = c.trackSelection(this._initialSelection);
     };
 
-    t.prototype.computeCursorState = function(e, t) {
-      return t.getTrackedSelection(this._selectionId);
+    b.prototype.computeCursorState = function(a, b) {
+      return b.getTrackedSelection(this._selectionId);
     };
 
-    return t;
-  }(i);
-  t.ReplaceCommandThatPreservesSelection = s;
+    return b;
+  }(e);
+  b.ReplaceCommandThatPreservesSelection = h;
 });

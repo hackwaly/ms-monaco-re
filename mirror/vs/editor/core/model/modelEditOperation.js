@@ -1,153 +1,156 @@
-define("vs/editor/core/model/modelEditOperation", ["require", "exports", "vs/editor/core/range"], function(e, t, n) {
-  var i = function() {
-    function e() {}
-    e.execute = function(t, n) {
-      var i = t.change(function(i) {
-        return e._apply(t, i, n.operations);
+define(["require", "exports", "vs/editor/core/range"], function(a, b, c) {
+  var d = c;
+
+  var e = function() {
+    function a() {}
+    a.execute = function(b, c) {
+      var d = b.change(function(d) {
+        return a._apply(b, d, c.operations);
       });
       return {
-        operations: i
+        operations: d
       };
     };
 
-    e._apply = function(t, n, i) {
-      i.sort(e._compareOperations);
-      for (var o = 1; o < i.length; o++)
-        if (i[o - 1].range.getStartPosition().isBeforeOrEqual(i[o].range.getEndPosition())) throw new Error(
+    a._apply = function(b, c, d) {
+      d.sort(a._compareOperations);
+      for (var e = 1; e < d.length; e++)
+        if (d[e - 1].range.getStartPosition().isBeforeOrEqual(d[e].range.getEndPosition())) throw new Error(
           "Overlapping ranges are not allowed!");
-      var r = t.getEditableRange();
+      var f = b.getEditableRange();
 
-      var s = r.getStartPosition();
+      var g = f.getStartPosition();
 
-      var a = r.getEndPosition();
-      for (o = 0; o < i.length; o++) {
-        var u = i[o].range;
-        if (!s.isBeforeOrEqual(u.getStartPosition()) || !u.getEndPosition().isBeforeOrEqual(a)) throw new Error(
+      var h = f.getEndPosition();
+      for (e = 0; e < d.length; e++) {
+        var i = d[e].range;
+        if (!g.isBeforeOrEqual(i.getStartPosition()) || !i.getEndPosition().isBeforeOrEqual(h)) throw new Error(
           "Editing outside of editable range not allowed!");
       }
-      var l = e._applyWithMarkers(t, n, i);
+      var j = a._applyWithMarkers(b, c, d);
 
-      var c = e._squashMarkers(t, l);
-      for (c.sort(e._compareOperations), o = 1; o < c.length; o++)
-        if (c[o - 1].range.getStartPosition().isBeforeOrEqual(c[o].range.getEndPosition())) throw new Error(
+      var k = a._squashMarkers(b, j);
+      k.sort(a._compareOperations);
+      for (e = 1; e < k.length; e++)
+        if (k[e - 1].range.getStartPosition().isBeforeOrEqual(k[e].range.getEndPosition())) throw new Error(
           "Inverse edit operations: Overlapping ranges are not allowed!");
-      return c;
+      return k;
     };
 
-    e._squashMarkers = function(e, t) {
-      var i;
-
-      var o;
-
-      var r;
-
-      var s;
-
-      var a;
-
-      var u;
-
-      var l;
-
+    a._squashMarkers = function(a, b) {
       var c;
 
-      var d = [];
-      for (i = 0, o = t.length; o > i; i++) {
-        c = t[i].identifier;
-        a = t[i].text;
-        r = t[i].selectionStartMarkerId;
-        s = t[i].positionMarkerId;
-        u = e._getMarker(r);
-        l = e._getMarker(s);
-        d.push({
-          identifier: c,
-          range: new n.Range(u.lineNumber, u.column, l.lineNumber, l.column),
-          text: a
-        });
-        e._removeMarker(r);
-        e._removeMarker(s);
-      }
-      return d;
-    };
+      var e;
 
-    e._applyWithMarkers = function(e, t, n) {
-      var i;
+      var f = [];
 
-      var o;
-
-      var r;
-
-      var s;
-
-      var a;
-
-      var u;
-
-      var l;
-
-      var c;
-
-      var d;
+      var g;
 
       var h;
 
-      var p = [];
-      for (i = 0, o = n.length; o > i; i++) {
-        h = n[i].identifier;
-        s = n[i].range;
-        r = n[i].text;
-        if (s.isEmpty() && !r) {
-          d = {
+      var i;
+
+      var j;
+
+      var k;
+
+      var l;
+      for (c = 0, e = b.length; c < e; c++) {
+        l = b[c].identifier;
+        i = b[c].text;
+        g = b[c].selectionStartMarkerId;
+        h = b[c].positionMarkerId;
+        j = a._getMarker(g);
+        k = a._getMarker(h);
+        f.push({
+          identifier: l,
+          range: new d.Range(j.lineNumber, j.column, k.lineNumber, k.column),
+          text: i
+        });
+        a._removeMarker(g);
+        a._removeMarker(h);
+      }
+      return f;
+    };
+
+    a._applyWithMarkers = function(a, b, c) {
+      var d = [];
+
+      var e;
+
+      var f;
+
+      var g;
+
+      var h;
+
+      var i;
+
+      var j;
+
+      var k;
+
+      var l;
+
+      var m;
+
+      var n;
+      for (e = 0, f = c.length; e < f; e++) {
+        n = c[e].identifier;
+        h = c[e].range;
+        g = c[e].text;
+        if (h.isEmpty() && !g) {
+          m = {
             startLineNumber: 1,
             startColumn: 1,
             endLineNumber: 1,
             endColumn: 1
           };
-          c = "";
+          l = "";
         } else {
-          if (s.isEmpty()) {
-            c = "";
-            a = {
-              lineNumber: s.startLineNumber,
-              column: s.startColumn
+          if (h.isEmpty()) {
+            l = "";
+            i = {
+              lineNumber: h.startLineNumber,
+              column: h.startColumn
             };
           } else {
-            l = t.deleteText(s);
-            c = l.deletedText;
-            a = l.position;
+            k = b.deleteText(h);
+            l = k.deletedText;
+            i = k.position;
           }
-          if (r) {
-            u = t.insertText(a, r);
-            d = {
-              startLineNumber: a.lineNumber,
-              startColumn: a.column,
-              endLineNumber: u.lineNumber,
-              endColumn: u.column
+          if (g) {
+            j = b.insertText(i, g);
+            m = {
+              startLineNumber: i.lineNumber,
+              startColumn: i.column,
+              endLineNumber: j.lineNumber,
+              endColumn: j.column
             };
           } else {
-            d = {
-              startLineNumber: a.lineNumber,
-              startColumn: a.column,
-              endLineNumber: a.lineNumber,
-              endColumn: a.column
+            m = {
+              startLineNumber: i.lineNumber,
+              startColumn: i.column,
+              endLineNumber: i.lineNumber,
+              endColumn: i.column
             };
           }
         }
-        p.push({
-          identifier: h,
-          text: c,
-          selectionStartMarkerId: e._addMarker(d.startLineNumber, d.startColumn, !0),
-          positionMarkerId: e._addMarker(d.endLineNumber, d.endColumn, !1)
+        d.push({
+          identifier: n,
+          text: l,
+          selectionStartMarkerId: a._addMarker(m.startLineNumber - 1, m.startColumn, "start"),
+          positionMarkerId: a._addMarker(m.endLineNumber - 1, m.endColumn, "end")
         });
       }
-      return p;
+      return d;
     };
 
-    e._compareOperations = function(e, t) {
-      return -n.compareRangesUsingEnds(e.range, t.range);
+    a._compareOperations = function(a, b) {
+      return -d.RangeUtils.compareRangesUsingEnds(a.range, b.range);
     };
 
-    return e;
+    return a;
   }();
-  t.ModelEditOperation = i;
+  b.ModelEditOperation = e;
 });

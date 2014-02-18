@@ -1,172 +1,211 @@
-define("vs/editor/contrib/suggest/suggestWidget", ["require", "exports", "vs/nls!vs/editor/editor.main",
-  "vs/base/lib/winjs.base", "vs/base/errors", "vs/editor/modes/modes", "vs/base/dom/builder",
-  "vs/base/ui/widgets/tree/preRenderer", "vs/base/ui/widgets/tree/treeImpl", "vs/base/ui/widgets/tree/treeDefaults",
-  "vs/base/ui/widgets/highlightedLabel", "vs/editor/core/constants", "vs/editor/editor", "vs/css!./suggest"
-], function(e, t, n, i, o, r, s, a, u, l, c, d) {
-  function h(e, t, n) {
-    for (var i = e.toLowerCase(), o = 0, r = 0; r < t.length && r < e.length; r++)
-      if (t[r] === e[r]) {
-        o += 2;
-      } else {
-        if (n[r] !== i[r]) break;
-        o += 1;
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
+    }
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
       }
-    return o;
+    }
+    d.prototype = b.prototype;
+
+    a.prototype = new d;
+  };
+
+define(["require", "exports", "vs/nls", "vs/base/lib/winjs.base", "vs/base/errors", "vs/editor/modes/modes",
+  "vs/base/dom/builder", "vs/base/ui/widgets/tree/preRenderer", "vs/base/ui/widgets/tree/treeImpl",
+  "vs/base/ui/widgets/tree/treeDefaults", "vs/base/ui/widgets/highlightedLabel", "vs/editor/core/constants",
+  "vs/editor/editor", "vs/css!./suggest"
+], function(a, b, c, d, e, f, g, h, i, j, k, l, m) {
+  function E(a, b, c) {
+    var d = a.toLowerCase();
+
+    var e = 0;
+    for (var f = 0; f < b.length && f < a.length; f++)
+      if (b[f] === a[f]) {
+        e += 2;
+      } else {
+        if (c[f] !== d[f]) break;
+        e += 1;
+      }
+    return e;
   }
-  var p = s.$;
+  var n = c;
 
-  var f = function() {
-    function e(e, t) {
-      this.parent = e;
+  var o = d;
 
-      this.message = t;
+  var p = e;
+
+  var q = f;
+
+  var r = g;
+
+  var s = h;
+
+  var t = i;
+
+  var u = j;
+
+  var v = k;
+
+  var w = l;
+
+  var x = m;
+
+  var y = r.$;
+
+  var z = function() {
+    function a(a, b) {
+      this.parent = a;
+
+      this.message = b;
     }
-    return e;
+    return a;
   }();
-  t.Message = f;
-  var g = function() {
-    function e(e) {
-      this.child = new f(this, e);
+  b.Message = z;
+  var A = function() {
+    function a(a) {
+      this.child = new z(this, a);
     }
-    return e;
+    return a;
   }();
-  t.MessageRoot = g;
-  var m = function() {
-    function e() {
+  b.MessageRoot = A;
+  var B = function() {
+    function a() {
       this.root = null;
     }
-    e.prototype.isRoot = function(e) {
-      return e instanceof g ? !0 : e instanceof f ? !1 : e.suggestions ? (this.root = e, !0) : !1;
+    a.prototype.isRoot = function(a) {
+      return a instanceof A ? !0 : a instanceof z ? !1 : a.suggestions ? (this.root = a, !0) : !1;
     };
 
-    e.prototype.getId = function(t, n) {
-      if (n instanceof g) {
+    a.prototype.getId = function(b, c) {
+      if (c instanceof A) {
         return "messageroot";
       }
-      if (n instanceof f) {
-        return "message" + n.message;
+      if (c instanceof z) {
+        return "message" + c.message;
       }
-      if (n.suggestions) {
-        return "root";
+      if (!c.suggestions) {
+        if (q.isISuggestion(c)) {
+          typeof c.id != "string" && (c.id = String(a._IdPool++));
+          return c.id;
+        }
+        throw p.illegalArgument("element");
       }
-      if (r.isISuggestion(n)) {
-        "string" != typeof n.id && (n.id = String(e._IdPool++));
-        return n.id;
-      }
-      throw o.illegalArgument("element");
+      return "root";
     };
 
-    e.prototype.getParent = function(e, t) {
-      return t instanceof g ? i.Promise.as(null) : t instanceof f ? i.Promise.as(t.parent) : i.Promise.as(this.isRoot(
-        t) ? null : this.root);
+    a.prototype.getParent = function(a, b) {
+      return b instanceof A ? o.Promise.as(null) : b instanceof z ? o.Promise.as(b.parent) : o.Promise.as(this.isRoot(
+        b) ? null : this.root);
     };
 
-    e.prototype.getChildren = function(e, t) {
-      return t instanceof g ? i.Promise.as([t.child]) : t instanceof f ? i.Promise.as([]) : i.Promise.as(this.isRoot(
-        t) ? this.root.suggestions : []);
+    a.prototype.getChildren = function(a, b) {
+      return b instanceof A ? o.Promise.as([b.child]) : b instanceof z ? o.Promise.as([]) : o.Promise.as(this.isRoot(
+        b) ? this.root.suggestions : []);
     };
 
-    e.prototype.hasChildren = function(e, t) {
-      return this.isRoot(t);
+    a.prototype.hasChildren = function(a, b) {
+      return this.isRoot(b);
     };
 
-    e._IdPool = 0;
+    a._IdPool = 0;
 
-    return e;
+    return a;
   }();
 
-  var v = function(e) {
-    function t() {
-      e.apply(this, arguments);
+  var C = function(a) {
+    function b() {
+      a.apply(this, arguments);
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.onLeftClick = function(e, t, n) {
-      n.preventDefault();
+    b.prototype.onLeftClick = function(a, b, c) {
+      c.preventDefault();
 
-      n.stopPropagation();
+      c.stopPropagation();
 
-      t instanceof f || e.setSelection([t], {
+      b instanceof z || a.setSelection([b], {
         origin: "mouse"
       });
 
       return !0;
     };
 
-    return t;
-  }(l.DefaultController);
+    return b;
+  }(u.DefaultController);
 
-  var y = function(e) {
-    function t(t, n) {
-      e.call(this, t);
+  var D = function(a) {
+    function b(b, c) {
+      a.call(this, b);
 
-      this.editor = n;
+      this.editor = c;
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.getHeight = function(t, n) {
-      var i = n;
-      return n instanceof f || !i.documentationLabel || !t.isFocused(i) ? 19 : e.prototype.getHeight.call(this, t, n);
+    b.prototype.getHeight = function(b, c) {
+      var d = c;
+      return c instanceof z || !d.documentationLabel || !b.isFocused(d) ? 19 : a.prototype.getHeight.call(this, b, c);
     };
 
-    t.prototype.render = function(e, t, n) {
-      return this.renderContents(e, t, n);
+    b.prototype.render = function(a, b, c) {
+      return this.renderContents(a, b, c);
     };
 
-    t.prototype.renderContents = function(e, t, n) {
-      var i = p(n);
-      if (t instanceof f) {
-        i.empty().span({
+    b.prototype.renderContents = function(a, b, c) {
+      var d = y(c);
+      if (b instanceof z) {
+        d.empty().span({
           style: {
             opacity: .7,
             "padding-left": "12px"
           },
-          text: t.message
+          text: b.message
         });
         return null;
       }
-      var o = t;
+      var e = b;
 
-      var r = i.getBinding();
+      var f = d.getBinding();
 
-      var s = i.clone();
-      if (!r) {
-        s.attr("aria-label", o.type);
+      var g = d.clone();
+      if (!f) {
+        g.attr("aria-label", e.type);
 
-        p(".icon").addClass(o.type).appendTo(s);
+        y(".icon").addClass(e.type).appendTo(g);
 
-        r = {};
-        var a = p(".text").appendTo(s);
-        r.main = p(".main").appendTo(a);
+        f = {};
+        var h = y(".text").appendTo(g);
+        f.main = y(".main").appendTo(h);
 
-        r.highlightedLabel = new c.HighlightedLabel(r.main);
+        f.highlightedLabel = new v.HighlightedLabel(f.main);
 
-        r.typeLabel = p("span.type-label").appendTo(r.main);
+        f.typeLabel = y("span.type-label").appendTo(f.main);
 
-        r.documentation = p(".docs").appendTo(a);
+        f.documentation = y(".docs").appendTo(h);
 
-        r.documentationLabel = p("span.docs-label").appendTo(r.documentation);
+        f.documentationLabel = y("span.docs-label").appendTo(f.documentation);
 
-        i.bind(r);
+        d.bind(f);
       }
-      r.highlightedLabel.setValue(o.label, o.highlights);
+      f.highlightedLabel.setValue(e.label, e.highlights);
 
-      r.typeLabel.text(o.typeLabel || "");
+      f.typeLabel.text(e.typeLabel || "");
 
-      r.documentationLabel.text(o.documentationLabel || "");
+      f.documentationLabel.text(e.documentationLabel || "");
 
       return function() {
-        r.highlightedLabel.destroy();
+        f.highlightedLabel.destroy();
       };
     };
 
-    return t;
-  }(a.PreRenderer);
+    return b;
+  }(s.PreRenderer);
 
-  var _ = function() {
-    function e(t, n) {
-      var s = this;
-      this.editor = t;
+  var F = function() {
+    function a(b, c) {
+      var d = this;
+      this.editor = b;
 
       this.isActive = !1;
 
@@ -178,306 +217,323 @@ define("vs/editor/contrib/suggest/suggestWidget", ["require", "exports", "vs/nls
 
       this.telemetryData = null;
 
-      this.telemetryService = n;
-      var a = function() {
-        var e = s.editor.getModel();
-        s.shouldShowEmptySuggestionList = e && e.getMode().suggestSupport ? e.getMode().suggestSupport.shouldShowEmptySuggestionList() : !
-          1;
+      this.telemetryService = c;
+      var e = function() {
+        var a = d.editor.getModel();
+        if (a && a.getMode().suggestSupport) {
+          d.shouldShowEmptySuggestionList = a.getMode().suggestSupport.shouldShowEmptySuggestionList();
+        } else {
+          d.shouldShowEmptySuggestionList = !1;
+        }
       };
-      a();
+      e();
 
       this.listenersToRemove = [];
 
-      this.listenersToRemove.push(t.addListener(d.EventType.ModelChanged, a));
+      this.listenersToRemove.push(b.addListener(w.EventType.ModelChanged, e));
 
-      this.listenersToRemove.push(t.addListener(d.EventType.ModelModeChanged, a));
+      this.listenersToRemove.push(b.addListener(w.EventType.ModelModeChanged, e));
 
-      this.builder = p(".editor-widget.suggest-widget.monaco-editor-background").style({
-        width: e.WIDTH + "px",
-        height: e.HEIGHT + "px"
+      this.builder = y(".editor-widget.suggest-widget.monaco-editor-background").style({
+        width: a.WIDTH + "px",
+        height: a.HEIGHT + "px"
       });
 
       if (!this.editor.getConfiguration().iconsInSuggestions) {
         this.builder.addClass("no-icons");
       }
-      var l = new m;
-      this.renderer = new y(l, this.editor);
+      var f = new B;
+      this.renderer = new D(f, this.editor);
 
-      this.tree = new u.Tree(this.builder.getHTMLElement(), {
-        dataSource: l,
+      this.tree = new t.Tree(this.builder.getHTMLElement(), {
+        dataSource: f,
         renderer: this.renderer,
-        controller: new v
+        controller: new C
       }, {
         twistiePixels: 0,
         alwaysFocused: !0,
         verticalScrollMode: "visible"
       });
 
-      this.listenersToRemove.push(t.addListener("blur", function() {
-        i.Promise.timeout(150).done(function() {
-          if (s.tree && !s.tree.isDOMFocused()) {
-            s.hide();
+      this.listenersToRemove.push(b.addListener("blur", function() {
+        o.Promise.timeout(150).done(function() {
+          if (d.tree && !d.tree.isDOMFocused()) {
+            d.hide();
           }
         });
       }));
 
-      this.listenersToRemove.push(this.tree.addListener("selection", function(e) {
-        if (e.selection && e.selection.length > 0) {
-          var t = e.selection[0];
-          if (!(t.hasOwnProperty("suggestions") || t instanceof g || t instanceof f)) {
-            s.telemetryData.selectedIndex = s.tree.getInput().suggestions.indexOf(t);
-            s.telemetryData.wasCancelled = !1;
-            s.submitTelemetryData();
-            s.model.accept(t);
-            s.editor.focus();
+      this.listenersToRemove.push(this.tree.addListener("selection", function(a) {
+        if (a.selection && a.selection.length > 0) {
+          var b = a.selection[0];
+          if (!b.hasOwnProperty("suggestions") && !(b instanceof A) && !(b instanceof z)) {
+            d.telemetryData.selectedIndex = d.tree.getInput().suggestions.indexOf(b);
+            d.telemetryData.wasCancelled = !1;
+            d.submitTelemetryData();
+            d.model.accept(b);
+            d.editor.focus();
           }
         }
       }));
-      var c = null;
-      this.listenersToRemove.push(this.tree.addListener("focus", function(e) {
-        var t = e.focus;
+      var g = null;
+      this.listenersToRemove.push(this.tree.addListener("focus", function(a) {
+        var b = a.focus;
 
-        var n = e.payload;
-        if (r.isISuggestion(t) && s.resolveDetails(t), t !== c) {
-          var i = [];
-          if (c) {
-            i.push(c);
-          }
-
-          if (t) {
-            i.push(t);
-          }
-
-          c = t;
-
-          s.tree.refreshAll(i).done(function() {
-            if (t) {
-              s.tree.reveal(t, n && n.firstSuggestion ? 0 : null);
-            }
-          }, o.onUnexpectedError);
+        var c = a.payload;
+        if (q.isISuggestion(b)) {
+          d.resolveDetails(b);
         }
+        if (b === g) return;
+        var e = [];
+        if (g) {
+          e.push(g);
+        }
+
+        if (b) {
+          e.push(b);
+        }
+
+        g = b;
+
+        d.tree.refreshAll(e).done(function() {
+          if (b) {
+            d.tree.reveal(b, c && c.firstSuggestion ? 0 : null);
+          }
+        }, p.onUnexpectedError);
       }));
 
       this.editor.addContentWidget(this);
 
-      this.listenersToRemove.push(this.editor.addListener(d.EventType.CursorSelectionChanged, function() {
-        if (s.isActive) {
-          s.editor.layoutContentWidget(s);
+      this.listenersToRemove.push(this.editor.addListener(w.EventType.CursorSelectionChanged, function(a) {
+        if (d.isActive) {
+          d.editor.layoutContentWidget(d);
         }
       }));
 
       this.hide();
     }
-    e.prototype.setModel = function(t) {
-      var n = this;
+    a.prototype.setModel = function(b) {
+      var c = this;
       this.releaseModel();
 
-      this.model = t;
-      var i;
+      this.model = b;
+      var d = null;
 
-      var r = null;
-      this.modelListenersToRemove.push(this.model.addListener("loading", function(t) {
-        if (!(t.auto || n.isActive)) {
-          r = n.telemetryService.start("suggestWidgetLoadingTime");
-          n.isLoading = !0;
-          i = setTimeout(function() {
-            n.builder.removeClass("empty");
+      var e;
+      this.modelListenersToRemove.push(this.model.addListener("loading", function(b) {
+        if (!b.auto && !c.isActive) {
+          d = c.telemetryService.start("suggestWidgetLoadingTime");
+          c.isLoading = !0;
+          e = setTimeout(function() {
+            c.builder.removeClass("empty");
 
-            n.tree.setInput(e.LOADING_MESSAGE).done(null, o.onUnexpectedError);
+            c.tree.setInput(a.LOADING_MESSAGE).done(null, p.onUnexpectedError);
 
-            n.show();
+            c.show();
           }, 50);
-          if (!t.retrigger) {
-            n.telemetryData = {
-              wasAutomaticallyTriggered: t.characterTriggered
+          if (!b.retrigger) {
+            c.telemetryData = {
+              wasAutomaticallyTriggered: b.characterTriggered
             };
           }
         }
       }));
 
-      this.modelListenersToRemove.push(this.model.addListener("suggest", function(e) {
-        if (n.isLoading = !1, "undefined" != typeof i && clearTimeout(i), !e.auto) {
-          n.builder.removeClass("empty");
+      this.modelListenersToRemove.push(this.model.addListener("suggest", function(a) {
+        c.isLoading = !1;
 
-          n.tree.setInput(e.suggestions).done(null, o.onUnexpectedError);
+        if (typeof e != "undefined") {
+          clearTimeout(e);
+        }
+        if (!a.auto) {
+          c.builder.removeClass("empty");
 
-          n.show();
-          for (var t, s = e.suggestions.currentWord, a = s.toLowerCase(), u = e.suggestions.suggestions, l = -1,
-              c = e.suggestions.suggestions[0], d = -1, p = 0, f = u.length; f > p; p++) {
-            t = u[p];
-            var g = h(t.label, s, a);
-            if (g > d) {
-              d = g;
-              c = t;
-              l = p;
+          c.tree.setInput(a.suggestions).done(null, p.onUnexpectedError);
+
+          c.show();
+          var b = a.suggestions.currentWord;
+
+          var f = b.toLowerCase();
+
+          var g = a.suggestions.suggestions;
+
+          var h;
+
+          var i = -1;
+
+          var j = a.suggestions.suggestions[0];
+
+          var k = -1;
+          for (var l = 0, m = g.length; l < m; l++) {
+            h = g[l];
+            var n = E(h.label, b, f);
+            if (n > k) {
+              k = n;
+              j = h;
+              i = l;
             }
           }
-          n.resolveDetails(c);
+          c.resolveDetails(j);
 
-          n.tree.setFocus(c, {
+          c.tree.setFocus(j, {
             firstSuggestion: !0
           });
 
-          n.telemetryData.suggestionCount = u.length;
+          c.telemetryData.suggestionCount = g.length;
 
-          n.telemetryData.suggestedIndex = l;
+          c.telemetryData.suggestedIndex = i;
 
-          n.telemetryData.hintLength = s.length;
+          c.telemetryData.hintLength = b.length;
 
-          if (r) {
-            r.data = {
+          if (d) {
+            d.data = {
               reason: "results"
             };
-            r.stop();
-            r = null;
+            d.stop();
+            d = null;
           }
         }
       }));
 
-      this.modelListenersToRemove.push(this.model.addListener("empty", function(t) {
-        var s = n.isLoading;
-        n.isLoading = !1;
+      this.modelListenersToRemove.push(this.model.addListener("empty", function(b) {
+        c.isLoading = !1;
 
-        if ("undefined" != typeof i) {
-          clearTimeout(i);
-        }
-
-        if (!t.auto) {
-          if (s) {
-            if (n.shouldShowEmptySuggestionList) {
-              n.builder.removeClass("empty");
-              n.tree.setInput(e.NO_SUGGESTIONS_MESSAGE).done(null, o.onUnexpectedError);
-              n.show();
+        if (!b.auto) {
+          if (c.tree.getInput() === a.LOADING_MESSAGE) {
+            if (c.shouldShowEmptySuggestionList) {
+              c.tree.setInput(a.NO_SUGGESTIONS_MESSAGE).done(null, p.onUnexpectedError);
             } else {
-              n.hide();
+              c.hide();
             }
           } else {
-            n.builder.addClass("empty");
+            c.builder.addClass("empty");
           }
-          if (r) {
-            r.data = {
+          if (d) {
+            d.data = {
               reason: "empty"
             };
-            r.stop();
-            r = null;
+            d.stop();
+            d = null;
           }
         }
       }));
 
-      this.modelListenersToRemove.push(this.model.addListener("cancel", function(e) {
-        n.isLoading = !1;
+      this.modelListenersToRemove.push(this.model.addListener("cancel", function(a) {
+        c.isLoading = !1;
 
-        n.hide();
+        c.hide();
 
-        if (!e.auto) {
-          if (!e.retrigger && n.telemetryData) {
-            n.telemetryData.selectedIndex = -1;
-            n.telemetryData.wasCancelled = !0;
-            n.submitTelemetryData();
+        if (!a.auto) {
+          if (!a.retrigger && c.telemetryData) {
+            c.telemetryData.selectedIndex = -1;
+            c.telemetryData.wasCancelled = !0;
+            c.submitTelemetryData();
           }
-          if (r) {
-            r.data = {
+          if (d) {
+            d.data = {
               reason: "cancel"
             };
-            r.stop();
-            r = null;
+            d.stop();
+            d = null;
           }
         }
       }));
     };
 
-    e.prototype.resolveDetails = function(e) {
-      var t = this;
-      if (e.detailsResolved !== !0) {
-        var n = this.editor.getModel().getMode().suggestSupport;
-        if ("function" == typeof n.getSuggestionDetails) {
-          if (this.currentSuggestionDetails) {
-            this.currentSuggestionDetails.cancel();
-          }
-          this.currentSuggestionDetails = n.getSuggestionDetails(this.editor.getModel().getAssociatedResource(), this
-            .editor.getPosition(), e);
-          this.currentSuggestionDetails.then(function(n) {
-            e.detailsResolved = !0;
-
-            e.codeSnippet = n.codeSnippet;
-
-            e.documentationLabel = n.documentationLabel;
-
-            e.highlights = n.highlights;
-
-            e.label = n.label;
-
-            e.type = n.type;
-
-            e.typeLabel = n.typeLabel;
-
-            return t.tree.refresh(e);
-          }, function(e) {
-            return o.isPromiseCanceledError(e) ? null : e;
-          }).done(void 0, o.onUnexpectedError);
-        }
+    a.prototype.resolveDetails = function(a) {
+      var b = this;
+      if (a.detailsResolved === !0) return;
+      var c = this.editor.getModel().getMode().suggestSupport;
+      if (typeof c.getSuggestionDetails != "function") return;
+      if (this.currentSuggestionDetails) {
+        this.currentSuggestionDetails.cancel();
       }
+
+      this.currentSuggestionDetails = c.getSuggestionDetails(this.editor.getModel().getAssociatedResource(), this.editor
+        .getPosition(), a);
+
+      this.currentSuggestionDetails.then(function(c) {
+        a.detailsResolved = !0;
+
+        a.codeSnippet = c.codeSnippet;
+
+        a.documentationLabel = c.documentationLabel;
+
+        a.highlights = c.highlights;
+
+        a.label = c.label;
+
+        a.type = c.type;
+
+        a.typeLabel = c.typeLabel;
+
+        return b.tree.refresh(a);
+      }, function(a) {
+        if (p.isPromiseCanceledError(a)) return;
+        throw a;
+      }).done(undefined, p.onUnexpectedError);
     };
 
-    e.prototype.selectNextPage = function() {
+    a.prototype.selectNextPage = function() {
       return this.isLoading ? !0 : this.isActive ? (this.tree.focusNextPage(), !0) : !1;
     };
 
-    e.prototype.selectNext = function() {
+    a.prototype.selectNext = function() {
       if (this.isLoading) {
         return !0;
       }
       if (this.isActive) {
-        var e = this.tree.getFocus();
+        var a = this.tree.getFocus();
         this.tree.focusNext(1);
 
-        e === this.tree.getFocus() && this.tree.focusFirst();
+        a === this.tree.getFocus() && this.tree.focusFirst();
 
         return !0;
       }
       return !1;
     };
 
-    e.prototype.selectPreviousPage = function() {
+    a.prototype.selectPreviousPage = function() {
       return this.isLoading ? !0 : this.isActive ? (this.tree.focusPreviousPage(), !0) : !1;
     };
 
-    e.prototype.selectPrevious = function() {
+    a.prototype.selectPrevious = function() {
       if (this.isLoading) {
         return !0;
       }
       if (this.isActive) {
-        var e = this.tree.getFocus();
+        var a = this.tree.getFocus();
         this.tree.focusPrevious(1);
 
-        e === this.tree.getFocus() && this.tree.focusLast();
+        a === this.tree.getFocus() && this.tree.focusLast();
 
         return !0;
       }
       return !1;
     };
 
-    e.prototype.acceptSelectedSuggestion = function() {
+    a.prototype.acceptSelectedSuggestion = function() {
       if (this.isLoading) {
         return !0;
       }
       if (this.isActive) {
-        var e = this.tree.getFocus();
-        e ? this.tree.setSelection([e]) : this.model.cancel();
+        var a = this.tree.getFocus();
+        a ? this.tree.setSelection([a]) : this.model.cancel();
 
         return !0;
       }
       return !1;
     };
 
-    e.prototype.releaseModel = function() {
-      for (var e; e = this.modelListenersToRemove.pop();) {
-        e();
+    a.prototype.releaseModel = function() {
+      var a;
+      while (a = this.modelListenersToRemove.pop()) {
+        a();
       }
       this.model = null;
     };
 
-    e.prototype.show = function() {
+    a.prototype.show = function() {
       this.isActive = !0;
 
       this.builder.style("visibility", "visible");
@@ -487,7 +543,7 @@ define("vs/editor/contrib/suggest/suggestWidget", ["require", "exports", "vs/nls
       this.editor.layoutContentWidget(this);
     };
 
-    e.prototype.hide = function() {
+    a.prototype.hide = function() {
       this.isActive = !1;
 
       this.builder.style("visibility", "hidden");
@@ -495,28 +551,28 @@ define("vs/editor/contrib/suggest/suggestWidget", ["require", "exports", "vs/nls
       this.editor.layoutContentWidget(this);
     };
 
-    e.prototype.getPosition = function() {
+    a.prototype.getPosition = function() {
       return this.isActive ? {
         position: this.editor.getPosition(),
-        preference: [2, 1]
+        preference: [x.ContentWidgetPositionPreference.BELOW, x.ContentWidgetPositionPreference.ABOVE]
       } : null;
     };
 
-    e.prototype.getDomNode = function() {
+    a.prototype.getDomNode = function() {
       return this.builder.getHTMLElement();
     };
 
-    e.prototype.getId = function() {
-      return e.ID;
+    a.prototype.getId = function() {
+      return a.ID;
     };
 
-    e.prototype.submitTelemetryData = function() {
+    a.prototype.submitTelemetryData = function() {
       this.telemetryService.publicLog("suggestWidget", this.telemetryData);
 
       this.telemetryData = null;
     };
 
-    e.prototype.destroy = function() {
+    a.prototype.destroy = function() {
       this.releaseModel();
 
       this.builder.destroy();
@@ -530,24 +586,24 @@ define("vs/editor/contrib/suggest/suggestWidget", ["require", "exports", "vs/nls
         this.renderer = null;
       }
 
-      this.listenersToRemove.forEach(function(e) {
-        e();
+      this.listenersToRemove.forEach(function(a) {
+        a();
       });
 
       this.listenersToRemove = null;
     };
 
-    e.ID = "editor.widget.suggestWidget";
+    a.ID = "editor.widget.suggestWidget";
 
-    e.WIDTH = 440;
+    a.WIDTH = 440;
 
-    e.HEIGHT = 240;
+    a.HEIGHT = 240;
 
-    e.LOADING_MESSAGE = new g(n.localize("vs_editor_contrib_suggest_suggestWidget", 0));
+    a.LOADING_MESSAGE = new A(n.localize("suggestWidget.loading", "Loading..."));
 
-    e.NO_SUGGESTIONS_MESSAGE = new g(n.localize("vs_editor_contrib_suggest_suggestWidget", 1));
+    a.NO_SUGGESTIONS_MESSAGE = new A(n.localize("suggestWidget.noSuggestions", "No suggestions."));
 
-    return e;
+    return a;
   }();
-  t.SuggestWidget = _;
+  b.SuggestWidget = F;
 });

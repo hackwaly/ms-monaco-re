@@ -1,62 +1,44 @@
-define("vs/editor/core/editorState", ["require", "exports", "vs/base/strings"], function(e, t, n) {
-  function i(e) {
-    for (var t = [], n = 0; n < arguments.length - 1; n++) {
-      t[n] = arguments[n + 1];
+define(["require", "exports"], function(a, b) {
+  function d(a) {
+    var b = [];
+    for (var c = 0; c < arguments.length - 1; c++) {
+      b[c] = arguments[c + 1];
     }
-    return new o(e, t);
-  }! function(e) {
-    e[e.Value = 0] = "Value";
+    return new e(a, b);
+  }
+  (function(a) {
+    a[a.Value = 0] = "Value";
 
-    e[e.Selection = 1] = "Selection";
+    a[a.Selection = 1] = "Selection";
 
-    e[e.Position = 2] = "Position";
+    a[a.Position = 2] = "Position";
+  })(b.Flag || (b.Flag = {}));
+  var c = b.Flag;
+  b.capture = d;
+  var e = function() {
+    function a(a, b) {
+      var d = this;
+      this.editor = a;
 
-    e[e.Scroll = 3] = "Scroll";
-  }(t.Flag || (t.Flag = {}));
-  t.Flag;
-  t.capture = i;
-  var o = function() {
-    function e(e, t) {
-      var i = this;
-      this.editor = e;
-
-      this.flags = t;
-
-      t.forEach(function(e) {
-        switch (e) {
-          case 0:
-            var t = i.editor.getModel();
-            i.modelVersionId = t ? n.format("{0}#{1}", t.getAssociatedResource().toExternal(), t.getVersionId()) :
-              null;
+      b.forEach(function(a) {
+        switch (a) {
+          case c.Value:
+            d.modelVersionId = d.editor.getModel().getVersionId();
             break;
-          case 2:
-            i.position = i.editor.getPosition();
+          case c.Position:
+            d.position = d.editor.getPosition();
             break;
-          case 1:
-            i.selection = i.editor.getSelection();
-            break;
-          case 3:
-            i.scrollLeft = i.editor.getScrollLeft();
-
-            i.scrollTop = i.editor.getScrollTop();
+          case c.Selection:
+            d.selection = d.editor.getSelection();
         }
       });
     }
-    e.prototype.equals = function(t) {
-      if (!(t instanceof e)) {
-        return !1;
-      }
-      var n = t;
-      return this.modelVersionId !== n.modelVersionId ? !1 : this.scrollLeft !== n.scrollLeft || this.scrollTop !== n
-        .scrollTop ? !1 : !this.position && n.position || this.position && !n.position || this.position && n.position && !
-        this.position.equals(n.position) ? !1 : !this.selection && n.selection || this.selection && !n.selection ||
-        this.selection && n.selection && !this.selection.equalsRange(n.selection) ? !1 : !0;
+    a.prototype.validate = function() {
+      return this.position && !this.position.equals(this.editor.getPosition()) ? !1 : this.selection && !this.selection
+        .equalsRange(this.editor.getSelection()) ? !1 : this.modelVersionId ? !! this.editor.getModel() && this.modelVersionId ===
+        this.editor.getModel().getVersionId() : !0;
     };
 
-    e.prototype.validate = function() {
-      return this.equals(new e(this.editor, this.flags));
-    };
-
-    return e;
+    return a;
   }();
 });

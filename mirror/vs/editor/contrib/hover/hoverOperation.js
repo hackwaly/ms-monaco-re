@@ -1,143 +1,146 @@
-define("vs/editor/contrib/hover/hoverOperation", ["require", "exports", "vs/base/time/schedulers", "vs/base/errors"],
-  function(e, t, n, i) {
-    var o;
-    ! function(e) {
-      e[e.IDLE = 0] = "IDLE";
+define(["require", "exports", "vs/base/time/schedulers", "vs/base/errors"], function(a, b, c, d) {
+  var e = c;
 
-      e[e.FIRST_WAIT = 1] = "FIRST_WAIT";
+  var f = d;
 
-      e[e.SECOND_WAIT = 2] = "SECOND_WAIT";
+  var g;
+  (function(a) {
+    a[a.IDLE = 0] = "IDLE";
 
-      e[e.WAITING_FOR_ASYNC_COMPUTATION = 3] = "WAITING_FOR_ASYNC_COMPUTATION";
-    }(o || (o = {}));
-    var r = function() {
-      function e(e, t, i, o) {
-        var r = this;
-        this._computer = e;
+    a[a.FIRST_WAIT = 1] = "FIRST_WAIT";
 
-        this._state = 0;
+    a[a.SECOND_WAIT = 2] = "SECOND_WAIT";
 
-        this._firstWaitScheduler = new n.RunOnceScheduler(function() {
-          return r._triggerAsyncComputation();
-        }, this._getHoverTimeMillis() / 2);
+    a[a.WAITING_FOR_ASYNC_COMPUTATION = 3] = "WAITING_FOR_ASYNC_COMPUTATION";
+  })(g || (g = {}));
+  var h = function() {
+    function a(a, b, c, d) {
+      var f = this;
+      this._computer = a;
 
-        this._secondWaitScheduler = new n.RunOnceScheduler(function() {
-          return r._triggerSyncComputation();
-        }, this._getHoverTimeMillis() / 2);
+      this._state = g.IDLE;
 
-        this._asyncComputationPromise = null;
+      this._firstWaitScheduler = new e.RunOnceScheduler(function() {
+        return f._triggerAsyncComputation();
+      }, this._getHoverTimeMillis() / 2);
 
+      this._secondWaitScheduler = new e.RunOnceScheduler(function() {
+        return f._triggerSyncComputation();
+      }, this._getHoverTimeMillis() / 2);
+
+      this._asyncComputationPromise = null;
+
+      this._asyncComputationPromiseDone = !1;
+
+      this._completeCallback = b;
+
+      this._errorCallback = c;
+
+      this._progressCallback = d;
+    }
+    a.prototype.getComputer = function() {
+      return this._computer;
+    };
+
+    a.prototype._getHoverTimeMillis = function() {
+      return this._computer.getHoverTimeMillis ? this._computer.getHoverTimeMillis() : a.HOVER_TIME;
+    };
+
+    a.prototype._triggerAsyncComputation = function() {
+      var a = this;
+      this._state = g.SECOND_WAIT;
+
+      this._secondWaitScheduler.schedule();
+
+      if (this._computer.computeAsync) {
         this._asyncComputationPromiseDone = !1;
+        this._asyncComputationPromise = this._computer.computeAsync();
+        this._asyncComputationPromise.then(function(b) {
+          a._asyncComputationPromiseDone = !0;
 
-        this._completeCallback = t;
-
-        this._errorCallback = i;
-
-        this._progressCallback = o;
+          a._withAsyncResult(b);
+        }).done(null, function() {
+          return a._onError;
+        });
+      } else {
+        this._asyncComputationPromiseDone = !0;
       }
-      e.prototype.getComputer = function() {
-        return this._computer;
-      };
+    };
 
-      e.prototype._getHoverTimeMillis = function() {
-        return this._computer.getHoverTimeMillis ? this._computer.getHoverTimeMillis() : e.HOVER_TIME;
-      };
+    a.prototype._triggerSyncComputation = function() {
+      if (this._computer.computeSync) {
+        this._computer.onResult(this._computer.computeSync(), !0);
+      }
 
-      e.prototype._triggerAsyncComputation = function() {
-        var e = this;
-        this._state = 2;
+      if (this._asyncComputationPromiseDone) {
+        this._state = g.IDLE;
+        this._onComplete(this._computer.getResult());
+      } else {
+        this._state = g.WAITING_FOR_ASYNC_COMPUTATION;
+        this._onProgress(this._computer.getResult());
+      }
+    };
 
-        this._secondWaitScheduler.schedule();
+    a.prototype._withAsyncResult = function(a) {
+      if (a) {
+        this._computer.onResult(a, !1);
+      }
 
-        if (this._computer.computeAsync) {
-          this._asyncComputationPromiseDone = !1;
-          this._asyncComputationPromise = this._computer.computeAsync();
-          this._asyncComputationPromise.then(function(t) {
-            e._asyncComputationPromiseDone = !0;
+      if (this._state === g.WAITING_FOR_ASYNC_COMPUTATION) {
+        this._state = g.IDLE;
+        this._onComplete(this._computer.getResult());
+      }
+    };
 
-            e._withAsyncResult(t);
-          }).done(null, function() {
-            return e._onError;
-          });
-        } else {
-          this._asyncComputationPromiseDone = !0;
-        }
-      };
+    a.prototype._onComplete = function(a) {
+      if (this._completeCallback) {
+        this._completeCallback(a);
+      }
+    };
 
-      e.prototype._triggerSyncComputation = function() {
-        if (this._computer.computeSync) {
-          this._computer.onResult(this._computer.computeSync(), !0);
-        }
+    a.prototype._onError = function(a) {
+      if (this._errorCallback) {
+        this._errorCallback(a);
+      } else {
+        f.onUnexpectedError(a);
+      }
+    };
 
-        if (this._asyncComputationPromiseDone) {
-          this._state = 0;
-          this._onComplete(this._computer.getResult());
-        } else {
-          this._state = 3;
-          this._onProgress(this._computer.getResult());
-        }
-      };
+    a.prototype._onProgress = function(a) {
+      if (this._progressCallback) {
+        this._progressCallback(a);
+      }
+    };
 
-      e.prototype._withAsyncResult = function(e) {
-        if (e) {
-          this._computer.onResult(e, !1);
-        }
+    a.prototype.start = function() {
+      if (this._state === g.IDLE) {
+        this._state = g.FIRST_WAIT;
+        this._firstWaitScheduler.schedule();
+      }
+    };
 
-        if (3 === this._state) {
-          this._state = 0;
-          this._onComplete(this._computer.getResult());
-        }
-      };
+    a.prototype.cancel = function() {
+      if (this._state === g.FIRST_WAIT) {
+        this._firstWaitScheduler.cancel();
+      }
 
-      e.prototype._onComplete = function(e) {
-        if (this._completeCallback) {
-          this._completeCallback(e);
-        }
-      };
-
-      e.prototype._onError = function(e) {
-        if (this._errorCallback) {
-          this._errorCallback(e);
-        } else {
-          i.onUnexpectedError(e);
-        }
-      };
-
-      e.prototype._onProgress = function(e) {
-        if (this._progressCallback) {
-          this._progressCallback(e);
-        }
-      };
-
-      e.prototype.start = function() {
-        if (0 === this._state) {
-          this._state = 1;
-          this._firstWaitScheduler.schedule();
-        }
-      };
-
-      e.prototype.cancel = function() {
-        if (1 === this._state) {
-          this._firstWaitScheduler.cancel();
-        }
-
-        if (2 === this._state) {
-          this._secondWaitScheduler.cancel();
-          if (this._asyncComputationPromise) {
-            this._asyncComputationPromise.cancel();
-          }
-        }
-
-        if (3 === this._state && this._asyncComputationPromise) {
+      if (this._state === g.SECOND_WAIT) {
+        this._secondWaitScheduler.cancel();
+        if (this._asyncComputationPromise) {
           this._asyncComputationPromise.cancel();
         }
+      }
 
-        this._state = 0;
-      };
+      if (this._state === g.WAITING_FOR_ASYNC_COMPUTATION && this._asyncComputationPromise) {
+        this._asyncComputationPromise.cancel();
+      }
 
-      e.HOVER_TIME = 300;
+      this._state = g.IDLE;
+    };
 
-      return e;
-    }();
-    t.HoverOperation = r;
-  });
+    a.HOVER_TIME = 300;
+
+    return a;
+  }();
+  b.HoverOperation = h;
+});

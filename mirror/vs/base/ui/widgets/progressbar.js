@@ -1,171 +1,203 @@
-define("vs/base/ui/widgets/progressbar", ["require", "exports", "vs/base/lib/winjs.base", "vs/base/assert",
-  "vs/base/env", "vs/base/dom/builder", "vs/base/dom/dom", "vs/base/uuid", "vs/css!./progressbar"
-], function(e, t, n, i, o, r, s, a) {
-  var u = "done";
+define(["require", "exports", "vs/base/lib/winjs.base", "vs/base/assert", "vs/base/env", "vs/base/dom/builder",
+  "vs/base/dom/dom", "vs/base/strings", "vs/css!./progressbar"
+], function(a, b, c, d, e, f, g, h) {
+  var i = c;
 
-  var l = "active";
+  var j = d;
 
-  var c = "infinite";
+  var k = e;
 
-  var d = "discrete";
+  var l = f;
 
-  var h = "progress-container";
+  var m = g;
 
-  var p = "progress-bit";
+  var n = h;
 
-  var f = r.$;
+  var o = "done";
 
-  var g = function() {
-    function e(e) {
+  var p = "active";
+
+  var q = "infinite";
+
+  var r = "discrete";
+
+  var s = "progress-container";
+
+  var t = "progress-bit";
+
+  var u = function() {
+    function a(a) {
       this.toUnbind = [];
 
       this.workedVal = 0;
 
-      this.create(e);
+      this.create(a);
     }
-    e.prototype.create = function(e) {
-      var t = this;
-      e.div({
-        "class": h
-      }, function(e) {
-        t.element = e.clone();
+    a.prototype.create = function(a) {
+      var b = this;
+      a.div({
+        "class": s
+      }, function(a) {
+        b.element = a.clone();
 
-        e.div({
-          "class": p
-        }).on([s.EventType.ANIMATION_START, s.EventType.ANIMATION_END, s.EventType.ANIMATION_ITERATION], function(e) {
-          switch (e.type) {
-            case s.EventType.ANIMATION_START:
-            case s.EventType.ANIMATION_END:
-              t.animationRunning = e.type === s.EventType.ANIMATION_START;
+        a.div({
+          "class": t
+        }).on([m.EventType.ANIMATION_START, m.EventType.ANIMATION_END, m.EventType.ANIMATION_ITERATION], function(a) {
+          switch (a.type) {
+            case m.EventType.ANIMATION_START:
+            case m.EventType.ANIMATION_END:
+              b.animationRunning = a.type === m.EventType.ANIMATION_START;
               break;
-            case s.EventType.ANIMATION_ITERATION:
-              if (t.animationStopToken) {
-                t.animationStopToken(null);
+            case m.EventType.ANIMATION_ITERATION:
+              if (b.animationStopToken) {
+                b.animationStopToken(null);
               }
           }
-        }, t.toUnbind);
+        }, b.toUnbind);
 
-        t.bit = e.getHTMLElement();
+        b.bit = a.getHTMLElement();
       });
     };
 
-    e.prototype.off = function() {
+    a.prototype.requestAnimationStop = function(a) {
+      var b = this;
+      return this.animationRunning ? (this.animationStopPromise || (this.animationStopPromise = (new i.Promise(
+        function(a, c, d) {
+          b.animationStopToken = a;
+        })).then(function() {
+        b.animationStopToken = null;
+
+        b.animationStopPromise = null;
+      })), a ? i.Promise.any([this.animationStopPromise, i.Promise.timeout(a)]) : this.animationStopPromise) : i.Promise
+        .as(null);
+    };
+
+    a.prototype.off = function() {
       this.bit.style.width = "inherit";
 
       this.bit.style.opacity = "1";
 
-      this.element.removeClass(l);
+      this.element.removeClass(p);
 
-      this.element.removeClass(c);
+      this.element.removeClass(q);
 
-      this.element.removeClass(d);
+      this.element.removeClass(r);
 
       this.workedVal = 0;
 
-      this.totalWork = void 0;
+      this.totalWork = undefined;
     };
 
-    e.prototype.done = function() {
+    a.prototype.done = function() {
       return this.doDone(!0);
     };
 
-    e.prototype.stop = function() {
+    a.prototype.stop = function() {
       return this.doDone(!1);
     };
 
-    e.prototype.doDone = function(e) {
-      var t = this;
-      this.element.addClass(u);
+    a.prototype.doDone = function(a) {
+      var b = this;
+      this.element.addClass(o);
 
-      this.element.hasClass(c) ? (this.bit.style.opacity = "0", e ? n.Promise.timeout(200).then(function() {
-        return t.off();
-      }) : this.off()) : (this.bit.style.width = "inherit", e ? n.Promise.timeout(200).then(function() {
-        return t.off();
+      this.element.hasClass(q) ? (this.bit.style.opacity = "0", a ? i.Promise.timeout(200).then(function() {
+        return b.off();
+      }) : this.off()) : (this.bit.style.width = "inherit", a ? i.Promise.timeout(200).then(function() {
+        return b.off();
       }) : this.off());
 
       return this;
     };
 
-    e.prototype.infinite = function() {
-      if (this.bit.style.width = "2%", this.bit.style.opacity = "1", this.element.removeClass(d), this.element.removeClass(
-        u), this.element.addClass(l), this.element.addClass(c), !o.browser.hasCSSAnimationSupport()) {
-        var e = a.v4().asHex();
-        this.currentProgressToken = e;
+    a.prototype.infinite = function() {
+      this.bit.style.width = "2%";
 
-        this.manualInfinite(e);
+      this.bit.style.opacity = "1";
+
+      this.element.removeClass(r);
+
+      this.element.removeClass(o);
+
+      this.element.addClass(p);
+
+      this.element.addClass(q);
+      if (!k.browser.hasCSSAnimationSupport()) {
+        var a = n.generateUuid();
+        this.currentProgressToken = a;
+
+        this.manualInfinite(a);
       }
       return this;
     };
 
-    e.prototype.manualInfinite = function(e) {
-      var t = this;
+    a.prototype.manualInfinite = function(a) {
+      var b = this;
       this.bit.style.width = "5%";
 
       this.bit.style.display = "inherit";
-      var i = 0;
+      var c = 0;
 
-      var o = function() {
-        n.Promise.timeout(50).then(function() {
-          if (e === t.currentProgressToken) {
-            if (t.element.hasClass(u)) {
-              t.bit.style.display = "none";
-              t.bit.style.left = "0";
+      var d = function() {
+        i.Promise.timeout(50).then(function() {
+          if (a !== b.currentProgressToken) return;
+          if (b.element.hasClass(o)) {
+            b.bit.style.display = "none";
+            b.bit.style.left = "0";
+          } else {
+            if (b.element.isHidden()) {
+              d();
             } else {
-              if (t.element.isHidden()) {
-                o();
-              } else {
-                i = (i + 1) % 95;
-                t.bit.style.left = i + "%";
-                o();
-              }
+              c = (c + 1) % 95;
+              b.bit.style.left = c + "%";
+              d();
             }
           }
         });
       };
-      o();
+      d();
     };
 
-    e.prototype.total = function(e) {
+    a.prototype.total = function(a) {
       this.workedVal = 0;
 
-      this.totalWork = e;
+      this.totalWork = a;
 
       return this;
     };
 
-    e.prototype.worked = function(e) {
-      i.ok(!isNaN(this.totalWork), "Total work not set");
+    a.prototype.worked = function(a) {
+      j.ok(!isNaN(this.totalWork), "Total work not set");
 
-      e = Number(e);
+      a = Number(a);
 
-      i.ok(!isNaN(e), "Value is not a number");
+      j.ok(!isNaN(a), "Value is not a number");
 
-      e = Math.max(1, e);
+      a = Math.max(1, a);
 
-      this.workedVal += e;
+      this.workedVal += a;
 
       this.workedVal = Math.min(this.totalWork, this.workedVal);
 
-      this.element.hasClass(c) && this.element.removeClass(c);
+      this.element.hasClass(q) && this.element.removeClass(q);
 
-      this.element.hasClass(d) || this.element.addClass(d);
+      this.element.hasClass(r) || this.element.addClass(r);
 
       this.bit.style.width = 100 * (this.workedVal / this.totalWork) + "%";
 
       return this;
     };
 
-    e.prototype.getContainer = function() {
-      return f(this.element);
+    a.prototype.getContainer = function() {
+      return l.Build.withBuilder(this.element);
     };
 
-    e.prototype.dispose = function() {
-      for (; this.toUnbind.length;) {
+    a.prototype.dispose = function() {
+      while (this.toUnbind.length) {
         this.toUnbind.pop()();
       }
     };
 
-    return e;
+    return a;
   }();
-  t.ProgressBar = g;
+  b.ProgressBar = u;
 });

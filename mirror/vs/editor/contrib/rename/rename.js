@@ -1,255 +1,308 @@
-define("vs/editor/contrib/rename/rename", ["require", "exports", "vs/base/lib/winjs.base",
-  "vs/nls!vs/editor/editor.main", "vs/platform/platform", "vs/platform/actionRegistry", "vs/editor/editorExtensions",
-  "vs/platform/services", "vs/editor/core/range", "vs/editor/core/editorState", "vs/editor/core/constants",
-  "vs/css!./rename"
-], function(e, t, n, i, o, r, s, a, u, l, c) {
-  var d = function() {
-    function e(e, t, n, i) {
-      var o = this;
-      this.editor = e;
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
+    }
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
+    }
+    d.prototype = b.prototype;
+
+    a.prototype = new d;
+  };
+
+define(["require", "exports", "vs/base/lib/winjs.base", "vs/nls", "vs/platform/platform", "vs/platform/actionRegistry",
+  "vs/editor/editorExtensions", "vs/platform/services", "vs/editor/core/range", "vs/editor/core/editorState",
+  "vs/editor/core/constants", "vs/css!./rename"
+], function(a, b, c, d, e, f, g, h, i, j, k) {
+  var l = c;
+
+  var m = d;
+
+  var n = e;
+
+  var o = f;
+
+  var p = g;
+
+  var q = h;
+
+  var r = i;
+
+  var s = j;
+
+  var t = k;
+
+  var u = function() {
+    function a(a, b, c, d) {
+      var e = this;
+      this.editor = a;
 
       this.isDisposed = !1;
 
-      this.editor.changeDecorations(function(e) {
-        o.decorations = [];
-        for (var i = 0, r = t.length; r > i; i++) {
-          var s = "linked-editing-placeholder";
-          o.decorations.push(e.addDecoration(n[i], {
-            className: s
+      this.editor.changeDecorations(function(a) {
+        e.decorations = [];
+        for (var d = 0, f = b.length; d < f; d++) {
+          var g = "linked-editing-placeholder";
+          e.decorations.push(a.addDecoration(c[d], {
+            className: g
           }));
         }
       });
 
-      this.editor.setSelections(t);
+      this.editor.setSelections(b);
 
       this.listenersToRemove = [];
 
-      this.listenersToRemove.push(this.editor.addListener(c.EventType.CursorPositionChanged, function(e) {
-        if (!o.isDisposed) {
-          var t = 1 + e.secondaryPositions.length;
-          if (t !== o.decorations.length) {
-            o.dispose();
-          }
+      this.listenersToRemove.push(this.editor.addListener(t.EventType.CursorPositionChanged, function(a) {
+        if (e.isDisposed) return;
+        var b = 1 + a.secondaryPositions.length;
+        if (b !== e.decorations.length) {
+          e.dispose();
         }
       }));
 
-      this.binding = i.bindGroup(function(e) {
-        e({
+      this.binding = d.bindGroup(function(a) {
+        a({
           key: "Enter"
         }, function() {
-          return o.onEnterOrEscape();
+          return e.onEnterOrEscape();
         });
 
-        e({
+        a({
           key: "Escape"
         }, function() {
-          return o.onEnterOrEscape();
+          return e.onEnterOrEscape();
         });
       });
     }
-    e.prototype.onEnterOrEscape = function() {
-      return this.isDisposed ? void 0 : (this.editor.setSelection(this.editor.getSelection()), this.dispose(), !0);
+    a.prototype.onEnterOrEscape = function() {
+      if (this.isDisposed) return;
+      this.editor.setSelection(this.editor.getSelection());
+
+      this.dispose();
+
+      return !0;
     };
 
-    e.prototype.dispose = function() {
-      if (!this.isDisposed) {
-        this.isDisposed = !0;
-        this.decorations = this.editor.deltaDecorations(this.decorations, []);
-        this.binding.dispose();
-        this.listenersToRemove.forEach(function(e) {
-          e();
-        });
-        this.listenersToRemove = [];
-      }
+    a.prototype.dispose = function() {
+      if (this.isDisposed) return;
+      this.isDisposed = !0;
+
+      this.decorations = this.editor.deltaDecorations(this.decorations, []);
+
+      this.binding.dispose();
+
+      this.listenersToRemove.forEach(function(a) {
+        a();
+      });
+
+      this.listenersToRemove = [];
     };
 
-    return e;
+    return a;
   }();
 
-  var h = function(e) {
-    function t(t, n) {
-      e.call(this, t, n, s.Precondition.WidgetFocus | s.Precondition.Writeable | s.Precondition.ShowInContextMenu);
+  var v = function(a) {
+    function b(b, c) {
+      a.call(this, b, c);
 
       this.idPool = 0;
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.injectMessageService = function(e) {
-      this.messageService = e;
+    b.prototype.injectMessageService = function(a) {
+      this.messageService = a;
     };
 
-    t.prototype.computeInfos = function() {
-      return n.Promise.as([]);
+    b.prototype.computeInfos = function(a) {
+      return l.Promise.as([]);
     };
 
-    t.prototype.getEnablementState = function() {
-      return e.prototype.getEnablementState.call(this) && !! this.messageService;
+    b.prototype.getEnablementState = function() {
+      return a.prototype.getEnablementState.call(this) && !! this.messageService;
     };
 
-    t.prototype.run = function() {
-      var e = this;
+    b.prototype.run = function() {
+      var a = this;
 
-      var t = ++this.idPool;
+      var b = ++this.idPool;
 
-      var n = l.capture(this.editor, 2, 0);
+      var c = s.capture(this.editor, s.Flag.Position, s.Flag.Value);
 
-      var i = this.editor.getSelection();
-      return this.computeInfos(this.editor).then(function(o) {
-        if (t === e.idPool && n.validate() && 0 !== o.length) {
-          var r = o.map(function(e) {
-            return e.range;
-          });
-          e._beginLinkedEditing(r, i);
-        }
-      }, function(t) {
-        e.messageService.show(0, t);
+      var d = this.editor.getSelection();
+      return this.computeInfos(this.editor).then(function(e) {
+        if (b !== a.idPool) return;
+        if (!c.validate()) return;
+        if (e.length === 0) return;
+        var f = e.map(function(a) {
+          return a.range;
+        });
+        a._beginLinkedEditing(f, d);
+      }, function(b) {
+        a.messageService.show(q.Severity.Info, b);
       });
     };
 
-    t.prototype._indexOf = function(e, t, n) {
-      for (var i = {
-        lineNumber: t,
-        column: n
-      }, o = 0; o < e.length; o++)
-        if (e[o].startLineNumber === t && u.containsPosition(e[o], i)) {
-          return o;
+    b.prototype._indexOf = function(a, b, c) {
+      var d = {
+        lineNumber: b,
+        column: c
+      };
+      for (var e = 0; e < a.length; e++) {
+        if (a[e].startLineNumber !== b) continue;
+        if (r.RangeUtils.containsPosition(a[e], d)) {
+          return e;
         }
+      }
       return -1;
     };
 
-    t.prototype._beginLinkedEditing = function(e, t) {
-      var n = this.editor.getSelection();
+    b.prototype._beginLinkedEditing = function(a, b) {
+      var c = this.editor.getSelection();
 
-      var i = this._indexOf(e, n.positionLineNumber, n.positionColumn);
-      if (-1 !== i || (n = t, i = this._indexOf(e, n.positionLineNumber, n.positionColumn), -1 !== i)) {
-        var o = !1;
-        if (!n.isEmpty()) {
-          if (u.containsPosition(e[i], {
-            lineNumber: n.selectionStartLineNumber,
-            column: n.selectionStartColumn
-          })) {
-            o = !0;
-          }
-        }
-        var r;
+      var d = this._indexOf(a, c.positionLineNumber, c.positionColumn);
+      if (d === -1) {
+        c = b;
 
-        var s;
-        if (o) {
-          r = n.positionColumn - e[i].startColumn;
-          s = n.selectionStartColumn - e[i].startColumn;
-        } else {
-          r = e[i].endColumn - e[i].startColumn;
-          s = 0;
-        }
-        var a = [];
-        a.push({
-          selectionStartLineNumber: e[i].startLineNumber,
-          selectionStartColumn: e[i].startColumn + s,
-          positionLineNumber: e[i].startLineNumber,
-          positionColumn: e[i].startColumn + r
-        });
-        for (var l = 0; l < e.length; l++) {
-          if (l !== i) {
-            a.push({
-              selectionStartLineNumber: e[l].startLineNumber,
-              selectionStartColumn: e[l].startColumn + s,
-              positionLineNumber: e[l].startLineNumber,
-              positionColumn: e[l].startColumn + r
-            });
-          }
-        }
-        new d(this.editor, a, e, this.handlerService);
+        d = this._indexOf(a, c.positionLineNumber, c.positionColumn);
+        if (d === -1) return;
       }
+      var e = !1;
+      if (!c.isEmpty()) {
+        if (r.RangeUtils.containsPosition(a[d], {
+          lineNumber: c.selectionStartLineNumber,
+          column: c.selectionStartColumn
+        })) {
+          e = !0;
+        }
+      }
+      var f;
+
+      var g;
+      if (e) {
+        f = c.positionColumn - a[d].startColumn;
+        g = c.selectionStartColumn - a[d].startColumn;
+      } else {
+        f = a[d].endColumn - a[d].startColumn;
+        g = 0;
+      }
+      var h = [];
+      h.push({
+        selectionStartLineNumber: a[d].startLineNumber,
+        selectionStartColumn: a[d].startColumn + g,
+        positionLineNumber: a[d].startLineNumber,
+        positionColumn: a[d].startColumn + f
+      });
+      for (var i = 0; i < a.length; i++) {
+        if (i !== d) {
+          h.push({
+            selectionStartLineNumber: a[i].startLineNumber,
+            selectionStartColumn: a[i].startColumn + g,
+            positionLineNumber: a[i].startLineNumber,
+            positionColumn: a[i].startColumn + f
+          });
+        }
+      }
+      new u(this.editor, h, a, this.handlerService);
     };
 
-    return t;
-  }(s.EditorAction);
-  t.LinkedEditing = h;
-  var p = function(e) {
-    function t(t, n) {
-      e.call(this, t, n);
+    return b;
+  }(p.EditorAction);
+  b.LinkedEditing = v;
+  var w = function(a) {
+    function b(b, c) {
+      a.call(this, b, c);
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.getEnablementState = function() {
-      return e.prototype.getEnablementState.call(this) && this.editor.getModel().getMode().occurrencesSupport && !
-        this.editor.getModel().hasEditableRange();
+    b.prototype.getEnablementState = function() {
+      return a.prototype.getEnablementState.call(this) && !! this.editor.getModel().getMode().occurrencesSupport;
     };
 
-    t.prototype.computeInfos = function(e) {
-      var t = e.getSelection();
+    b.prototype.computeInfos = function(a) {
+      var b = a.getSelection();
 
-      var n = t.getStartPosition();
+      var c = b.getStartPosition();
 
-      var i = e.getModel();
-      return this.editor.getModel().getMode().occurrencesSupport.findOccurrences(i.getAssociatedResource(), n);
+      var d = a.getModel();
+      return this.editor.getModel().getMode().occurrencesSupport.findOccurrences(d.getAssociatedResource(), c);
     };
 
-    t.ID = "editor.actions.changeAll";
+    b.ID = "editor.actions.changeAll";
 
-    return t;
-  }(h);
-  t.ChangeAllAction = p;
-  var f = function(e) {
-    function t(t, n) {
-      e.call(this, t, n);
+    return b;
+  }(v);
+  b.ChangeAllAction = w;
+  var x = function(a) {
+    function b(b, c) {
+      a.call(this, b, c);
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.getEnablementState = function() {
-      return e.prototype.getEnablementState.call(this) && !! this.editor.getModel().getMode().referenceSupport;
+    b.prototype.getEnablementState = function() {
+      return a.prototype.getEnablementState.call(this) && !! this.editor.getModel().getMode().referenceSupport;
     };
 
-    t.prototype.computeInfos = function(e) {
-      var t = e.getSelection();
+    b.prototype.computeInfos = function(a) {
+      var c = a.getSelection();
 
-      var o = t.getStartPosition();
+      var d = c.getStartPosition();
 
-      var r = e.getModel();
+      var e = a.getModel();
 
-      var s = r.getMode();
-      return new n.Promise(function(e, t, n) {
-        s.referenceSupport.findReferences(r.getAssociatedResource(), o).then(function(n) {
-          var o;
+      var f = e.getMode();
+      return new l.Promise(function(a, b, c) {
+        f.referenceSupport.findReferences(e.getAssociatedResource(), d).then(function(c) {
+          var d;
 
-          var r;
+          var e;
 
-          var s = !1;
+          var f = !1;
 
-          var a = [];
-          for (r = 0; !s && r < n.length; r++) {
-            var u = n[r];
-            if ("undefined" == typeof o) {
-              o = u.resourceUrl;
-            } else if (o !== u.resourceUrl) {
-              s = !0;
+          var g = [];
+          for (e = 0; !f && e < c.length; e++) {
+            var h = c[e];
+            if (typeof d == "undefined") {
+              d = h.resourceUrl;
+            } else if (d !== h.resourceUrl) {
+              f = !0;
               break;
             }
-            a.push({
+            g.push({
               kind: null,
-              range: u.range
+              range: h.range
             });
           }
-          if (s) {
-            t(i.localize("vs_editor_contrib_rename_rename", 0));
+          if (f) {
+            b(m.localize("rename.error.multiplefile",
+              "Sorry, but rename can not yet be performed on symbols that are used in multiple files."));
           } else {
-            e(a);
+            a(g);
           }
-        }, t, n);
+        }, b, c);
       });
     };
 
-    t.ID = "editor.actions.rename";
+    b.ID = "editor.actions.rename";
 
-    return t;
-  }(h);
-  t.RenameAction = f;
-  var g = o.Registry.as(s.Extensions.EditorContributions);
-  g.registerEditorContribution(new r.ActionDescriptor(f, f.ID, i.localize("vs_editor_contrib_rename_rename", 1), {
+    return b;
+  }(v);
+  b.RenameAction = x;
+  var y = n.Registry.as(p.Extensions.EditorContributions);
+  y.registerEditorContribution(new o.ActionDescriptor(x, x.ID, m.localize("rename.label", "Rename symbol"), {
     key: "F2"
+  }, {
+    ctrlCmd: !0,
+    key: "B"
   }));
 
-  g.registerEditorContribution(new r.ActionDescriptor(p, p.ID, i.localize("vs_editor_contrib_rename_rename", 2), {
+  y.registerEditorContribution(new o.ActionDescriptor(w, w.ID, m.localize("changeAll.label", "Change all occurrences"), {
+    ctrlCmd: !0,
+    alt: !0,
+    key: "B"
+  }, {
     ctrlCmd: !0,
     key: "F2"
   }));

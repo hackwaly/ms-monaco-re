@@ -1,161 +1,138 @@
-define("vs/base/ui/widgets/quickopen/quickOpenViewer", ["require", "exports", "vs/base/lib/winjs.base",
-  "vs/base/dom/builder", "vs/base/ui/widgets/tree/treeDefaults", "vs/base/ui/widgets/highlightedLabel",
-  "vs/base/ui/widgets/quickopen/quickOpenModel", "vs/base/ui/widgets/tree/actionsRenderer"
-], function(e, t, n, i, o, r, s, a) {
-  var u = i.$;
-
-  var l = function() {
-    function e() {}
-    e.prototype.getId = function(t, n) {
-      return n instanceof s.QuickOpenModel ? e.ROOT : n instanceof s.QuickOpenEntry ? n.getId() : null;
-    };
-
-    e.prototype.hasChildren = function(e, t) {
-      return t instanceof s.QuickOpenModel ? t.getEntries().length > 0 : !1;
-    };
-
-    e.prototype.getChildren = function(e, t) {
-      return t instanceof s.QuickOpenModel ? n.Promise.as(t.getEntries()) : n.Promise.as([]);
-    };
-
-    e.prototype.getParent = function() {
-      return n.Promise.as(null);
-    };
-
-    e.ROOT = "__root__";
-
-    return e;
-  }();
-  t.DataSource = l;
-  var c = function() {
-    function e() {}
-    e.prototype.hasActions = function() {
-      return !1;
-    };
-
-    e.prototype.getActions = function() {
-      return n.Promise.as(null);
-    };
-
-    e.prototype.hasSecondaryActions = function() {
-      return !1;
-    };
-
-    e.prototype.getSecondaryActions = function() {
-      return n.Promise.as(null);
-    };
-
-    e.prototype.getActionItem = function() {
-      return null;
-    };
-
-    return e;
-  }();
-
-  var d = function(e) {
-    function t(t) {
-      if ("undefined" == typeof t) {
-        t = new c;
-      }
-
-      e.call(this, t);
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
     }
-    __extends(t, e);
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
+    }
+    d.prototype = b.prototype;
 
-    t.prototype.getHeight = function(e, t) {
-      return t instanceof s.QuickOpenEntryItem ? t.getHeight() : 24;
+    a.prototype = new d;
+  };
+
+define(["require", "exports", "vs/base/lib/winjs.base", "vs/base/dom/builder", "vs/base/ui/widgets/tree/treeDefaults",
+  "vs/base/ui/widgets/highlightedLabel", "vs/base/ui/widgets/quickopen/quickOpenModel"
+], function(a, b, c, d, e, f, g) {
+  var h = c;
+
+  var i = d;
+
+  var j = e;
+
+  var k = f;
+
+  var l = g;
+
+  var m = i.$;
+
+  var n = function() {
+    function a() {}
+    a.prototype.getId = function(b, c) {
+      return c instanceof l.QuickOpenModel ? a.ROOT : c instanceof l.QuickOpenEntry ? c.getId() : null;
     };
 
-    t.prototype.renderContents = function(e, t, n, i) {
-      var o = null;
-      if (t instanceof s.QuickOpenEntry) {
-        var a = t;
-        if (a instanceof s.QuickOpenEntryItem) {
-          return t.render(e, n, i);
+    a.prototype.hasChildren = function(a, b) {
+      return b instanceof l.QuickOpenModel ? b.getEntries().length > 0 : !1;
+    };
+
+    a.prototype.getChildren = function(a, b) {
+      return b instanceof l.QuickOpenModel ? h.Promise.as(b.getEntries()) : h.Promise.as([]);
+    };
+
+    a.prototype.getParent = function(a, b) {
+      return h.Promise.as(null);
+    };
+
+    a.ROOT = "__root__";
+
+    return a;
+  }();
+  b.DataSource = n;
+  var o = function() {
+    function a() {}
+    a.prototype.getHeight = function(a, b) {
+      return b instanceof l.QuickOpenEntryItem ? b.getHeight() : 24;
+    };
+
+    a.prototype.render = function(a, b, c, d) {
+      var e = null;
+      if (b instanceof l.QuickOpenEntry) {
+        var f = b;
+        if (f instanceof l.QuickOpenEntryItem) {
+          return b.render(a, c, d);
         }
-        if (a instanceof s.QuickOpenEntryGroup) {
-          var l = a;
-          if (l.showBorder()) {
-            u(n).addClass("results-group-separator");
+        if (f instanceof l.QuickOpenEntryGroup) {
+          var g = f;
+          if (g.showBorder()) {
+            m(c).addClass("results-group-separator");
           }
 
-          if (l.getGroupLabel()) {
-            u(n).div(function(e) {
-              e.addClass("results-group");
+          if (g.getGroupLabel()) {
+            m(c).div(function(a) {
+              a.addClass("results-group");
 
-              e.attr({
-                text: l.getGroupLabel()
+              a.attr({
+                text: g.getGroupLabel()
               });
             });
           }
         }
-        u(n).div(function(e) {
-          e.addClass("quick-open-entry");
+        m(c).div(function(a) {
+          a.addClass("quick-open-entry");
 
-          if (a.getIcon()) {
-            e.append(u("span", {
-              "class": "quick-open-entry-icon " + a.getIcon()
+          if (f.getIcon()) {
+            a.append(m("span", {
+              "class": "quick-open-entry-icon " + f.getIcon()
             }));
           }
-          var t = a.getHighlights();
-          if (t && t.length > 0) {
-            var n = e.getProperty("highlightedLabel");
-            if (!n) {
-              n = new r.HighlightedLabel(e);
-              e.setProperty("highlightedLabel", n);
+          var b = f.getHighlights();
+          if (b && b.length > 0) {
+            var c = a.getProperty("highlightedLabel");
+            if (!c) {
+              c = new k.HighlightedLabel(a);
+              a.setProperty("highlightedLabel", c);
             }
 
-            o = function() {
-              n.destroy();
+            e = function() {
+              c.destroy();
             };
 
-            n.setValue(a.getLabel(), t);
+            c.setValue(f.getLabel(), b);
           } else {
-            if (a.getLabel()) {
-              e.span({
-                text: a.getLabel(),
+            if (f.getLabel()) {
+              a.span({
+                text: f.getLabel(),
                 "class": "quick-open-entry-label"
               });
             }
           }
-          if (a.getMeta()) {
-            e.span({
-              text: a.getMeta(),
-              "class": "quick-open-entry-meta"
-            });
-          }
-
-          if (a.getDescription()) {
-            e.span({
-              text: a.getDescription(),
+          if (f.getDescription()) {
+            a.span({
+              text: f.getDescription(),
               "class": "quick-open-entry-description"
             });
           }
         });
       }
-      return o;
+      return e;
     };
 
-    return t;
-  }(a.ActionsRenderer);
-  t.Renderer = d;
-  var h = function(e) {
-    function t() {
-      e.apply(this, arguments);
+    return a;
+  }();
+  b.Renderer = o;
+  var p = function(a) {
+    function b() {
+      a.apply(this, arguments);
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype.onClick = function(e, t, n) {
-      return this.onLeftClick(e, t, n);
+    b.prototype.onClick = function(a, b, c) {
+      return this.onLeftClick(a, b, c);
     };
 
-    t.prototype.onContextMenu = function(t, n, i) {
-      i && (i.preventDefault(), i.stopPropagation());
-
-      return e.prototype.onContextMenu.call(this, t, n, i);
-    };
-
-    return t;
-  }(o.DefaultController);
-  t.Controller = h;
+    return b;
+  }(j.DefaultController);
+  b.Controller = p;
 });

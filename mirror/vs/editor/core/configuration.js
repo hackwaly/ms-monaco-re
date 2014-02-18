@@ -158,7 +158,11 @@ define(["require", "exports", "vs/nls", "vs/base/env", "./config", "vs/base/obje
 
       var c;
       for (c = 0; c < a.length; c++) {
-        a.charAt(c) === "	" ? b += this.editor.tabSize : b++;
+        if (a.charAt(c) === "	") {
+          b += this.editor.tabSize;
+        } else {
+          b++;
+        }
       }
       var d = "";
       if (!this.editor.insertSpaces) {

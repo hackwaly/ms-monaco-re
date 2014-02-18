@@ -1,32 +1,34 @@
-define("vs/editor/core/command/surroundSelectionCommand", ["require", "exports", "vs/editor/core/range",
-  "vs/editor/core/selection"
-], function(e, t, n, i) {
-  var o = function() {
-    function e(e, t, n) {
-      this._range = e;
+define(["require", "exports", "vs/editor/core/range", "vs/editor/core/selection"], function(a, b, c, d) {
+  var e = c;
 
-      this._charBeforeSelection = t;
+  var f = d;
 
-      this._charAfterSelection = n;
+  var g = function() {
+    function a(a, b, c) {
+      this._range = a;
+
+      this._charBeforeSelection = b;
+
+      this._charAfterSelection = c;
     }
-    e.prototype.getEditOperations = function(e, t) {
-      t.addEditOperation(new n.Range(this._range.startLineNumber, this._range.startColumn, this._range.startLineNumber,
+    a.prototype.getEditOperations = function(a, b) {
+      b.addEditOperation(new e.Range(this._range.startLineNumber, this._range.startColumn, this._range.startLineNumber,
         this._range.startColumn), this._charBeforeSelection);
 
-      t.addEditOperation(new n.Range(this._range.endLineNumber, this._range.endColumn, this._range.endLineNumber,
+      b.addEditOperation(new e.Range(this._range.endLineNumber, this._range.endColumn, this._range.endLineNumber,
         this._range.endColumn), this._charAfterSelection);
     };
 
-    e.prototype.computeCursorState = function(e, t) {
-      var n = t.getInverseEditOperations();
+    a.prototype.computeCursorState = function(a, b) {
+      var c = b.getInverseEditOperations();
 
-      var o = n[0].range;
+      var d = c[0].range;
 
-      var r = n[1].range;
-      return new i.Selection(o.endLineNumber, o.endColumn, r.endLineNumber, r.endColumn - this._charAfterSelection.length);
+      var e = c[1].range;
+      return new f.Selection(d.endLineNumber, d.endColumn, e.endLineNumber, e.endColumn - this._charAfterSelection.length);
     };
 
-    return e;
+    return a;
   }();
-  t.SurroundSelectionCommand = o;
+  b.SurroundSelectionCommand = g;
 });

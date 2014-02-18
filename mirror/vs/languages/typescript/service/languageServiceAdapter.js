@@ -1,717 +1,706 @@
-define("vs/languages/typescript/service/languageServiceAdapter", ["require", "exports", "vs/base/collections",
-  "vs/languages/typescript/lint/lint", "vs/base/paths", "vs/base/strings", "vs/base/severity", "vs/base/filters",
+define(["require", "exports", "vs/base/network", "vs/base/strings", "vs/platform/markers/markers", "vs/base/filters",
   "vs/editor/core/model/mirrorModel", "vs/languages/typescript/service/textEdit",
   "vs/languages/typescript/lib/typescriptServices", "vs/languages/typescript/resources/remoteModels",
-  "vs/languages/lib/javascriptSnippets", "vs/languages/typescript/service/typescriptSnippets", "./outline",
-  "./references"
-], function(e, t, n, r, i, o, s, a, l, c, u, p, h, d, m, f) {
-  var g = function() {
-    function e(e, t, n, r) {
-      this._compilationSettings = e;
-
-      this._suggestSettings = t;
-
-      this._host = n;
-
-      this._languageService = r;
-
-      this._applyTypeScriptCompilationSettings();
+  "vs/languages/lib/javascriptSnippets", "vs/languages/typescript/service/typescriptSnippets"
+], function(require, exports, __Network__, __strings__, __markers__, __filters__, __MirrorModel__, __textEdit__,
+  __TypeScriptServices__, __remoteModels__, __JavaScriptSnippets__, __TypeScriptSnippets__) {
+  var Network = __Network__;
+  var strings = __strings__;
+  var markers = __markers__;
+  var filters = __filters__;
+  var MirrorModel = __MirrorModel__;
+  var textEdit = __textEdit__;
+  var TypeScriptServices = __TypeScriptServices__;
+  var remoteModels = __remoteModels__;
+  var JavaScriptSnippets = __JavaScriptSnippets__;
+  var TypeScriptSnippets = __TypeScriptSnippets__;
+  var LanguageServiceAdapter = function() {
+    function LanguageServiceAdapter(host, languageService, resourceService) {
+      this.host = host;
+      this.resourceService = resourceService;
+      this.setLanguageService(languageService);
+      this.setSuggestConfiguration({});
     }
-    e.prototype._applyTypeScriptCompilationSettings = function() {
-      var e = this._host.getCompilationSettings();
-      e.useCaseSensitiveFileResolution = !1;
-
-      e.noImplicitAny = this._compilationSettings.noImplicitAny;
-
-      e.codeGenTarget = o.equalsIgnoreCase("ES3", this._compilationSettings.codeGenTarget) ? 0 : 1;
-
-      e.moduleGenTarget = o.equalsIgnoreCase("commonjs", this._compilationSettings.moduleGenTarget) ? 1 : o.equalsIgnoreCase(
-        "amd", this._compilationSettings.moduleGenTarget) ? 2 : 0;
+    LanguageServiceAdapter.prototype.setLanguageService = function(languageService) {
+      this.languageService = languageService;
     };
-
-    Object.defineProperty(e.prototype, "languageService", {
-      get: function() {
-        return this._languageService;
-      },
-      enumerable: !0,
-      configurable: !0
-    });
-
-    e.prototype.getExtraDiagnostics = function(e) {
-      if (!this._compilationSettings.semanticValidation) {
-        return [];
-      }
-      var t = r.check(this._compilationSettings.lint, this._languageService, e);
-      return t.map(function(e) {
-        return {
-          code: 0,
+    LanguageServiceAdapter.prototype.getLanguageSerivce = function() {
+      return this.languageService;
+    };
+    LanguageServiceAdapter.prototype.setSuggestConfiguration = function(options) {
+      this.suggestConfiguration = options;
+    };
+    LanguageServiceAdapter.prototype.getSyntacticDiagnostics = function(resources) {
+      var result = [];
+      var diagnostics = this.languageService.getSyntacticDiagnostics(resources.toExternal());
+      LanguageServiceAdapter.appendMarkersFromDiagnostics(result, diagnostics);
+      return result;
+    };
+    LanguageServiceAdapter.prototype.getSemanticDiagnostics = function(resources) {
+      var result = [];
+      var diagnostics = this.languageService.getSemanticDiagnostics(resources.toExternal());
+      LanguageServiceAdapter.appendMarkersFromDiagnostics(result, diagnostics);
+      return result;
+    };
+    LanguageServiceAdapter.appendMarkersFromDiagnostics = function(markerList, diagnostics) {
+      for (var i = 0; i < diagnostics.length; i++) {
+        var diag = diagnostics[i];
+        markerList.push({
           type: "",
-          severity: e.severity,
-          range: e.range,
-          text: e.message
-        };
-      });
-    };
-
-    e.prototype.getSyntacticDiagnostics = function(e) {
-      if (!this._compilationSettings.syntaxValidation) {
-        return [];
+          code: -1,
+          text: diag.text(),
+          severity: markers.Severity.Error,
+          offset: diag.start(),
+          length: diag.length()
+        });
       }
-      var t = this._languageService.getSyntacticDiagnostics(e.toExternal());
-      return this._toMarkers(e, t);
     };
+    LanguageServiceAdapter.prototype.format = function(resource, range, options) {
+      var model = this.resourceService.get(resource);
 
-    e.prototype.getSemanticDiagnostics = function(e) {
-      if (!this._compilationSettings.semanticValidation) {
-        return [];
-      }
-      var t = this._languageService.getSemanticDiagnostics(e.toExternal());
-      return this._toMarkers(e, t);
-    };
+      var filename = model.getAssociatedResource().toExternal();
 
-    e.prototype._toMarkers = function(e, t) {
-      for (var n = [], r = 0; r < t.length; r++) {
-        var i = t[r];
-
-        var o = s.Severity.Error;
-        if (this._compilationSettings.diagnosticClassifier) {
-          o = this._compilationSettings.diagnosticClassifier(i);
-        }
-
-        if (o) {
-          n.push({
-            type: "",
-            code: -1,
-            text: i.text(),
-            severity: o,
-            range: this.rangeFromMinAndLim({
-              minChar: i.start(),
-              limChar: i.start() + i.length()
-            }, e)
-          });
-        }
-      }
-      return n;
-    };
-
-    e.prototype.format = function(e, t, n) {
-      var r = this._host.getScriptSnapshotByUrl(e).model;
-
-      var i = r.getAssociatedResource().toExternal();
-
-      var o = r.getOffsetFromPosition({
-        lineNumber: t.startLineNumber,
-        column: t.startColumn
+      var minChar = model.getOffsetFromPosition({
+        lineNumber: range.startLineNumber,
+        column: range.startColumn
       });
 
-      var s = r.getOffsetFromPosition({
-        lineNumber: t.endLineNumber,
-        column: t.endColumn
+      var limChar = model.getOffsetFromPosition({
+        lineNumber: range.endLineNumber,
+        column: range.endColumn
       });
-
-      var a = this._languageService.getFormattingEditsForRange(i, o, s, this.createFormatOptions(n));
-
-      var l = this.applyTextEdits(a, r, o, s);
-      return l.text;
+      var edits = this.languageService.getFormattingEditsForRange(filename, minChar, limChar, this.createFormatOptions(
+        options));
+      var result = this.applyTextEdits(edits, model, minChar, limChar);
+      return result.text;
     };
+    LanguageServiceAdapter.prototype.formatAfterKeystroke = function(resource, position, options) {
+      var model = this.resourceService.get(resource);
 
-    e.prototype.formatAfterKeystroke = function(e, t, n) {
-      var r = this._host.getScriptSnapshotByUrl(e).model;
+      var filename = model.getAssociatedResource().toExternal();
 
-      var i = r.getAssociatedResource().toExternal();
+      var offset = model.getOffsetFromPosition(position);
 
-      var o = r.getOffsetFromPosition(t);
-
-      var s = r.getOffsetFromPosition({
-        lineNumber: t.lineNumber,
+      var lineOffset = model.getOffsetFromPosition({
+        lineNumber: position.lineNumber,
         column: 1
       });
 
-      var a = r.getLineContent(t.lineNumber).length;
+      var lineLen = model.getLineContent(position.lineNumber).length;
 
-      var l = r.getValueInRange({
-        startColumn: t.column,
-        endColumn: t.column + 1,
-        startLineNumber: t.lineNumber,
-        endLineNumber: t.lineNumber
+      var ch = model.getValueInRange({
+        startColumn: position.column,
+        endColumn: position.column + 1,
+        startLineNumber: position.lineNumber,
+        endLineNumber: position.lineNumber
       });
-
-      var c = this._languageService.getFormattingEditsAfterKeystroke(i, 1 + o, l, this.createFormatOptions(n));
-
-      var u = this.applyTextEdits(c, r, s, s + a);
-      return u;
+      var edits = this.languageService.getFormattingEditsAfterKeystroke(filename, 1 + offset, ch, this.createFormatOptions(
+        options));
+      var result = this.applyTextEdits(edits, model, lineOffset, lineOffset + lineLen);
+      return result;
     };
-
-    e.prototype.createFormatOptions = function(e) {
-      var t = new u.Services.FormatCodeOptions;
-      t.ConvertTabsToSpaces = e.insertSpaces;
-
-      t.TabSize = e.tabSize;
-
-      t.IndentSize = e.tabSize;
-
-      t.InsertSpaceAfterCommaDelimiter = !0;
-
-      t.InsertSpaceBeforeAndAfterBinaryOperators = !0;
-
-      t.InsertSpaceAfterSemicolonInForStatements = !0;
-
-      return t;
+    LanguageServiceAdapter.prototype.createFormatOptions = function(options) {
+      var formatOptions = new TypeScriptServices.Services.FormatCodeOptions;
+      formatOptions.ConvertTabsToSpaces = options.insertSpaces;
+      formatOptions.TabSize = options.tabSize;
+      formatOptions.IndentSize = options.tabSize;
+      formatOptions.InsertSpaceAfterCommaDelimiter = true;
+      formatOptions.InsertSpaceBeforeAndAfterBinaryOperators = true;
+      formatOptions.InsertSpaceAfterSemicolonInForStatements = true;
+      return formatOptions;
     };
+    LanguageServiceAdapter.prototype.applyTextEdits = function(edits, model, min, lim) {
+      var edit = textEdit.create(model);
 
-    e.prototype.applyTextEdits = function(e, t, n, r) {
-      for (var i, o = c.create(t), s = 0; s < e.length; s++) {
-        o.replace(e[s].minChar, e[s].limChar - e[s].minChar, e[s].text);
-        n = Math.min(n, e[s].minChar);
-        r = Math.max(r, e[s].limChar);
+      var result;
+      for (var i = 0; i < edits.length; i++) {
+        edit.replace(edits[i].minChar, edits[i].limChar - edits[i].minChar, edits[i].text);
+        min = Math.min(min, edits[i].minChar);
+        lim = Math.max(lim, edits[i].limChar);
       }
-      i = o.apply();
-
-      i = i.substring(n, r + (i.length - t.getValue().length));
-
+      result = edit.apply();
+      result = result.substring(min, lim + (result.length - model.getValue().length));
       return {
-        text: i,
+        text: result,
         range: this.rangeFromMinAndLim({
-          minChar: n,
-          limChar: r
-        }, t.getAssociatedResource())
+          minChar: min,
+          limChar: lim
+        }, model)
       };
     };
+    LanguageServiceAdapter.prototype.getActionsAtPosition = function(resource, position) {
+      var model = this.resourceService.get(resource);
 
-    e.prototype.getActionsAtPosition = function(e, t) {
-      var n = this._host.getScriptSnapshotByUrl(e).model;
+      var filename = model.getAssociatedResource().toExternal();
 
-      var r = n.getAssociatedResource().toExternal();
+      var offset = model.getOffsetFromPosition(position);
 
-      var i = n.getOffsetFromPosition(t);
+      var result = [];
+      var tree = this.languageService.getSyntaxTree(filename);
 
-      var o = [];
-
-      var s = this._languageService.getSyntaxTree(r);
-
-      var a = s.sourceUnit().findToken(i);
-      return a.kind() !== u.SyntaxKind.IdentifierName ? o : (o.push("editor.actions.changeAll"), o.push(
-        "editor.actions.rename"), o.push("editor.actions.referenceSearch.trigger"), o.push(
-        "editor.actions.previewDeclaration"), o.push("editor.actions.goToDeclaration"), o);
+      var token = tree.sourceUnit().findToken(offset);
+      if (token.kind() === TypeScriptServices.TypeScript.SyntaxKind.IdentifierName) {
+        result.push("editor.actions.rename");
+        result.push("editor.actions.referenceSearch.trigger");
+        result.push("editor.actions.previewDeclaration");
+        result.push("editor.actions.goToDeclaration");
+      }
+      return result;
     };
+    LanguageServiceAdapter.prototype.getOutline = function(resource) {
+      var _this = this;
+      var model = this.resourceService.get(resource);
 
-    e.prototype.getOutline = function(e) {
-      var t = this;
+      var filename = model.getAssociatedResource().toExternal();
 
-      var n = this._host.getScriptSnapshotByUrl(e).model;
-
-      var r = n.getAssociatedResource().toExternal();
-
-      var i = this._languageService.getSyntaxTree(r);
-      return m.forSourceUnit(i.sourceUnit(), function(n, r) {
-        return t.rangeFromMinAndLim({
-          minChar: n,
-          limChar: n + r
-        }, e);
-      });
-    };
-
-    e.prototype.getNavigateToItems = function(t) {
-      for (var n, r = this._host.getScriptFileNames(), i = [], o = 0; o < r.length; o++) {
-        n = this._languageService.getScriptLexicalStructure(r[o]);
-        for (var s = 0; s < n.length; s++) {
-          var a = n[s];
-
-          var l = e.FILTER(t, n[s].name);
-          if (l) {
-            var c = this._host.getScriptSnapshot(a.fileName).model;
-            if (c && !this.isBaseLibModel(c)) {
-              i.push({
-                containerName: a.containerName,
-                name: a.name,
-                type: a.kind,
-                matchKind: a.matchKind,
-                resourceUrl: c.getAssociatedResource().toExternal(),
-                range: this.rangeFromMinAndLim(a, c.getAssociatedResource())
-              });
-            }
+      var items = this.languageService.getScriptLexicalStructure(filename);
+      var roots = [];
+      var parentPath = [];
+      items.filter(function(item) {
+        switch (item.kind) {
+          case TypeScriptServices.Services.ScriptElementKind.moduleElement:
+          case TypeScriptServices.Services.ScriptElementKind.scriptElement:
+            return false;
+        }
+        return true;
+      }).sort(function(left, right) {
+        return left.minChar - right.minChar;
+      }).map(function(item) {
+        var node = {
+          label: item.name,
+          type: item.kind,
+          range: _this.rangeFromMinAndLim(item, model),
+          children: []
+        };
+        return node;
+      }).forEach(function(node) {
+        while (true) {
+          var parent = parentPath[parentPath.length - 1];
+          if (!parent) {
+            parentPath.push(node);
+            roots.push(node);
+            break;
+          } else if (_this.isSubRange(parent.range, node.range)) {
+            parent.children.push(node);
+            parentPath.push(node);
+            break;
+          } else {
+            parentPath.pop();
           }
         }
-      }
-      return i;
+      });
+      return roots;
     };
+    LanguageServiceAdapter.prototype.getNavigateToItems = function(search) {
+      var fileNames = this.host.getScriptFileNames();
 
-    e.prototype.findOccurrences = function(e, t) {
-      var n = this;
+      var items;
 
-      var r = this._host.getScriptSnapshotByUrl(e).model;
+      var types = [];
+      for (var i = 0; i < fileNames.length; i++) {
+        items = this.languageService.getScriptLexicalStructure(fileNames[i]);
+        for (var j = 0; j < items.length; j++) {
+          var item = items[j];
 
-      var i = r.getAssociatedResource().toExternal();
+          var matches = LanguageServiceAdapter.FILTER(search, items[j].name);
+          if (!matches) {
+            continue;
+          }
+          var targetModel = this.resourceService.get(new Network.URL(item.fileName));
+          if (!targetModel || this.isBaseLibModel(targetModel)) {
+            continue;
+          }
+          types.push({
+            containerName: item.containerName,
+            name: item.name,
+            type: item.kind,
+            matchKind: item.matchKind,
+            resourceUrl: targetModel.getAssociatedResource().toExternal(),
+            range: this.rangeFromMinAndLim(item, targetModel)
+          });
+        }
+      }
+      return types;
+    };
+    LanguageServiceAdapter.prototype.findOccurrences = function(resource, position, strict) {
+      var _this = this;
+      var model = this.resourceService.get(resource);
 
-      var o = r.getOffsetFromPosition(t);
+      var filename = model.getAssociatedResource().toExternal();
 
-      var s = this._languageService.getOccurrencesAtPosition(i, o);
+      var offset = model.getOffsetFromPosition(position);
 
-      var a = s.map(function(t) {
+      var entries = this.languageService.getOccurrencesAtPosition(filename, offset);
+      var elements = entries.map(function(entry) {
         return {
-          kind: t.isWriteAccess ? "write" : null,
-          range: n.rangeFromMinAndLim(t, e)
+          kind: entry.isWriteAccess ? "write" : null,
+          range: _this.rangeFromMinAndLim(entry, model)
         };
       });
-      return a;
+      return elements;
     };
+    LanguageServiceAdapter.prototype.findDeclaration = function(resource, position) {
+      var model = this.resourceService.get(resource);
 
-    e.prototype.findDeclaration = function(e, t) {
-      var n = this._host.getScriptSnapshotByUrl(e).model;
+      var filename = model.getAssociatedResource().toExternal();
 
-      var r = n.getAssociatedResource().toExternal();
+      var offset = model.getOffsetFromPosition(position);
 
-      var i = n.getOffsetFromPosition(t);
-
-      var o = this._languageService.getDefinitionAtPosition(r, i);
-      if (!o || 0 === o.length) {
+      var infos = this.languageService.getDefinitionAtPosition(filename, offset);
+      if (!infos || infos.length === 0) {
         return null;
       }
-      var s = o[0];
-      if (!s.fileName) {
+      var info = infos[0];
+      if (!info.fileName) {
         return null;
       }
-      var a = this._host.getScriptSnapshot(s.fileName).model;
-      if (this.isBaseLibModel(a)) {
+      var targetModel = this.resourceService.get(new Network.URL(info.fileName));
+      if (this.isBaseLibModel(targetModel)) {
         return null;
       }
-      var l = {
-        resourceUrl: a.getAssociatedResource().toExternal(),
-        range: this.rangeFromMinAndLim(s, a.getAssociatedResource(), !0),
-        preview: this.preview(a, s.minChar, s.limChar)
+      var result = {
+        resourceUrl: targetModel.getAssociatedResource().toExternal(),
+        range: this.rangeFromMinAndLim(info, targetModel, true),
+        preview: this.preview(targetModel, info.minChar, info.limChar)
       };
-      return l;
+      return result;
     };
-
-    e.prototype.findTypeDeclaration = function() {
+    LanguageServiceAdapter.prototype.findTypeDeclaration = function(resource, position) {
       return null;
     };
+    LanguageServiceAdapter.prototype.findReferences = function(resource, position) {
+      var _this = this;
+      var model = this.resourceService.get(resource);
 
-    e.prototype.isExternallyVisibleSymbole = function(e, t) {
-      var n = this._host.getScriptSnapshotByUrl(e).model;
+      var offset = model.getOffsetFromPosition(position);
 
-      var r = n.getOffsetFromPosition(t);
+      var filename = model.getAssociatedResource().toExternal();
 
-      var i = n.getAssociatedResource().toExternal();
-
-      var o = this._languageService.getTypeAtPosition(i, r);
-      if (!o) {
-        return !0;
-      }
-      switch (o.kind) {
-        case u.Services.ScriptElementKind.localVariableElement:
-        case u.Services.ScriptElementKind.localFunctionElement:
-        case u.Services.ScriptElementKind.parameterElement:
-          return !1;
-      }
-      return !0;
-    };
-
-    e.prototype.findReferences = function(e, t) {
-      var n = this;
-
-      var r = this._host.getScriptSnapshotByUrl(e).model;
-
-      var i = r.getOffsetFromPosition(t);
-
-      var o = r.getAssociatedResource().toExternal();
-
-      var s = this._languageService.getReferencesAtPosition(o, i);
-
-      var a = s.filter(function(e) {
-        return !n.isBaseLibModel(n._host.getScriptSnapshot(e.fileName).model);
-      }).map(function(e) {
-        var t = n._host.getScriptSnapshot(e.fileName).model;
-
+      var infos = this.languageService.getReferencesAtPosition(filename, offset);
+      var result = infos.filter(function(info) {
+        return !_this.isBaseLibModel(_this.resourceService.get(new Network.URL(info.fileName)));
+      }).map(function(info) {
+        var targetModel = _this.resourceService.get(new Network.URL(info.fileName));
         var r = {
-          resourceUrl: t.getAssociatedResource().toExternal(),
-          range: n.rangeFromMinAndLim(e, t.getAssociatedResource()),
-          preview: n.preview(t, e.minChar, e.limChar)
+          resourceUrl: targetModel.getAssociatedResource().toExternal(),
+          range: _this.rangeFromMinAndLim(info, targetModel),
+          preview: _this.preview(targetModel, info.minChar, info.limChar)
         };
         return r;
       });
-      return a;
+      return result;
     };
+    LanguageServiceAdapter.prototype.getTypeInformationAtPosition = function(resource, position) {
+      var model = this.resourceService.get(resource);
 
-    e.prototype.getTypeInformationAtPosition = function(e, t) {
-      var n = this._host.getScriptSnapshotByUrl(e).model;
+      var offset = model.getOffsetFromPosition(position);
 
-      var r = n.getOffsetFromPosition(t);
+      var filename = model.getAssociatedResource().toExternal();
 
-      var i = n.getAssociatedResource().toExternal();
-
-      var o = this._languageService.getTypeAtPosition(i, r);
-      if (!o) {
+      var info = this.languageService.getTypeAtPosition(filename, offset);
+      if (!info) {
         return null;
       }
-      var s = [{
+      var htmlContent = [];
+      htmlContent.push({
         className: "type",
-        text: o.memberName.toString()
-      }, {
+        text: info.memberName.toString()
+      });
+      htmlContent.push({
         className: "documentation",
-        text: o.docComment
-      }];
-
-      var a = {
+        text: info.docComment
+      });
+      var result = {
         value: "",
-        htmlContent: s,
+        htmlContent: htmlContent,
         className: "typeInfo ts",
-        range: this.rangeFromMinAndLim(o, e)
+        range: this.rangeFromMinAndLim(info, model)
       };
-      return a;
+      return result;
     };
+    LanguageServiceAdapter.prototype.getRangesToPosition = function(resource, position) {
+      var model = this.resourceService.get(resource);
 
-    e.prototype.getRangesToPosition = function(e, t) {
-      for (var n = this._host.getScriptSnapshotByUrl(e).model, r = n.getOffsetFromPosition(t), i = n.getAssociatedResource()
-          .toExternal(), o = this._languageService.getSyntaxTree(i), s = o.sourceUnit().findToken(r), a = []; null !==
-        s;) {
-        a.unshift({
+      var offset = model.getOffsetFromPosition(position);
+
+      var filename = model.getAssociatedResource().toExternal();
+      var tree = this.languageService.getSyntaxTree(filename);
+
+      var token = tree.sourceUnit().findToken(offset);
+
+      var result = [];
+      while (token !== null) {
+        result.unshift({
           type: "node",
           range: this.rangeFromMinAndLim({
-            minChar: s.start(),
-            limChar: s.end()
-          }, e)
+            minChar: token.start(),
+            limChar: token.end()
+          }, model)
         });
-        s = s.parent();
+        token = token.parent();
       }
-      return a;
+      return result;
     };
+    LanguageServiceAdapter.append = function(suggestions, suggestionSet, suggestion) {
+      var key = suggestion.type + suggestion.label + suggestion.codeSnippet;
+      if (!suggestionSet[key]) {
+        suggestionSet[key] = true;
+        suggestions.push(suggestion);
+      }
+    };
+    LanguageServiceAdapter.prototype.suggest = function(resource, position) {
+      var model = this.resourceService.get(resource);
 
-    e.prototype.suggest = function(e, t) {
-      var r = this._host.getScriptSnapshotByUrl(e).model;
+      var filename = resource.toExternal();
 
-      var i = e.toExternal();
+      var currentWord = model.getWordUntilPosition(position);
 
-      var o = r.getWordUntilPosition(t);
+      var offset = model.getOffsetFromPosition(position);
 
-      var s = r.getOffsetFromPosition(t);
+      var completionOffset = offset - currentWord.length;
 
-      var a = s - o.length;
+      var memberCompletion = model.getValue().charAt(completionOffset - 1) === ".";
+      var suggestions = [];
+      var completion = this.languageService.getCompletionsAtPosition(filename, completionOffset, memberCompletion);
+      if (completion) {
+        memberCompletion = completion.isMemberCompletion;
+        var suggestionSet = {};
 
-      var l = "." === r.getValue().charAt(a - 1);
-
-      var c = this._languageService.getCompletionsAtPosition(i, a, l);
-
-      var u = new n.DelegateHashSet(function(e) {
-        return e.type + e.label + e.codeSnippet;
-      });
-      if (c) {
-        l = c.isMemberCompletion;
-        for (var p = 0, m = c.entries.length; m > p; p++) {
-          var f = c.entries[p];
-          u.add({
-            label: f.name,
-            codeSnippet: f.name,
-            type: this.monacoTypeFromEntryKind(f.kind)
+        function append(suggestion) {
+          var key = suggestion.type + suggestion.label + suggestion.codeSnippet;
+          if (!suggestionSet[key]) {
+            suggestionSet[key] = true;
+            suggestions.push(suggestion);
+          }
+        }
+        completion.entries.forEach(function(entry) {
+          if (!entry.name || !entry.kind) {
+            return;
+          }
+          LanguageServiceAdapter.append(suggestions, suggestionSet, {
+            type: LanguageServiceAdapter.convertScriptElementKindToSuggestionType(entry.kind),
+            label: entry.name,
+            codeSnippet: entry.name
           });
-        }
+        });
       }
-      var g = !l;
+      var shouldIncludeSnippets = !memberCompletion;
 
-      var v = this._suggestSettings.alwaysAllWords || !c || 0 === c.entries.length;
-      if (g) {
-        for (var p = 0, m = h.snippets.length; m > p; p++) {
-          u.add(h.snippets[p]);
-        }
-        for (var p = 0, m = d.snippets.length; m > p; p++) {
-          u.add(d.snippets[p]);
-        }
+      var shouldIncludeAllWords = this.suggestConfiguration.alwaysAllWords || !completion || completion.entries.length ===
+        0;
+      if (shouldIncludeAllWords) {
+        model.getAllUniqueWords(currentWord).filter(function(word) {
+          return !/^-?\d*\.?\d/.test(word);
+        }).forEach(function(word) {
+          var suggestion = {
+            type: "text",
+            label: word,
+            codeSnippet: word
+          };
+          suggestions.push(suggestion);
+        });
       }
-      v && r.getAllUniqueWords(o).filter(function(e) {
-        return !/^-?\d*\.?\d/.test(e);
-      }).forEach(function(e) {
-        var t = {
-          type: "text",
-          label: e,
-          codeSnippet: e
-        };
-        u.add(t);
-      });
-
-      return u.toArray();
+      if (shouldIncludeSnippets) {
+        suggestions.push.apply(suggestions, JavaScriptSnippets.snippets);
+        suggestions.push.apply(suggestions, TypeScriptSnippets.snippets);
+      }
+      return suggestions;
     };
+    LanguageServiceAdapter.prototype.getSuggestionDetails = function(resource, position, suggestion) {
+      var model = this.resourceService.get(resource);
 
-    e.prototype.monacoTypeFromEntryKind = function(e) {
-      switch (e) {
-        case u.Services.ScriptElementKind.primitiveType:
-        case u.Services.ScriptElementKind.keyword:
+      var filename = resource.toExternal();
+
+      var offset = model.getOffsetFromPosition(position);
+      var detail = this.languageService.getCompletionEntryDetails(filename, offset, suggestion.label);
+      suggestion.typeLabel = detail.type;
+      suggestion.documentationLabel = detail.docComment;
+      if (this.suggestConfiguration.useCodeSnippetsOnMethodSuggest && suggestion.type === "function") {
+        var parsedSignature = LanguageServiceAdapter.parseMethodSignature(detail.type);
+        var suggestionArgumentNames = parsedSignature.arguments.map(function(piece) {
+          return "{{" + piece.name.trim() + "}}";
+        });
+        var codeSnippet = detail.name;
+        if (suggestionArgumentNames.length > 0) {
+          codeSnippet += "(" + suggestionArgumentNames.join(", ") + "){{}}";
+        } else {
+          codeSnippet += "()";
+        }
+        suggestion.codeSnippet = codeSnippet;
+      }
+      return suggestion;
+    };
+    LanguageServiceAdapter.convertScriptElementKindToSuggestionType = function(kind) {
+      switch (kind) {
+        case TypeScriptServices.Services.ScriptElementKind.primitiveType:
+        case TypeScriptServices.Services.ScriptElementKind.keyword:
           return "keyword";
-        case u.Services.ScriptElementKind.variableElement:
-        case u.Services.ScriptElementKind.localVariableElement:
-        case u.Services.ScriptElementKind.memberVariableElement:
-        case u.Services.ScriptElementKind.memberGetAccessorElement:
-        case u.Services.ScriptElementKind.memberSetAccessorElement:
+        case TypeScriptServices.Services.ScriptElementKind.variableElement:
+        case TypeScriptServices.Services.ScriptElementKind.localVariableElement:
+        case TypeScriptServices.Services.ScriptElementKind.memberVariableElement:
+        case TypeScriptServices.Services.ScriptElementKind.memberGetAccessorElement:
+        case TypeScriptServices.Services.ScriptElementKind.memberSetAccessorElement:
           return "field";
-        case u.Services.ScriptElementKind.functionElement:
-        case u.Services.ScriptElementKind.memberFunctionElement:
-        case u.Services.ScriptElementKind.constructSignatureElement:
-        case u.Services.ScriptElementKind.callSignatureElement:
+        case TypeScriptServices.Services.ScriptElementKind.functionElement:
+        case TypeScriptServices.Services.ScriptElementKind.memberFunctionElement:
+        case TypeScriptServices.Services.ScriptElementKind.constructSignatureElement:
+        case TypeScriptServices.Services.ScriptElementKind.callSignatureElement:
           return "function";
       }
-      return e;
+      return kind;
     };
+    LanguageServiceAdapter.prototype.quickFix = function(resource, position) {
+      var model = this.resourceService.get(resource);
 
-    e.prototype.getSuggestionDetails = function(e, t, n) {
-      var r = this._host.getScriptSnapshotByUrl(e).model;
+      var filename = model.getAssociatedResource().toExternal();
 
-      var i = e.toExternal();
+      var offset = model.getOffsetFromPosition(position);
 
-      var o = r.getOffsetFromPosition(t);
+      var currentWord = model.getWordUntilPosition(position);
 
-      var s = this._languageService.getCompletionEntryDetails(i, o, n.label);
-      if (!s) {
-        return n;
-      }
-      if (n.documentationLabel = s.docComment, n.typeLabel = s.type, n.codeSnippet = s.name, this._suggestSettings.useCodeSnippetsOnMethodSuggest &&
-        "function" === this.monacoTypeFromEntryKind(s.kind)) {
-        var a = this.parseMethodSignature(s.type);
+      var completionOffset = offset - currentWord.length;
 
-        var l = a.arguments.map(function(e) {
-          return "{{" + e.name.trim() + "}}";
+      var memberCompletion = model.getValue().charAt(completionOffset - 1) === ".";
+
+      var completion = this.languageService.getCompletionsAtPosition(filename, completionOffset, memberCompletion);
+      var result = [];
+      completion.entries.forEach(function(entry) {
+        var score = strings.difference(currentWord, entry.name);
+        if (score < currentWord.length / 2) {
+          return;
+        }
+        result.push({
+          type: LanguageServiceAdapter.convertScriptElementKindToSuggestionType(entry.kind),
+          label: entry.name,
+          codeSnippet: entry.name,
+          score: score
         });
-
-        var c = s.name;
-        c += l.length > 0 ? "(" + l.join(", ") + "){{}}" : "()";
-
-        n.codeSnippet = c;
-      }
-      return n;
+      });
+      result.sort(function(a, b) {
+        return b.score - a.score;
+      });
+      return result.slice(0, 3);
     };
+    LanguageServiceAdapter.parseMethodSignature = function(signature) {
+      var parsedArguments = [];
+      var returnType = "";
+      var currentArgumentName = "";
 
-    e.prototype.quickFix = function(e, t) {
-      var n = this._host.getScriptSnapshotByUrl(e).model;
+      var currentArgumentType = "";
 
-      var r = n.getAssociatedResource().toExternal();
+      var isInName = true;
+      var parensDepth = 1;
 
-      var i = n.getOffsetFromPosition(t);
+      var i;
 
-      var s = n.getWordUntilPosition(t);
+      var len;
 
-      var a = i - s.length;
-
-      var l = "." === n.getValue().charAt(a - 1);
-
-      var c = this._languageService.getCompletionsAtPosition(r, a, l);
-
-      var u = [];
-      c.entries.forEach(function(e) {
-        var t = o.difference(s, e.name);
-        if (!(t < s.length / 2)) {
-          u.push({
-            type: "field",
-            label: e.name,
-            codeSnippet: e.name,
-            score: t
+      var ch;
+      for (i = 1, len = signature.length; i < len; i++) {
+        ch = signature.charAt(i);
+        if (ch === ")") {
+          parensDepth--;
+        }
+        if (ch === "(") {
+          parensDepth++;
+        }
+        if (parensDepth === 1 && ch === ":") {
+          isInName = false;
+          continue;
+        }
+        if (parensDepth === 1 && ch === ",") {
+          parsedArguments.push({
+            name: currentArgumentName,
+            type: currentArgumentType
           });
+          currentArgumentName = "";
+          currentArgumentType = "";
+          isInName = true;
+          continue;
         }
-      });
-
-      u.sort(function(e, t) {
-        return t.score - e.score;
-      });
-
-      return u.slice(0, 3);
-    };
-
-    e.prototype.parseMethodSignature = function(e) {
-      var t;
-
-      var n;
-
-      var r;
-
-      var i = [];
-
-      var o = "";
-
-      var s = "";
-
-      var a = !0;
-
-      var l = 1;
-      for (t = 1, n = e.length; n > t; t++)
-        if (r = e.charAt(t), ")" === r && l--, "(" === r && l++, 1 !== l || ":" !== r)
-          if (1 !== l || "," !== r) {
-            if (0 === l && ")" === r) {
-              if ("" !== o) {
-                i.push({
-                  name: o,
-                  type: s
-                });
-              }
-              break;
-            }
-            if (a) {
-              o += r;
-            } else {
-              s += r;
-            }
-          } else {
-            i.push({
-              name: o,
-              type: s
-            });
-            o = "";
-            s = "";
-            a = !0;
-          } else {
-            a = !1;
-          }
-      return {
-        arguments: i,
-        flatArguments: e.substr(0, t + 1),
-        flatReturnType: e.substr(t + 5)
-      };
-    };
-
-    e.transformParameter = function(e) {
-      return {
-        label: e.name,
-        documentation: e.docComment,
-        signatureLabelOffset: e.minChar,
-        signatureLabelEnd: e.limChar
-      };
-    };
-
-    e.transformSignature = function(t) {
-      return {
-        label: t.signatureInfo,
-        documentation: t.docComment,
-        parameters: t.parameters.map(function(t) {
-          return e.transformParameter(t);
-        })
-      };
-    };
-
-    e.prototype.getParameterHints = function(t, n) {
-      var r = this._host.getScriptSnapshotByUrl(t).model;
-
-      var i = r.getOffsetFromPosition(n);
-
-      var o = r.getAssociatedResource().toExternal();
-
-      var s = this._languageService.getSignatureAtPosition(o, i);
-      if (!s) {
-        return null;
-      }
-      var a = {
-        currentSignature: Math.max(0, s.activeFormal),
-        currentParameter: Math.max(0, s.actual.currentParameter),
-        signatures: s.formal.map(function(t) {
-          return e.transformSignature(t);
-        })
-      };
-      return a;
-    };
-
-    e.prototype.getEmitOutput = function(e, t) {
-      var n = this._languageService.getEmitOutput(e.toExternal());
-
-      var r = n.outputFiles;
-      if (!r) {
-        return null;
-      }
-      for (var i = 0, s = r.length; s > i; i++)
-        if (o.endsWith(r[i].name, t)) {
-          return r[i].text;
-        }
-      return null;
-    };
-
-    e.prototype.findModuleReferences = function(e) {
-      var t = this;
-
-      var n = new Array;
-
-      var r = this._host.getScriptSnapshot(e.toExternal()).model;
-      f.collect(r.getValue()).forEach(function(o) {
-        if (o instanceof f.ImportReference) {
-          if (o.isRelative) {
-            n.push({
-              openInEditor: !0,
-              range: r.getRangeFromOffsetAndLength(o.offset, o.length),
-              url: i.join(i.dirname(e.toExternal()), o.path + ".ts")
-            });
-          } else {
-            n.push({
-              openInEditor: !0,
-              range: r.getRangeFromOffsetAndLength(o.offset, o.length),
-              url: i.join(t._compilationSettings.scope, o.path + ".ts")
+        if (parensDepth === 0 && ch === ")") {
+          if (currentArgumentName !== "") {
+            parsedArguments.push({
+              name: currentArgumentName,
+              type: currentArgumentType
             });
           }
+          break;
+        }
+        if (isInName) {
+          currentArgumentName += ch;
         } else {
-          if (o instanceof f.TripleSlashReference) {
-            n.push({
-              openInEditor: !0,
-              range: r.getRangeFromOffsetAndLength(o.offset, o.length),
-              url: i.join(i.dirname(e.toExternal()), o.path)
-            });
-          }
+          currentArgumentType += ch;
         }
-      });
-
-      return n;
-    };
-
-    e.prototype.isBaseLibModel = function(e) {
-      return e instanceof p.DefaultLibModel;
-    };
-
-    e.prototype.rangeFromMinAndLim = function(e, t, n) {
-      if ("undefined" == typeof n) {
-        n = !1;
       }
-      var r = this._host.getScriptSnapshotByUrl(t).model;
+      return {
+        arguments: parsedArguments,
+        flatArguments: signature.substr(0, i + 1),
+        flatReturnType: signature.substr(i + 5)
+      };
+    };
+    LanguageServiceAdapter.prototype.getParameterHints = function(resource, position) {
+      var model = this.resourceService.get(resource);
 
-      var i = e.minChar;
+      var offset = model.getOffsetFromPosition(position);
 
-      var o = Math.max(1, e.limChar - e.minChar);
-      if (n) {
-        var s = r.getPositionFromOffset(i);
+      var filename = model.getAssociatedResource().toExternal();
+
+      var info = this.languageService.getSignatureAtPosition(filename, offset);
+      if (!info) {
+        return null;
+      }
+
+      function transformParameter(parameter) {
         return {
-          startLineNumber: s.lineNumber,
-          startColumn: s.column,
-          endLineNumber: s.lineNumber,
-          endColumn: s.column
+          label: parameter.name,
+          documentation: parameter.docComment,
+          signatureLabelOffset: parameter.minChar,
+          signatureLabelEnd: parameter.limChar
         };
       }
-      return r.getRangeFromOffsetAndLength(i, o);
+
+      function transformSignature(signature) {
+        return {
+          label: signature.signatureInfo,
+          documentation: signature.docComment,
+          parameters: signature.parameters.map(function(parameter) {
+            return transformParameter(parameter);
+          })
+        };
+      }
+      var result = {
+        currentSignature: Math.max(0, info.activeFormal),
+        currentParameter: Math.max(0, info.actual.currentParameter),
+        signatures: info.formal.map(function(signature) {
+          return transformSignature(signature);
+        })
+      };
+      return result;
     };
+    LanguageServiceAdapter.prototype.getEmitOutput = function(resource, type) {
+      var output = this.languageService.getEmitOutput(resource.toExternal());
 
-    e.prototype.preview = function(e, t, n, r) {
-      if ("undefined" == typeof r) {
-        r = 200;
+      var files = output.outputFiles;
+      if (!files) {
+        return null;
       }
-      for (var i, o = this._languageService.getSyntaxTree(e.getAssociatedResource().toExternal()), s = o.sourceUnit()
-          .findToken(t); s && !i;) {
-        if (s.fullWidth() > r) {
-          i = s;
+      for (var i = 0, len = files.length; i < len; i++) {
+        if (strings.endsWith(files[i].name, type)) {
+          return files[i].text;
         }
-        s = s.parent();
       }
-      if (!i) {
-        i = o.sourceUnit().findToken(t).root();
+      return null;
+    };
+    LanguageServiceAdapter.prototype.isBaseLibModel = function(model) {
+      return model instanceof remoteModels.DefaultLibModel;
+    };
+    LanguageServiceAdapter.prototype.rangeFromMinAndLim = function(thing, model, empty) {
+      if (typeof empty === "undefined") {
+        empty = false;
       }
-      var a = e.getValue().substring(i.fullStart(), i.fullEnd());
+      var offset = thing.minChar;
+      var length = thing.limChar - thing.minChar;
+      length = Math.max(1, length);
+      var range = {};
+      range.startLineNumber = model.getLineNumberFromOffset(offset);
+      range.startColumn = 1 + offset - model.getLineStart(range.startLineNumber);
+      if (empty) {
+        range.endLineNumber = range.startLineNumber;
+        range.endColumn = range.startColumn;
+      } else {
+        range.endLineNumber = model.getLineNumberFromOffset(offset + length);
+        range.endColumn = 1 + offset + length - model.getLineStart(range.endLineNumber);
+      }
+      return range;
+    };
+    LanguageServiceAdapter.prototype.preview = function(model, offset, to, range) {
+      if (typeof range === "undefined") {
+        range = 200;
+      }
+      var tree = this.languageService.getSyntaxTree(model.getAssociatedResource().toExternal());
 
-      var c = new l.MirrorModel(0, a);
+      var token = tree.sourceUnit().findToken(offset);
 
-      var u = t - i.fullStart();
+      var scope;
+      while (token && !scope) {
+        if (token.fullWidth() > range) {
+          scope = token;
+        }
+        token = token.parent();
+      }
+      if (!scope) {
+        scope = tree.sourceUnit().findToken(offset).root();
+      }
+      var shortValue = model.getValue().substring(scope.start(), scope.end());
+      var shortModel = new MirrorModel.MirrorModel("__temp_model_", 0, shortValue);
+      var shortOffset = offset - scope.start();
 
-      var p = n - t;
+      var length = to - offset;
 
-      var h = c.getRangeFromOffsetAndLength(u, p);
-      c.dispose();
+      var startLineNumber = shortModel.getLineNumberFromOffset(shortOffset);
 
+      var startColumn = 1 + shortOffset - shortModel.getLineStart(startLineNumber);
+
+      var endLineNumber = shortModel.getLineNumberFromOffset(shortOffset + length);
+
+      var endColumn = 1 + (shortOffset + length) - shortModel.getLineStart(endLineNumber);
+      shortModel.dispose();
       return {
-        text: a,
-        range: h
+        text: shortValue,
+        range: {
+          startLineNumber: startLineNumber,
+          startColumn: startColumn,
+          endLineNumber: endLineNumber,
+          endColumn: endColumn
+        }
       };
     };
+    LanguageServiceAdapter.prototype.isSubRange = function(outer, inner) {
+      if (outer.startLineNumber > inner.startLineNumber || outer.endLineNumber < inner.endLineNumber) {
+        return false;
+      }
+      if (outer.startLineNumber === inner.startLineNumber) {
+        if (outer.startColumn > inner.startColumn) {
+          return false;
+        }
+      }
+      if (outer.endLineNumber === inner.endLineNumber) {
+        if (outer.endColumn < inner.endColumn) {
+          return false;
+        }
+      }
+      return true;
+    };
+    LanguageServiceAdapter.prototype.calculateStringDifference = function(first, second) {
+      var lengthDifference = Math.abs(first.length - second.length);
+      if (lengthDifference > 4) {
+        return 0;
+      }
+      var LCS = [];
+      var zeroArray = [];
+      var i;
 
-    e.FILTER = a.or(a.matchesPrefix, a.matchesContiguousSubString, a.matchesCamelCase);
-
-    return e;
+      var j;
+      for (i = 0; i < second.length + 1; ++i) {
+        zeroArray.push(0);
+      }
+      for (i = 0; i < first.length + 1; ++i) {
+        LCS.push(zeroArray);
+      }
+      for (i = 1; i < first.length + 1; ++i) {
+        for (j = 1; j < second.length + 1; ++j) {
+          if (first[i - 1] === second[j - 1]) {
+            LCS[i][j] = LCS[i - 1][j - 1] + 1;
+          } else {
+            LCS[i][j] = Math.max(LCS[i - 1][j], LCS[i][j - 1]);
+          }
+        }
+      }
+      return LCS[first.length][second.length] - Math.sqrt(lengthDifference);
+    };
+    LanguageServiceAdapter.FILTER = filters.or(filters.matchesPrefix, filters.matchesContiguousSubString, filters.matchesCamelCase);
+    return LanguageServiceAdapter;
   }();
-  t.LanguageServiceAdapter = g;
+  exports.LanguageServiceAdapter = LanguageServiceAdapter;
 });

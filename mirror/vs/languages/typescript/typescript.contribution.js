@@ -1,158 +1,58 @@
-define("vs/languages/typescript/typescript.contribution", ["require", "exports", "vs/nls!vs/editor/editor.main",
-  "vs/base/env", "vs/platform/platform", "vs/editor/modes/modesExtensions", "vs/editor/editorExtensions",
-  "./editor/workerStatusReporter", "vs/platform/configurationRegistry", "./typescript.configuration"
-], function(e, t, n, i, o, r, s, a, u, l) {
-  var c = o.Registry.as(r.Extensions.EditorModes);
-  c.registerMode(["text/typescript"], new o.DeferredDescriptor("vs/languages/typescript/typescript", "TypeScriptMode"));
-
-  if (i.enableNLSWarnings) {
-    c.registerWorkerParticipant("vs.languages.typescript", new o.DeferredDescriptor(
+define(["require", "exports", "vs/nls", "vs/platform/platform", "vs/editor/modes/modesExtensions",
+  "vs/editor/editorExtensions", "./editor/workerStatusReporter", "vs/platform/configurationRegistry", "vs/base/env"
+], function(require, exports, __nls__, __platform__, __modesExtensions__, __editorExtensions__,
+  __workerStatusReporter__, __ConfigurationRegistry__, __env__) {
+  "use strict";
+  var nls = __nls__;
+  var platform = __platform__;
+  var modesExtensions = __modesExtensions__;
+  var editorExtensions = __editorExtensions__;
+  var workerStatusReporter = __workerStatusReporter__;
+  var ConfigurationRegistry = __ConfigurationRegistry__;
+  var env = __env__;
+  var modesRegistry = platform.Registry.as(modesExtensions.Extensions.EditorModes);
+  modesRegistry.registerMode(["text/typescript"], new platform.DeferredDescriptor(
+    "vs/languages/typescript/typescript", "TypeScriptMode"));
+  if (env.enableNLSWarnings) {
+    modesRegistry.registerWorkerParticipant("vs.languages.typescript", new platform.DeferredDescriptor(
       "vs/languages/typescript/participants/nlsParticipant", "WorkerParticipant"));
   }
-
-  if (i.enableEditorLanguageServiceIndicator) {
-    o.Registry.as(s.Extensions.EditorContributions).registerEditorContribution(new o.BaseDescriptor(a.StatusPresenter));
+  if (env.enableEditorLanguageServiceIndicator) {
+    platform.Registry.as(editorExtensions.Extensions.EditorContributions).registerEditorContribution(new platform.BaseDescriptor(
+      workerStatusReporter.StatusPresenter));
   }
-  var d = o.Registry.as(u.Extensions.Configuration);
-  d.registerConfiguration({
-    id: r.LANGUAGE_CONFIGURATION + "/vs.languages.typescript",
-    type: "object",
-    title: n.localize("vs_languages_typescript_typescript.contribution", 0),
-    description: n.localize("vs_languages_typescript_typescript.contribution", 1),
-    properties: {
-      suggestSettings: {
-        type: "object",
-        description: n.localize("vs_languages_typescript_typescript.contribution", 2),
-        "default": l.defaultSuggestSettions,
-        properties: {
-          alwaysAllWords: {
-            type: "boolean",
-            "default": !1,
-            description: n.localize("vs_languages_typescript_typescript.contribution", 3)
-          },
-          useCodeSnippetsOnMethodSuggest: {
-            type: "boolean",
-            "default": !1,
-            description: n.localize("vs_languages_typescript_typescript.contribution", 4)
-          }
-        }
-      },
-      allowMultipleWorkers: {
-        type: "boolean",
-        description: n.localize("vs_languages_typescript_typescript.contribution", 5),
-        "default": !1
-      },
-      validationSettings: {
-        description: n.localize("vs_languages_typescript_typescript.contribution", 6),
-        "default": l.defaultValidationSettings,
-        type: ["object", "array"],
-        properties: {
-          scope: {
-            type: "string",
-            "default": "/",
-            description: n.localize("vs_languages_typescript_typescript.contribution", 7)
-          },
-          codeGenTarget: {
-            "enum": ["ES5", "ES3"],
-            "default": "ES5",
-            description: n.localize("vs_languages_typescript_typescript.contribution", 8)
-          },
-          moduleGenTarget: {
-            "enum": ["commonjs", "amd", ""],
-            "default": "",
-            description: n.localize("vs_languages_typescript_typescript.contribution", 9)
-          },
-          noImplicitAny: {
-            type: "boolean",
-            "default": !1,
-            description: n.localize("vs_languages_typescript_typescript.contribution", 10)
-          },
-          noLib: {
-            type: "boolean",
-            "default": !1,
-            description: n.localize("vs_languages_typescript_typescript.contribution", 11)
-          },
-          lint: {
-            type: "object",
-            description: n.localize("vs_languages_typescript_typescript.contribution", 12),
-            properties: {
-              curlyBracketsMustNotBeOmitted: {
-                "enum": ["ignore", "warning", "error"],
-                "default": "warning",
-                description: n.localize("vs_languages_typescript_typescript.contribution", 13)
-              },
-              emptyBlocksWithoutComment: {
-                "enum": ["ignore", "warning", "error"],
-                "default": "warning",
-                description: n.localize("vs_languages_typescript_typescript.contribution", 14)
-              },
-              comparisonOperatorsNotStrict: {
-                "enum": ["ignore", "warning", "error"],
-                "default": "warning",
-                description: n.localize("vs_languages_typescript_typescript.contribution", 15)
-              },
-              missingSemicolon: {
-                "enum": ["ignore", "warning", "error"],
-                "default": "warning",
-                description: n.localize("vs_languages_typescript_typescript.contribution", 16)
-              },
-              reservedKeywords: {
-                "enum": ["ignore", "warning", "error"],
-                "default": "error",
-                description: n.localize("vs_languages_typescript_typescript.contribution", 17)
-              },
-              typeScriptSpecifics: {
-                "enum": ["ignore", "warning", "error"],
-                "default": "error",
-                description: n.localize("vs_languages_typescript_typescript.contribution", 18)
-              },
-              unknownTypeOfResults: {
-                "enum": ["ignore", "warning", "error"],
-                "default": "warning",
-                description: n.localize("vs_languages_typescript_typescript.contribution", 19)
-              },
-              semicolonsInsteadOfBlocks: {
-                "enum": ["ignore", "warning", "error"],
-                "default": "warning",
-                description: n.localize("vs_languages_typescript_typescript.contribution", 20)
-              },
-              functionsInsideLoops: {
-                "enum": ["ignore", "warning", "error"],
-                "default": "warning",
-                description: n.localize("vs_languages_typescript_typescript.contribution", 21)
-              },
-              newOnLowercaseFunctions: {
-                "enum": ["ignore", "warning", "error"],
-                "default": "warning",
-                description: n.localize("vs_languages_typescript_typescript.contribution", 22)
-              },
-              tripleSlashReferenceAlike: {
-                "enum": ["ignore", "warning", "error"],
-                "default": "warning",
-                description: n.localize("vs_languages_typescript_typescript.contribution", 23)
-              },
-              unusedVariables: {
-                "enum": ["ignore", "warning", "error"],
-                "default": "warning",
-                description: n.localize("vs_languages_typescript_typescript.contribution", 24)
-              },
-              unusedFunctions: {
-                "enum": ["ignore", "warning", "error"],
-                "default": "warning",
-                description: n.localize("vs_languages_typescript_typescript.contribution", 25)
-              },
-              unusedMembers: {
-                "enum": ["ignore", "warning", "error"],
-                "default": "warning",
-                description: n.localize("vs_languages_typescript_typescript.contribution", 26)
-              },
-              functionsWithoutReturnType: {
-                "enum": ["ignore", "warning", "error"],
-                "default": "warning",
-                description: n.localize("vs_languages_typescript_typescript.contribution", 27)
-              }
-            }
-          }
+  if (false) {
+    modesRegistry.registerWorkerParticipant("vs.languages.typescript", new platform.DeferredDescriptor(
+      "vs/languages/typescript/participants/symbolUsageParticipant", "WorkerParticipant"));
+  }
+  var configurationRegistry = platform.Registry.as(ConfigurationRegistry.Extensions.Configuration);
+  configurationRegistry.registerConfiguration({
+    path: [modesExtensions.LANGUAGE_CONFIGURATION, "vs.languages.typescript"],
+    configuration: {
+      id: "typeScriptConfiguration",
+      type: "object",
+      title: nls.localize("tsConfigurationTitle", "TypeScript configuration"),
+      description: nls.localize("tsConfigurationDescription", "This is used to configure the TypeScript language."),
+      properties: {
+        useCodeSnippetsOnMethodSuggest: {
+          type: "boolean",
+          "default": "true",
+          description: nls.localize("useCodeSnippetsOnMethodSuggest",
+            "Controls if completing a method will automatically insert parameters")
+        },
+        showTypeScriptWarnings: {
+          type: "boolean",
+          "default": "true",
+          description: nls.localize("showTypeScriptWarnings", "Controls if TypeScript warnings should be displayed")
+        },
+        completeFunctionsAsInvocation: {
+          type: "boolean",
+          description: nls.localize("completeFunctionsAsInvocation",
+            "Controls if completions of functions should automatically add parentheses ")
+        },
+        useResidentFlagAggressively: {
+          type: "boolean",
+          "default": "true"
         }
       }
     }

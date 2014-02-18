@@ -1,80 +1,88 @@
-define("vs/base/ui/widgets/highlightedLabel", ["require", "exports", "vs/base/dom/dom", "vs/base/objects",
-  "vs/css!./highlightedlabel"
-], function(e, t, n, i) {
-  var o = function() {
-    function e(e, t, n) {
-      if ("undefined" == typeof t) {
-        t = "";
+define(["require", "exports", "vs/base/dom/dom", "vs/base/objects", "vs/css!./highlightedlabel"], function(a, b, c, d) {
+  var e = c;
+
+  var f = d;
+
+  var g = function() {
+    function a(a, b, c) {
+      if (typeof b == "undefined") {
+        b = "";
       }
 
-      if ("undefined" == typeof n) {
-        n = [];
+      if (typeof c == "undefined") {
+        c = [];
       }
 
       this.domNode = document.createElement("span");
 
       this.domNode.className = "monaco-highlighted-label";
 
-      e.getHTMLElement().appendChild(this.domNode);
+      a.getHTMLElement().appendChild(this.domNode);
 
-      this.text = t;
+      this.text = b;
 
-      this.highlights = n;
+      this.highlights = c;
 
       this.renderedOnce = !1;
     }
-    e.prototype.destroy = function() {
+    a.prototype.destroy = function() {
       this.text = null;
 
       this.highlights = null;
     };
 
-    e.prototype.getHTMLElement = function() {
+    a.prototype.getHTMLElement = function() {
       return this.domNode;
     };
 
-    e.prototype.setValue = function(e, t) {
-      if ("undefined" == typeof e) {
-        e = "";
+    a.prototype.setValue = function(a, b) {
+      if (typeof a == "undefined") {
+        a = "";
       }
 
-      if ("undefined" == typeof t) {
-        t = [];
+      if (typeof b == "undefined") {
+        b = [];
       }
+      if (this.renderedOnce && this.text === a && f.equals(this.highlights, b)) return;
+      this.text = a;
 
-      if (!(this.renderedOnce && this.text === e && i.equals(this.highlights, t))) {
-        this.text = e;
-        this.highlights = t;
-        this.render();
-        this.renderedOnce = !0;
-      }
+      this.highlights = b;
+
+      this.render();
+
+      this.renderedOnce = !0;
     };
 
-    e.prototype.render = function() {
-      n.clearNode(this.domNode);
-      for (var e, t = [], i = 0, o = 0; o < this.highlights.length; o++) {
-        e = this.highlights[o];
-        if (i < e.start) {
-          t.push("<span>");
-          t.push(this.text.substring(i, e.start));
-          t.push("</span>");
-          i = e.end;
+    a.prototype.render = function() {
+      e.clearNode(this.domNode);
+      var a = [];
+
+      var b;
+
+      var c = 0;
+      for (var d = 0; d < this.highlights.length; d++) {
+        b = this.highlights[d];
+        if (c < b.start) {
+          a.push("<span>");
+          a.push(this.text.substring(c, b.start));
+          a.push("</span>");
+          c = b.end;
         }
-        t.push('<span class="highlight">');
-        t.push(this.text.substring(e.start, e.end));
-        t.push("</span>");
-        i = e.end;
+        a.push('<span class="highlight">');
+        a.push(this.text.substring(b.start, b.end));
+        a.push("</span>");
+        c = b.end;
       }
-      if (i < this.text.length) {
-        t.push("<span>");
-        t.push(this.text.substring(i));
-        t.push("</span>");
+      if (c < this.text.length) {
+        a.push("<span>");
+        a.push(this.text.substring(c));
+        a.push("</span>");
       }
 
-      this.domNode.innerHTML = t.join("");
+      this.domNode.innerHTML = a.join("");
     };
 
-    return e;
+    return a;
   }();
-  t.HighlightedLabel = o;
+  b.HighlightedLabel = g;
 });

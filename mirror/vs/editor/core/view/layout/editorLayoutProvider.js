@@ -1,170 +1,166 @@
-define("vs/editor/core/view/layout/editorLayoutProvider", ["require", "exports"], function(e, t) {
-  var n = function() {
-    function e(e, t, n, i, o, r, s, a) {
+define(["require", "exports"], function(a, b) {
+  var c = function() {
+    function a(a, b, c, d, e, f, g) {
       this.verticalScrollbarWidth = 10;
 
       this.horizontalScrollbarHeight = 10;
 
-      this.outerWidth = e;
+      this.outerWidth = a;
 
-      this.outerHeight = t;
+      this.outerHeight = b;
 
-      this.lineHeight = n;
+      this.lineHeight = c;
 
-      this.showGlyphMargin = i;
+      this.showGlyphMargin = d;
 
       this.glyphMarginWidth = this.computeGlyphMarginWidth();
 
-      this.showLineNumbers = o;
+      this.showLineNumbers = e;
 
-      this.lineNumbersMinChars = r;
-
-      this.lineDecorationsWidth = s;
+      this.lineNumbersMinChars = f;
 
       this.lineCount = 0;
 
-      this.maxDigitWidth = a;
+      this.maxDigitWidth = g;
 
       this.lineNumbersWidth = this.computeLineNumbersWidth();
 
       this.layoutInfo = this.layout();
     }
-    e.prototype.setDimensions = function(e, t) {
-      return this.outerWidth !== e || this.outerHeight !== t ? (this.outerWidth = e, this.outerHeight = t, this.layoutInfo =
+    a.prototype.setDimensions = function(a, b) {
+      return this.outerWidth !== a || this.outerHeight !== b ? (this.outerWidth = a, this.outerHeight = b, this.layoutInfo =
         this.layout(), !0) : !1;
     };
 
-    e.prototype.setScrollbarSize = function(e, t) {
-      return this.verticalScrollbarWidth !== e || this.horizontalScrollbarHeight !== t ? (this.verticalScrollbarWidth =
-        e, this.horizontalScrollbarHeight = t, this.layoutInfo = this.layout(), !0) : !1;
+    a.prototype.setScrollbarSize = function(a, b) {
+      return this.verticalScrollbarWidth !== a || this.horizontalScrollbarHeight !== b ? (this.verticalScrollbarWidth =
+        a, this.horizontalScrollbarHeight = b, this.layoutInfo = this.layout(), !0) : !1;
     };
 
-    e.prototype.setGlyphMargin = function(e) {
-      this.showGlyphMargin = e;
+    a.prototype.setGlyphMargin = function(a) {
+      this.showGlyphMargin = a;
 
       return this.setGlyphMarginWidth(this.computeGlyphMarginWidth());
     };
 
-    e.prototype.setLineHeight = function(e) {
-      this.lineHeight = e;
+    a.prototype.setLineHeight = function(a) {
+      this.lineHeight = a;
 
       return this.setGlyphMarginWidth(this.computeGlyphMarginWidth());
     };
 
-    e.prototype.computeGlyphMarginWidth = function() {
+    a.prototype.computeGlyphMarginWidth = function() {
       return this.showGlyphMargin ? this.lineHeight : 0;
     };
 
-    e.prototype.setGlyphMarginWidth = function(e) {
-      return this.glyphMarginWidth !== e ? (this.glyphMarginWidth = e, this.layoutInfo = this.layout(), !0) : !1;
+    a.prototype.setGlyphMarginWidth = function(a) {
+      return this.glyphMarginWidth !== a ? (this.glyphMarginWidth = a, this.layoutInfo = this.layout(), !0) : !1;
     };
 
-    e.prototype.setLineDecorationsWidth = function(e) {
-      return this.lineDecorationsWidth !== e ? (this.lineDecorationsWidth = e, this.layoutInfo = this.layout(), !0) : !
-        1;
-    };
-
-    e.prototype.setShowLineNumbers = function(e) {
-      this.showLineNumbers = e;
+    a.prototype.setShowLineNumbers = function(a) {
+      this.showLineNumbers = a;
 
       return this.setLineNumbersWidth(this.computeLineNumbersWidth());
     };
 
-    e.prototype.setLineNumbersMinChars = function(e) {
-      this.lineNumbersMinChars = e;
+    a.prototype.setLineNumbersMinChars = function(a) {
+      this.lineNumbersMinChars = a;
 
       return this.setLineNumbersWidth(this.computeLineNumbersWidth());
     };
 
-    e.prototype.setLineCount = function(e) {
-      this.lineCount = e;
+    a.prototype.setLineCount = function(a) {
+      this.lineCount = a;
 
       return this.setLineNumbersWidth(this.computeLineNumbersWidth());
     };
 
-    e.prototype.setMaxDigitWidth = function(e) {
-      this.maxDigitWidth = e;
+    a.prototype.setMaxDigitWidth = function(a) {
+      this.maxDigitWidth = a;
 
       return this.setLineNumbersWidth(this.computeLineNumbersWidth());
     };
 
-    e.prototype.setLineNumbersWidth = function(e) {
-      return this.lineNumbersWidth !== e ? (this.lineNumbersWidth = e, this.layoutInfo = this.layout(), !0) : !1;
+    a.prototype.setLineNumbersWidth = function(a) {
+      return this.lineNumbersWidth !== a ? (this.lineNumbersWidth = a, this.layoutInfo = this.layout(), !0) : !1;
     };
 
-    e.prototype.getLayoutInfo = function() {
+    a.prototype.getLayoutInfo = function() {
       return this.layoutInfo;
     };
 
-    e.prototype.layout = function() {
-      var e = this.outerWidth;
+    a.prototype.layout = function() {
+      var b = this.outerWidth;
 
-      var t = this.outerHeight;
+      var c = this.outerHeight;
 
-      var n = this.lineNumbersWidth;
+      var d = this.lineNumbersWidth;
 
-      var i = this.glyphMarginWidth;
+      var e = this.glyphMarginWidth;
 
-      var o = t;
+      var f = c;
 
-      var r = t;
+      var g = c;
 
-      var s = this.lineDecorationsWidth;
+      var h = a.DECORATIONS_WIDTH;
 
-      var a = t;
+      var i = c;
 
-      var u = e - i - n - s;
+      var j = b - e - d - h;
 
-      var l = t;
+      var k = c;
 
-      var c = this.verticalScrollbarWidth;
+      var l = this.verticalScrollbarWidth;
 
-      var d = this.horizontalScrollbarHeight;
+      var m = this.horizontalScrollbarHeight;
 
-      var h = 0;
+      var n = 0;
 
-      var p = h + i;
+      var o = n + e;
 
-      var f = p + n;
+      var p = o + d;
 
-      var g = f + s;
+      var q = p + h;
       return {
-        width: e,
-        height: t,
-        glyphMarginLeft: h,
-        glyphMarginWidth: i,
-        glyphMarginHeight: r,
-        lineNumbersLeft: p,
-        lineNumbersWidth: n,
-        lineNumbersHeight: o,
-        decorationsLeft: f,
-        decorationsWidth: s,
-        decorationsHeight: a,
-        contentLeft: g,
-        contentWidth: u,
-        contentHeight: l,
-        verticalScrollbarWidth: c,
-        horizontalScrollbarHeight: d
+        width: b,
+        height: c,
+        glyphMarginLeft: n,
+        glyphMarginWidth: e,
+        glyphMarginHeight: g,
+        lineNumbersLeft: o,
+        lineNumbersWidth: d,
+        lineNumbersHeight: f,
+        decorationsLeft: p,
+        decorationsWidth: h,
+        decorationsHeight: i,
+        contentLeft: q,
+        contentWidth: j,
+        contentHeight: k,
+        verticalScrollbarWidth: l,
+        horizontalScrollbarHeight: m
       };
     };
 
-    e.prototype.digitCount = function(e) {
-      for (var t = 0; e;) {
-        e = Math.floor(e / 10);
-        t++;
+    a.prototype.digitCount = function(a) {
+      var b = 0;
+      while (a) {
+        a = Math.floor(a / 10);
+        b++;
       }
-      return t ? t : 1;
+      return b ? b : 1;
     };
 
-    e.prototype.computeLineNumbersWidth = function() {
+    a.prototype.computeLineNumbersWidth = function() {
       if (this.showLineNumbers) {
-        var e = Math.max(this.digitCount(this.lineCount), this.lineNumbersMinChars);
-        return e * this.maxDigitWidth;
+        var a = Math.max(this.digitCount(this.lineCount), this.lineNumbersMinChars);
+        return a * this.maxDigitWidth;
       }
       return 0;
     };
 
-    return e;
+    a.DECORATIONS_WIDTH = 10;
+
+    return a;
   }();
-  t.EditorLayoutProvider = n;
+  b.EditorLayoutProvider = c;
 });

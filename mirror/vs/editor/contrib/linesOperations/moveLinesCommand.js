@@ -1,61 +1,61 @@
-define("vs/editor/contrib/linesOperations/moveLinesCommand", ["require", "exports", "vs/editor/core/range",
-  "vs/editor/core/selection"
-], function(e, t, n, i) {
-  var o = function() {
-    function e(e, t) {
-      this._selection = e;
+define(["require", "exports", "vs/editor/core/range", "vs/editor/core/selection"], function(a, b, c, d) {
+  var e = c;
 
-      this._isMovingDown = t;
+  var f = d;
+
+  var g = function() {
+    function a(a, b) {
+      this._selection = a;
+
+      this._isMovingDown = b;
     }
-    e.prototype.getEditOperations = function(e, t) {
-      var o = e.getLineCount();
-      if (!(this._isMovingDown && this._selection.endLineNumber === o || !this._isMovingDown && 1 === this._selection
-        .startLineNumber)) {
-        this._moveEndPositionDown = !1;
-        var r = this._selection;
-        if (r.startLineNumber < r.endLineNumber && 1 === r.endColumn && (this._moveEndPositionDown = !0, r = r.setEndPosition(
-            r.endLineNumber - 1, e.getLineMaxColumn(r.endLineNumber - 1))), r.startLineNumber === r.endLineNumber &&
-          1 === e.getLineMaxColumn(r.startLineNumber)) {
-          var s = r.startLineNumber;
-
-          var a = this._isMovingDown ? s + 1 : s - 1;
-          if (1 === e.getLineMaxColumn(a)) {
-            t.addEditOperation(new n.Range(1, 1, 1, 1), null);
-          } else {
-            t.addEditOperation(new n.Range(s, 1, s, 1), e.getLineContent(a));
-            t.addEditOperation(new n.Range(a, 1, a, e.getLineMaxColumn(a)), null);
-          }
-
-          r = new i.Selection(a, 1, a, 1);
-        } else {
-          var u;
-
-          var l;
-          if (this._isMovingDown) {
-            u = r.endLineNumber + 1;
-            l = e.getLineContent(u);
-            t.addEditOperation(new n.Range(u - 1, e.getLineMaxColumn(u - 1), u, e.getLineMaxColumn(u)), null);
-            t.addEditOperation(new n.Range(r.startLineNumber, 1, r.startLineNumber, 1), l + "\n");
-          } else {
-            u = r.startLineNumber - 1;
-            l = e.getLineContent(u);
-            t.addEditOperation(new n.Range(u, 1, u + 1, 1), null);
-            t.addEditOperation(new n.Range(r.endLineNumber, e.getLineMaxColumn(r.endLineNumber), r.endLineNumber, e.getLineMaxColumn(
-              r.endLineNumber)), "\n" + l);
-          }
-        }
-        this._selectionId = t.trackSelection(r);
+    a.prototype.getEditOperations = function(a, b) {
+      var c = a.getLineCount();
+      if (this._isMovingDown && this._selection.endLineNumber === c) return;
+      if (!this._isMovingDown && this._selection.startLineNumber === 1) return;
+      this._moveEndPositionDown = !1;
+      var d = this._selection;
+      if (d.startLineNumber < d.endLineNumber && d.endColumn === 1) {
+        this._moveEndPositionDown = !0;
+        d = d.setEndPosition(d.endLineNumber - 1, a.getLineMaxColumn(d.endLineNumber - 1));
       }
+      if (d.startLineNumber === d.endLineNumber && a.getLineMaxColumn(d.startLineNumber) === 1) {
+        var g = d.startLineNumber;
+
+        var h = this._isMovingDown ? g + 1 : g - 1;
+        b.addEditOperation(new e.Range(g, 1, g, 1), a.getLineContent(h));
+
+        b.addEditOperation(new e.Range(h, 1, h, a.getLineMaxColumn(h)), null);
+
+        d = new f.Selection(h, 1, h, 1);
+      } else {
+        var i;
+
+        var j;
+        if (this._isMovingDown) {
+          i = d.endLineNumber + 1;
+          j = a.getLineContent(i);
+          b.addEditOperation(new e.Range(i - 1, a.getLineMaxColumn(i - 1), i, a.getLineMaxColumn(i)), null);
+          b.addEditOperation(new e.Range(d.startLineNumber, 1, d.startLineNumber, 1), j + "\n");
+        } else {
+          i = d.startLineNumber - 1;
+          j = a.getLineContent(i);
+          b.addEditOperation(new e.Range(i, 1, i + 1, 1), null);
+          b.addEditOperation(new e.Range(d.endLineNumber, a.getLineMaxColumn(d.endLineNumber), d.endLineNumber, a.getLineMaxColumn(
+            d.endLineNumber)), "\n" + j);
+        }
+      }
+      this._selectionId = b.trackSelection(d);
     };
 
-    e.prototype.computeCursorState = function(e, t) {
-      var n = t.getTrackedSelection(this._selectionId);
-      this._moveEndPositionDown && (n = n.setEndPosition(n.endLineNumber + 1, 1));
+    a.prototype.computeCursorState = function(a, b) {
+      var c = b.getTrackedSelection(this._selectionId);
+      this._moveEndPositionDown && (c = c.setEndPosition(c.endLineNumber + 1, 1));
 
-      return n;
+      return c;
     };
 
-    return e;
+    return a;
   }();
-  t.MoveLinesCommand = o;
+  b.MoveLinesCommand = g;
 });

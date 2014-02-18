@@ -1,29 +1,70 @@
-define("vs/languages/typescript/resources/remoteModels", ["require", "exports", "vs/editor/core/model/mirrorModel"],
-  function(e, t, n) {
-    var r = function(e) {
-      function t(n, r) {
-        e.call(this, [], 1, t.normalize(r), n);
+var __extends = this.__extends || function(d, b) {
+    for (var p in b)
+      if (b.hasOwnProperty(p)) {
+        d[p] = b[p];
       }
-      __extends(t, e);
 
-      t.normalize = function(e) {
-        e.length > 0 && e.charCodeAt(0) === t._bom && (e = e.substring(1));
+    function __() {
+      this.constructor = d;
+    }
+    __.prototype = b.prototype;
+    d.prototype = new __;
+  };
 
-        return e.replace(/\r\n/g, "\n");
-      };
+define(["require", "exports", "vs/base/network", "vs/editor/core/model/mirrorModel"], function(require, exports,
+  __network__, __mirrorModel__) {
+  "use strict";
+  var network = __network__;
+  var mirrorModel = __mirrorModel__;
+  var RemoteModel = function(_super) {
+    __extends(RemoteModel, _super);
 
-      t._bom = 65279;
-
-      return t;
-    }(n.AbstractMirrorModel);
-    t.RemoteModel = r;
-    var i = function(e) {
-      function t(t, n) {
-        e.call(this, t, n);
+    function RemoteModel(url, content, isGeneratedDFile) {
+      if (typeof isGeneratedDFile === "undefined") {
+        isGeneratedDFile = false;
       }
-      __extends(t, e);
+      _super.call(this, url.toExternal(), isGeneratedDFile ? -1 : 1, RemoteModel.normalize(content), url);
+      if (isGeneratedDFile) {
+        var path = url.toExternal();
+        this.actualResource = new network.URL(path.substring(0, path.length - 5) + ".ts");
+      }
+    }
+    RemoteModel.normalize = function(value) {
+      if (value.length > 0 && value.charCodeAt(0) === RemoteModel._bom) {
+        value = value.substring(1);
+      }
+      return value.replace(/\r\n/g, "\n");
+    };
+    RemoteModel.prototype.isGenerated = function() {
+      return !!this.actualResource;
+    };
+    RemoteModel.prototype.getActualResource = function() {
+      if (!this.actualResource) {
+        return this.getAssociatedResource();
+      } else {
+        return this.actualResource;
+      }
+    };
+    RemoteModel._bom = 65279;
+    return RemoteModel;
+  }(mirrorModel.MirrorModel);
+  exports.RemoteModel = RemoteModel;
+  var DefaultLibModel = function(_super) {
+    __extends(DefaultLibModel, _super);
 
-      return t;
-    }(r);
-    t.DefaultLibModel = i;
-  });
+    function DefaultLibModel(url, content) {
+      _super.call(this, url, content, false);
+    }
+    return DefaultLibModel;
+  }(RemoteModel);
+  exports.DefaultLibModel = DefaultLibModel;
+  var AllReferences = function(_super) {
+    __extends(AllReferences, _super);
+
+    function AllReferences(url, content) {
+      _super.call(this, url.toExternal(), -1, content, url);
+    }
+    return AllReferences;
+  }(mirrorModel.MirrorModel);
+  exports.AllReferences = AllReferences;
+});

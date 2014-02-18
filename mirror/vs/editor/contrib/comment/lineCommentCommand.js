@@ -1,108 +1,139 @@
-define("vs/editor/contrib/comment/lineCommentCommand", ["require", "exports",
-  "vs/editor/contrib/comment/blockCommentCommand", "vs/base/strings", "vs/editor/core/range"
-], function(e, t, n, i, o) {
-  var r = function(e) {
-    function t(t) {
-      e.call(this, t);
+var __extends = this.__extends || function(a, b) {
+    function d() {
+      this.constructor = a;
+    }
+    for (var c in b) {
+      if (b.hasOwnProperty(c)) {
+        a[c] = b[c];
+      }
+    }
+    d.prototype = b.prototype;
+
+    a.prototype = new d;
+  };
+
+define(["require", "exports", "vs/editor/contrib/comment/blockCommentCommand", "vs/base/strings",
+  "vs/editor/core/range"
+], function(a, b, c, d, e) {
+  var f = c;
+
+  var g = d;
+
+  var h = e;
+
+  var i = function(a) {
+    function b(b) {
+      a.call(this, b);
 
       this._hasDelegatedToParent = !1;
     }
-    __extends(t, e);
+    __extends(b, a);
 
-    t.prototype._hasLineCommentTokensSupportForLines = function(e, t, n) {
-      for (var i, o, r = t; n >= r; r++) {
-        if (i = e.getModeAtPosition(t, 1).commentsSupport, !i) {
+    b.prototype._hasLineCommentTokensSupportForLines = function(a, b, c) {
+      var d;
+
+      var e;
+      for (var f = b; f <= c; f++) {
+        d = a.getModeAtPosition(b, 1).commentsSupport;
+        if (!d) {
           return !1;
         }
-        if (o = i.getCommentsConfiguration(), !o || !o.lineCommentTokens || 0 === o.lineCommentTokens.length) {
+        e = d.getCommentsConfiguration();
+        if (!e || !e.lineCommentTokens || e.lineCommentTokens.length === 0) {
           return !1;
         }
       }
       return !0;
     };
 
-    t.prototype.getEditOperations = function(t, n) {
-      var r = this._selection;
+    b.prototype.getEditOperations = function(b, c) {
+      var d = this._selection;
       this._moveEndPositionDown = !1;
 
-      if (r.startLineNumber < r.endLineNumber && 1 === r.endColumn) {
+      if (d.startLineNumber < d.endLineNumber && d.endColumn === 1) {
         this._moveEndPositionDown = !0;
-        r = r.setEndPosition(r.endLineNumber - 1, t.getLineMaxColumn(r.endLineNumber - 1));
+        d = d.setEndPosition(d.endLineNumber - 1, b.getLineMaxColumn(d.endLineNumber - 1));
       }
-      var s = t.getModeAtPosition(r.startLineNumber, r.startColumn).commentsSupport;
-      if (s) {
-        if (!this._hasLineCommentTokensSupportForLines(t, r.startLineNumber, r.endLineNumber)) {
-          var a = s.getCommentsConfiguration();
-          if (!a || !a.blockCommentStartToken || !a.blockCommentEndToken) return;
-          var u = a.blockCommentStartToken;
+      var e = b.getModeAtPosition(d.startLineNumber, d.startColumn).commentsSupport;
+      if (!e) return;
+      if (!this._hasLineCommentTokensSupportForLines(b, d.startLineNumber, d.endLineNumber)) {
+        var f = e.getCommentsConfiguration();
+        if (!f || !f.blockCommentStartToken || !f.blockCommentEndToken) return;
+        var i = f.blockCommentStartToken;
 
-          var l = u.length;
+        var j = i.length;
 
-          var c = a.blockCommentEndToken;
+        var k = f.blockCommentEndToken;
 
-          var d = (c.length, t.getLineContent(r.startLineNumber).lastIndexOf(u, r.startColumn - 1));
+        var l = k.length;
 
-          var h = t.getLineContent(r.endLineNumber).indexOf(c, r.endColumn - 1); - 1 !== d && -1 !== h ? (r.startColumn =
-            d + l + 1, r.endColumn = h + 1) : (r.startColumn = 1, r.endColumn = t.getLineMaxColumn(r.endLineNumber));
+        var m = b.getLineContent(d.startLineNumber).lastIndexOf(i, d.startColumn - 1);
 
-          this._hasDelegatedToParent = !0;
-
-          e.prototype._createOperationsForBlockComment.call(this, r, a, t, n);
-
-          return void 0;
+        var n = b.getLineContent(d.endLineNumber).indexOf(k, d.endColumn - 1);
+        if (m !== -1 && n !== -1) {
+          d.startColumn = m + j + 1;
+          d.endColumn = n + 1;
+        } else {
+          d.startColumn = 1;
+          d.endColumn = b.getLineMaxColumn(d.endLineNumber);
         }
-        var p;
 
-        var f;
+        this._hasDelegatedToParent = !0;
 
-        var g;
+        a.prototype._createOperationsForBlockComment.call(this, d, f, b, c);
+        return;
+      }
+      var o = !0;
 
-        var m;
+      var p;
 
-        var v = !0;
+      var q = [];
 
-        var y = [];
+      var r = [];
 
-        var _ = [];
-        for (m = r.startLineNumber; m <= r.endLineNumber; m++) {
-          g = t.getModeAtPosition(m, 1).commentsSupport.getCommentsConfiguration().lineCommentTokens[0];
-          _[m - r.startLineNumber] = g;
-          if (v) {
-            p = t.getLineContent(m);
-            f = i.firstNonWhitespaceIndex(p);
-            if (-1 === f) {
-              v = !1;
-            } else {
-              if (!this._haystackHasNeedleAtOffset(p, g, f)) {
-                v = !1;
-              }
+      var s;
+
+      var t;
+
+      var u;
+      for (u = d.startLineNumber; u <= d.endLineNumber; u++) {
+        t = b.getModeAtPosition(u, 1).commentsSupport.getCommentsConfiguration().lineCommentTokens[0];
+        r[u - d.startLineNumber] = t;
+        if (o) {
+          p = b.getLineContent(u);
+          s = g.firstNonWhitespaceIndex(p);
+          if (s === -1) {
+            o = !1;
+          } else {
+            if (!this._haystackHasNeedleAtOffset(p, t, s)) {
+              o = !1;
             }
-            y[m - r.startLineNumber] = f;
           }
+          q[u - d.startLineNumber] = s;
         }
-        if (v)
-          for (m = r.startLineNumber; m <= r.endLineNumber; m++) {
-            n.addEditOperation(new o.Range(m, y[m - r.startLineNumber] + 1, m, y[m - r.startLineNumber] + 1 + _[m - r
-              .startLineNumber].length), null);
-          } else
-            for (m = r.startLineNumber; m <= r.endLineNumber; m++) {
-              n.addEditOperation(new o.Range(m, 1, m, 1), _[m - r.startLineNumber]);
-            }
-        this._selectionId = n.trackSelection(r);
       }
+      if (o)
+        for (u = d.startLineNumber; u <= d.endLineNumber; u++) {
+          c.addEditOperation(new h.Range(u, q[u - d.startLineNumber] + 1, u, q[u - d.startLineNumber] + 1 + r[u - d.startLineNumber]
+            .length), null);
+        } else
+          for (u = d.startLineNumber; u <= d.endLineNumber; u++) {
+            c.addEditOperation(new h.Range(u, 1, u, 1), r[u - d.startLineNumber]);
+          }
+      this._selectionId = c.trackSelection(d);
     };
 
-    t.prototype.computeCursorState = function(t, n) {
+    b.prototype.computeCursorState = function(b, c) {
       if (this._hasDelegatedToParent) {
-        return e.prototype.computeCursorState.call(this, t, n);
+        return a.prototype.computeCursorState.call(this, b, c);
       }
-      var i = n.getTrackedSelection(this._selectionId);
-      this._moveEndPositionDown && (i = i.setEndPosition(i.endLineNumber + 1, 1));
+      var d = c.getTrackedSelection(this._selectionId);
+      this._moveEndPositionDown && (d = d.setEndPosition(d.endLineNumber + 1, 1));
 
-      return i;
+      return d;
     };
 
-    return t;
-  }(n.BlockCommentCommand);
-  t.LineCommentCommand = r;
+    return b;
+  }(f.BlockCommentCommand);
+  b.LineCommentCommand = i;
 });

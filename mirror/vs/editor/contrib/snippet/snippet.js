@@ -1,9 +1,18 @@
-define("vs/editor/contrib/snippet/snippet", ["require", "exports", "vs/base/collections", "vs/base/strings",
-  "vs/editor/core/range", "vs/editor/core/constants", "vs/editor/core/command/replaceCommand",
-  "vs/editor/core/selection", "vs/editor/editor", "vs/css!./snippet"
-], function(e, t, n, i, o, r, s, a) {
-  var u = function() {
-    function e(e) {
+define(["require", "exports", "vs/base/strings", "vs/editor/core/range", "vs/editor/core/constants",
+  "vs/editor/core/command/replaceCommand", "vs/editor/core/selection", "vs/css!./snippet"
+], function(a, b, c, d, e, f, g) {
+  var h = c;
+
+  var i = d;
+
+  var j = e;
+
+  var k = f;
+
+  var l = g;
+
+  var m = function() {
+    function a(a) {
       this.lines = [];
 
       this.placeHolders = [];
@@ -12,175 +21,190 @@ define("vs/editor/contrib/snippet/snippet", ["require", "exports", "vs/base/coll
 
       this.finishPlaceHolderIndex = -1;
 
-      this.parseTemplate(e);
+      this.parseTemplate(a);
     }
-    e.prototype.parseTemplate = function(e) {
-      var t;
-
-      var i;
-
-      var r;
-
-      var s;
-
-      var a = {};
-
-      var u = e.split("\n");
-      for (t = 0, i = u.length; i > t; t++) {
-        var l = this.parseLine(u[t]);
-        for (r = 0, s = l.placeHolders.length; s > r; r++) {
-          var c;
-
-          var d = l.placeHolders[r];
-
-          var h = new o.Range(t + 1, d.startColumn, t + 1, d.endColumn);
-          if (n.contains(a, d.value)) {
-            c = a[d.value];
-          } else {
-            c = {
-              value: d.value,
-              occurences: []
-            };
-            this.placeHolders.push(c);
-            if ("" === d.value) {
-              this.finishPlaceHolderIndex = this.placeHolders.length - 1;
-            }
-            a[d.value] = c;
-          }
-
-          c.occurences.push(h);
-        }
-        this.lines.push(l.line);
-      }
-      if (this.placeHolders.length > this.startPlaceHolderIndex && "" === this.placeHolders[this.startPlaceHolderIndex]
-        .value && this.placeHolders.length > 1) {
-        this.startPlaceHolderIndex++;
-      }
-    };
-
-    e.prototype.parseLine = function(e) {
-      for (var t, n = "", i = [], o = 0, r = e.length, s = 0; r > o;)
-        if ("{" === e.charAt(o) && r > o + 1 && "{" === e.charAt(o + 1)) {
-          for (o += 2, t = ""; r > o;) {
-            if ("}" === e.charAt(o) && r > o + 1 && "}" === e.charAt(o + 1)) {
-              o += 2;
-              break;
-            }
-            t += e.charAt(o);
-
-            o++;
-          }
-          i.push({
-            value: t,
-            startColumn: s + 1,
-            endColumn: s + 1 + t.length
-          });
-
-          n += t;
-
-          s += t.length;
-        } else {
-          n += e.charAt(o);
-          s++;
-          o++;
-        }
-      return {
-        line: n,
-        placeHolders: i
-      };
-    };
-
-    e.prototype.extractLineIndentation = function(e, t) {
-      if ("undefined" == typeof t) {
-        t = Number.MAX_VALUE;
-      }
-      var n = i.getLeadingWhitespace(e);
-      return n.length > t - 1 ? n.substring(0, t - 1) : n;
-    };
-
-    e.prototype.bind = function(e, t, n, i) {
-      var o;
-
-      var r;
-
-      var s;
-
-      var a;
-
-      var u;
-
-      var l;
+    a.prototype.parseTemplate = function(a) {
+      var b = {};
 
       var c;
 
       var d;
 
-      var h = [];
+      var e;
 
-      var p = [];
+      var f;
 
-      var f = this.extractLineIndentation(e, n + 1);
+      var g = a.split("\n");
+      for (c = 0, d = g.length; c < d; c++) {
+        var h = this.parseLine(g[c]);
+        for (e = 0, f = h.placeHolders.length; e < f; e++) {
+          var j = h.placeHolders[e];
 
-      var g = [];
-      for (u = 0, l = this.lines.length; l > u; u++) {
-        o = this.lines[u];
-        if (0 === u) {
-          g[u + 1] = n;
-          h[u] = o;
-        } else {
-          r = this.extractLineIndentation(o);
-          s = o.substr(r.length);
-          a = i.normalizeIndentation(f + r);
-          g[u + 1] = a.length - r.length;
-          h[u] = a + s;
+          var k = new i.Range(c + 1, j.startColumn, c + 1, j.endColumn);
+
+          var l;
+          if (b.hasOwnProperty(j.value)) {
+            l = b[j.value];
+          } else {
+            l = {
+              value: j.value,
+              occurences: []
+            };
+            this.placeHolders.push(l);
+            if (j.value === "") {
+              this.finishPlaceHolderIndex = this.placeHolders.length - 1;
+            }
+            b[j.value] = l;
+          }
+
+          l.occurences.push(k);
         }
+        this.lines.push(h.line);
       }
+      if (this.placeHolders.length > this.startPlaceHolderIndex && this.placeHolders[this.startPlaceHolderIndex].value ===
+        "" && this.placeHolders.length > 1) {
+        this.startPlaceHolderIndex++;
+      }
+    };
+
+    a.prototype.parseLine = function(a) {
+      var b;
+
+      var c = "";
+
+      var d = [];
+
+      var e = 0;
+
+      var f = a.length;
+
+      var g = 0;
+      while (e < f)
+        if (a.charAt(e) === "{" && e + 1 < f && a.charAt(e + 1) === "{") {
+          e += 2;
+
+          b = "";
+          while (e < f) {
+            if (a.charAt(e) === "}" && e + 1 < f && a.charAt(e + 1) === "}") {
+              e += 2;
+              break;
+            }
+            b += a.charAt(e);
+
+            e++;
+          }
+          d.push({
+            value: b,
+            startColumn: g + 1,
+            endColumn: g + 1 + b.length
+          });
+
+          c += b;
+
+          g += b.length;
+        } else {
+          c += a.charAt(e);
+          g++;
+          e++;
+        }
+      return {
+        line: c,
+        placeHolders: d
+      };
+    };
+
+    a.prototype.extractLineIndentation = function(a, b) {
+      if (typeof b == "undefined") {
+        b = Number.MAX_VALUE;
+      }
+      var c = h.getLeadingWhitespace(a);
+      return c.length > b - 1 ? c.substring(0, b - 1) : c;
+    };
+
+    a.prototype.bind = function(a, b, c, d) {
+      var e = [];
+
+      var f = [];
+
+      var g = this.extractLineIndentation(a, c + 1);
+
+      var h;
+
+      var i;
+
+      var j;
+
+      var k;
+
+      var l;
+
       var m;
 
-      var v;
+      var n;
 
-      var y;
-      for (u = 0, l = this.placeHolders.length; l > u; u++) {
-        for (m = this.placeHolders[u], y = [], c = 0, d = m.occurences.length; d > c; c++) {
-          v = m.occurences[c];
-          y.push({
-            startLineNumber: v.startLineNumber + t,
-            startColumn: v.startColumn + g[v.startLineNumber],
-            endLineNumber: v.endLineNumber + t,
-            endColumn: v.endColumn + g[v.endLineNumber]
+      var o;
+
+      var p = [];
+      for (l = 0, m = this.lines.length; l < m; l++) {
+        h = this.lines[l];
+        if (l === 0) {
+          p[l + 1] = c;
+          e[l] = h;
+        } else {
+          i = this.extractLineIndentation(h);
+          j = h.substr(i.length);
+          k = d.normalizeIndentation(g + i);
+          p[l + 1] = k.length - i.length;
+          e[l] = k + j;
+        }
+      }
+      var q;
+
+      var r;
+
+      var s;
+      for (l = 0, m = this.placeHolders.length; l < m; l++) {
+        q = this.placeHolders[l];
+
+        s = [];
+        for (n = 0, o = q.occurences.length; n < o; n++) {
+          r = q.occurences[n];
+          s.push({
+            startLineNumber: r.startLineNumber + b,
+            startColumn: r.startColumn + p[r.startLineNumber],
+            endLineNumber: r.endLineNumber + b,
+            endColumn: r.endColumn + p[r.endLineNumber]
           });
         }
-        p.push({
-          value: m.value,
-          occurences: y
+        f.push({
+          value: q.value,
+          occurences: s
         });
       }
       return {
-        lines: h,
-        placeHolders: p,
+        lines: e,
+        placeHolders: f,
         startPlaceHolderIndex: this.startPlaceHolderIndex,
         finishPlaceHolderIndex: this.finishPlaceHolderIndex
       };
     };
 
-    return e;
+    return a;
   }();
-  t.CodeSnippet = u;
-  var l = function() {
-    function e(e, t, n, i) {
-      this.editor = e;
+  b.CodeSnippet = m;
+  var n = function() {
+    function a(a, b, c, d) {
+      this.editor = a;
 
-      this.model = e.getModel();
+      this.handlerService = b;
 
-      this.handlerService = t;
-
-      this.finishPlaceHolderIndex = n.finishPlaceHolderIndex;
+      this.finishPlaceHolderIndex = c.finishPlaceHolderIndex;
 
       this.trackedPlaceHolders = [];
 
       this.placeHolderDecorations = [];
 
-      this.currentPlaceHolderIndex = n.startPlaceHolderIndex;
+      this.currentPlaceHolderIndex = c.startPlaceHolderIndex;
 
       this.highlightDecorationId = null;
 
@@ -188,125 +212,129 @@ define("vs/editor/contrib/snippet/snippet", ["require", "exports", "vs/base/coll
 
       this.binding = null;
 
-      this.initialize(n, i);
+      this.initialize(c, d);
     }
-    e.prototype.initialize = function(e, t) {
-      var n;
+    a.prototype.initialize = function(a, b) {
+      var c = this;
 
-      var i;
+      var d = [];
 
-      var s = this;
-      for (n = 0, i = e.placeHolders.length; i > n; n++) {
-        for (var a = e.placeHolders[n], u = [], l = 0, c = a.occurences.length; c > l; l++) {
-          u.push(this.model.addTrackedRange(a.occurences[l], 0));
+      var e;
+
+      var f;
+
+      var g = this.editor.getModel();
+      for (e = 0, f = a.placeHolders.length; e < f; e++) {
+        var h = a.placeHolders[e];
+
+        var k = [];
+        for (var l = 0, m = h.occurences.length; l < m; l++) {
+          k.push(g.addTrackedRange(h.occurences[l]));
         }
         this.trackedPlaceHolders.push({
-          ranges: u
+          ranges: k
         });
       }
-      this.editor.changeDecorations(function(r) {
-        var a = t + e.lines.length - 1;
+      this.editor.changeDecorations(function(d) {
+        var h = b + a.lines.length - 1;
 
-        var u = s.model.getLineMaxColumn(a);
-        for (s.highlightDecorationId = r.addDecoration(new o.Range(t, 1, a, u), {
+        var j = c.editor.getModel().getLineMaxColumn(h);
+        c.highlightDecorationId = d.addDecoration(new i.Range(b, 1, h, j), {
           className: "new-snippet",
           isWholeLine: !0
-        }), n = 0, i = s.trackedPlaceHolders.length; i > n; n++) {
-          var l = n === s.finishPlaceHolderIndex ? "finish-snippet-placeholder" : "snippet-placeholder";
-          s.placeHolderDecorations.push(r.addDecoration(s.model.getTrackedRange(s.trackedPlaceHolders[n].ranges[0]), {
-            className: l
+        });
+        for (e = 0, f = c.trackedPlaceHolders.length; e < f; e++) {
+          var k = e === c.finishPlaceHolderIndex ? "finish-snippet-placeholder" : "snippet-placeholder";
+          c.placeHolderDecorations.push(d.addDecoration(g.getTrackedRange(c.trackedPlaceHolders[e].ranges[0]), {
+            className: k
           }));
         }
       });
 
       this.listenersToRemove = [];
 
-      this.listenersToRemove.push(this.model.addListener(r.EventType.ModelContentChanged, function(e) {
-        if (!s.isFinished)
-          if (e.changeType === r.EventType.ModelContentChangedFlush) {
-            s.stopAll();
-          } else if (e.changeType === r.EventType.ModelContentChangedLineChanged) {
-          var t = e.lineNumber;
+      this.listenersToRemove.push(this.editor.getModel().addListener(j.EventType.ModelContentChanged, function(a) {
+        if (c.isFinished) return;
+        if (a.changeType === j.EventType.ModelContentChangedFlush) {
+          c.stopAll();
+        } else if (a.changeType === j.EventType.ModelContentChangedLineChanged) {
+          var b = a.lineNumber;
 
-          var n = s.model.getDecorationRange(s.highlightDecorationId);
-          if (t < n.startLineNumber || t > n.endLineNumber) {
-            s.stopAll();
+          var d = c.editor.getModel().getDecorationRange(c.highlightDecorationId);
+          if (b < d.startLineNumber || b > d.endLineNumber) {
+            c.stopAll();
           }
-        } else if (e.changeType === r.EventType.ModelContentChangedLinesInserted) {
-          var i = e.fromLineNumber;
+        } else if (a.changeType === j.EventType.ModelContentChangedLinesInserted) {
+          var e = a.fromLineNumber;
 
-          var n = s.model.getDecorationRange(s.highlightDecorationId);
-          if (i < n.startLineNumber || i > n.endLineNumber) {
-            s.stopAll();
+          var d = c.editor.getModel().getDecorationRange(c.highlightDecorationId);
+          if (e < d.startLineNumber || e > d.endLineNumber) {
+            c.stopAll();
           }
-        } else if (e.changeType === r.EventType.ModelContentChangedLinesDeleted) {
-          var o = e.fromLineNumber;
+        } else if (a.changeType === j.EventType.ModelContentChangedLinesDeleted) {
+          var f = a.fromLineNumber;
 
-          var a = e.toLineNumber;
+          var g = a.toLineNumber;
 
-          var n = s.model.getDecorationRange(s.highlightDecorationId);
+          var d = c.editor.getModel().getDecorationRange(c.highlightDecorationId);
 
-          var u = a < n.startLineNumber;
+          var h = g < d.startLineNumber;
 
-          var l = o > n.endLineNumber;
-          if (u || l) {
-            s.stopAll();
-          }
-        }
-      }));
-
-      this.listenersToRemove.push(this.editor.addListener(r.EventType.CursorPositionChanged, function(e) {
-        if (!s.isFinished) {
-          var t = s.model.getDecorationRange(s.highlightDecorationId);
-
-          var n = e.position.lineNumber;
-          if (n < t.startLineNumber || n > t.endLineNumber) {
-            s.stopAll();
+          var i = f > d.endLineNumber;
+          if (h || i) {
+            c.stopAll();
           }
         }
       }));
 
-      this.listenersToRemove.push(this.editor.addListener(r.EventType.ModelChanged, function() {
-        s.stopAll();
+      this.listenersToRemove.push(this.editor.addListener(j.EventType.CursorPositionChanged, function(a) {
+        if (c.isFinished) return;
+        var b = c.editor.getModel().getDecorationRange(c.highlightDecorationId);
+
+        var d = a.position.lineNumber;
+        if (d < b.startLineNumber || d > b.endLineNumber) {
+          c.stopAll();
+        }
       }));
 
-      this.listenersToRemove.push(this.model.addListener(r.EventType.ModelDecorationsChanged, function() {
-        if (!s.isFinished) {
-          for (var e = s.model.getEditableRange(), t = !0, n = !0, i = 0;
-            (t || n) && i < s.trackedPlaceHolders.length; i++)
-            for (var o = s.trackedPlaceHolders[i].ranges, r = 0;
-              (t || n) && r < o.length; r++) {
-              var a = s.model.getTrackedRange(o[r]);
-              if (t && !a.isEmpty()) {
-                t = !1;
-              }
+      this.listenersToRemove.push(this.editor.addListener(j.EventType.ModelChanged, function() {
+        c.stopAll();
+      }));
 
-              if (n && !e.equalsRange(a)) {
-                n = !1;
-              }
+      this.listenersToRemove.push(this.editor.getModel().addListener(j.EventType.ModelDecorationsChanged, function(a) {
+        if (c.isFinished) return;
+        var b = !0;
+        for (var d = 0; d < c.trackedPlaceHolders.length; d++) {
+          var e = c.trackedPlaceHolders[d].ranges;
+          for (var f = 0; f < e.length; f++) {
+            var g = c.editor.getModel().getTrackedRange(e[f]);
+            if (!g.isEmpty()) {
+              b = !1;
+              break;
             }
-          if (t || n) {
-            s.stopAll();
-          } else if (-1 !== s.finishPlaceHolderIndex) {
-            var u = s.placeHolderDecorations[s.finishPlaceHolderIndex];
+          }
+        }
+        if (b) {
+          c.stopAll();
+        } else if (c.finishPlaceHolderIndex !== -1) {
+          var h = c.placeHolderDecorations[c.finishPlaceHolderIndex];
 
-            var l = s.model.getDecorationRange(u);
+          var i = c.editor.getModel().getDecorationRange(h);
 
-            var c = s.model.getDecorationOptions(u);
+          var j = c.editor.getModel().getDecorationOptions(h);
 
-            var d = l.isEmpty();
+          var k = i.isEmpty();
 
-            var h = "finish-snippet-placeholder" === c.className;
+          var l = j.className === "finish-snippet-placeholder";
 
-            var p = Number(d) ^ Number(h);
-            if (p) {
-              s.editor.changeDecorations(function(e) {
-                var t = d ? "finish-snippet-placeholder" : "snippet-placeholder";
-                e.changeDecorationOptions(u, {
-                  className: t
-                });
+          var m = Number(k) ^ Number(l);
+          if (m) {
+            c.editor.changeDecorations(function(a) {
+              var b = k ? "finish-snippet-placeholder" : "snippet-placeholder";
+              a.changeDecorationOptions(h, {
+                className: b
               });
-            }
+            });
           }
         }
       }));
@@ -316,54 +344,54 @@ define("vs/editor/contrib/snippet/snippet", ["require", "exports", "vs/base/coll
       this.registerKeyHandlers();
     };
 
-    e.prototype.registerKeyHandlers = function() {
-      var e = this;
-      this.binding = this.handlerService.bindGroup(function(t) {
-        t({
+    a.prototype.registerKeyHandlers = function() {
+      var a = this;
+      this.binding = this.handlerService.bindGroup(function(b) {
+        b({
           key: "Tab"
         }, function() {
-          return e.onNextPlaceHolder();
+          return a.onNextPlaceHolder();
         });
 
-        t({
+        b({
           key: "Shift-Tab"
         }, function() {
-          return e.onPrevPlaceHolder();
+          return a.onPrevPlaceHolder();
         });
 
-        t({
+        b({
           key: "Enter"
         }, function() {
-          return e.onAccept();
+          return a.onAccept();
         });
 
-        t({
+        b({
           key: "Escape"
         }, function() {
-          return e.onEscape();
+          return a.onEscape();
         });
       });
     };
 
-    e.prototype.onNextPlaceHolder = function() {
+    a.prototype.onNextPlaceHolder = function() {
       return this.isFinished ? !1 : (this.currentPlaceHolderIndex = (this.currentPlaceHolderIndex + 1) % this.trackedPlaceHolders
         .length, this.doLinkEditing(), !0);
     };
 
-    e.prototype.onPrevPlaceHolder = function() {
+    a.prototype.onPrevPlaceHolder = function() {
       return this.isFinished ? !1 : (this.currentPlaceHolderIndex = (this.trackedPlaceHolders.length + this.currentPlaceHolderIndex -
         1) % this.trackedPlaceHolders.length, this.doLinkEditing(), !0);
     };
 
-    e.prototype.onAccept = function() {
+    a.prototype.onAccept = function() {
       if (this.isFinished) {
         return !1;
       }
-      if (-1 !== this.finishPlaceHolderIndex) {
-        var e = this.model.getTrackedRange(this.trackedPlaceHolders[this.finishPlaceHolderIndex].ranges[0]);
+      if (this.finishPlaceHolderIndex !== -1) {
+        var a = this.editor.getModel().getTrackedRange(this.trackedPlaceHolders[this.finishPlaceHolderIndex].ranges[0]);
         this.editor.setPosition({
-          lineNumber: e.endLineNumber,
-          column: e.endColumn
+          lineNumber: a.endLineNumber,
+          column: a.endColumn
         });
       }
       this.stopAll();
@@ -371,138 +399,105 @@ define("vs/editor/contrib/snippet/snippet", ["require", "exports", "vs/base/coll
       return !0;
     };
 
-    e.prototype.onEscape = function() {
+    a.prototype.onEscape = function() {
       return this.isFinished ? !1 : (this.stopAll(), this.editor.setSelections([this.editor.getSelections()[0]]), !0);
     };
 
-    e.prototype.doLinkEditing = function() {
-      for (var e = [], t = 0, n = this.trackedPlaceHolders[this.currentPlaceHolderIndex].ranges.length; n > t; t++) {
-        var i = this.model.getTrackedRange(this.trackedPlaceHolders[this.currentPlaceHolderIndex].ranges[t]);
-        e.push({
-          selectionStartLineNumber: i.startLineNumber,
-          selectionStartColumn: i.startColumn,
-          positionLineNumber: i.endLineNumber,
-          positionColumn: i.endColumn
+    a.prototype.doLinkEditing = function() {
+      var a = [];
+      for (var b = 0, c = this.trackedPlaceHolders[this.currentPlaceHolderIndex].ranges.length; b < c; b++) {
+        var d = this.editor.getModel().getTrackedRange(this.trackedPlaceHolders[this.currentPlaceHolderIndex].ranges[
+          b]);
+        a.push({
+          selectionStartLineNumber: d.startLineNumber,
+          selectionStartColumn: d.startColumn,
+          positionLineNumber: d.endLineNumber,
+          positionColumn: d.endColumn
         });
       }
-      this.editor.setSelections(e);
+      this.editor.setSelections(a);
     };
 
-    e.prototype.stopAll = function() {
-      var e = this;
-      if (!this.isFinished) {
-        this.isFinished = !0;
+    a.prototype.stopAll = function() {
+      var a = this;
+      if (this.isFinished) return;
+      this.isFinished = !0;
 
-        this.listenersToRemove.forEach(function(e) {
-          e();
-        });
+      this.listenersToRemove.forEach(function(a) {
+        a();
+      });
 
-        this.listenersToRemove = [];
-        for (var t = 0; t < this.trackedPlaceHolders.length; t++)
-          for (var n = this.trackedPlaceHolders[t].ranges, i = 0; i < n.length; i++) {
-            this.model.removeTrackedRange(n[i]);
-          }
-        this.trackedPlaceHolders = [];
-
-        this.binding.dispose();
-
-        this.editor.changeDecorations(function(t) {
-          t.removeDecoration(e.highlightDecorationId);
-          for (var n = 0; n < e.placeHolderDecorations.length; n++) {
-            t.removeDecoration(e.placeHolderDecorations[n]);
-          }
-          e.placeHolderDecorations = [];
-
-          e.highlightDecorationId = null;
-        });
+      this.listenersToRemove = [];
+      var b = this.editor.getModel();
+      for (var c = 0; c < this.trackedPlaceHolders.length; c++) {
+        var d = this.trackedPlaceHolders[c].ranges;
+        for (var e = 0; e < d.length; e++) {
+          b.removeTrackedRange(d[e]);
+        }
       }
+      this.trackedPlaceHolders = [];
+
+      this.binding.dispose();
+
+      this.editor.changeDecorations(function(b) {
+        b.removeDecoration(a.highlightDecorationId);
+        for (var c = 0; c < a.placeHolderDecorations.length; c++) {
+          b.removeDecoration(a.placeHolderDecorations[c]);
+        }
+        a.placeHolderDecorations = [];
+
+        a.highlightDecorationId = null;
+      });
     };
 
-    return e;
+    return a;
   }();
 
-  var c = function() {
-    function e() {}
-    e.run = function(e, t, n, i) {
-      if (0 === n.placeHolders.length) {
-        this._runForAllSelections(e, t, n, i);
-      } else {
-        this._runForPrimarySelection(e, t, n, i);
+  var o = function() {
+    function a() {}
+    a.run = function(b, c, d, e) {
+      var f = b.getSelection();
+
+      var g = f.getStartPosition();
+
+      var h = b.getModel();
+
+      var i = f;
+      if (e) {
+        i = i.plusRange(e);
       }
-    };
+      var j = d.bind(h.getLineContent(i.startLineNumber), i.startLineNumber - 1, i.startColumn - 1, b);
 
-    e._getTypeRangeForSelection = function(e, t, n) {
-      var i;
-      return i = n ? e.validateRange(o.plusRange(t, {
-        startLineNumber: t.positionLineNumber,
-        startColumn: t.positionColumn - n,
-        endLineNumber: t.positionLineNumber,
-        endColumn: t.positionColumn
-      })) : t;
-    };
+      var m = j.lines.join("\n");
 
-    e._getAdaptedSnippet = function(e, t, n, i) {
-      return n.bind(t.getLineContent(i.startLineNumber), i.startLineNumber - 1, i.startColumn - 1, e);
-    };
-
-    e._getCommandForSnippet = function(e, t) {
-      var n = e.lines.join("\n");
-      return new s.ReplaceCommand(t, n);
-    };
-
-    e._runForPrimarySelection = function(t, n, i, o) {
-      var r = t.getModel();
-
-      var s = e._getTypeRangeForSelection(r, t.getSelection(), o);
-
-      var u = e._getAdaptedSnippet(t, r, i, s);
-      t.executeCommand("editor.contrib.insertSnippetHelper", this._getCommandForSnippet(u, s));
-      var c = e._getSnippetCursorOnly(u);
-      if (c) {
-        t.setSelection(new a.Selection(c.lineNumber, c.column, c.lineNumber, c.column));
+      var o = new k.ReplaceCommand(i, m);
+      b.executeCommand("editor.contrib.insertSnippetHelper", o);
+      var p = a._getSnippetCursorOnly(j);
+      if (p) {
+        b.setSelection(new l.Selection(p.lineNumber, p.column, p.lineNumber, p.column));
       } else {
-        if (u.placeHolders.length > 0) {
-          new l(t, n, u, s.startLineNumber);
+        if (j.placeHolders.length > 0) {
+          new n(b, c, j, i.startLineNumber);
         }
       }
     };
 
-    e._runForAllSelections = function(t, n, i, o) {
-      var r;
-
-      var s;
-
-      var a;
-
-      var u = t.getSelections();
-
-      var l = t.getModel();
-
-      var c = [];
-      for (r = 0; r < u.length; r++) {
-        s = e._getTypeRangeForSelection(l, u[r], o);
-        a = e._getAdaptedSnippet(t, l, i, s);
-        c.push(this._getCommandForSnippet(a, s));
-      }
-      t.executeCommands("editor.contrib.insertSnippetHelper", c);
-    };
-
-    e._getSnippetCursorOnly = function(e) {
-      if (1 !== e.placeHolders.length) {
+    a._getSnippetCursorOnly = function(a) {
+      if (a.placeHolders.length !== 1) {
         return null;
       }
-      var t = e.placeHolders[0];
-      if ("" !== t.value || 1 !== t.occurences.length) {
+      var b = a.placeHolders[0];
+      if (b.value !== "" || b.occurences.length !== 1) {
         return null;
       }
-      var n = t.occurences[0];
-      return o.isEmpty(n) ? {
-        lineNumber: n.startLineNumber,
-        column: n.startColumn
+      var c = b.occurences[0];
+      return i.RangeUtils.isEmpty(c) ? {
+        lineNumber: c.startLineNumber,
+        column: c.startColumn
       } : null;
     };
 
-    return e;
+    return a;
   }();
-  t.InsertSnippetHelper = c;
+  b.InsertSnippetHelper = o;
 });
